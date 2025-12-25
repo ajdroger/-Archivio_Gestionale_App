@@ -1,0 +1,25 @@
+[
+    {
+        "codice_fiscale": "TEST01",
+        "matricola": "M9001",
+        "nome": "TEST",
+        "cognome": "UNO",
+        "data_nascita": "1990-01-01",
+        "indirizzo": "Via Test 1",
+        "email": "test1@example.com",
+        "stato": "ATTIVO",
+        "documento_anno": 2025,
+        "quota_versata": 100.00,
+        "metodo_pagamento": "CARTA"
+    },
+    {
+        "codice_fiscale": "TEST02",
+        "matricola": "M9002",
+        "nome": "TEST",
+        "cognome": "DUE (MOROSO)",
+        "data_nascita": "1992-02-02",
+        "indirizzo": "Via Test 2",
+        "email": "test2@example.com",
+        "stato": "ATTIVO"
+    }
+]

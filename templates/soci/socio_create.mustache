@@ -1,0 +1,223 @@
+{{> layout_header }}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <div class="card border-0 shadow-lg" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <div class="card-header bg-transparent py-4 border-bottom border-secondary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-user-plus me-2 text-primary"></i>INIZIALIZZAZIONE NUOVO RECORD SOCIO</h4>
+                    <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Torna all'Archivio</a>
+                </div>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <p class="text-secondary mb-5 fs-6 opacity-75">Inserire i parametri vitali per la registrazione crittografata del nuovo membro nel sistema centrale.</p>
+
+                <form action="/fratellanza-militare-archivio/public/soci/salva" method="POST">
+                    <!-- CSRF Token -->
+                    <input type="hidden" name="csrf_name" value="{{csrf.name}}">
+                    <input type="hidden" name="csrf_value" value="{{csrf.value}}">
+
+                    <div class="row g-5 mb-5">
+                        <!-- Colonna 1: Identità -->
+                        <div class="col-md-6 border-end border-secondary border-opacity-25 px-md-4">
+                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-id-badge me-2"></i>DATI IDENTIFICATIVI</h5>
+                            
+                            <!-- 1. Nome & Cognome -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mc-label" for="nome">NOME</label>
+                                        <input type="text" id="nome" name="nome" class="mc-input text-white" required placeholder="Es: Mario">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mc-label" for="cognome">COGNOME</label>
+                                        <input type="text" id="cognome" name="cognome" class="mc-input text-white" required placeholder="Es: Rossi">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 2. Data, Sesso, Luogo -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label class="mc-label" for="data_nascita">DATA DI NASCITA</label>
+                                        <input type="date" id="data_nascita" name="data_nascita" class="mc-input text-white" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="mc-label" for="sesso">SESSO</label>
+                                        <select id="sesso" name="sesso" class="mc-input text-white" required>
+                                            <option value="" disabled selected>-</option>
+                                            <option value="M">M</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                     <div class="form-group">
+                                        <label class="mc-label" for="luogo_nascita">COMUNE (O STATO)</label>
+                                        <input type="text" id="luogo_nascita" name="luogo_nascita" class="mc-input text-white" placeholder="Es: Roma" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Codice Fiscale Calculator -->
+                            <div class="form-group mb-4">
+                                <label class="mc-label d-flex justify-content-between align-items-center" for="codice_fiscale">
+                                    CODICE FISCALE (ID UNICO)
+                                    <button type="button" id="btn-calc-cf" class="btn btn-xs btn-outline-info py-0 px-2" style="font-size: 0.7rem; border-radius: 4px;">
+                                        <i class="fa-solid fa-calculator me-1"></i>CALCOLA AUTOMATICO
+                                    </button>
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" id="codice_fiscale" name="codice_fiscale" class="mc-input fs-5 font-monospace" required pattern="[A-Z0-9]{16}" placeholder="RSSMRA80A01H501Z" maxlength="16" style="text-transform:uppercase; color: var(--mc-accent); border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                                    <span class="input-group-text bg-dark border-secondary border-opacity-25 text-success" style="border-left: 0;"><i class="fa-solid fa-check"></i></span>
+                                </div>
+                                <div class="form-text text-secondary opacity-50 small mt-1">Calcola automaticamente se il socio non ha la tessera sanitaria.</div>
+                            </div>
+                        </div>
+
+                        <!-- Colonna 2: Contatti e Stato -->
+                        <div class="col-md-6 px-md-4">
+                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-satellite-dish me-2"></i>RETI DI CONTATTO</h5>
+                            
+                            <div class="form-group mb-4">
+                                <label class="mc-label" for="indirizzo">LOCALIZZAZIONE / INDIRIZZO</label>
+                                <input type="text" id="indirizzo" name="indirizzo" class="mc-input text-white" placeholder="Es: Via Roma 1, 50123 Firenze">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="mc-label" for="email">CANALE E-MAIL</label>
+                                <input type="email" id="email" name="email" class="mc-input text-white" placeholder="nome@dominio.it">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="mc-label" for="telefono">CONTATTO TEL / MOBILE</label>
+                                <input type="tel" id="telefono" name="telefono" class="mc-input text-white" placeholder="+39 333 1234567">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="mc-label" for="matricola">IDENTIFICATIVO MATRICOLA</label>
+                                <input type="text" id="matricola" name="matricola" class="mc-input text-info opacity-75" placeholder="AUTO-GEN">
+                                <div class="form-text text-secondary opacity-50 small">Il sistema assegnerà un ID sequenziale se lasciato vuoto.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark bg-opacity-25 border-primary border-opacity-10 mb-5 shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="form-check form-switch d-flex align-items-center">
+                                <input class="form-check-input mc-switch" type="checkbox" name="pagamento_effettuato" value="1" id="pagamento_effettuato" role="switch">
+                                <label class="form-check-label ms-3 py-1" for="pagamento_effettuato">
+                                    <strong class="text-white fs-6">REGISTRAZIONE QUOTA ASSOCIATIVA 2025</strong><br>
+                                    <small class="text-secondary">Eseguire il pagamento contestuale per attivare immediatamente lo stato del socio.</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-3">
+                        <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary">ANNULLA</a>
+                        <button type="submit" class="btn btn-primary btn-lg px-5 shadow-primary fw-bold"><i class="fa-solid fa-floppy-disk me-2"></i>COMMIT RECORD</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .mc-input {
+        width: 100%;
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #f1f5f9;
+        transition: all 0.2s ease;
+    }
+    .mc-input:focus {
+        outline: none;
+        background: rgba(15, 23, 42, 0.6);
+        border-color: var(--mc-accent);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+    }
+    .mc-label { 
+        font-size: 0.7rem; 
+        color: #94a3b8; 
+        font-weight: 700; 
+        letter-spacing: 0.1em; 
+        margin-bottom: 0.6rem; 
+        display: block;
+    }
+    .mc-switch {
+        width: 3em !important;
+        height: 1.5em !important;
+        cursor: pointer;
+    }
+    .tracking-wider { letter-spacing: 0.15em; }
+    .shadow-primary { box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.3); }
+</style>
+<script>
+    document.getElementById('btn-calc-cf').addEventListener('click', async function() {
+        const btn = this;
+        const originalText = btn.innerHTML;
+        
+        // Raccolta Dati
+        const payload = {
+            nome: document.getElementById('nome').value,
+            cognome: document.getElementById('cognome').value,
+            data_nascita: document.getElementById('data_nascita').value,
+            sesso: document.getElementById('sesso').value,
+            luogo: document.getElementById('luogo_nascita').value
+        };
+
+        // Validazione Client-Side
+        if(!payload.nome || !payload.cognome || !payload.data_nascita || !payload.sesso || !payload.luogo) {
+            alert('Per calcolare il Codice Fiscale, compila prima tutti i campi: Nome, Cognome, Data di Nascita, Sesso e Luogo.');
+            return;
+        }
+
+        // UI Loading
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>CALCOLO...';
+
+        try {
+            const formData = new URLSearchParams();
+            Object.keys(payload).forEach(k => formData.append(k, payload[k]));
+            // Add CSRF
+            formData.append('csrf_name', document.querySelector('input[name="csrf_name"]').value);
+            formData.append('csrf_value', document.querySelector('input[name="csrf_value"]').value);
+
+            const response = await fetch('/fratellanza-militare-archivio/public/soci/calcola-cf', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.cf) {
+                const cfInput = document.getElementById('codice_fiscale');
+                cfInput.value = data.cf;
+                // Visual feedback
+                cfInput.style.backgroundColor = 'rgba(52, 211, 153, 0.2)'; // Green tint
+                setTimeout(() => cfInput.style.backgroundColor = '', 1000);
+            } else {
+                alert('Errore nel calcolo: ' + (data.error || 'Risposta sconosciuta dal server.'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Si è verificato un errore di rete durante il calcolo.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    });
+
+    // Auto-search logic for Belfiore (Optional UX enhancement could go here later)
+</script>
+{{> layout_footer }}

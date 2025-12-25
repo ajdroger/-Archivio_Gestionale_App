@@ -1,0 +1,93 @@
+# CASI D'USO (Use Cases) - Digitalizzazione Archivio Soci
+
+**Versione:** 1.0  
+**Data:** 17 Dicembre 2025
+
+## 1. Attori del Sistema
+*   **Segreteria (User)**: Operatore incaricato del data-entry e della scansione quotidiana.
+*   **Direttore (Supervisor)**: Ha accesso completo in lettura per verifiche e controlli.
+*   **Amministratore Sistema (Admin)**: Gestisce la manutenzione tecnica, i backup e gli accessi.
+
+---
+
+## 2. Diagramma dei Casi d'Uso (Descrizione)
+Il sistema copre le seguenti funzionalità principali:
+1.  **Gestione Soci**: Inserimento, Modifica e Consultazione.
+2.  **Gestione Documentale**: Scansione, Upload, Verifica Integrità.
+3.  **Controllo Amministrativo**: Verifica Morosità, Audit Log.
+
+---
+
+## 3. Descrizione Dettagliata Casi d'Uso
+
+### UC1: Inserimento Nuovo Socio
+*   **Attore Primario:** Segreteria
+*   **Precondizione:** Il sistema è attivo e l'operatore è loggato.
+*   **Flusso Principale:**
+    1.  L'operatore seleziona "Nuovo Socio".
+    2.  Il sistema mostra il form anagrafico.
+    3.  L'operatore inserisce: Nome, Cognome, CF, Data Nascita, Indirizzo.
+    4.  L'operatore conferma.
+    5.  Il sistema verifica validità CF e unicità.
+    6.  Il sistema salva la scheda e conferma l'avvenuta creazione.
+*   **Eccezioni:**
+    *   *CF Duplicato*: Il sistema mostra errore e rimanda alla scheda esistente.
+
+### UC2: Digitalizzazione e Associazione Documento
+*   **Attore Primario:** Segreteria
+*   **Precondizione:** Esiste una scheda Socio o la si sta creando.
+*   **Flusso Principale:**
+    1.  L'operatore acquisisce il cartaceo via scanner (OCR).
+    2.  Il sistema riceve il file (o l'operatore lo carica manualmente).
+    3.  Il sistema calcola l'hash SHA-256 (Verifica Integrità).
+    4.  Il sistema chiede di specificare il tipo (es. "Modulo Iscrizione 2025").
+    5.  L'operatore conferma.
+    6.  Il file viene caricato su Cloud Storage (Google Drive) e il link salvato nel DB locale.
+    7.  Lo stato documento diventa "VALIDO".
+
+### UC2.1: Gestione Consenso GDPR
+*   **Attore Primario:** Segreteria / Sistema
+*   **Flusso Principale:**
+    1.  L'operatore accede alla sezione GDPR del socio.
+    2.  Il sistema mostra i consensi attuali e la versione dell'informativa.
+    3.  L'operatore aggiorna le preferenze del socio.
+    4.  Il sistema registra la data di firma e logga l'azione nell'Audit Trail.
+    5.  In caso di revoca, il sistema disabilita i flag e imposta la data di revoca.
+
+### UC3: Verifica Morosità (Automatico)
+*   **Attore Primario:** Sistema / Direttore
+*   **Flusso Principale:**
+    1.  L'utente visualizza la lista soci.
+    2.  Per ogni socio, il sistema interroga i documenti associati.
+    3.  SE esiste un "Modulo Iscrizione" per l'anno corrente -> Morosità: NO.
+    4.  ALTRIMENTI -> Morosità: SI (Evidenziato in Rosso).
+
+### UC4: Consultazione Archivio
+*   **Attore Primario:** Segreteria / Direttore
+*   **Flusso Principale:**
+    1.  L'operatore inserisce Codice Fiscale o Cognome nella barra di ricerca.
+    2.  Il sistema mostra i risultati.
+    3.  L'operatore clicca su "Dettagli".
+    4.  Viene mostrata la scheda anagrafica e la lista dei PDF cliccabili.
+
+### UC5: Accesso e Sicurezza
+*   **Attore Primario:** Tutti
+*   **Flusso Principale:**
+    1.  L'utente tenta di accedere al portale con Username e Password.
+    2.  Il sistema verifica le credenziali hashate (BCRYPT) nel database `users`.
+    3.  Se le credenziali sono corrette, il sistema richiede il **codice 2FA (TOTP)**.
+    4.  L'utente inserisce il codice dall'app di autenticazione.
+    5.  Il sistema verifica il codice (Secret via `.env`) e crea la sessione.
+    6.  Ad ogni richiesta, il sistema verifica i permessi (ACL) in base al ruolo.
+
+### UC6: Manutenzione e Diagnostica Sistema
+*   **Attore Primario:** Amministratore Sistema
+*   **Flusso Principale:**
+    1.  L'admin accede alla `debug_dashboard.php`.
+    2.  Il sistema aggrega in tempo reale lo stato delle estensioni PHP, lo spazio disco e l'integrità del DB SQLite.
+    3.  L'admin lancia il `repair_tool.php` in caso di errori di permessi sulle cartelle log/database.
+    4.  L'admin monitora i log di sistema via web per intercettare anomalie GDPR o errori di sicurezza.
+
+---
+
+*Documento allegato alla Specifica Tecnica del Progetto Fratellanza Militare.*

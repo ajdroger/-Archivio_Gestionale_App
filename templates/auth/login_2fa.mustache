@@ -1,0 +1,45 @@
+<div class="card shadow-lg border-0 rounded-4" style="background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1) !important;">
+    <div class="card-body p-4 p-md-5 text-center">
+        <div class="mb-4 text-warning">
+            <i class="fa-solid fa-mobile-screen-button fa-3x"></i>
+        </div>
+        <h4 class="card-title mb-2 text-white">Verifica a Due Fattori</h4>
+        <p class="text-secondary small mb-4">Inserisci il codice generato dall'app Authenticator.</p>
+
+        {{#error}}
+        <div class="alert alert-danger text-start" role="alert">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>{{error}}
+        </div>
+        {{/error}}
+
+        {{#qr_uri}}
+        <div class="mb-4">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{qr_uri}}" alt="QR Code 2FA" class="img-fluid rounded border p-2 bg-white">
+        </div>
+        {{/qr_uri}}
+
+        {{#secret}}
+        <div class="alert alert-secondary mb-4 p-2 small bg-dark text-info border-info">
+            <i class="fa-solid fa-key me-1"></i>Secret: <code>{{secret}}</code>
+        </div>
+        {{/secret}}
+
+        <form action="/fratellanza-militare-archivio/public/login/2fa" method="POST">
+            <input type="hidden" name="csrf_name" value="{{csrf.name}}">
+            <input type="hidden" name="csrf_value" value="{{csrf.value}}">
+            
+            <div class="mb-4">
+                <input type="text" name="code" id="code" class="form-control form-control-lg text-center font-monospace tracking-widest bg-dark text-warning border-secondary" placeholder="000000" maxlength="6" required autofocus autocomplete="one-time-code" style="letter-spacing: 0.5em; font-size: 1.5rem;">
+            </div>
+            
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg shadow">
+                    VERIFICA <i class="fa-solid fa-check ms-2"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="text-center mt-3">
+     <a href="/fratellanza-militare-archivio/public/logout" class="text-secondary small text-decoration-none"><i class="fa-solid fa-arrow-left me-1"></i>Torna al login</a>
+</div>

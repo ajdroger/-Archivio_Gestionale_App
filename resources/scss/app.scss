@@ -1,0 +1,50 @@
+// Import Bootstrap
+@import "bootstrap/scss/bootstrap";
+
+/* Fratellanza Militare - Custom Styles */
+
+/* Esempio colori brand personalizzati */
+:root {
+    --bs-primary-rgb: 13, 110, 253;
+    /* Bootstrap standard blue, da cambiare se necessario */
+}
+
+.card-dashboard {
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+}
+
+// Inline styles moved from layout
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+footer {
+    margin-top: auto;
+    background-color: #e9ecef;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.moroso-SI {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.moroso-NO {
+    color: #198754;
+}

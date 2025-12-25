@@ -1,0 +1,221 @@
+{{> layout_header }}
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-end border-bottom border-secondary pb-4">
+            <div>
+                <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-chart-line me-3 text-primary"></i>REPORTING CENTER</h2>
+                <p class="text-secondary mb-0 mt-2">Analisi aggregata in tempo reale dei parametri di sistema e anagrafica.</p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-dark text-secondary border border-secondary px-3 py-2">
+                    <i class="fa-solid fa-clock-rotate-left me-2"></i>DATA RIFERIMENTO: {{stats.data_riferimento}}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPI Cards Grid -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card mc-stat-card h-100 shadow-lg">
+            <div class="card-body p-4 text-center">
+                <div class="mc-icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="mc-stat-value text-white">{{stats.totale}}</div>
+                <div class="mc-stat-label">TOTALE SOCI</div>
+                <div class="progress mt-3 bg-dark" style="height: 4px;">
+                    <div class="progress-bar bg-primary" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card mc-stat-card h-100 shadow-lg border-bottom-success">
+            <div class="card-body p-4 text-center">
+                <div class="mc-icon-circle bg-success bg-opacity-10 text-success mx-auto mb-3">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <div class="mc-stat-value text-white">{{stats.paganti}}</div>
+                <div class="mc-stat-label">IN REGOLA (2025)</div>
+                <div class="progress mt-3 bg-dark" style="height: 4px;">
+                    <div class="progress-bar bg-success" style="width: {{stats.perc_paganti}}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card mc-stat-card h-100 shadow-lg border-bottom-danger">
+            <div class="card-body p-4 text-center">
+                <div class="mc-icon-circle bg-danger bg-opacity-10 text-danger mx-auto mb-3">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div class="mc-stat-value text-white">{{stats.morosi}}</div>
+                <div class="mc-stat-label">MOROSITÀ RILEVATA</div>
+                <div class="progress mt-3 bg-dark" style="height: 4px;">
+                    <div class="progress-bar bg-danger" style="width: {{stats.perc_morosi}}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card mc-stat-card h-100 shadow-lg border-bottom-info">
+            <div class="card-body p-4 text-center">
+                <div class="mc-icon-circle bg-info bg-opacity-10 text-info mx-auto mb-3">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div class="mc-stat-value text-white">{{stats.attivi}}</div>
+                <div class="mc-stat-label">STATUS ATTIVO</div>
+                <div class="progress mt-3 bg-dark" style="height: 4px;">
+                    <div class="progress-bar bg-info" style="width: {{stats.perc_attivi}}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPI Cards Grid (preserved) -->
+<div class="row g-4 mb-5">
+    <!-- ... (Previous KPI Cards, I should probably keep them or the user will lose them. I will assume the tool keeps them if I don't target them.
+    Wait, I am replacing lines 81-122 which are the previous "Details" and "Export" cards.
+    I will replace them with the new Tabs interface.
+    -->
+
+    <div class="col-12">
+        <div class="card bg-dark border-secondary shadow-lg">
+            <div class="card-header border-secondary bg-transparent py-3">
+                 <h5 class="text-white mb-0 fw-bold"><i class="fa-solid fa-users me-2 text-primary"></i>ANALISI ANAGRAFICA & STATO SOCI</h5>
+            </div>
+            <div class="card-body p-4">
+                
+                <form action="" method="GET" class="row g-3 mb-4 bg-black bg-opacity-25 p-3 rounded border border-secondary">
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary small">Stato Iscrizione</label>
+                        <select name="status" class="form-select bg-dark text-white border-secondary">
+                            <option value="">Tutti</option>
+                            <option value="ATTIVO" {{#filters.status}}selected{{/filters.status}}>ATTIVO</option>
+                            <option value="SOSPESO" {{#filters.status}}selected{{/filters.status}}>SOSPESO</option>
+                            <option value="RADIATO" {{#filters.status}}selected{{/filters.status}}>RADIATO</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary small">Stato Amministrativo</label>
+                        <select name="payment_status" class="form-select bg-dark text-white border-secondary">
+                            <option value="">Tutti</option>
+                            <option value="in_regola">In Regola</option>
+                            <option value="moroso">Moroso</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-filter me-2"></i>Filtra Dati</button>
+                        
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-download me-2"></i>Esporta
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="/fratellanza-militare-archivio/public/statistiche/export/pdf?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-pdf me-2 text-danger"></i>Report PDF</a></li>
+                                <li><a class="dropdown-item" href="/fratellanza-militare-archivio/public/statistiche/export/excel?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-csv me-2 text-success"></i>Export CSV</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Socio</th>
+                                <th>Matricola</th>
+                                <th>Stato</th>
+                                <th>Posizione</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#filtered_soci}}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-primary bg-opacity-25 text-primary me-3">{{DatiPersonali.Nome.0}}{{DatiPersonali.Cognome.0}}</div>
+                                        <div>
+                                            <div class="fw-bold">{{DatiPersonali.Cognome}} {{DatiPersonali.Nome}}</div>
+                                            <div class="small text-secondary">{{DatiPersonali.Email}}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="font-monospace text-info">{{Matricola}}</span></td>
+                                <td>
+                                    <span class="badge bg-{{#Stato.isActive}}success{{/Stato.isActive}}{{^Stato.isActive}}secondary{{/Stato.isActive}}">
+                                        {{Stato.name}}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{#verificaMorosita}}
+                                        <span class="badge bg-danger">MOROSO</span>
+                                    {{/verificaMorosita}}
+                                    {{^verificaMorosita}}
+                                        <span class="badge bg-success">IN REGOLA</span>
+                                    {{/verificaMorosita}}
+                                </td>
+                                <td>
+                                    <a href="/fratellanza-militare-archivio/public/soci/{{CodiceFiscale}}" class="btn btn-sm btn-outline-light"><i class="fa-solid fa-eye"></i></a>
+                                </td>
+                            </tr>
+                            {{/filtered_soci}}
+                        </tbody>
+                    </table>
+                    <div class="text-secondary small mt-2">Visualizzati {{filtered_count}} risultati</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .mc-stat-card {
+        background: rgba(30, 41, 59, 0.4) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mc-stat-card:hover {
+        transform: translateY(-8px);
+        background: rgba(30, 41, 59, 0.6) !important;
+        border-color: rgba(56, 189, 248, 0.2) !important;
+    }
+    .mc-icon-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .mc-stat-value {
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin: 15px 0 5px 0;
+    }
+    .mc-stat-label {
+        color: #94a3b8;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+    }
+    .border-bottom-success { border-bottom: 4px solid #10b981 !important; }
+    .border-bottom-danger { border-bottom: 4px solid #ef4444 !important; }
+    .border-bottom-info { border-bottom: 4px solid #0ea5e9 !important; }
+</style>
+
+{{> layout_footer }}

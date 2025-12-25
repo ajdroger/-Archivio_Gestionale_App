@@ -1,0 +1,128 @@
+---
+config:
+  theme: base
+---
+classDiagram
+    direction TB
+    classDef controller fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,font-weight:bold;
+    classDef domain fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    classDef security fill:#ffebee,stroke:#b71c1c,stroke-width:2px,font-weight:bold;
+    classDef infra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef kernel fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    namespace Gestori_Richieste_HTTP {
+        class AppKernel {
+            <<Slim Framework>>
+            +run() : Avvia app
+            +addMiddleware(mw)
+            +mapRoute(url, ctrl)
+        }
+        note for AppKernel "Il Cervello (Router).\nRiceve la richiesta HTTP\ne decide a chi passarla."
+
+        class AuthController {
+            +login(user, pass)
+            +verify2FA(code)
+            +logout()
+        }
+        note for AuthController "Il Portinaio.\nGestisce accessi e 2FA."
+
+        class SocioController {
+            +index()
+            +create(dati)
+            +uploadDoc(file)
+            +search(query)
+        }
+        note for SocioController "Il Manager.\nCoordina dati e file."
+    }
+    namespace Sicurezza_Bancaria {
+        class SecurityPipeline {
+            <<Middleware>>
+            +RateLimit(ip)
+            +CsrfCheck(token)
+            +SessionCheck()
+        }
+        note for SecurityPipeline "Lo Scudo.\nFiltra richieste PRIMA\nche tocchino i dati."
+
+        class TotpProvider {
+            <<Service 2FA>>
+            +generateSecret()
+            +checkCode(secret, input)
+        }
+
+        class UserAdmin {
+            <<Entità Utente>>
+            +Int ID
+            +String PasswordHash
+            +String Ruolo
+        }
+    }
+    namespace Modello_Dati_Business {
+        class Socio {
+            +String Matricola
+            +String Nome
+            +String Cognome
+            +checkMorosita(anno)
+            +aggiornaDati(nuovi)
+        }
+        note for Socio "Il Socio.\nContiene logica di business\n(es. pagamenti)."
+
+        class Documento {
+            +UUID ID
+            +String HashSHA256
+            +String PathCloud
+            +verificaIntegrita()
+        }
+        note for Documento "Il File Digitale.\nL'hash garantisce\nintegrità."
+    }
+    namespace Infrastruttura_Tecnica {
+        class ISocioRepository {
+            <<Interface>>
+            +findAll()
+            +save(Socio)
+            +findByCF(CF)
+        }
+        
+        class SQLiteAdapter {
+            <<Database>>
+            +query(sql)
+            +prepare(stmt)
+            +execute(params)
+        }
+
+        class CloudStorage {
+            <<Google Drive API>>
+            +uploadFile(blob)
+            +deleteFile(id)
+        }
+
+        class AuditLogger {
+            <<Registro Eventi>>
+            +log(evento, user)
+        }
+    }
+    AppKernel --> SecurityPipeline : 1. Filtra traffico
+    SecurityPipeline --> AuthController : 2. Se login
+    SecurityPipeline --> SocioController : 2. Se gestione
+    AuthController --> UserAdmin : Verifica DB
+    AuthController --> TotpProvider : Verifica 2FA
+    AuthController ..> AuditLogger : Log Accesso
+    SocioController --> ISocioRepository : 3. Chiede dati
+    SocioController --> CloudStorage : 3. Invia file
+    SocioController ..> AuditLogger : Log Modifica
+    ISocioRepository <|.. SQLiteAdapter : Implementa
+    ISocioRepository --> Socio : Restituisce
+    Socio *-- Documento : Possiede
+    class AppKernel controller
+    class AuthController controller
+    class SocioController controller
+    
+    class SecurityPipeline security
+    class TotpProvider security
+    class UserAdmin security
+    
+    class Socio domain
+    class Documento domain
+    
+    class ISocioRepository infra
+    class SQLiteAdapter infra
+    class CloudStorage infra
+    class AuditLogger infra

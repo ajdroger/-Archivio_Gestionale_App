@@ -1,0 +1,15 @@
+[
+    {
+        "codice_fiscale": "RSSMRA80A01H501U",
+        "matricola": "M1001",
+        "nome": "MARIO",
+        "cognome": "ROSSI",
+        "data_nascita": "1980-01-01",
+        "indirizzo": "Via Roma 1, Firenze",
+        "email": "mario.rossi@email.com",
+        "stato": "ATTIVO",
+        "documento_anno": 2025,
+        "quota_versata": 50.00,
+        "metodo_pagamento": "BONIFICO"
+    }
+]

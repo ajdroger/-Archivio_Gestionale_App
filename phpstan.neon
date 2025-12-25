@@ -1,0 +1,17 @@
+parameters:
+    level: 5
+    paths:
+        - src
+        - tests
+    excludePaths:
+        - vendor
+    bootstrapFiles:
+        - vendor/autoload.php
+    ignoreErrors:
+        - '#Access to an undefined property Pest\\Mixins\\Expectation.*::\$not#'
+        - '#Access to an undefined property PHPUnit\\Framework\\TestCase::\$db#'
+        - '#Call to protected method .*(createMock|once|withRouting).* of class .*TestCase#'
+        - '#Call to an undefined method Pest\\PendingCalls\\TestCall::expect.*#'
+        - '#Undefined variable: \$this#'
+        - '#Variable \$this in PHPDoc tag @var does not exist#'
+

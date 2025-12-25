@@ -1,0 +1,15 @@
+/* Fratellanza Militare - Custom Styles */
+
+/* Esempio colori brand personalizzati */
+:root {
+    --bs-primary-rgb: 13, 110, 253;
+    /* Bootstrap standard blue, da cambiare se necessario */
+}
+
+.card-dashboard {
+    transition: transform 0.2s;
+}
+
+.card-dashboard:hover {
+    transform: translateY(-5px);
+}

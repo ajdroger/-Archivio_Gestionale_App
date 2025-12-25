@@ -1,0 +1,181 @@
+{{> layout_header }}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <div class="card-header bg-transparent py-4 border-bottom border-secondary text-center">
+                <div class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 80px; height: 80px; font-size: 2rem; border: 2px solid rgba(56, 189, 248, 0.2);">
+                    {{user_initial}}
+                </div>
+                <h5 class="mb-0 text-white fw-bold">PROFILO SOCIO</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <label class="mc-label">NOME E COGNOME</label>
+                    <div class="fs-4 fw-bold text-white">{{socio.nome}} {{socio.cognome}}</div>
+                </div>
+                <div class="mb-4">
+                    <label class="mc-label">IDENTIFICATIVO FISCALE</label>
+                    <div class="mc-code-box">{{socio.cf}}</div>
+                </div>
+                <div class="mb-4">
+                    <label class="mc-label">STATO OPERATIVO</label>
+                    <div class="mt-1">
+                        {{#is_attivo}}
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">CERTIFICATO ATTIVO</span>
+                        {{/is_attivo}}
+                    </div>
+                </div>
+                <div class="d-grid mt-5">
+                    <a href="/fratellanza-militare-archivio/public/soci/{{socio.cf}}/modifica" class="btn btn-warning fw-bold shadow-sm"><i class="fa-solid fa-user-pen me-2"></i>REVISIONA DATI</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <div class="card-header bg-transparent py-4 border-bottom border-secondary d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-white fw-bold"><i class="fa-solid fa-vault me-2 text-primary"></i>VAULT DOCUMENTI</h5>
+                <span class="badge bg-dark text-info border border-info border-opacity-25 px-3 py-2"><i class="fa-solid fa-file-shield me-2"></i>{{documenti.length}} FILES</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                        <thead class="text-uppercase small text-secondary" style="background: rgba(15, 23, 42, 0.5);">
+                            <tr>
+                                <th class="ps-4 py-3 border-secondary" style="width: 20%;">Categorizzazione</th>
+                                <th class="border-secondary" style="width: 40%;">Asset Name</th>
+                                <th class="text-center border-secondary" style="width: 15%;">Integrità</th>
+                                <th class="text-end pe-4 border-secondary" style="width: 25%;">Terminal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-top-0">
+                            {{#documenti}}
+                            <tr style="transition: all 0.2s;">
+                                <td class="ps-4">
+                                    <span class="badge bg-dark text-secondary border border-secondary border-opacity-50 small fw-bold"><i class="fa-regular fa-file-code me-2"></i>{{tipo}}</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-white small">{{nome_file}}</div>
+                                    <small class="text-secondary opacity-50 font-monospace" style="font-size: 0.7rem;">UID: {{id}}</small>
+                                </td>
+                                <td class="text-center">
+                                    {{#stato}}
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2">
+                                            <i class="fa-solid fa-shield-check me-1"></i>VERIFIED
+                                        </span>
+                                    {{/stato}}
+                                    {{^stato}}
+                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2">
+                                            <i class="fa-solid fa-hourglass-half me-1"></i>PENDING
+                                        </span>
+                                    {{/stato}}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="/fratellanza-militare-archivio/public/soci/{{socio_cf}}/documenti/{{id}}/download" 
+                                           class="btn btn-sm btn-outline-primary border-primary border-opacity-25" 
+                                           title="Download">
+                                            <i class="fa-solid fa-cloud-arrow-down"></i>
+                                        </a>
+                                        
+                                        <form action="/fratellanza-militare-archivio/public/soci/{{socio_cf}}/documenti/{{id}}/elimina" 
+                                              method="POST" 
+                                              onsubmit="return confirm('CONFERMA ELIMINAZIONE FISICA: L\'operazione è irreversibile e verrà tracciata nell\'audit trail.');">
+                                            <input type="hidden" name="csrf_name" value="{{csrf_name}}">
+                                            <input type="hidden" name="csrf_value" value="{{csrf_value}}">
+                                            <button type="submit" 
+                                                    class="btn btn-sm btn-outline-danger border-danger border-opacity-25" 
+                                                    title="Remove Asset">
+                                                <i class="fa-solid fa-eraser"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/documenti}}
+                            {{^documenti}}
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <div class="text-secondary opacity-25 mb-4">
+                                        <i class="fa-solid fa-folder-open fa-5x"></i>
+                                    </div>
+                                    <h5 class="text-secondary fw-light">Nessun file crittografato nel vault</h5>
+                                    <p class="text-secondary small">Eseguire l'upload per caricare un nuovo asset.</p>
+                                </td>
+                            </tr>
+                            {{/documenti}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+             <div class="card-footer bg-black bg-opacity-20 border-top border-secondary py-4 px-4 text-end">
+                <form action="/fratellanza-militare-archivio/public/soci/{{socio.cf}}/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-4 align-items-end w-100">
+                    <input type="hidden" name="csrf_name" value="{{csrf.name}}">
+                    <input type="hidden" name="csrf_value" value="{{csrf.value}}">
+                    
+                    <div class="d-flex gap-3 w-100 justify-content-end align-items-center flex-wrap">
+                        <div class="form-group flex-grow-1" style="max-width: 300px;">
+                             <select name="tipo_documento" id="tipoDocumento" class="form-select bg-dark text-white border-secondary shadow-sm" onchange="toggleExtraFields()">
+                                <option value="GENERICO">Asset Generico</option>
+                                <option value="MODULO_ISCRIZIONE">Modulo Iscrizione (Audit Enabled)</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-grow-1" style="max-width: 400px;">
+                            <input type="file" name="documento" class="form-control bg-dark text-white border-secondary shadow-sm" required>
+                        </div>
+                    </div>
+
+                    <div id="extraFields" class="d-none gap-3 w-100 justify-content-end align-items-center bg-dark bg-opacity-50 p-3 rounded" style="border: 1px dashed rgba(255,255,255,0.1) !important;">
+                        <div class="input-group w-auto shadow-sm">
+                            <span class="input-group-text bg-secondary border-secondary text-white small">Periodo</span>
+                            <input type="number" name="anno" class="form-control bg-dark text-white border-secondary" value="2025" min="2000" max="2100" style="max-width: 90px;">
+                        </div>
+                        <div class="input-group w-auto shadow-sm">
+                            <span class="input-group-text bg-secondary border-secondary text-white small">Quota Versata €</span>
+                            <input type="number" name="quota" class="form-control bg-dark text-white border-secondary" value="50.00" step="0.01" min="0" style="max-width: 110px;">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg shadow-primary px-5 fw-bold"><i class="fa-solid fa-cloud-arrow-up me-2"></i>ESEGUI SECURE UPLOAD</button>
+                </form>
+
+                <script>
+                function toggleExtraFields() {
+                    const type = document.getElementById('tipoDocumento').value;
+                    const extras = document.getElementById('extraFields');
+                    if (type === 'MODULO_ISCRIZIONE') {
+                        extras.classList.remove('d-none');
+                        extras.classList.add('d-flex');
+                    } else {
+                        extras.classList.add('d-none');
+                        extras.classList.remove('d-flex');
+                    }
+                }
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .mc-label { 
+        font-size: 0.65rem; 
+        color: #94a3b8; 
+        font-weight: 800; 
+        letter-spacing: 0.15em; 
+        margin-bottom: 0.5rem; 
+        display: block;
+    }
+    .mc-code-box {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        letter-spacing: 0.05em;
+    }
+    .shadow-primary { box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.3); }
+</style>
+{{> layout_footer }}

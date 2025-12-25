@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Report Amministrativo - Fratellanza Militare</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; color: #333; line-height: 1.5; font-size: 12px; }
+        .header { border-bottom: 2px solid #003366; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { color: #003366; margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; color: #666; }
+        .kpi-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .kpi-table td { width: 25%; padding: 15px; border: 1px solid #ddd; text-align: center; }
+        .kpi-label { display: block; font-size: 10px; color: #999; text-transform: uppercase; margin-bottom: 5px; }
+        .kpi-value { display: block; font-size: 20px; font-weight: bold; color: #003366; }
+        .section-title { font-size: 16px; font-weight: bold; color: #003366; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 15px; margin-top: 30px; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8f9fa; text-align: left; padding: 8px; border-bottom: 2px solid #dee2e6; color: #495057; text-transform: uppercase; font-size: 10px; }
+        .data-table td { padding: 8px; border-bottom: 1px solid #dee2e6; vertical-align: top; }
+        .footer { position: fixed; bottom: 0; width: 100%; font-size: 9px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 5px; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FRATELLANZA MILITARE ARCHIVIO</h1>
+        <p>Report Statistico Amministrativo - Generato il {{stats.data_riferimento}}</p>
+    </div>
+
+    {{#type_soci}}
+    <div class="section-title">INDICATORI CHIAVE (KPI)</div>
+    <table class="kpi-table">
+        <tr>
+            <td>
+                <span class="kpi-label">Totale Soci</span>
+                <span class="kpi-value">{{stats.totale}}</span>
+            </td>
+            <td>
+                <span class="kpi-label">Soci In Regola</span>
+                <span class="kpi-value">{{stats.paganti}}</span>
+            </td>
+            <td>
+                <span class="kpi-label">Morosità Attuale</span>
+                <span class="kpi-value">{{stats.morosi}}</span>
+            </td>
+            <td>
+                <span class="kpi-label">Status Attivo</span>
+                <span class="kpi-value">{{stats.attivi}}</span>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">ELENCO ANALITICO SOCI</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Nome e Cognome</th>
+                <th>Codice Fiscale</th>
+                <th>Matricola</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#soci}}
+            <tr>
+                <td><strong>{{DatiPersonali.Nome}} {{DatiPersonali.Cognome}}</strong><br><small style="color:#888">{{DatiPersonali.Email}}</small></td>
+                <td style="font-family: monospace">{{CodiceFiscale}}</td>
+                <td>{{Matricola}}</td>
+                <td>{{Stato.name}}</td>
+                <td>
+                    {{#verificaMorosita}}
+                        <span class="badge badge-danger">DA REGOLARIZZARE</span>
+                    {{/verificaMorosita}}
+                    {{^verificaMorosita}}
+                        <span class="badge badge-success">IN REGOLA</span>
+                    {{/verificaMorosita}}
+                </td>
+            </tr>
+            {{/soci}}
+        </tbody>
+    </table>
+    {{/type_soci}}
+
+    {{#type_audit}}
+    <div class="section-title">AUDIT LOG SECURITY</div>
+    <div style="margin-bottom:20px; font-size:11px; color:#666;">
+        Filtri Applicati: 
+        {{#filters.start_date}}Dal: {{filters.start_date}} {{/filters.start_date}}
+        {{#filters.end_date}}Al: {{filters.end_date}} {{/filters.end_date}}
+        {{^filters.start_date}}Tutto lo storico{{/filters.start_date}}
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Utente</th>
+                <th>Azione</th>
+                <th>Risorsa</th>
+                <th>IP</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#logs}}
+            <tr>
+                <td style="width:120px;">{{timestamp}}</td>
+                <td>{{username}}</td>
+                <td>{{action}}</td>
+                <td>{{resource_id}}</td>
+                <td>{{ip_address}}</td>
+            </tr>
+            {{/logs}}
+        </tbody>
+    </table>
+    {{/type_audit}}
+
+    <div class="footer">
+        &copy; {{year}} Fratellanza Militare - Archivio Digitale Mission-Critical. Documento ad uso interno riservato.
+    </div>
+</body>
+</html>

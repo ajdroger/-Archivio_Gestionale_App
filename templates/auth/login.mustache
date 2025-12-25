@@ -1,0 +1,35 @@
+<div class="text-center mb-4">
+    <h1 class="h3 mb-3 fw-normal text-light"><i class="fa-solid fa-shield-halved me-2"></i>Accesso Riservato</h1>
+</div>
+
+<div class="card shadow-lg border-0 rounded-4" style="background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1) !important;">
+    <div class="card-body p-4 p-md-5">
+        <h5 class="card-title text-center mb-4 text-warning fw-bold">FRATELLANZA MILITARE</h5>
+        
+        {{#error}}
+        <div class="alert alert-danger" role="alert">
+            <i class="fa-solid fa-circle-exclamation me-2"></i>{{error}}
+        </div>
+        {{/error}}
+
+        <form action="/fratellanza-militare-archivio/public/login" method="POST">
+            <input type="hidden" name="csrf_name" value="{{csrf.name}}">
+            <input type="hidden" name="csrf_value" value="{{csrf.value}}">
+            
+            <div class="form-floating mb-3">
+                <input type="text" name="username" id="username" class="form-control bg-dark text-white border-secondary" placeholder="Utente" required autofocus>
+                <label for="username" class="text-secondary">Utente</label>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="password" name="password" id="password" class="form-control bg-dark text-white border-secondary" placeholder="Password" required>
+                <label for="password" class="text-secondary">Password</label>
+            </div>
+            
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg shadow">
+                    ACCEDI <i class="fa-solid fa-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

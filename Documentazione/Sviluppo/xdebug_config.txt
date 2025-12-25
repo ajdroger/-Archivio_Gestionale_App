@@ -1,0 +1,14 @@
+Configurazione Xdebug corretta per PHP 8.2 (Ampps)
+
+File: C:\Program Files\Ampps\php82\php.ini
+
+[Xdebug]
+zend_extension="C:/Program Files/Ampps/php82/lib/php_xdebug.dll"
+xdebug.mode=coverage,develop,debug
+xdebug.client_port=9003
+xdebug.start_with_request=yes
+xdebug.max_nesting_level=512
+xdebug.cli_color=1
+
+Comando per verificare sulla riga di comando:
+php -v

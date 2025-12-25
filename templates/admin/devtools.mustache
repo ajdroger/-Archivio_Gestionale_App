@@ -1,0 +1,1378 @@
+{{> layout_header }}
+
+<!-- 
+    ========================================================================================
+    MISSION CONTROL CENTER v3.1 (Edizione Premium)
+    ========================================================================================
+    
+    FILE: templates/devtools.mustache
+    DESCRIZIONE:
+    Questo template rappresenta l'interfaccia amministrativa principale (Dashboard).
+    Include funzionalità per:
+    1. Monitoraggio dello stato del sistema (Health Check, Versioni, Backup).
+    2. Gestione Sicurezza (Utenti, 2FA, Session Inspector).
+    3. Audit & Forensics (Log di sicurezza, Tracciamento richieste).
+    4. Toolkit di Sviluppo (Script, Test Automatizzati, Rebranding).
+    5. Accesso ai Dati (Console SQL, Editor di File).
+
+    STRUTTURA:
+    - CSS Personalizzato (Theming Cyperpunk/Glassmorphism).
+    - Sidebar di Navigazione (nav-pills).
+    - Area Contenuto Principale con Tabs (Bootstrap).
+    - Terminale/Console a scomparsa.
+    - Logica JavaScript per interazioni API (AJAX).
+
+    NOTE PER MANUTENTORI:
+    - Tutte le chiamate API sono gestite dalla funzione `api()` in JS.
+    - I dati iniziali sono iniettati da Mustache (SSR).
+    - Il layout è responsive ma ottimizzato per Desktop.
+    
+    AUTORE: Agente (Refactoring v3.1)
+    ========================================================================================
+-->
+
+<!-- CONFIGURAZIONE GLOBALE: Token CSRF per sicurezza chiamate AJAX -->
+<script>
+    /**
+     * Oggetto globale per la gestione della sicurezza CSRF.
+     * I valori sono iniettati dal motore di template Mustache.
+     */
+    window.CSRF = {
+        name: '{{csrf.name}}',  // Nome del token (es. csrf_name)
+        value: '{{csrf.value}}' // Valore hash del token
+    };
+</script>
+
+<!-- STILI PERSONALIZZATI: Tema Scuro Premium -->
+<style>
+    /* --- DEFINIZIONE VARIABILI (CONTRASTO OTTIMIZZATO & COMFORT) --- */
+    :root {
+        --bg-dark: #111827;        /* Grigio Scuro Profondo (Gray 900) - Meno duro del nero */
+        --bg-panel: #1f2937;       /* Grigio Pannelli (Gray 800) */
+        --border-color: #374151;   /* Bordi Grigi (Gray 700) */
+        --text-main: #f9fafb;      /* Bianco Morbido (Gray 50) */
+        --text-muted: #d1d5db;     /* Grigio Chiaro (Gray 300) */
+        
+        /* Colori Accento ad Alta Leggibilità */
+        --accent-primary: #38bdf8; /* Sky 400 */
+        --accent-success: #34d399; /* Emerald 400 */
+        --accent-warning: #fbbf24; /* Amber 400 */
+        --accent-danger: #f87171;  /* Red 400 */
+    }
+    
+    /* Configurazione Body */
+    body { 
+        background-color: var(--bg-dark); 
+        color: var(--text-main); 
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.6; 
+        overflow-x: hidden; 
+    }
+
+    /* Pannelli: Spaziosi e Solidi */
+    .glass-panel {
+        background-color: var(--bg-panel) !important;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        margin-bottom: 24px;
+        transition: transform 0.2s; /* Micro-interazione */
+    }
+    
+    /* Sidebar Link */
+    .sidebar-link {
+        color: var(--text-muted);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 12px 20px;
+        margin-bottom: 8px;
+        border: 1px solid transparent; /* Prevents layout shift on hover */
+    }
+    
+    .sidebar-link:hover, .sidebar-link.active {
+        background-color: #374151; /* Gray 700 */
+        color: #ffffff;
+        border-left: 5px solid var(--accent-primary);
+        padding-left: 25px; /* Animazione smooth */
+    }
+    
+    /* Tables: Cells Spaziose e No-Wrap per Azioni */
+    .table-dark-custom th {
+        background-color: #111827;
+        color: #f3f4f6;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-bottom: 2px solid #4b5563;
+        padding: 16px;
+    }
+    .table-dark-custom td {
+        background-color: #1f2937;
+        border-color: #374151;
+        vertical-align: middle;
+        padding: 16px; /* Hitting area confortevole */
+        color: var(--text-main);
+        font-size: 0.95rem;
+    }
+    
+    /* Prevent wrapping on Action columns */
+    .td-actions {
+        white-space: nowrap;
+        width: 1%; /* Shrink to fit content */
+        min-width: 150px; /* Min width for buttons */
+    }
+    
+    .hover-row:hover td { 
+        background-color: #374151 !important; 
+    }
+
+    /* Common Utilities */
+    .fw-bold { font-weight: 700 !important; }
+    .text-muted { color: #9ca3af !important; }
+    
+    /* Card Body Expansion */
+    .card-body { padding: 24px !important; }
+
+    /* Input Fields più leggibili */
+    .form-control, .form-select {
+        background-color: #111827 !important;
+        border: 1px solid #4b5563 !important;
+        color: #fff !important;
+        padding: 10px 14px;
+    }
+    .form-control:focus {
+        border-color: var(--accent-primary) !important;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+
+    /* Titoli sezioni */
+    .uppercase-tracking {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.75rem;
+    }
+
+    /* Scrollbar Personalizzata (Webkit) */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+</style>
+
+<!-- ######################################################################################## -->
+<!-- LAYOUT PRINCIPALE -->
+<div class="d-flex min-vh-100 bg-black">
+    
+    <!-- 
+        ========================================
+        1. SIDEBAR DI NAVIGAZIONE
+        Menù laterale fisso con profilo utente.
+        AUMENTATA LARGHEZZA E CONTRASTO
+        ========================================
+    -->
+    <div class="d-flex flex-column flex-shrink-0 p-4 border-end border-secondary" style="width: 320px; background-color: #0a0a0a;">
+        
+        <!-- Intestazione Sidebar -->
+        <div class="d-flex align-items-center mb-5 text-decoration-none">
+            <div class="bg-primary p-3 rounded me-3 shadow-lg">
+                <i class="fa-solid fa-layer-group text-white fs-3"></i>
+            </div>
+            <div>
+                <span class="fs-5 fw-bold text-white tracking-widest">MISSION CONTROL</span><br>
+                <small class="text-white opacity-75 code-font" style="font-size: 0.85rem;">SYSTEM V3.1</small>
+            </div>
+        </div>
+        
+        <!-- Elementi di Navigazione (Tabs) -->
+        <div class="nav flex-column nav-pills gap-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <!-- Tab: Dashboard -->
+            <button class="nav-link sidebar-link text-start active" id="v-pills-dash-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dash" type="button" role="tab">
+                <i class="fa-solid fa-gauge-high w-30px me-3 text-center"></i>Dashboard
+            </button>
+            
+            <!-- Tab: Security Center -->
+            <button class="nav-link sidebar-link text-start" id="v-pills-security-tab" data-bs-toggle="pill" data-bs-target="#v-pills-security" type="button" role="tab">
+                <i class="fa-solid fa-shield-halved w-30px me-3 text-center"></i>Security Center
+            </button>
+            
+            <!-- Tab: Audit & Logs -->
+            <button class="nav-link sidebar-link text-start" id="v-pills-audit-tab" data-bs-toggle="pill" data-bs-target="#v-pills-audit" type="button" role="tab">
+                <i class="fa-solid fa-file-contract w-30px me-3 text-center"></i>Audit & Logs
+            </button>
+            
+            <!-- Tab: Toolkit -->
+            <button class="nav-link sidebar-link text-start" id="v-pills-tools-tab" data-bs-toggle="pill" data-bs-target="#v-pills-tools" type="button" role="tab">
+                <i class="fa-solid fa-toolbox w-30px me-3 text-center"></i>Toolkit
+            </button>
+            
+            <!-- Tab: Database -->
+            <button class="nav-link sidebar-link text-start" id="v-pills-db-tab" data-bs-toggle="pill" data-bs-target="#v-pills-db" type="button" role="tab">
+                <i class="fa-solid fa-database w-30px me-3 text-center"></i>Database
+            </button>
+            
+            <!-- Tab: Code Reactor -->
+            <button class="nav-link sidebar-link text-start" id="v-pills-editor-tab" data-bs-toggle="pill" data-bs-target="#v-pills-editor" type="button" role="tab">
+                <i class="fa-solid fa-code w-30px me-3 text-center"></i>Code Reactor
+            </button>
+        </div>
+
+        <!-- Profilo Utente (Bottom) -->
+        <div class="mt-auto pt-4 border-top border-secondary">
+            <div class="d-flex align-items-center p-3 rounded" style="background-color: #1a1a1a;">
+                <div class="rounded-circle bg-white d-flex align-items-center justify-content-center text-black fw-bold me-3 border border-secondary" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                    {{user_initial}}
+                </div>
+                <div class="flex-grow-1 overflow-hidden">
+                    <div class="text-white fs-6 fw-bold text-truncate">{{username}}</div>
+                    <div class="text-success text-truncate small fw-bold">● Online</div>
+                </div>
+                <a href="/fratellanza-militare-archivio/public/logout" class="btn btn-lg text-danger ms-2" title="Disconnetti">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+        ========================================
+        2. AREA CONTENUTO PRINCIPALE
+        Gestisce i diversi pannelli tramite Tab-Content.
+        SPAZIATURA AUMENTATA (p-5) e FULL WIDTH
+        ========================================
+    -->
+    <div class="flex-grow-1 overflow-auto bg-black position-relative" style="padding-left: 0;">
+        
+        <!-- Top Bar Appiccicosa (Sticky) -->
+        <header class="py-4 px-5 border-bottom border-secondary d-flex justify-content-between align-items-center sticky-top z-index-100" style="background-color: #0a0a0a;">
+            <div class="d-flex align-items-center">
+                <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO</h4>
+            </div>
+            <div class="d-flex gap-3">
+                 <!-- Pulsante Toggle Terminale -->
+                 <button class="btn btn-dark border-secondary text-white d-flex align-items-center px-4 py-2" onclick="toggleTerminal()">
+                     <i class="fa-solid fa-terminal me-2"></i>Console
+                 </button>
+                 <a href="/fratellanza-militare-archivio/public/dashboard" class="btn btn-outline-light d-flex align-items-center px-4 py-2">
+                     <i class="fa-solid fa-home me-2"></i>Home
+                 </a>
+            </div>
+        </header>
+
+        <!-- Contenitore Tab Panels -->
+        <div class="p-5 tab-content w-100" id="v-pills-tabContent">
+            
+            <!-- 
+                ************* TAB 1: DASHBOARD ************* 
+                Panoramica metriche e azioni rapide.
+            -->
+            <div class="tab-pane fade show active" id="v-pills-dash" role="tabpanel">
+                
+                <!-- RIGA 1: Metriche Sistema -->
+                <div class="row g-4 mb-4">
+                    <!-- Integrity Card -->
+                    <div class="col-xl-3 col-md-6 col-12">
+                        <div class="card glass-panel h-100 border-0 metric-card">
+                            <div class="card-body">
+                                <h6 class="text-muted uppercase-tracking small mb-2">INTEGRITÀ DB</h6>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h3 class="mb-0 code-font">{{health.database.integrity}}</h3>
+                                    <i class="fa-solid fa-check-circle text-success fs-2 opacity-50"></i>
+                                </div>
+                                <div class="mt-2 text-success small border-top border-secondary border-opacity-10 pt-2">
+                                    <i class="fa-solid fa-satellite-dish me-1"></i> Connessione Stabile
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Backups Card -->
+                    <div class="col-xl-3 col-md-6 col-12">
+                         <div class="card glass-panel h-100 border-0 metric-card">
+                            <div class="card-body">
+                                <h6 class="text-muted uppercase-tracking small mb-2">BACKUP TOTALI</h6>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h3 class="mb-0 code-font">{{health.backups.count}}</h3>
+                                    <i class="fa-solid fa-cloud-arrow-down text-info fs-2 opacity-50"></i>
+                                </div>
+                                <div class="mt-2 text-muted small border-top border-secondary border-opacity-10 pt-2">
+                                    Ultimo: {{health.backups.latest_age_hours}} ore fa
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- PHP Version -->
+                    <div class="col-xl-3 col-md-6 col-12">
+                         <div class="card glass-panel h-100 border-0 metric-card">
+                            <div class="card-body">
+                                <h6 class="text-muted uppercase-tracking small mb-2">VERSIONE PHP</h6>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h3 class="mb-0 code-font">{{system.php_version}}</h3>
+                                    <i class="fa-brands fa-php text-primary fs-2 opacity-50"></i>
+                                </div>
+                                <div class="mt-2 text-muted small border-top border-secondary border-opacity-10 pt-2 text-truncate">
+                                    OS: {{system.os}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Security Status -->
+                    <div class="col-xl-3 col-md-6 col-12">
+                         <div class="card glass-panel h-100 border-0 metric-card">
+                            <div class="card-body">
+                                <h6 class="text-muted uppercase-tracking small mb-2">SICUREZZA</h6>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h3 class="mb-0 text-success fw-bold">100%</h3>
+                                    <i class="fa-solid fa-shield-cat text-success fs-2 opacity-50"></i>
+                                </div>
+                                <div class="mt-2 text-success small border-top border-secondary border-opacity-10 pt-2">
+                                    <i class="fa-solid fa-lock me-1"></i> 2FA Attiva
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGA 2: Quick Actions & Status -->
+                <div class="row g-4 mb-4">
+                    <!-- Quick Actions -->
+                    <div class="col-xl-8 col-lg-12">
+                        <div class="card glass-panel border-0 h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
+                                 <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-bolt me-2 text-warning"></i>AZIONI RAPIDE DI SISTEMA</h6>
+                             </div>
+                             <div class="card-body">
+                                 <div class="row g-3">
+                                     <!-- Audit -->
+                                     <div class="col-md-4 col-12">
+                                         <button onclick="runQuickScript('bin/security_audit_cli.php')" class="btn btn-outline-info w-100 h-100 p-4 text-start hover-shadow position-relative" title="Esegui un'analisi completa di sicurezza (Permessi, DB, Config).">
+                                            <span class="position-absolute top-0 end-0 p-3 opacity-50"><i class="fa-solid fa-user-secret fs-3"></i></span>
+                                             <div class="fw-bold mb-2 fs-5">Security Audit</div>
+                                             <small class="text-muted d-block lh-sm">Analisi permessi, config PHP e integrità database.</small>
+                                         </button>
+                                     </div>
+                                     <!-- Cleanup -->
+                                     <div class="col-md-4 col-12">
+                                         <button onclick="runQuickScript('bin/cleanup_system.php')" class="btn btn-outline-warning w-100 h-100 p-4 text-start hover-shadow position-relative" title="Rimuove file temporanei, cache e sessioni scadute.">
+                                            <span class="position-absolute top-0 end-0 p-3 opacity-50"><i class="fa-solid fa-broom fs-3"></i></span>
+                                             <div class="fw-bold mb-2 fs-5">Cleanup</div>
+                                             <small class="text-muted d-block lh-sm">Rimozione cache, sessioni scadute e temp.</small>
+                                         </button>
+                                     </div>
+                                     <!-- Diagnostics -->
+                                     <div class="col-md-4 col-12">
+                                         <button onclick="runQuickScript('bin/check_system.php')" class="btn btn-outline-success w-100 h-100 p-4 text-start hover-shadow position-relative" title="Verifica la connettività di tutti i servizi critici.">
+                                            <span class="position-absolute top-0 end-0 p-3 opacity-50"><i class="fa-solid fa-stethoscope fs-3"></i></span>
+                                             <div class="fw-bold mb-2 fs-5">Diagnostica</div>
+                                             <small class="text-muted d-block lh-sm">Test connettività completa servizi.</small>
+                                         </button>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                    <!-- System Status Widget -->
+                    <div class="col-xl-4 col-lg-12">
+                         <div class="card bg-gradient-to-br from-green-900 to-black border-success border-opacity-25 h-100 glass-panel">
+                             <div class="card-body text-center d-flex flex-column justify-content-center align-items-center p-5">
+                                 <div class="spinner-grow text-success mb-4" role="status" style="width: 4rem; height: 4rem;">
+                                     <span class="visually-hidden">Loading...</span>
+                                 </div>
+                                 <h4 class="text-success fw-bold uppercase-tracking mb-2 fs-4">SYSTEM OPERATIONAL</h4>
+                                 <p class="text-success opacity-75 mb-0 px-4">Tutti i servizi critici attivi.</p>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- RIGA 3: Server Environment Details (NEW) -->
+                <!-- SECTION: ENVIRONMENT DETAILS -->
+                <div class="card glass-panel border-0 mb-4">
+                    <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
+                        <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-server me-2 text-secondary"></i>AMBIENTE SERVER & CONFIGURAZIONE PHP</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4 text-center">
+                            <div class="col-md-3 col-6 border-end border-secondary border-opacity-25">
+                                <h6 class="text-muted small uppercase-tracking mb-1">MEMORY LIMIT</h6>
+                                <div class="fs-4 fw-bold font-monospace text-white">{{system.memory_limit}}</div>
+                            </div>
+                            <div class="col-md-3 col-6 border-end border-secondary border-opacity-25">
+                                <h6 class="text-muted small uppercase-tracking mb-1">MAX UPLOAD</h6>
+                                <div class="fs-4 fw-bold font-monospace text-white">{{system.upload_max}}</div>
+                            </div>
+                            <div class="col-md-3 col-6 border-end border-secondary border-opacity-25">
+                                <h6 class="text-muted small uppercase-tracking mb-1">MAX EXECUTION</h6>
+                                <div class="fs-4 fw-bold font-monospace text-white">{{system.max_execution}}</div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <h6 class="text-muted small uppercase-tracking mb-1">SERVER SW</h6>
+                                <div class="fs-6 fw-bold text-white text-truncate" title="{{system.server_software}}">{{system.server_software}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 
+                ************* TAB 2: SECURITY CENTER ************* 
+                Gestione Utenti, 2FA e Ispezione Sessione.
+            -->
+            <div class="tab-pane fade" id="v-pills-security" role="tabpanel">
+                 <div class="row g-4">
+                     <!-- RIGA 1: Lista Utenti (FULL WIDTH per massima visibilità) -->
+                     <div class="col-12">
+                         <div class="card glass-panel border-0 h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center py-3">
+                                 <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-users-gear me-2"></i>IDENTITY MANAGEMENT</h6>
+                                 <button class="btn btn-sm btn-dark border-secondary bg-black bg-opacity-50" onclick="loadUsers()">
+                                     <i class="fa-solid fa-arrows-rotate me-1"></i> Aggiorna
+                                 </button>
+                             </div>
+                             <div class="card-body p-0">
+                                 <div class="table-responsive h-100 p-2">
+                                     <table class="table table-dark-custom table-hover mb-0 w-100 align-middle">
+                                         <thead>
+                                             <tr>
+                                                 <th class="ps-4" style="width: 30%;">Username</th>
+                                                 <th style="width: 20%;">Ruolo</th>
+                                                 <th style="width: 20%;">Stato 2FA</th>
+                                                 <th class="text-end pe-4 td-actions" style="width: 30%;">Azioni</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="user-list-body">
+                                             <!-- Popolato via JS -->
+                                             <tr><td colspan="4" class="text-center p-5 text-muted"><i class="fa-solid fa-spinner fa-spin me-2"></i>Caricamento utenti...</td></tr>
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- RIGA 2: Strumenti Provisioning & Debug -->
+                     <!-- Card: Provisioning (Aggiungi Utente) -->
+                     <div class="col-xl-6 col-12">
+                         <div class="card glass-panel border-0 h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
+                                 <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-user-plus me-2 text-primary"></i>PROVISIONING</h6>
+                             </div>
+                             <div class="card-body">
+                                 <form id="form-add-user" autocomplete="off">
+                                     <div class="row g-3">
+                                         <div class="col-md-6">
+                                             <label class="form-label small text-muted">Username</label>
+                                             <input type="text" name="username" class="form-control" placeholder="es. mario.rossi" required>
+                                         </div>
+                                         <div class="col-md-6">
+                                             <label class="form-label small text-muted">Password Temp</label>
+                                             <input type="password" name="password" class="form-control" placeholder="Min. 8 caratteri" required>
+                                         </div>
+                                         <div class="col-12">
+                                             <label class="form-label small text-muted">Ruolo Assegnato</label>
+                                             <select name="role" class="form-select">
+                                                 <option value="user" selected>Operatore Standard</option>
+                                                 <option value="admin">Amministratore Sistema</option>
+                                             </select>
+                                         </div>
+                                         <div class="col-12 mt-4">
+                                            <button type="submit" class="btn btn-primary w-100 fw-bold shadow-lg py-2">
+                                                <i class="fa-solid fa-save me-2"></i>CREA ACCOUNT
+                                            </button>
+                                         </div>
+                                     </div>
+                                 </form>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- Card: Session Inspector -->
+                     <div class="col-xl-6 col-12">
+                         <div class="card glass-panel border-0 h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3 d-flex justify-content-between">
+                                  <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-bug me-2 text-warning"></i>SESSION INSPECTOR</h6>
+                                  <span class="badge bg-dark border border-secondary text-secondary code-font small">{{session_debug.status}}</span>
+                             </div>
+                             <div class="card-body">
+                                 <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-black bg-opacity-40 rounded border border-secondary border-opacity-25">
+                                     <div>
+                                         <div class="small text-muted mb-1">SESSION ID</div>
+                                         <code class="text-info fs-6">{{session_debug.id}}</code>
+                                     </div>
+                                     <div class="text-end">
+                                          <div class="small text-muted mb-1">ULTIMA ATTIVITÀ</div>
+                                          <span class="text-white">{{session_debug.meta.last_activity}}</span>
+                                     </div>
+                                 </div>
+                                 
+                                 <h6 class="text-muted small fw-bold mb-2 uppercase-tracking">DATA PAYLOAD (MASKED)</h6>
+                                 <div class="overflow-auto custom-scrollbar bg-black bg-opacity-40 rounded p-3" style="max-height: 250px; border: 1px solid rgba(255,255,255,0.1);">
+                                     <table class="table table-sm table-borderless text-light mb-0 code-font small">
+                                         <tbody>
+                                             {{#session_debug.data_kv}}
+                                             <tr>
+                                                 <td class="text-muted opacity-75 pe-3 text-nowrap" style="width: 1%;">{{key}}</td>
+                                                 <td class="text-break text-success">{{val}}</td>
+                                             </tr>
+                                             {{/session_debug.data_kv}}
+                                             {{^session_debug.data_kv}}
+                                             <tr><td class="text-muted fst-italic">Nessun dato in sessione.</td></tr>
+                                             {{/session_debug.data_kv}}
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+
+            <!-- 
+                ************* TAB 3: AUDIT & LOGS ************* 
+                Log di sicurezza e tracciamento forensic.
+            -->
+            <div class="tab-pane fade" id="v-pills-audit" role="tabpanel">
+                
+                <!-- Barra dei Filtri -->
+                <div class="card glass-panel border-0 mb-4 shadow-sm">
+                    <div class="card-body p-3">
+                        <form class="row g-3 align-items-end" method="GET" action="/fratellanza-militare-archivio/public/devtools">
+                            <input type="hidden" name="tab" value="audit"> <!-- Mantiene il tab attivo -->
+                            
+                            <div class="col-md-2">
+                                <label class="small text-muted fw-bold mb-1">DA DATA</label>
+                                <input type="date" name="start_date" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{filters.start_date}}">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="small text-muted fw-bold mb-1">A DATA</label>
+                                <input type="date" name="end_date" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{filters.end_date}}">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="small text-muted fw-bold mb-1">UTENTE</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-user"></i></span>
+                                    <input type="text" name="audit_user" class="form-control bg-dark text-white border-secondary" placeholder="Username" value="{{filters.audit_user}}">
+                                </div>
+                            </div>
+                             <div class="col-md-2">
+                                <label class="small text-muted fw-bold mb-1">RESOURCE ID</label>
+                                <input type="text" name="resource_id" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="es. 123" value="{{filters.resource_id}}">
+                            </div>
+                            
+                            <!-- Bottoni Azione -->
+                            <div class="col-md-4 d-flex justify-content-end gap-2">
+                                <button type="submit" class="btn btn-sm btn-primary fw-bold px-4 hover-lift">
+                                    <i class="fa-solid fa-filter me-2"></i>FILTRA
+                                </button>
+                                <div class="vr bg-secondary opacity-50 mx-1"></div>
+                                <a href="/fratellanza-militare-archivio/public/devtools/export/audit/pdf?{{qs}}" class="btn btn-sm btn-outline-danger" title="Esporta PDF">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </a>
+                                <a href="/fratellanza-militare-archivio/public/devtools/export/audit/excel?{{qs}}" class="btn btn-sm btn-outline-success" title="Esporta Excel">
+                                    <i class="fa-solid fa-file-csv"></i>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- 1. Audit Table (Full Width) -->
+                    <div class="col-12">
+                        <div class="card glass-panel border-0 text-white h-100">
+                             <div class="card-header bg-transparent d-flex justify-content-between align-items-center py-3">
+                                 <div>
+                                     <h6 class="mb-0 fw-bold"><i class="fa-solid fa-list-ul me-2"></i>AUDIT TRAIL</h6>
+                                     <small class="text-muted" style="font-size: 0.75rem;">Eventi di sicurezza registrati a norma GDPR</small>
+                                 </div>
+                                 <span class="badge bg-secondary bg-opacity-25 text-light">{{pagination.total}} Eventi</span>
+                             </div>
+                             <div class="table-responsive flex-grow-1">
+                                 <table class="table table-dark-custom table-hover small mb-0 font-monospace">
+                                     <thead>
+                                         <tr>
+                                             <th>Timestamp/Data</th>
+                                             <th>Attore (Utente)</th>
+                                             <th>Azione</th>
+                                             <th>Resource Target</th>
+                                             <th>IP Sorgente</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                         {{#audit_logs}}
+                                         <tr class="hover-row transition-colors">
+                                             <td class="text-nowrap text-secondary">{{timestamp}}</td>
+                                             <td class="text-info fw-bold">{{username}}</td>
+                                             <td>
+                                                 <!-- Badge Dinamico basato sull'azione (Logica semplificata css) -->
+                                                 <span class="badge bg-dark border border-secondary border-opacity-50 text-light fw-normal px-2 py-1 rounded-1">
+                                                     {{action}}
+                                                 </span>
+                                             </td>
+                                             <td class="text-warning text-opacity-75">{{resource_id}}</td>
+                                             <td class="text-muted">{{ip_address}}</td>
+                                         </tr>
+                                         {{/audit_logs}}
+                                         {{^audit_logs}}
+                                         <tr><td colspan="5" class="text-center p-5 text-muted fst-italic">Nessun evento trovato con i filtri correnti.</td></tr>
+                                         {{/audit_logs}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                             
+                             <!-- Paginazione -->
+                             {{#pagination.total}}
+                             <div class="card-footer bg-transparent border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center py-2">
+                                 <small class="text-muted code-font">Pagina {{pagination.current_page}} di {{pagination.last_page}}</small>
+                                 <div>
+                                     {{#pagination.has_prev}}
+                                     <a href="?tab=audit&page={{pagination.prev_page}}{{qs_pagination}}" class="btn btn-xs btn-dark border-secondary text-white me-1 hover-white">
+                                         <i class="fa-solid fa-chevron-left"></i> Prev
+                                     </a>
+                                     {{/pagination.has_prev}}
+                                     
+                                     {{#pagination.has_next}}
+                                     <a href="?tab=audit&page={{pagination.next_page}}{{qs_pagination}}" class="btn btn-xs btn-dark border-secondary text-white hover-white">
+                                         Next <i class="fa-solid fa-chevron-right"></i>
+                                     </a>
+                                     {{/pagination.has_next}}
+                                 </div>
+                             </div>
+                             {{/pagination.total}}
+                        </div>
+                    </div>
+
+                    <!-- 2. Trace Explorer (Full Width) -->
+                    <div class="col-12">
+                        <div class="card glass-panel border-0">
+                            <div class="card-body">
+                                <h6 class="text-white small fw-bold mb-3 d-flex align-items-center">
+                                    <i class="fa-solid fa-magnifying-glass-chart me-2 text-info"></i>TRACE EXPLORER
+                                </h6>
+                                <p class="small text-muted mb-3 lh-sm">
+                                    Inserisci il <strong>Correlation ID</strong> (UUID) per isolare l'intera catena di log di una specifica richiesta http.
+                                </p>
+                                <div class="input-group input-group-sm mb-2" style="max-width: 600px;">
+                                    <input type="text" id="trace-id-input" class="form-control bg-dark text-white border-secondary font-monospace" placeholder="e.g. 550e8400-e29b...">
+                                    <button class="btn btn-info" id="btn-trace-logs" title="Cerca Trace"><i class="fa-solid fa-search"></i> TRACCIA RICHIESTA</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. App Logs Tail (Full Width & Expanded Height) -->
+                    <div class="col-12">
+                        <div class="card glass-panel border-0 overflow-hidden">
+                             <div class="card-header bg-transparent py-2 border-bottom border-secondary border-opacity-25">
+                                 <h6 class="text-white small fw-bold mb-0"><i class="fa-solid fa-terminal me-2 text-secondary"></i>APP LOGS (LIVE TAIL)</h6>
+                             </div>
+                             <div class="card-body p-0 overflow-auto bg-black bg-opacity-40 text-muted small font-monospace custom-scrollbar" style="max-height: 400px; min-height: 200px;">
+                                 <ul class="list-unstyled m-0 p-3">
+                                     {{#logs}}
+                                     <li class="border-bottom border-secondary border-opacity-10 py-1 mb-1 text-break hover-text-white transition-colors">
+                                         {{content}}
+                                     </li>
+                                     {{/logs}}
+                                     {{^logs}}
+                                     <li class="text-center py-4 opacity-50">Nessun log recente.</li>
+                                     {{/logs}}
+                                 </ul>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 
+                ************* TAB 4: TOOLKIT ************* 
+                Strumenti di sviluppo, script e test.
+            -->
+            <div class="tab-pane fade" id="v-pills-tools" role="tabpanel">
+                
+                <!-- Strumento Speciale: Rebranding -->
+                <div class="card glass-panel border-0 mb-4 border-start border-4 border-primary shadow-sm">
+                    <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-3 py-4">
+                        <div>
+                            <h5 class="fw-bold text-white mb-1"><i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i>Project Rebranding Tool</h5>
+                            <p class="mb-0 text-muted small">Refactoring globale per aggiornare namespace e percorsi in tutto il progetto.</p>
+                        </div>
+                        <div class="d-flex gap-3 bg-black bg-opacity-30 p-3 rounded align-items-center border border-secondary border-opacity-25">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-dark border-secondary text-secondary">New Name</span>
+                                <input type="text" id="renamer-new-name" class="form-control bg-dark text-white border-secondary" placeholder="new-project-slug">
+                            </div>
+                            <div class="form-check form-switch pt-1">
+                                <input class="form-check-input" type="checkbox" id="renamer-dry-run" checked>
+                                <label class="form-check-label text-white small" for="renamer-dry-run">Dry Run (Simula)</label>
+                            </div>
+                            <button id="btn-run-renamer" class="btn btn-sm btn-primary fw-bold px-3">
+                                <i class="fa-solid fa-play me-2"></i>EXECUTE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGA 1: MANUTENZIONE & SETUP -->
+                <div class="row g-4 mb-4">
+                    <!-- Maintenance -->
+                    <div class="col-md-6">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-screwdriver-wrench me-2"></i>MANUTENZIONE (Salute Sistema)</h6>
+                        <div class="d-grid gap-3">
+                             {{#scripts.maintenance}}
+                             <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm">
+                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                     <div class="overflow-hidden me-3">
+                                         <div class="fw-bold text-success font-monospace small mb-1 bg-success bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                             <i class="fa-solid fa-scroll me-1"></i> {{name}}
+                                         </div>
+                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                     </div>
+                                     <button class="btn btn-sm btn-outline-success run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
+                                         <i class="fa-solid fa-play"></i>
+                                     </button>
+                                 </div>
+                             </div>
+                             {{/scripts.maintenance}}
+                             {{^scripts.maintenance}}
+                             <div class="text-muted small fst-italic ps-2">Nessuno script di manutenzione.</div>
+                             {{/scripts.maintenance}}
+                        </div>
+                    </div>
+                    
+                    <!-- Setup -->
+                    <div class="col-md-6">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-forward-step me-2"></i>SETUP & MIGRAZIONI</h6>
+                        <div class="d-grid gap-3">
+                             {{#scripts.setup}}
+                             <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm">
+                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                     <div class="overflow-hidden me-3">
+                                         <div class="fw-bold text-info font-monospace small mb-1 bg-info bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                             <i class="fa-solid fa-database me-1"></i> {{name}}
+                                         </div>
+                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                     </div>
+                                     <button class="btn btn-sm btn-outline-info run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
+                                         <i class="fa-solid fa-play"></i>
+                                     </button>
+                                 </div>
+                             </div>
+                             {{/scripts.setup}}
+                             {{^scripts.setup}}
+                             <div class="text-muted small fst-italic ps-2">Nessuno script di setup.</div>
+                             {{/scripts.setup}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGA 2: TOOLS & DEBUG -->
+                <div class="row g-4 mb-4">
+                    <!-- General Tools -->
+                    <div class="col-md-6">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-toolbox me-2"></i>STRUMENTI GENERALI</h6>
+                        <div class="d-grid gap-3">
+                             {{#scripts.tools}}
+                             <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm">
+                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                     <div class="overflow-hidden me-3">
+                                         <div class="fw-bold text-light font-monospace small mb-1 bg-light bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                             <i class="fa-solid fa-microchip me-1"></i> {{name}}
+                                         </div>
+                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                     </div>
+                                     <button class="btn btn-sm btn-outline-light run-script-btn px-3" data-path="{{path}}" title="Esegui Tool">
+                                         <i class="fa-solid fa-play"></i>
+                                     </button>
+                                 </div>
+                             </div>
+                             {{/scripts.tools}}
+                             {{^scripts.tools}}
+                             <div class="text-muted small fst-italic ps-2">Nessun tool rilevato.</div>
+                             {{/scripts.tools}}
+                        </div>
+                    </div>
+
+                    <!-- Debug Tools -->
+                    <div class="col-md-6">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-bug me-2"></i>STRUMENTI DI DEBUG (Rischioso!)</h6>
+                        <div class="d-grid gap-3">
+                             {{#scripts.debug_tools}}
+                             <div class="card bg-dark bg-opacity-60 border-danger border-opacity-25 hover-card metric-card shadow-sm">
+                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                     <div class="overflow-hidden me-3">
+                                         <div class="fw-bold text-danger font-monospace small mb-1 bg-danger bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                             <i class="fa-solid fa-biohazard me-1"></i> {{name}}
+                                         </div>
+                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                     </div>
+                                     <button class="btn btn-sm btn-outline-danger run-script-btn px-3" data-path="{{path}}" title="Esegui Debug">
+                                         <i class="fa-solid fa-play"></i>
+                                     </button>
+                                 </div>
+                             </div>
+                             {{/scripts.debug_tools}}
+                             {{^scripts.debug_tools}}
+                             <div class="text-muted small fst-italic ps-2">Nessun debug tool rilevato.</div>
+                             {{/scripts.debug_tools}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGA 3: TESTS -->
+                <div class="row g-4 mb-4">
+                    <!-- Integration Tests -->
+                    <div class="col-md-6">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-vial-circle-check me-2"></i>TEST DI INTEGRAZIONE</h6>
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="table-responsive custom-scrollbar" style="max-height: 400px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_integration}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-primary text-opacity-75">
+                                                 <i class="fa-solid fa-flask me-2 opacity-50"></i>{{name}}
+                                             </td>
+                                             <td class="text-end pe-3">
+                                                 <button class="btn btn-sm btn-outline-primary py-0 px-2 run-script-btn" data-path="{{path}}" title="Esegui Test">
+                                                     Run <i class="fa-solid fa-play ms-1" style="font-size: 0.6rem;"></i>
+                                                 </button>
+                                             </td>
+                                         </tr>
+                                         {{/scripts.tests_integration}}
+                                         {{^scripts.tests_integration}}
+                                         <tr><td class="p-4 text-center text-muted">Nessun Integration Test.</td></tr>
+                                         {{/scripts.tests_integration}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Legacy Tests -->
+                    <div class="col-md-6">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-vial me-2"></i>TEST MANUALI / LEGACY</h6>
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="table-responsive custom-scrollbar" style="max-height: 400px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_legacy}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-warning text-opacity-75">
+                                                 <i class="fa-solid fa-flask-vial me-2 opacity-50"></i>{{name}}
+                                             </td>
+                                             <td class="text-end pe-3">
+                                                 <button class="btn btn-sm btn-outline-warning py-0 px-2 run-script-btn" data-path="{{path}}" title="Esegui Test">
+                                                     Run <i class="fa-solid fa-play ms-1" style="font-size: 0.6rem;"></i>
+                                                 </button>
+                                             </td>
+                                         </tr>
+                                         {{/scripts.tests_legacy}}
+                                         {{^scripts.tests_legacy}}
+                                         <tr><td class="p-4 text-center text-muted">Nessun Legacy Test.</td></tr>
+                                         {{/scripts.tests_legacy}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 
+                ************* TAB 5: DATABASE ************* 
+                Console SQL per query dirette (SQLite).
+            -->
+            <!-- 
+                ************* TAB 5: DATABASE ************* 
+                Console SQL per query dirette (SQLite).
+            -->
+            <!-- SECTION: DATABASE CONSOLE -->
+            <div class="tab-pane fade" id="v-pills-db" role="tabpanel">
+                <div class="d-flex flex-column h-100 gap-4">
+                    
+                    <!-- Top: Schema DB (Orizzontale) -->
+                    <div class="col-12">
+                        <h6 class="text-white small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-table me-2 text-secondary"></i>SCHEMA DATABASE (Overview)</h6>
+                        
+                        <div class="card glass-panel border-0">
+                             <div class="card-body p-4 overflow-auto custom-scrollbar">
+                                 <div class="d-flex gap-3">
+                                     {{#database_schema}}
+                                     <div class="bg-black bg-opacity-40 border border-secondary border-opacity-25 rounded p-3 hover-card pointer transition-colors flex-shrink-0 position-relative group"
+                                          style="min-width: 220px;"
+                                          onclick="document.getElementById('sql-input').value='SELECT * FROM {{name}} LIMIT 50;'" title="Clicca per interrogare {{name}}">
+                                         
+                                         <div class="d-flex justify-content-between align-items-start mb-2">
+                                             <div class="text-info fw-bold font-monospace small text-truncate" style="max-width: 150px;">
+                                                 <i class="fa-solid fa-table-cells me-2 opacity-50"></i>{{name}}
+                                             </div>
+                                             <i class="fa-solid fa-chevron-right text-muted opacity-25 small"></i>
+                                         </div>
+                                         
+                                         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                                            <small class="text-muted" style="font-size: 0.7rem;">Tabella SQLite</small>
+                                            <span class="badge bg-dark border border-secondary text-secondary rounded-pill code-font">{{rows}} Rows</span>
+                                         </div>
+                                     </div>
+                                     {{/database_schema}}
+                                     {{^database_schema}}
+                                     <div class="p-3 text-center text-muted small fst-italic w-100">Nessuna tabella trovata o errore di connessione.</div>
+                                     {{/database_schema}}
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Main: Query Editor & Results -->
+                    <div class="col-12 flex-grow-1 d-flex flex-column gap-3">
+                        
+                        <!-- Area Input Query -->
+                        <div class="card glass-panel border-0">
+                            <div class="card-body p-4">
+                                <label class="text-warning fw-bold small mb-2 d-flex align-items-center justify-content-between">
+                                    <span><i class="fa-solid fa-terminal me-2"></i>SQL EDITOR</span>
+                                    <span class="badge bg-warning text-black">READ/WRITE ACCESS</span>
+                                </label>
+                                <div class="position-relative">
+                                    <textarea id="sql-input" class="form-control bg-black text-warning border-secondary font-monospace mb-3 p-3 shadow-inner" rows="5" 
+                                              placeholder="-- Scrivi qui la tua query SQL...&#10;SELECT * FROM utenti LIMIT 10;" style="font-size: 0.9rem;"></textarea>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-secondary"><i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i> Le query vengono eseguite direttamente sul database di produzione.</small>
+                                    <button id="btn-run-query" class="btn btn-warning btn-sm fw-bold px-4 hover-lift shadow-warning">
+                                        <i class="fa-solid fa-play me-2"></i>ESEGUI QUERY
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Area Risultati -->
+                        <div class="card glass-panel border-0 flex-grow-1 overflow-hidden" style="min-height: 400px;">
+                            <div class="card-header bg-transparent py-2 border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <small class="text-white fw-bold"><i class="fa-solid fa-list-check me-2 text-success"></i>RISULTATI QUERY</small>
+                                <button class="btn btn-xs btn-outline-secondary" onclick="document.getElementById('sql-results').innerHTML='<tbody></tbody>'"><i class="fa-solid fa-trash me-1"></i>Pulisci</button>
+                            </div>
+                            <div class="table-responsive h-100 custom-scrollbar bg-black bg-opacity-25">
+                                <table class="table table-dark-custom table-striped table-sm mb-0 font-monospace small" id="sql-results">
+                                    <thead>
+                                        <tr><th class="p-5 text-center text-muted fw-normal opacity-50">I risultati appariranno qui...</th></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 
+                ************* TAB 6: CODE REACTOR ************* 
+                Editor di file e browser del filesystem del server.
+            -->
+            <div class="tab-pane fade h-100" id="v-pills-editor" role="tabpanel">
+                <div class="row g-0 h-100 border border-secondary border-opacity-25 rounded overflow-hidden shadow-lg" style="min-height: 750px;">
+                      
+                      <!-- Pannello File Tree (SX) -->
+                      <div class="col-lg-3 bg-dark border-end border-secondary border-opacity-25 d-flex flex-column bg-opacity-50 backdrop-blur">
+                          <div class="p-2 border-bottom border-secondary border-opacity-25 bg-black bg-opacity-20 d-flex gap-2">
+                              <button class="btn btn-sm btn-link text-secondary hover-text-white" id="btn-fs-refresh" title="Ricarica Cartella">
+                                  <i class="fa-solid fa-sync"></i>
+                              </button>
+                              <input type="text" id="fs-path" class="form-control form-control-sm bg-transparent text-secondary border-0 font-monospace" value="/" readonly title="Percorso Corrente">
+                          </div>
+                          <div class="flex-grow-1 overflow-auto p-2 code-font small custom-scrollbar" id="fs-tree">
+                              <!-- Tree popolato via JS -->
+                          </div>
+                      </div>
+
+                       <!-- Pannello Editor (DX) -->
+                      <div class="col-lg-9 bg-black d-flex flex-column position-relative">
+                           <!-- Editor Toolbar -->
+                           <div class="p-2 bg-dark border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                               <span class="text-white small fw-bold font-monospace ps-2 d-flex align-items-center">
+                                   <i class="fa-solid fa-file-code me-2 text-primary"></i> <span id="editor-filename">Nessun file selezionato</span>
+                               </span>
+                               <button class="btn btn-sm btn-success fw-bold px-3 d-flex align-items-center disabled" id="btn-fs-save" disabled>
+                                   <i class="fa-solid fa-save me-2"></i>SALVA MODIFICHE
+                               </button>
+                           </div>
+                           
+                           <!-- Avviso Irreversibilità -->
+                           <div class="alert alert-danger mb-0 rounded-0 py-1 px-3 small d-flex align-items-center bg-danger bg-opacity-10 border-bottom border-danger border-opacity-25" style="display: none;" id="editor-warning-bar">
+                               <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                               <strong>ATTENZIONE:</strong> Le modifiche ai file sono <u>irreversibili</u> e vengono applicate immediatamente al filesystem. Procedere con cautela.
+                           </div>
+                           
+                           <!-- Textarea Codice -->
+                           <textarea id="code-editor" class="flex-grow-1 w-100 bg-black text-light p-3 code-font border-0" 
+                                style="resize: none; outline: none; font-size: 0.9rem; line-height: 1.6; color: #d4d4d4;" 
+                                spellcheck="false" disabled placeholder="Seleziona un file per iniziare l'editing..."></textarea>
+                      </div>
+                </div>
+            </div>
+
+        </div> <!-- Fine Tab Content -->
+
+    </div> <!-- Fine Main Content Area -->
+</div>
+
+<!-- 
+    ========================================
+    TERMINAL DRAWER (Console Output)
+    Cassetto a comparsa per log e output script.
+    ========================================
+-->
+<div id="terminal-drawer" class="bg-black border-top border-secondary border-opacity-50 shadow-lg position-fixed bottom-0 z-index-1050" 
+     style="height: 350px; display: none; left: 280px; width: calc(100% - 280px); transition: all 0.3s ease;">
+     
+     <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-dark border-bottom border-secondary border-opacity-25">
+         <div class="text-info fw-bold small"><i class="fa-solid fa-terminal me-2"></i>CONSOLE OUTPUT</div>
+         <div>
+             <button class="btn btn-sm text-muted hover-white me-1" onclick="document.getElementById('terminal-content').innerText='// Console Cleared.\n'" title="Pulisci">
+                 <i class="fa-solid fa-eraser"></i>
+             </button>
+             <button class="btn btn-sm text-muted hover-white" onclick="toggleTerminal()" title="Chiudi">
+                 <i class="fa-solid fa-times"></i>
+             </button>
+         </div>
+     </div>
+     <div id="terminal-content" class="p-3 code-font text-info small h-100 overflow-auto pb-5 bg-opacity-10" style="background: #050505;">
+         // Console Ready. Waiting for commands...
+     </div>
+</div>
+
+<!-- ######################################################################################## -->
+<!-- LOGICA JAVASCRIPT APPLICATIVA -->
+<!-- ######################################################################################## -->
+<script>
+    /* --- FUNZIONI DI UTILITÀ (Logging & API) --- */
+
+    /**
+     * Stampa un messaggio nella console (drawer) visuale.
+     * @param {string} msg - Il messaggio da stampare.
+     * @param {string} type - Tipo di messaggio: 'info', 'success', 'error', 'warning'.
+     */
+    const log = (msg, type='info') => {
+        const term = document.getElementById('terminal-content');
+        let colorClass = 'text-info';
+        
+        switch(type) {
+            case 'error': colorClass = 'text-danger fw-bold'; break;
+            case 'success': colorClass = 'text-success fw-bold'; break;
+            case 'warning': colorClass = 'text-warning'; break;
+        }
+
+        const time = new Date().toLocaleTimeString();
+        term.innerHTML += `<div class="${colorClass} mb-1 border-bottom border-secondary border-opacity-10 pb-1">
+            <span class="opacity-50 text-secondary me-2">[${time}]</span><span style="white-space: pre-wrap;">${msg}</span>
+        </div>`;
+        
+        // Auto-scroll in basso
+        term.scrollTop = term.scrollHeight;
+
+        // Se è un errore o successo importante, apri il terminale se chiuso
+        if(type !== 'info') {
+            const drawer = document.getElementById('terminal-drawer');
+            if (drawer.style.display === 'none') drawer.style.display = 'block';
+        }
+    };
+
+    /**
+     * Wrapper asincrono per chiamate API interne al DevToolsController.
+     * Gestisce automaticamente il CSRF token e la conversione JSON.
+     * @param {string} endpoint - L'URL relativo dell'endpoint (es. '/devtools/run').
+     * @param {object} data - Oggetto con i dati da inviare (POST).
+     */
+    const api = async (endpoint, data={}) => {
+        // Inietta Token CSRF
+        data.csrf_name = window.CSRF.name;
+        data.csrf_value = window.CSRF.value;
+        
+        const formData = new URLSearchParams();
+        Object.keys(data).forEach(k => formData.append(k, data[k]));
+
+        try {
+            const res = await fetch('/fratellanza-militare-archivio/public' + endpoint, { 
+                method: 'POST', 
+                body: formData,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            
+            const json = await res.json();
+            
+            if(!res.ok) throw new Error(json.error || 'Errore Server Sconosciuto');
+            return json; // Ritorna il payload (es. {success: true, output: ...})
+        } catch(e) {
+            log(`API ERROR [${endpoint}]: ${e.message}`, 'error');
+            throw e; // Rilancia per catch specifici
+        }
+    };
+
+    /* --- GESTIONE UI --- */
+
+    // Mostra/Nascondi il drawer del terminale
+    function toggleTerminal() {
+        const t = document.getElementById('terminal-drawer');
+        t.style.display = t.style.display==='none' ? 'block' : 'none';
+    }
+
+    // Persistenza Tab attivo al refresh della pagina
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if(tab) {
+        const el = document.querySelector(`#v-pills-${tab}-tab`);
+        if(el) {
+            new bootstrap.Tab(el).show();
+        }
+    }
+
+    /* --- AZIONI RAPIDE & SCRIPT --- */
+
+    // Esegue uno script PHP lato server
+    window.runQuickScript = (path) => {
+        log(`>>> Avvio esecuzione script: ${path}...`, 'info');
+        api('/devtools/run', {script: path}).then(d => {
+            log('---------------- SCRIPT OUTPUT ----------------', 'warning');
+            log(d.output || '(Nessun output testuale)');
+            log('-----------------------------------------------', 'warning');
+            log('Esecuzione completata con successo.', 'success');
+        });
+    };
+
+    // Binding bottoni "Run" nella lista script
+    document.querySelectorAll('.run-script-btn').forEach(btn => {
+        btn.onclick = () => runQuickScript(btn.dataset.path);
+    });
+
+    /* --- GESTIONE UTENTI (SECURITY TAB) --- */
+    
+    // Carica la lista utenti via AJAX
+    const loadUsers = () => {
+        const b = document.getElementById('user-list-body');
+        // Stato Loading
+        b.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-muted"><i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aggiornamento lista...</td></tr>';
+        
+        api('/devtools/security/list').then(d => {
+            b.innerHTML = '';
+            if (d.users.length === 0) {
+                 b.innerHTML = '<tr><td colspan="4" class="text-center">Nessun utente trovato.</td></tr>';
+                 return;
+            }
+            d.users.forEach(u => {
+                // Rendering riga tabella
+                // FIX CONTRASTO: Badge solidi
+                const roleBadge = u.role === 'admin' 
+                    ? '<span class="badge bg-danger text-white border border-white border-opacity-25 shadow-sm">ADMIN</span>' 
+                    : '<span class="badge bg-info text-dark border border-info border-opacity-25">USER</span>';
+                
+                const mfaStatus = u.has_2fa 
+                    ? '<span class="badge bg-emerald-500 text-white bg-success"><i class="fa-solid fa-lock me-1"></i>ACTIVE</span>' 
+                    : '<span class="badge bg-secondary text-light opacity-75"><i class="fa-solid fa-lock-open me-1"></i>DISABLED</span>';
+
+                b.innerHTML += `
+                <tr class="hover-row border-bottom border-secondary border-opacity-10 transition-colors">
+                    <td class="ps-4 py-3 fw-bold font-monospace text-white">${u.username}</td>
+                    <td>${roleBadge}</td>
+                    <td>${mfaStatus}</td>
+                    <td class="text-end pe-4">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-gear me-1"></i> GESTISCI
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg border-secondary">
+                                <li><h6 class="dropdown-header text-muted small uppercase-tracking">Sicurezza</h6></li>
+                                <li>
+                                    <button class="dropdown-item text-warning" onclick="rotate2FA('${u.username}')">
+                                        <i class="fa-solid fa-arrows-rotate me-2"></i>Ruota Secret 2FA
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item text-warning" onclick="resetUserPassword('${u.username}')">
+                                        <i class="fa-solid fa-key me-2"></i>Reset Password
+                                    </button>
+                                </li>
+                                <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                                <li>
+                                    <button class="dropdown-item text-danger" onclick="deleteUser('${u.username}')">
+                                        <i class="fa-solid fa-trash me-2"></i>Elimina Utente
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            });
+            log('Lista utenti aggiornata.', 'info');
+        });
+    };
+    
+    // Auto-caricamento quando si apre il tab Security
+    document.getElementById('v-pills-security-tab').addEventListener('shown.bs.tab', loadUsers);
+
+    // Form di creazione utente
+    document.getElementById('form-add-user').onsubmit = (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        api('/devtools/security/add', Object.fromEntries(fd)).then(() => {
+            log(`Utente '${fd.get('username')}' creato con successo.`, 'success');
+            e.target.reset();
+            loadUsers(); // Refresh lista
+        });
+    };
+
+    // Azioni individuali utente
+    window.rotate2FA = (id) => confirm('Sei sicuro di voler resettare il segreto 2FA per questo utente? L\'utente dovrà scansionare un nuovo QR Code.') && 
+        api('/devtools/security/rotate', {id}).then(() => log('Segreto 2FA rigenerato con successo (o rimosso).', 'success'));
+    
+    window.resetUser = (id) => {
+        const p = prompt('Inserisci la nuova password per l\'utente:');
+        if(p) api('/devtools/security/reset', {id, password: p}).then(() => log('Password utente aggiornata.', 'success'));
+    };
+
+    window.deleteUser = (id) => confirm('ATTENZIONE: Questa azione è irreversibile. Cancellare l\'utente?') && 
+        api('/devtools/security/delete', {id}).then(() => { log('Utente eliminato definitivamente.', 'success'); loadUsers(); });
+
+
+    /* --- TOOLS AGGIUNTIVI (Renamer, Trace, SQL) --- */
+
+    // Rebranding Tool
+    document.getElementById('btn-run-renamer').onclick = () => {
+        const name = document.getElementById('renamer-new-name').value;
+        const dry = document.getElementById('renamer-dry-run').checked;
+        if(!name) return alert('Inserisci un nuovo nome progetto.');
+        
+        log(`>>> Avvio Rebranding su namespace '${name}' (DryRun: ${dry})...`, 'warning');
+        api('/devtools/renamer', {new_name: name, dry_run: dry?'1':'0'}).then(d => {
+             log(d.output);
+             log('Rebranding task completato.', 'success');
+        });
+    };
+
+    // Esecuzione Trace ID
+    document.getElementById('btn-trace-logs').onclick = () => {
+        const id = document.getElementById('trace-id-input').value;
+        if(!id) return log('Inserisci un ID valido.', 'error');
+        
+        api('/devtools/trace', {requestId: id}).then(d => {
+             if(d.logs.length) {
+                 log(`Trovati ${d.logs.length} record di log per ID ${id}`, 'success');
+                 d.logs.forEach(l => log(`[${l.level_name}] ${l.message}`));
+             } else log('Nessuna traccia trovata per questo ID.', 'warning');
+        });
+    };
+
+    // SQL Console Engine
+    document.getElementById('btn-run-query').onclick = () => {
+        const sql = document.getElementById('sql-input').value;
+        if(!sql) return;
+        
+        log(`Esecuzione Query: ${sql}`, 'info');
+        api('/devtools/db/query', {sql}).then(d => {
+             const t = document.getElementById('sql-results');
+             t.innerHTML = '';
+             
+             if(!d.results || d.results.length === 0) {
+                 log('Query eseguita. Nessuna riga ritornata.', 'success');
+                 return t.innerHTML = '<thead><tr><th>Nessun risultato (0 rows)</th></tr></thead>';
+             }
+             
+             // Generazione dinamica header tabella
+             let h = '<thead><tr>';
+             Object.keys(d.results[0]).forEach(k => h+=`<th>${k}</th>`);
+             h+='</tr></thead><tbody>';
+             
+             // Generazione righe
+             d.results.forEach(r => {
+                 h+='<tr>';
+                 Object.values(r).forEach(v => h+=`<td>${v===null?'<span class="text-muted">NULL</span>':v}</td>`);
+                 h+='</tr>';
+             });
+             h+='</tbody>';
+             
+             t.innerHTML = h;
+             log(`Query OK. ${d.results.length} righe recuperate.`, 'success');
+        });
+    };
+
+
+    /* --- FILESYSTEM BROWSER (Code Reactor) --- */
+
+    /**
+     * Carica il contenuto di una directory nel pannello laterale.
+     * @param {string} path - Il percorso assoluto o relativo della cartella.
+     */
+    const loadDir = (path) => {
+        const t = document.getElementById('fs-tree');
+        t.innerHTML = '<div class="text-center p-3 opacity-50"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+        
+        api('/devtools/fs/list', {path}).then(d => {
+             document.getElementById('fs-path').value = d.current;
+             t.innerHTML = '';
+             
+             // Tasto 'Torna su'
+             if(d.current!=='/' && d.current!=='\\') {
+                 const u = document.createElement('div');
+                 u.className='p-1 pointer hover-text-white text-info mb-1';
+                 u.innerHTML='<i class="fa-solid fa-turn-up me-2"></i> .. (Level Up)';
+                 u.onclick=()=>loadDir(d.current+'/../');
+                 t.appendChild(u);
+             }
+             
+             // Rendering Items
+             d.items.forEach(i => {
+                 const el = document.createElement('div');
+                 el.className='p-1 pointer text-nowrap d-flex align-items-center mb-1 ' + (i.type==='dir'?'text-warning':'text-muted');
+                 // Icona diversa per folder/file
+                 const icon = i.type==='dir' ? '<i class="fa-solid fa-folder me-2 text-warning opacity-75"></i>' : '<i class="fa-solid fa-file-code me-2 opacity-50"></i>';
+                 
+                 el.innerHTML=`${icon}<span>${i.name}</span>`;
+                 
+                 // Comportamento Click
+                 el.onclick=()=>i.type==='dir' ? loadDir(i.path) : loadFile(i.path);
+                 
+                 // Hover effect js (opzionale, gestito da css)
+                 el.onmouseenter = () => el.classList.add('text-white');
+                 el.onmouseleave = () => el.classList.remove('text-white');
+                 if(i.type==='dir') el.onmouseleave = () => el.classList.remove('text-white'); // keep warning color logic if needed
+
+                 t.appendChild(el);
+             });
+        });
+    };
+
+    /**
+     * Carica il contenuto di un file nell'editor.
+     */
+    const loadFile = (path) => {
+        document.getElementById('editor-filename').innerText = path;
+        api('/devtools/fs/read', {path}).then(d => {
+            const ed = document.getElementById('code-editor');
+            ed.value = d.content;
+            ed.disabled = false;
+            
+            // Mostra avviso irreversibilità
+            document.getElementById('editor-warning-bar').style.display = 'flex';
+            
+            // Abilita Salvataggio
+            const btnSave = document.getElementById('btn-fs-save');
+            btnSave.disabled = false;
+            btnSave.classList.remove('disabled');
+            
+            btnSave.onclick = () => {
+                if(confirm('ATTENZIONE: Stai per sovrascrivere permanentemente questo file.\nQuesta azione è IRREVERSIBILE e non può essere annullata.\n\nProcedere con il salvataggio?')) {
+                    api('/devtools/fs/save', {path, content: ed.value}).then(()=>log(`File ${path} salvato.`, 'success'));
+                }
+            };
+        });
+    };
+
+    // Refresh button filesystem
+    document.getElementById('btn-fs-refresh').onclick = () => loadDir(document.getElementById('fs-path').value);
+    
+    // Inizializzazione: Carica root directory
+    loadDir('/');
+
+</script>
+
+{{> layout_footer }}

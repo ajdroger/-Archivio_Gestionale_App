@@ -1,0 +1,39 @@
+{
+    "autoload": {
+        "psr-4": {
+            "FratellanzaMilitare\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5",
+        "robmorgan/phinx": "^0.16.10",
+        "phpstan/phpstan": "^2.1",
+        "friendsofphp/php-cs-fixer": "^3.92",
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-arch": "^3.1"
+    },
+    "require": {
+        "slim/slim": "^4.15",
+        "slim/psr7": "^1.8",
+        "mustache/mustache": "^3.0",
+        "php-di/php-di": "^7.1",
+        "slim/csrf": "^1.5",
+        "monolog/monolog": "^3.9",
+        "spomky-labs/otphp": "^11.3",
+        "php": "^8.2",
+        "vlucas/phpdotenv": "^5.6",
+        "dompdf/dompdf": "^3.1",
+        "phpmailer/phpmailer": "^7.0",
+        "defuse/php-encryption": "^2.4"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

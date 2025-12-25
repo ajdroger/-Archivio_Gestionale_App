@@ -1,0 +1,11 @@
+vendor/
+database.sqlite
+.phpunit.result.cache
+logs/
+*.log
+.env
+node_modules/
+storage/uploads/*
+!storage/uploads/.gitkeep
+backups/*
+!backups/.gitkeep

@@ -1,0 +1,201 @@
+ ------ ------------------------------------------------------------------- 
+  Line   tests\Arch\ArchitectureTest.php                                    
+ ------ ------------------------------------------------------------------- 
+  :3     Call to an undefined method Pest\PendingCalls\TestCall::expect().  
+         🪪  method.notFound                                                
+  :9     Call to an undefined method Pest\PendingCalls\TestCall::expect().  
+         🪪  method.notFound                                                
+  :13    Call to an undefined method Pest\PendingCalls\TestCall::expect().  
+         🪪  method.notFound                                                
+ ------ ------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Feature\HomeControllerTest.php                                        
+ ------ ---------------------------------------------------------------------------- 
+  :10    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :11    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Feature\LoginControllerTest.php                                       
+ ------ ---------------------------------------------------------------------------- 
+  :9     Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :10    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+  :29    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :33    Call to protected method withRouting() of class Tests\TestCase.             
+         🪪  method.protected                                                        
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Feature\SocioControllerTest.php                                       
+ ------ ---------------------------------------------------------------------------- 
+  :14    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :15    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+  :19    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :34    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+  :38    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :41    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :44    Call to protected method withRouting() of class Tests\TestCase.             
+         🪪  method.protected                                                        
+  :56    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :58    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :59    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+  :62    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :63    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+  :69    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :71    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+  :89    Call to protected method withRouting() of class Tests\TestCase.             
+         🪪  method.protected                                                        
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Feature\StatisticsControllerTest.php                                  
+ ------ ---------------------------------------------------------------------------- 
+  :10    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :11    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+  :15    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :16    Call to protected method once() of class PHPUnit\Framework\TestCase.        
+         🪪  method.protected                                                        
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Feature\TestPdfGenerationTest.php                                     
+ ------ ---------------------------------------------------------------------------- 
+  :27    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :30    Call to protected method withRouting() of class Tests\TestCase.             
+         🪪  method.protected                                                        
+  :53    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :54    Call to protected method createMock() of class PHPUnit\Framework\TestCase.  
+         🪪  method.protected                                                        
+  :75    Call to protected method withRouting() of class Tests\TestCase.             
+         🪪  method.protected                                                        
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------- 
+  Line   tests\Feature\UserJourneyTest.php                                
+ ------ ----------------------------------------------------------------- 
+  :55    Call to protected method withRouting() of class Tests\TestCase.  
+         🪪  method.protected                                             
+  :75    Call to protected method withRouting() of class Tests\TestCase.  
+         🪪  method.protected                                             
+  :93    Call to protected method withRouting() of class Tests\TestCase.  
+         🪪  method.protected                                             
+  :105   Call to protected method withRouting() of class Tests\TestCase.  
+         🪪  method.protected                                             
+ ------ ----------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Integration\SecurityWorkflowTest.php                                  
+ ------ ---------------------------------------------------------------------------- 
+  :40    Access to an undefined property Pest\Mixins\Expectation<mixed>::$not.       
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Integration\TransactionResilienceTest.php                             
+ ------ ---------------------------------------------------------------------------- 
+  :13    Access to an undefined property PHPUnit\Framework\TestCase::$db.            
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+  :17    Access to an undefined property PHPUnit\Framework\TestCase::$db.            
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+  :50    Access to an undefined property PHPUnit\Framework\TestCase::$db.            
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+  :71    Access to an undefined property PHPUnit\Framework\TestCase::$db.            
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------- 
+  Line   tests\Pest.php                                     
+ ------ --------------------------------------------------- 
+  :37    Undefined variable: $this                          
+         🪪  variable.undefined                             
+  :37    Variable $this in PHPDoc tag @var does not exist.  
+         🪪  varTag.variableNotFound                        
+ ------ --------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------- 
+  Line   tests\RenamerTool\SystemRenamer.php                                       
+ ------ -------------------------------------------------------------------------- 
+  :21    Property SystemRenamer::$routesToTest is never read, only written.        
+         🪪  property.onlyWritten                                                  
+         💡  See:                                                                  
+         https://phpstan.org/developing-extensions/always-read-written-properties  
+ ------ -------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------- 
+  Line   tests\Security\AuditTrailTest.php                                          
+ ------ --------------------------------------------------------------------------- 
+  :28    Parameter #1 $array (list) of array_values is already a list, call has no  
+         effect.                                                                    
+         🪪  arrayValues.list                                                       
+ ------ --------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Unit\AmministratoreTest.php                                           
+ ------ ---------------------------------------------------------------------------- 
+  :36    Access to an undefined property Pest\Mixins\Expectation<array|null>::$not.  
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+  :62    Access to an undefined property Pest\Mixins\Expectation<array|null>::$not.  
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+  :72    Access to an undefined property Pest\Mixins\Expectation<array|null>::$not.  
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+ ------ ---------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------- 
+  Line   tests\Unit\OperatoreTest.php                                                
+ ------ ---------------------------------------------------------------------------- 
+  :39    Access to an undefined property Pest\Mixins\Expectation<array|null>::$not.  
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+  :66    Access to an undefined property Pest\Mixins\Expectation<array|null>::$not.  
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+  :92    Access to an undefined property Pest\Mixins\Expectation<array|null>::$not.  
+         🪪  property.notFound                                                       
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefine  
+         d-property                                                                  
+ ------ ---------------------------------------------------------------------------- 
+
+ [ERROR] Found 52 errors                                                            
+

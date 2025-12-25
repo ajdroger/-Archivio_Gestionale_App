@@ -1,0 +1,121 @@
+{{> layout_header }}
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <div class="card border-0 shadow-lg" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <div class="card-header bg-transparent py-4 border-bottom border-secondary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-user-pen me-2 text-warning"></i>REVISIONE RECORD: <span class="text-info opacity-75">{{socio.nome}} {{socio.cognome}}</span></h4>
+                    <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Annulla Modifiche</a>
+                </div>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <form action="/fratellanza-militare-archivio/public/soci/{{socio.codice_fiscale}}/aggiorna" method="POST">
+                    <!-- CSRF Token -->
+                    <input type="hidden" name="csrf_name" value="{{csrf.name}}">
+                    <input type="hidden" name="csrf_value" value="{{csrf.value}}">
+
+                    <div class="row g-5 mb-5">
+                        <!-- Colonna 1: Identità -->
+                        <div class="col-md-6 border-end border-secondary border-opacity-25 px-md-4">
+                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-lock me-2"></i>PARAMETRI IMMODIFICABILI</h5>
+                            
+                            <div class="form-group mb-4">
+                                <label class="mc-label">CODICE FISCALE (CHIAVE PRIMARIA)</label>
+                                <div class="mc-code-box bg-dark bg-opacity-50 text-secondary border-secondary border-opacity-25">{{socio.codice_fiscale}}</div>
+                                <div class="form-text text-danger opacity-75 small mt-2"><i class="fa-solid fa-shield-halved me-1"></i>Questo campo è bloccato per integrità referenziale.</div>
+                            </div>
+
+                            <h5 class="mb-4 text-primary tracking-wider small fw-bold mt-5"><i class="fa-solid fa-user-gear me-2"></i>DATI ANAGRAFICI EDITABILI</h5>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mc-label" for="nome">NOME</label>
+                                        <input type="text" id="nome" name="nome" class="mc-input text-white" value="{{socio.nome}}" required placeholder="Nome">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="mc-label" for="cognome">COGNOME</label>
+                                        <input type="text" id="cognome" name="cognome" class="mc-input text-white" value="{{socio.cognome}}" required placeholder="Cognome">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label class="mc-label" for="data_nascita">DATA DI NASCITA</label>
+                                <input type="date" id="data_nascita" name="data_nascita" class="mc-input text-white" value="{{socio.data_nascita}}" placeholder="Data Nascita">
+                            </div>
+                        </div>
+
+                        <!-- Colonna 2: Contatti e Stato -->
+                        <div class="col-md-6 px-md-4">
+                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-tower-broadcast me-2"></i>AGGIORNAMENTO COORDINATE</h5>
+                            
+                            <div class="form-group mb-4">
+                                <label class="mc-label" for="indirizzo">INDIRIZZO RESIDENZA</label>
+                                <input type="text" id="indirizzo" name="indirizzo" class="mc-input text-white" value="{{socio.indirizzo}}" placeholder="Indirizzo">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="mc-label" for="email">E-MAIL DI CONTATTO</label>
+                                <input type="email" id="email" name="email" class="mc-input text-white" value="{{socio.email}}" placeholder="nome@esempio.it">
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label class="mc-label" for="telefono">NUMERO TELEFONICO</label>
+                                <input type="tel" id="telefono" name="telefono" class="mc-input text-white" value="{{socio.telefono}}" placeholder="Telefono">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="mc-label" for="matricola">SERIALE MATRICOLA</label>
+                                <input type="text" id="matricola" name="matricola" class="mc-input text-info" value="{{socio.matricola}}" placeholder="12345">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top border-secondary pt-5">
+                        <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary">ANNULLA</a>
+                        <button type="submit" class="btn btn-warning btn-lg px-5 shadow-sm fw-bold"><i class="fa-solid fa-check-double me-2"></i>APPlica MODIFICHE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .mc-input {
+        width: 100%;
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #f1f5f9;
+        transition: all 0.2s ease;
+    }
+    .mc-input:focus {
+        outline: none;
+        background: rgba(15, 23, 42, 0.6);
+        border-color: var(--mc-accent);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+    }
+    .mc-label { 
+        font-size: 0.7rem; 
+        color: #94a3b8; 
+        font-weight: 700; 
+        letter-spacing: 0.1em; 
+        margin-bottom: 0.6rem; 
+        display: block;
+    }
+    .mc-code-box {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        letter-spacing: 0.05em;
+    }
+    .tracking-wider { letter-spacing: 0.15em; }
+</style>
+{{> layout_footer }}
