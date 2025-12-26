@@ -1,0 +1,45 @@
+# Railway Ignore File
+# Files and directories to exclude from Railway deployment
+
+# Development
+*.log
+.env
+.env.*
+!.env.example
+
+# Testing (optional - rimuovi se vuoi testare in produzione)
+# tests/
+# phpunit.xml
+# .phpunit.result.cache
+
+# Cache & Temporary
+*.cache
+.php-cs-fixer.cache
+phpstan_*.txt
+pest_check.txt
+
+# Build artifacts
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Local development files
+docker/
+Dockerfile
+docker-compose.yml
+
+# Development scripts (opzionale)
+deploy_automated.ps1
+
+# Vercel-specific (non necessari per Railway)
+api/
+vercel.json
+.vercelignore

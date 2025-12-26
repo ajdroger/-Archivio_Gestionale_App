@@ -1,0 +1,23 @@
+[nixpacks]
+providers = ["php"]
+
+[phases.setup]
+nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.pdo_sqlite", "php82Extensions.sqlite3", "php82Extensions.mbstring", "php82Extensions.openssl", "php82Extensions.curl", "php82Extensions.gd", "php82Extensions.zip"]
+
+[phases.install]
+cmds = [
+  "composer install --no-dev --optimize-autoloader --no-interaction"
+]
+
+[phases.build]
+cmds = [
+  "mkdir -p storage/uploads",
+  "mkdir -p logs",
+  "mkdir -p backups",
+  "chmod -R 775 storage",
+  "chmod -R 775 logs",
+  "chmod -R 775 backups"
+]
+
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t public"
