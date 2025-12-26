@@ -1,0 +1,59 @@
+# Vercel Ignore File
+# Files and directories to exclude from Vercel deployment
+
+# Development
+*.log
+logs/
+.env
+.env.*
+!.env.example
+
+# Testing
+tests/
+phpunit.xml
+.phpunit.result.cache
+pest.php
+playwright.config.ts
+
+# Cache & Temporary
+*.cache
+.php-cs-fixer.cache
+phpstan_*.txt
+pest_check.txt
+
+# Local Database (use cloud DB in production)
+database.sqlite
+*.sqlite
+*.db
+db/seeds/
+
+# Build artifacts
+node_modules/
+vendor/*/tests/
+vendor/*/test/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backups
+backups/
+
+# Local development files
+bin/
+Debug/
+docker/
+Dockerfile
+docker-compose.yml
+
+# Documentation (optional - remove if you want docs in production)
+Documentazione/
+
+# Development scripts
+deploy_automated.ps1
+
+# OS Files
+.DS_Store
+Thumbs.db

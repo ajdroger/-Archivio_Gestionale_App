@@ -1,0 +1,33 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "api/index.php",
+            "use": "vercel-php@0.7.3"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(css|js|images|fonts)/(.*)$",
+            "dest": "public/$1/$2"
+        },
+        {
+            "src": "/favicon.ico",
+            "dest": "public/favicon.ico"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "api/index.php"
+        }
+    ],
+    "env": {
+        "APP_ENV": "production",
+        "APP_NAME": "Fratellanza Militare Archivio"
+    },
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.7.3",
+            "maxDuration": 10
+        }
+    }
+}
