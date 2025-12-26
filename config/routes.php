@@ -46,7 +46,7 @@ return function (App $app) {
     $app->get('/soci/{cf}', SocioController::class . ':detail')->setName('socio_detail');
     $app->get('/soci/{cf}/documenti/{id}/download', SocioController::class . ':downloadDocument')->setName('socio_download_doc');
 
-    $app->get('/soci/export/csv', SocioController::class . ':exportCsv')->setName('socio_export')->add(new RateLimitMiddleware(20, 60));
+    $app->get('/soci/export/csv', SocioController::class . ':exportCsv')->setName('socio_export')->add(new RateLimitMiddleware(30, 60));
 
     // Backup Route
     // $app->post('/backup/db', \FratellanzaMilitare\Controller\DevTools\DevToolsDatabaseController::class . ':backupDb')->setName('backup_db')->add($adminLimit);
@@ -56,7 +56,7 @@ return function (App $app) {
 
     // Stats Exports (Presidente, Segreteria, Admin)
     $statsRole = new \FratellanzaMilitare\Middleware\RoleMiddleware(['presidente', 'segreteria']);
-    $exportLimit = new RateLimitMiddleware(20, 60);
+    $exportLimit = new RateLimitMiddleware(30, 60);
 
     $app->group('/statistiche', function ($group) use ($exportLimit) {
         $group->get('', StatisticsController::class . ':view')->setName('statistics');

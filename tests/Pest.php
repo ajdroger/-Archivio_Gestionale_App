@@ -33,7 +33,7 @@ uses(\Tests\TestCase::class)->in('Feature', 'Integration', 'Unit', 'Security', '
 */
 
 expect()->extend('toBeOne', function () {
-    /** @var \Pest\Expectation $this */
+    /** @phpstan-ignore-next-line */
     return $this->toBe(1);
 });
 

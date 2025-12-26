@@ -24,7 +24,7 @@ test('log evento', function () {
     $audit->logEvento($operatore, 'TEST_ACTION', 'resource_123');
 
     $result = $audit->ricercaAzioni(['action' => 'TEST_ACTION']);
-    $eventi = array_values($result['data']);
+    $eventi = $result['data'];
 
 
     expect($eventi)->not->toBeEmpty();
@@ -74,7 +74,7 @@ test('esportazione csv', function () {
 test('esportazione formato non supportato throws exception', function () {
     /** @var \Tests\TestCase $this */
     $audit = AuditTrail::getInstance();
-    expect(fn () => $audit->esportaLog('xml'))->toThrow(InvalidArgumentException::class);
+    expect(fn() => $audit->esportaLog('xml'))->toThrow(InvalidArgumentException::class);
 });
 
 test('ricerca azioni con filtri', function () {

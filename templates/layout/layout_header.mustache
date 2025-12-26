@@ -14,62 +14,10 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/fratellanza-militare-archivio/public/css/premium.css">
     
-    <style>
-        :root {
-            --mc-slate: #0f172a;
-            --mc-slate-light: #1e293b;
-            --mc-accent: #38bdf8;
-            --mc-gold: #fbbf24;
-        }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--mc-slate); 
-            color: #f1f5f9;
-            padding: 0 !important; /* Override premium.css padding */
-        }
-        .navbar-mc {
-            background: rgba(15, 23, 42, 0.8) !important;
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.8rem 0;
-        }
-        .navbar-brand { 
-            font-weight: 800; 
-            background: linear-gradient(90deg, #f1f5f9, #94a3b8);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 1.4rem;
-        }
-        .nav-link { font-weight: 500; font-size: 0.95rem; color: #94a3b8 !important; transition: color 0.2s; }
-        .nav-link:hover, .nav-link.active { color: var(--mc-accent) !important; }
-        
-        .mc-status-badge {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background: rgba(74, 222, 128, 0.1);
-            color: #4ade80;
-            border: 1px solid rgba(74, 222, 128, 0.2);
-            font-weight: 700;
-        }
-        
-        .main-content {
-            margin-top: 2rem;
-            padding-bottom: 5rem;
-        }
-        
-        /* Modern Cards Refinement */
-        .card {
-            background: var(--mc-slate-light);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <!-- Custom CSS (Consolidated) -->
+    <link rel="stylesheet" href="/fratellanza-militare-archivio/public/css/style.css">
 </head>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 {{body_class}}">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-mc sticky-top mb-0">
         <div class="container">
             <a class="navbar-brand" href="/fratellanza-militare-archivio/public/">

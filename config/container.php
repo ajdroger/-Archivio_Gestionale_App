@@ -10,7 +10,7 @@ use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use Psr\Container\ContainerInterface; // Added this use statement
 
 // Load custom Mustache loader
-require_once __DIR__ . '/../src/InfrastrutturaIT/Mustache_Loader_CascadingLoader.php';
+require_once __DIR__ . '/../src/View/CascadingLoader.php';
 
 return [
         // Logger Generale Sistema
@@ -133,8 +133,8 @@ return [
         ];
 
         return new Mustache_Engine([
-            'loader' => new Mustache_Loader_CascadingLoader($templatePaths),
-            'partials_loader' => new Mustache_Loader_CascadingLoader($templatePaths),
+            'loader' => new \FratellanzaMilitare\View\CascadingLoader($templatePaths),
+            'partials_loader' => new \FratellanzaMilitare\View\CascadingLoader($templatePaths),
             'escape' => function ($value) {
                 return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
             },
@@ -191,10 +191,27 @@ return [
     },
 
     // NEW: Split DevTools Controllers (SOLID Refactor)
+    // NEW: Split DevTools Controllers (SOLID Refactor)
+    \FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Controller\DevTools\DevToolsSystemController(
+            $c->get(Mustache_Engine::class),
+            $c->get(\FratellanzaMilitare\Debug\ResilienceMonitor::class),
+            $c->get(PDO::class)
+        );
+    },
+
+    \FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Controller\DevTools\DevToolsAuditController(
+            $c->get(Mustache_Engine::class),
+            $c->get(PDO::class)
+        );
+    },
+
     \FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController::class => function (ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController(
             $c->get(Mustache_Engine::class),
-            $c->get(\FratellanzaMilitare\Debug\ResilienceMonitor::class)
+            $c->get(\FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class),
+            $c->get(\FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class)
         );
     },
 

@@ -31,7 +31,20 @@ class StatisticsController
             $sociFilters['moroso'] = ($params['payment_status'] === 'moroso');
         }
 
-        $stats = $this->repository->getStatistics();
+        // Caching Implementation
+        $cacheFile = __DIR__ . '/../../../var/cache/stats_cache.json';
+        $cacheTime = 300; // 5 minutes
+
+        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
+            $stats = json_decode(file_get_contents($cacheFile), true);
+        } else {
+            $stats = $this->repository->getStatistics();
+            // Ensure var/cache directory exists
+            if (!is_dir(dirname($cacheFile))) {
+                mkdir(dirname($cacheFile), 0777, true);
+            }
+            file_put_contents($cacheFile, json_encode($stats));
+        }
         $filteredSoci = $this->repository->findByFilters($sociFilters); // For list view if implemented
 
         $html = $this->mustache->render('statistics', [

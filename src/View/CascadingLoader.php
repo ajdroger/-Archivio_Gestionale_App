@@ -1,10 +1,17 @@
 <?php
 
+namespace FratellanzaMilitare\View;
+
+use Mustache_Loader;
+use Mustache_Loader_FilesystemLoader;
+use Mustache_Exception_UnknownTemplateException;
+use Exception;
+
 /**
  * Mustache Cascading Loader
  * Allows templates to be loaded from multiple directories
  */
-class Mustache_Loader_CascadingLoader implements Mustache_Loader
+class CascadingLoader implements Mustache_Loader
 {
     private array $loaders = [];
 

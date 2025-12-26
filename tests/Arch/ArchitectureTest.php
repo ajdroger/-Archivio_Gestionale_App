@@ -1,6 +1,7 @@
 <?php
 
 arch('controllers')
+    /** @phpstan-ignore-next-line */
     ->expect('FratellanzaMilitare\Controller')
     ->not->toUse('FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection')
     ->ignoring([
@@ -17,9 +18,11 @@ arch('controllers')
 // Example exception if strictly needed, but ideally should be clean.
 
 arch('debug')
+    /** @phpstan-ignore-next-line */
     ->expect(['dd', 'dump', 'die', 'var_dump'])
     ->not->toBeUsed();
 
 arch('models')
+    /** @phpstan-ignore-next-line */
     ->expect('FratellanzaMilitare\SecurityLayer')
     ->not->toUse('FratellanzaMilitare\Controller');

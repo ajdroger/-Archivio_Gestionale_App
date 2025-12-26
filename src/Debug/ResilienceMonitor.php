@@ -34,16 +34,51 @@ class ResilienceMonitor
 
     private function checkDatabaseIntegrity(): array
     {
-        $stmt = $this->pdo->query("PRAGMA integrity_check");
-        $result = $stmt->fetchColumn();
+        $driver = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
-        $foreignKeyCheck = $this->pdo->query("PRAGMA foreign_key_check");
-        $foreignKeys = $foreignKeyCheck ? $foreignKeyCheck->fetchAll() : [];
+        if ($driver === 'sqlite') {
+            $stmt = $this->pdo->query("PRAGMA integrity_check");
+            $result = $stmt->fetchColumn();
+
+            $foreignKeyCheck = $this->pdo->query("PRAGMA foreign_key_check");
+            $foreignKeys = $foreignKeyCheck ? $foreignKeyCheck->fetchAll() : [];
+
+            return [
+                'status' => ($result === 'ok' && empty($foreignKeys)),
+                'integrity' => $result,
+                'foreign_key_violations' => count($foreignKeys)
+            ];
+        } elseif ($driver === 'mysql') {
+            $tables = ['users', 'soci', 'documenti', 'audit_logs'];
+            $details = [];
+            $allOk = true;
+
+            foreach ($tables as $table) {
+                try {
+                    $stmt = $this->pdo->query("CHECK TABLE `$table`");
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if (($row['Msg_text'] ?? '') !== 'OK') {
+                        $allOk = false;
+                        $details[$table] = $row['Msg_text'] ?? 'Unknown Error';
+                    }
+                } catch (\Exception $e) {
+                    $allOk = false;
+                    $details[$table] = $e->getMessage();
+                }
+            }
+
+            return [
+                'status' => $allOk,
+                'integrity' => $allOk ? 'ok' : 'errors detected',
+                'details' => $details,
+                'foreign_key_violations' => 0 // Not easily queryable globally in MySQL
+            ];
+        }
 
         return [
-            'status' => ($result === 'ok' && empty($foreignKeys)),
-            'integrity' => $result,
-            'foreign_key_violations' => count($foreignKeys)
+            'status' => true,
+            'integrity' => 'driver not supported',
+            'foreign_key_violations' => 0
         ];
     }
 

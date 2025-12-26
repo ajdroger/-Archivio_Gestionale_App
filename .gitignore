@@ -1,11 +1,57 @@
+# Dependencies
 vendor/
+node_modules/
+
+# Database
 database.sqlite
-.phpunit.result.cache
+*.sqlite
+*.db
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
 logs/
 *.log
-.env
-node_modules/
+
+# Cache & Temporary Files
+.phpunit.result.cache
+.php-cs-fixer.cache
+*.cache
+.phpunit.cache
+phpstan_*.txt
+pest_check.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Uploads & Backups
 storage/uploads/*
 !storage/uploads/.gitkeep
 backups/*
 !backups/.gitkeep
+
+# Build artifacts
+public/build/
+public/hot
+public/storage
+
+# Testing
+coverage/
+.phpunit.result.cache
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

@@ -9,6 +9,19 @@ require __DIR__ . '/../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
+// --- DEBUG ROUTING V3 (TOP LEVEL) ---
+$logData = sprintf(
+    "[%s] Method: %s | URI: %s | Script: %s | HTTPS: %s | Host: %s\n",
+    date('Y-m-d H:i:s'),
+    $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN',
+    $_SERVER['REQUEST_URI'] ?? 'UNKNOWN',
+    $_SERVER['SCRIPT_NAME'] ?? 'UNKNOWN',
+    $_SERVER['HTTPS'] ?? 'off',
+    $_SERVER['HTTP_HOST'] ?? 'UNKNOWN'
+);
+file_put_contents(__DIR__ . '/../logs/route_debug_v3.log', $logData, FILE_APPEND);
+// ------------------------------------
+
 // 1.5 Secure Session Configuration
 ini_set('memory_limit', '256M');
 ini_set('session.cookie_httponly', 1);
@@ -18,10 +31,13 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
     ini_set('session.cookie_secure', 1);
 }
 
-// 1.7 Force HTTPS in production
+// 1.7 Force HTTPS in production (Use 307 to preserve POST data)
 if (($_ENV['APP_ENV'] ?? 'production') === 'production') {
-    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
-        header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], true, 301);
+    // Skip if on localhost to avoid issues with Ampps self-signed certs or simple HTTP dev
+    $isLocal = in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1', '::1']);
+
+    if (!$isLocal && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on')) {
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], true, 307);
         exit;
     }
 }

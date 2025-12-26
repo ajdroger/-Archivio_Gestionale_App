@@ -44,122 +44,7 @@
 </script>
 
 <!-- STILI PERSONALIZZATI: Tema Scuro Premium -->
-<style>
-    /* --- DEFINIZIONE VARIABILI (CONTRASTO OTTIMIZZATO & COMFORT) --- */
-    :root {
-        --bg-dark: #111827;        /* Grigio Scuro Profondo (Gray 900) - Meno duro del nero */
-        --bg-panel: #1f2937;       /* Grigio Pannelli (Gray 800) */
-        --border-color: #374151;   /* Bordi Grigi (Gray 700) */
-        --text-main: #f9fafb;      /* Bianco Morbido (Gray 50) */
-        --text-muted: #d1d5db;     /* Grigio Chiaro (Gray 300) */
-        
-        /* Colori Accento ad Alta Leggibilità */
-        --accent-primary: #38bdf8; /* Sky 400 */
-        --accent-success: #34d399; /* Emerald 400 */
-        --accent-warning: #fbbf24; /* Amber 400 */
-        --accent-danger: #f87171;  /* Red 400 */
-    }
-    
-    /* Configurazione Body */
-    body { 
-        background-color: var(--bg-dark); 
-        color: var(--text-main); 
-        font-family: 'Segoe UI', system-ui, sans-serif;
-        font-size: 16px;
-        line-height: 1.6; 
-        overflow-x: hidden; 
-    }
-
-    /* Pannelli: Spaziosi e Solidi */
-    .glass-panel {
-        background-color: var(--bg-panel) !important;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-        margin-bottom: 24px;
-        transition: transform 0.2s; /* Micro-interazione */
-    }
-    
-    /* Sidebar Link */
-    .sidebar-link {
-        color: var(--text-muted);
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 12px 20px;
-        margin-bottom: 8px;
-        border: 1px solid transparent; /* Prevents layout shift on hover */
-    }
-    
-    .sidebar-link:hover, .sidebar-link.active {
-        background-color: #374151; /* Gray 700 */
-        color: #ffffff;
-        border-left: 5px solid var(--accent-primary);
-        padding-left: 25px; /* Animazione smooth */
-    }
-    
-    /* Tables: Cells Spaziose e No-Wrap per Azioni */
-    .table-dark-custom th {
-        background-color: #111827;
-        color: #f3f4f6;
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        border-bottom: 2px solid #4b5563;
-        padding: 16px;
-    }
-    .table-dark-custom td {
-        background-color: #1f2937;
-        border-color: #374151;
-        vertical-align: middle;
-        padding: 16px; /* Hitting area confortevole */
-        color: var(--text-main);
-        font-size: 0.95rem;
-    }
-    
-    /* Prevent wrapping on Action columns */
-    .td-actions {
-        white-space: nowrap;
-        width: 1%; /* Shrink to fit content */
-        min-width: 150px; /* Min width for buttons */
-    }
-    
-    .hover-row:hover td { 
-        background-color: #374151 !important; 
-    }
-
-    /* Common Utilities */
-    .fw-bold { font-weight: 700 !important; }
-    .text-muted { color: #9ca3af !important; }
-    
-    /* Card Body Expansion */
-    .card-body { padding: 24px !important; }
-
-    /* Input Fields più leggibili */
-    .form-control, .form-select {
-        background-color: #111827 !important;
-        border: 1px solid #4b5563 !important;
-        color: #fff !important;
-        padding: 10px 14px;
-    }
-    .form-control:focus {
-        border-color: var(--accent-primary) !important;
-        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
-    }
-
-    /* Titoli sezioni */
-    .uppercase-tracking {
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-size: 0.75rem;
-    }
-
-    /* Scrollbar Personalizzata (Webkit) */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg-dark); }
-    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-</style>
+<!-- Styles moved to style.css -->
 
 <!-- ######################################################################################## -->
 <!-- LAYOUT PRINCIPALE -->
@@ -818,63 +703,186 @@
                     </div>
                 </div>
 
-                <!-- RIGA 3: TESTS -->
+                <!-- RIGA 3: TEST SUITE COMPLETA (Grid Layout) -->
+                <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-vials me-2"></i>SUITE DI TEST AUTOMATIZZATI (100% COVERAGE)</h6>
                 <div class="row g-4 mb-4">
-                    <!-- Integration Tests -->
-                    <div class="col-md-6">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-vial-circle-check me-2"></i>TEST DI INTEGRAZIONE</h6>
+                    
+                    <!-- 1. Unit Tests -->
+                    <div class="col-xl-3 col-md-6">
                         <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="table-responsive custom-scrollbar" style="max-height: 400px;">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-info small fw-bold mb-0">UNIT TESTS</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
                                  <table class="table table-dark-custom table-hover small mb-0 align-middle">
                                      <tbody>
-                                         {{#scripts.tests_integration}}
+                                         {{#scripts.tests_unit}}
                                          <tr>
-                                             <td class="ps-3 font-monospace text-primary text-opacity-75">
-                                                 <i class="fa-solid fa-flask me-2 opacity-50"></i>{{name}}
-                                             </td>
-                                             <td class="text-end pe-3">
-                                                 <button class="btn btn-sm btn-outline-primary py-0 px-2 run-script-btn" data-path="{{path}}" title="Esegui Test">
-                                                     Run <i class="fa-solid fa-play ms-1" style="font-size: 0.6rem;"></i>
-                                                 </button>
-                                             </td>
+                                             <td class="ps-3 font-monospace text-info text-opacity-75"><i class="fa-solid fa-atom me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-info py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
                                          </tr>
-                                         {{/scripts.tests_integration}}
-                                         {{^scripts.tests_integration}}
-                                         <tr><td class="p-4 text-center text-muted">Nessun Integration Test.</td></tr>
-                                         {{/scripts.tests_integration}}
+                                         {{/scripts.tests_unit}}
+                                         {{^scripts.tests_unit}}<tr><td class="p-3 text-center text-muted">Nessun Unit Test.</td></tr>{{/scripts.tests_unit}}
                                      </tbody>
                                  </table>
                              </div>
                         </div>
                     </div>
 
-                    <!-- Legacy Tests -->
-                    <div class="col-md-6">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-vial me-2"></i>TEST MANUALI / LEGACY</h6>
+                    <!-- 2. Feature Tests -->
+                    <div class="col-xl-3 col-md-6">
                         <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="table-responsive custom-scrollbar" style="max-height: 400px;">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-success small fw-bold mb-0">FEATURE TESTS</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
                                  <table class="table table-dark-custom table-hover small mb-0 align-middle">
                                      <tbody>
-                                         {{#scripts.tests_legacy}}
+                                         {{#scripts.tests_feature}}
                                          <tr>
-                                             <td class="ps-3 font-monospace text-warning text-opacity-75">
-                                                 <i class="fa-solid fa-flask-vial me-2 opacity-50"></i>{{name}}
-                                             </td>
-                                             <td class="text-end pe-3">
-                                                 <button class="btn btn-sm btn-outline-warning py-0 px-2 run-script-btn" data-path="{{path}}" title="Esegui Test">
-                                                     Run <i class="fa-solid fa-play ms-1" style="font-size: 0.6rem;"></i>
-                                                 </button>
-                                             </td>
+                                             <td class="ps-3 font-monospace text-success text-opacity-75"><i class="fa-solid fa-star me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-success py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
                                          </tr>
-                                         {{/scripts.tests_legacy}}
-                                         {{^scripts.tests_legacy}}
-                                         <tr><td class="p-4 text-center text-muted">Nessun Legacy Test.</td></tr>
-                                         {{/scripts.tests_legacy}}
+                                         {{/scripts.tests_feature}}
+                                         {{^scripts.tests_feature}}<tr><td class="p-3 text-center text-muted">Nessun Feature Test.</td></tr>{{/scripts.tests_feature}}
                                      </tbody>
                                  </table>
                              </div>
                         </div>
                     </div>
+
+                    <!-- 3. Integration Tests -->
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-primary small fw-bold mb-0">INTEGRATION</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_integration}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-primary text-opacity-75"><i class="fa-solid fa-flask me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-primary py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
+                                         </tr>
+                                         {{/scripts.tests_integration}}
+                                         {{^scripts.tests_integration}}<tr><td class="p-3 text-center text-muted">Nessun Integration Test.</td></tr>{{/scripts.tests_integration}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Security Tests -->
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-danger small fw-bold mb-0">SECURITY</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_security}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-danger text-opacity-75"><i class="fa-solid fa-shield-virus me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-danger py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
+                                         </tr>
+                                         {{/scripts.tests_security}}
+                                         {{^scripts.tests_security}}<tr><td class="p-3 text-center text-muted">Nessun Security Test.</td></tr>{{/scripts.tests_security}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+                
+                    <!-- 5. Performance Tests -->
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-warning small fw-bold mb-0">PERFORMANCE</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_performance}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-warning text-opacity-75"><i class="fa-solid fa-stopwatch me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-warning py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
+                                         </tr>
+                                         {{/scripts.tests_performance}}
+                                         {{^scripts.tests_performance}}<tr><td class="p-3 text-center text-muted">Nessun Performance Test.</td></tr>{{/scripts.tests_performance}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. E2E Tests -->
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-light small fw-bold mb-0">END-TO-END (E2E)</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_e2e}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-light text-opacity-75"><i class="fa-solid fa-robot me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-light py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
+                                         </tr>
+                                         {{/scripts.tests_e2e}}
+                                         {{^scripts.tests_e2e}}<tr><td class="p-3 text-center text-muted">Nessun E2E Test.</td></tr>{{/scripts.tests_e2e}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Architecture Tests -->
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-secondary small fw-bold mb-0">ARCHITECTURE</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_arch}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-secondary text-opacity-75"><i class="fa-solid fa-sitemap me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-secondary py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
+                                         </tr>
+                                         {{/scripts.tests_arch}}
+                                         {{^scripts.tests_arch}}<tr><td class="p-3 text-center text-muted">Nessun Arch Test.</td></tr>{{/scripts.tests_arch}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 8. Legacy Tests -->
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card glass-panel border-0 overflow-hidden h-100">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
+                                 <h6 class="text-muted small fw-bold mb-0">LEGACY / MANUAL</h6>
+                             </div>
+                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
+                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
+                                     <tbody>
+                                         {{#scripts.tests_legacy}}
+                                         <tr>
+                                             <td class="ps-3 font-monospace text-muted text-opacity-75"><i class="fa-solid fa-box-archive me-2 opacity-50"></i>{{name}}</td>
+                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-secondary py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
+                                         </tr>
+                                         {{/scripts.tests_legacy}}
+                                         {{^scripts.tests_legacy}}<tr><td class="p-3 text-center text-muted">Nessun Legacy Test.</td></tr>{{/scripts.tests_legacy}}
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
