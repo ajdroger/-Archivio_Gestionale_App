@@ -5,10 +5,24 @@ namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
 use PDO;
 use PDOException;
 
+/**
+ * Gestore Singleton per la connessione al database MySQL tramite PDO.
+ * 
+ * Legge la configurazione dalle variabili d'ambiente (.env) e stabilisce
+ * una connessione sicura e ottimizzata (UTF-8, ERRMODE_EXCEPTION).
+ */
 class DatabaseConnection
 {
     private static ?PDO $connection = null;
 
+    /**
+     * Restituisce l'istanza singleton della connessione PDO.
+     * 
+     * Se la connessione non esiste, la crea. Se esiste, la riutilizza.
+     * 
+     * @return PDO Istanza di PDO connessa
+     * @throws PDOException In caso di errore di connessione
+     */
     public static function getConnection(): PDO
     {
         if (self::$connection === null) {

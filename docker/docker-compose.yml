@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ../database.sqlite:/var/www/html/database.sqlite
+      - ../storage:/var/www/html/storage
+      - ../logs:/var/www/html/logs
+    restart: unless-stopped
+    container_name: fratellanza_archivio

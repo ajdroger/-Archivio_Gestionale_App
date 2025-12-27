@@ -1,53 +1,61 @@
 # Fratellanza Militare - Archivio Digitale Soci
-> **Edizione: Mission-Critical Enterprise (v2.0)**
+> **Edizione: Mission-Critical Enterprise (v2.0.1)**
+> **Stato:** 🛡️ Operativo | 🔒 2FA Attiva | ☁️ Cloud-Ready
 
 Sistema professionale di gestione e digitalizzazione dell'archivio storico e corrente della Fratellanza Militare di Firenze.
 
-## 🚀 Panoramica
-L'applicazione è progettata per operare in scenari ad alta affidabilità:
-- **Integrità Transazionale**: Salvataggi atomici "tutto-o-niente" (MySQL InnoDB).
-- **Tracciabilità Totale**: Ogni operazione è marcata con un **Request Correlation ID**.
-- **Disaster Recovery**: Backup off-site automatici (Cloud Sync) e rotazione locale.
-- **Sicurezza Hardening**: 
-    - 2FA (TOTP) con **Secrets Encrypted (AES-256)**.
-    - Password Hashing (Bcrypt).
-    - Session Hardening (Secure/HttpOnly).
-- **OCR & Digitalizzazione**: Motore OCR integrato per la dematerializzazione.
-- **GDPR Compliance**: Pseudonimizzazione, Diritto all'Oblio e Audit Log immutabile.
+## 🚀 Panoramica v2.0
+L'applicazione è progettata per operare in scenari ad alta affidabilità con focus assoluto su sicurezza e integrità:
+
+- **🔐 Sicurezza Militare**:
+    - **2FA (TOTP)** obbligatoria per amministratori.
+    - **Encryption At-Rest**: Dati sensibili cifrati (AES-256).
+    - **Session Hardening**: Protezione contro Session Hijacking e XSS.
+- **🛡️ Data Integrity**:
+    - **Audit Log Immutabile**: Ogni azione tracciata su DB separato.
+    - **Backup Ibridi**: Backup locali (ZIP) + Predisposizione Cloud Storage.
+    - **Integrità Transazionale**: MySQL InnoDB con foreign keys strette.
+- **⚡ Performance & Tools**:
+    - **Mission Control Dashboard**: Monitoraggio in tempo reale (CPU, RAM, DB).
+    - **CLI Toolbox**: Suite completa di strumenti da riga di comando per manutenzione (`bin/tools`).
+    - **OCR Engine**: Indicizzazione automatica dei documenti PDF caricati.
 
 ## 🛠️ Requisiti di Sistema
-- **PHP**: 8.2 o superiore.
-- **Estensioni PHP**: `pdo_mysql`, `json`, `mbstring`, `openssl`.
-- **Database**: MySQL 8.0+.
-- **Composer**: Gestione dipendenze.
-- **Web Server**: Apache/Ampps/Nginx.
+- **PHP**: 8.2+ con estensioni (`pdo_mysql`, `intl`, `mbstring`, `openssl`).
+- **Database**: MySQL 8.0 / MariaDB 10.5.
+- **Server**: Apache/Nginx con supporto `.htaccess`.
+- **Environment**: Variabili d'ambiente gestite via `.env`.
 
-## 📦 Installazione & Setup
-1. **Composer**: `composer install`
-2. **Setup Env**: `cp .env.example .env` (Configura `TOTP_SECRET` e `DB_PATH`).
-3. **Migrazioni**: `vendor/bin/phinx migrate`
-4. **Permessi**: Assicurati che `storage/`, `logs/` e `database.sqlite` siano scrivibili.
+## 📦 Installazione Rapida
+```bash
+# 1. Clona Repository
+git clone https://github.com/ajdroger/-Archivio_Gestionale_App.git
+cd fratellanza-militare-archivio
 
-## 🧪 Testing e Diagnostica Mission-Critical
-Il sistema dispone di una suite di controllo qualità avanzata:
-- **Suite di Test (Pest)**: Esegue 71 test (Unit, Feature, Integration, Security).
-  ```bash
-  vendor/bin/pest
-  ```
-- **Analisi Statica (PHPStan Level 5)**: Verifica formale della logica e dei tipi.
-  ```bash
-  vendor/bin/phpstan analyse src
-  ```
-- **Mission-Critical Console (CLI)**: Hub centralizzato per manutenzione e incident response.
-  ```bash
-  php bin/debug_console/console.php
-  ```
-- **Developer Dashboard (Web)**: Accessibile via `/devtools` per il monitoraggio della resilienza.
+# 2. Install Dipendenze
+composer install --no-dev --optimize-autoloader
+npm install && npm run build
 
-## 🔒 Sicurezza e Privacy
-- **Audit Logging**: Registrazione SQL-based con pseudonimizzazione automatica (GDPR).
-- **Protezione Sessioni**: Cookie configurati con `SameSite=Strict` e `HttpOnly`.
-- **Storage Lockdown**: Directory `/storage/uploads` protetta da esecuzione script e accesso diretto via `.htaccess`.
+# 3. Configurazione
+cp .env.example .env
+# Modifica .env inserendo DB credentials e Mail server
+php bin/maintenance/regenerate_key_clean.php # Genera chiavi sicure
+
+# 4. Verifica
+php bin/tools/health_check.php
+```
+
+## 🧪 Strumenti di Sviluppo & Diagnostica
+Il sistema include una suite di strumenti accessibili via CLI o Web (`/devtools`):
+- **Security Audit**: `php bin/tools/security_audit_cli.php`
+- **Mail Test**: `php bin/tools/test_smtp.php`
+- **Integrity Check**: `php bin/maintenance/check_integrity.php`
+- **Backup Verify**: `php bin/maintenance/backup_verify.php`
+
+## 🔒 Conformità GDPR
+- **Pseudonimizzazione**: Dati sensibili separati logicamente.
+- **Diritto all'Oblio**: Strumenti di cancellazione sicura (Soft Delete).
+- **Access Logs**: Registro accessi conforme alle normative vigenti.
 
 ---
 *Digitalizzazione a cura di Soobadur Mohammad Ajmeer - Tecnico Informatico*

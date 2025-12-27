@@ -5,80 +5,88 @@ use FratellanzaMilitare\Service\ValidationService;
 use FratellanzaMilitare\Service\PdfGenerationService;
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use FratellanzaMilitare\Service\FileEmailService;
 use Monolog\Logger;
 
-require __DIR__ . '/../../vendor/autoload.php';
+// Shared setup for this file
+beforeEach(function () {
+    /** @var \Tests\TestCase $this */
+    $this->pdo = DatabaseConnection::getConnection();
+    // Cleanup before start
+    $this->pdo->exec("DELETE FROM soci WHERE codice_fiscale = 'RSSMRA80A01H501Z'");
+    $this->pdo->exec("DELETE FROM soci WHERE codice_fiscale = 'TEST_REG_SERVICE_CF'");
+});
 
-// Mock Logger
-$logger = new Logger('test_integration');
-
-// Dependencies
-$pdo = DatabaseConnection::getConnection();
-// CLEANUP
-$pdo->exec("DELETE FROM soci WHERE codice_fiscale = 'TEST_REG_SERVICE_CF'");
-$pdo->exec("DELETE FROM soci WHERE codice_fiscale = 'RSSMRA80A01H501Z'");
-
-$repo = new PDOSocioRepository($pdo);
-$validator = new ValidationService();
-$pdfService = new PdfGenerationService();
-
-$service = new RegistrationService(
-    $repo,
-    $validator,
-    $pdfService,
-    new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/test_integration_emails.txt'),
-    $logger
-);
-
-echo "=== INTEGRATION TEST: RegistrationService ===\n";
-
-// Data
-$data = [
-    'nome' => 'Mario',
-    'cognome' => 'Rossi',
-    'codice_fiscale' => 'RSSMRA80A01H501Z', // Valid Structure
-    'data_nascita' => '1980-01-01',
-    'indirizzo' => 'Via Roma 1',
-    'email' => 'mario@test.com',
-    'pagamento_effettuato' => '1' // Trigger PDF generation
-];
-
-try {
-    // 2. Register
-    $socio = $service->registerNewMember($data);
-    echo "✓ Socio Registered: " . $socio->CodiceFiscale . "\n";
-
-    // 3. Verify Persistence
-    $fetched = $repo->findByCodiceFiscale('RSSMRA80A01H501Z');
-    if ($fetched) {
-        echo "✓ Persistence Verified: Found in DB.\n";
-    } else {
-        echo "✗ FAIL: Not found in DB.\n";
-        exit(1);
+afterEach(function () {
+    /** @var \Tests\TestCase $this */
+    // Cleanup after end
+    if (isset($this->pdo)) {
+        $this->pdo->exec("DELETE FROM soci WHERE codice_fiscale = 'RSSMRA80A01H501Z'");
+        $this->pdo->exec("DELETE FROM soci WHERE codice_fiscale = 'TEST_REG_SERVICE_CF'");
     }
+    // Cleanup Files if tracked? 
+    // We'll handle file cleanup inside the test for specific created files, or here if we track them.
+});
 
-    // 4. Verify Document
+test('Integration: Registration Service Register New Member Flow', function () {
+    /** @var \Tests\TestCase $this */
+    // 1. Setup Dependencies
+    $logger = new Logger('test_integration');
+    $repo = new PDOSocioRepository($this->pdo);
+    $validator = new ValidationService();
+    $pdfService = new PdfGenerationService();
+    $emailService = new FileEmailService(__DIR__ . '/../../logs/tests/test_integration_emails.txt');
+
+    $service = new RegistrationService(
+        $repo,
+        $validator,
+        $pdfService,
+        $emailService,
+        $logger
+    );
+
+    // 2. Data
+    $data = [
+        'nome' => 'Mario',
+        'cognome' => 'Rossi',
+        'codice_fiscale' => 'RSSMRA80A01H501Z',
+        'data_nascita' => '1980-01-01',
+        'indirizzo' => 'Via Roma 1',
+        'email' => 'mario@test.com',
+        'pagamento_effettuato' => '1' // Trigger PDF generation
+    ];
+
+    // 3. Execution
+    $socio = $service->registerNewMember($data);
+
+    // 4. Assertions
+    expect($socio)->not->toBeNull()
+        ->and($socio->CodiceFiscale)->toBe('RSSMRA80A01H501Z');
+
+    // Verify DB Persistence
+    $fetched = $repo->findByCodiceFiscale('RSSMRA80A01H501Z');
+    expect($fetched)->not->toBeNull();
+    expect($fetched->DatiPersonali->Nome)->toBe('MARIO');
+
+    // Verify Document Generation
     $docs = $socio->DocumentiAssociati;
+    expect($docs)->toBeArray();
+
+    // Note: depending on PdfGeneration logic, docs might be empty if PDF generation failed silently or wasn't triggered. 
+    // The original test assumed explicit success.
     if (count($docs) > 0) {
-        echo "✓ Document Verified: " . $docs[0]->NomeFile . "\n";
-        // Check file existence
-        $filePath = __DIR__ . '/../../storage/uploads/' . $docs[0]->IdUnivoco . '_' . $docs[0]->NomeFile;
+        $doc = $docs[0];
+        $filePath = __DIR__ . '/../../storage/uploads/' . $doc->IdUnivoco . '_' . $doc->NomeFile;
+
+        expect(file_exists($filePath))->toBeTrue("PDF Document should exist on disk");
+
+        // Cleanup File
         if (file_exists($filePath)) {
-            echo "✓ File Verified: exists on disk.\n";
-            // cleanup file
             unlink($filePath);
-        } else {
-            echo "✗ FAIL: File not found on disk at $filePath\n";
         }
     } else {
-        echo "✗ FAIL: No document attached.\n";
+        // Fail if expected docs are missing
+        $this->fail('No documents were generated for the registered member.');
     }
 
-    // Cleanup DB
-    $pdo->exec("DELETE FROM soci WHERE codice_fiscale = 'RSSMRA80A01H501Z'");
-    echo "\n=== SUCCESS ===\n";
-
-} catch (\Exception $e) {
-    echo "\n=== ERROR ===\n" . $e->getMessage() . "\n";
-    exit(1);
-}
+});

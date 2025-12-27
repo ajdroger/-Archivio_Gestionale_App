@@ -1,0 +1,43 @@
+/* --- EXPERT MONITORING WIDGETS --- */
+.circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 80%;
+  max-height: 250px;
+}
+.circular-chart .circle-bg {
+  fill: none;
+  stroke: #444;
+  stroke-width: 3.8;
+  opacity: 0.3;
+}
+.circular-chart .circle {
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+.circular-chart.red .circle { stroke: #ef4444; }
+.circular-chart.green .circle { stroke: #10b981; }
+
+@keyframes progress { 0% { stroke-dasharray: 0 100; } }
+
+/* Pulsating Badge */
+.pulsate {
+    animation: pulse-animation 2s infinite;
+}
+@keyframes pulse-animation {
+    0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.5); }
+    100% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+}
+.pulsing-dot-danger {
+    animation: pulse-red 2s infinite;
+}
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0px rgba(255, 0, 0, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(255, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0px rgba(255, 0, 0, 0); }
+}
+
+/* Utility */
+.uppercase-tracking { text-transform: uppercase; letter-spacing: 1px; }

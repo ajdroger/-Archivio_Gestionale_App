@@ -1,7 +1,7 @@
 📁 FRATELLANZA MILITARE - COMPLETE FILE STRUCTURE INDEX
-Generated: 2025-12-25 01:06 CET
-Version: 1.3.1 MySQL Edition - Production Ready
-Total Files: 150+
+Generated: 2025-12-27 10:30 CET
+Version: 2.0.1 Enterprise Edition - Deployment Ready
+Total Files: 175+
 
 🧪 TESTS (tests/)
 Feature Tests (tests/Feature/)

@@ -83,7 +83,7 @@ $logs = $logViewer->listLogs();
         </header>
 
         <!-- GIANT BUTTON TO TOOLKIT -->
-        <a href="../tests/test_dashboard.php" class="btn-giant">
+        <a href="test_dashboard.php" class="btn-giant">
             🚀 VAI ALLA SESSIONE TOOLKIT (100+ TEST)
             <div style="font-size: 0.9rem; font-weight: normal; margin-top: 5px; opacity: 0.9;">
                 Layout Orizzontale | Esecuzione One-Click | Verificati 106+ Test
@@ -146,7 +146,7 @@ $logs = $logViewer->listLogs();
                 <h2>📄 Monitor Log</h2>
                 <div style="margin-bottom: 15px;">
                     <?php
-                    $auditLog = __DIR__ . '/../logs/audit.log';
+                    $auditLog = __DIR__ . '/../../logs/audit/audit.log';
                     $auditOk = file_exists($auditLog) && is_writable($auditLog);
                     ?>
                     <span class="badge">Audit Trail: <span
@@ -174,7 +174,7 @@ $logs = $logViewer->listLogs();
             <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap;">
                 <a href="env_check.php" class="btn">Ambiente</a>
                 <a href="verify_xdebug.php" class="btn">Xdebug JSON</a>
-                <a href="../src/Debug/check_ini.php" class="btn">PHP Info</a>
+                <a href="../../bin/debug_tools/check_ini.php" class="btn">PHP Info</a>
                 <a href="repair_tool.php" class="btn" style="background: #f87171; color: white;">Riparazione Sistema</a>
             </div>
         </div>

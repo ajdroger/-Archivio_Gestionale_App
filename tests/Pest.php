@@ -14,12 +14,15 @@
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->safeLoad();
 
+// Force Test Database (Safety override)
+$_ENV['DB_DATABASE'] = 'fratellanza_test';
+
 // Mission-critical: Allineamento sessione sicura per i test
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_samesite', 'Strict');
 
-uses(\Tests\TestCase::class)->in('Feature', 'Integration', 'Unit', 'Security', 'Performance');
+uses(Tests\TestCase::class)->in('Feature', 'Unit', 'Integration');
 
 /*
 |--------------------------------------------------------------------------

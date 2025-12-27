@@ -13,6 +13,12 @@ use Exception;
  * 
  * Gestisce la queue dei background jobs con retry logic e scheduling.
  */
+/**
+ * Servizio per la gestione di Code di lavorazione (Database-backed).
+ * 
+ * Permette di accodare job (push_jobs), processarli (pop), gestirne il completamento
+ * o il fallimento (failed_jobs) e supporta delay e retry automatici.
+ */
 class QueueService
 {
     private PDO $pdo;
@@ -24,7 +30,11 @@ class QueueService
     }
 
     /**
-     * Aggiungi job alla queue
+     * Aggiungi un job alla coda.
+     * 
+     * @param JobInterface $job Oggetto che implementa la logica del job
+     * @param int $delay Ritardo in secondi prima che il job sia disponibile
+     * @return bool
      */
     public function push(JobInterface $job, int $delay = 0): bool
     {
@@ -51,7 +61,13 @@ class QueueService
     }
 
     /**
-     * Preleva prossimo job dalla queue
+     * Preleva il prossimo job disponibile dalla coda ed esegue lock (SELECT FOR UPDATE).
+     * 
+     * Implementa un meccanismo transazionale per garantire che un job sia elaborato
+     * da un solo worker alla volta.
+     * 
+     * @param string $queue Nome della coda
+     * @return array|null Dati del job o null se vuota
      */
     public function pop(string $queue = 'default'): ?array
     {
@@ -107,7 +123,7 @@ class QueueService
     }
 
     /**
-     * Marca job come completato ed eliminalo
+     * Marca un job come completato e lo rimuove dalla tabella jobs.
      */
     public function complete(int $jobId): bool
     {
@@ -121,7 +137,7 @@ class QueueService
     }
 
     /**
-     * Rilascia job per retry
+     * Rilascia un job nella coda (es. dopo un fallimento temporaneo) con un delay.
      */
     public function release(int $jobId, int $delay = 60): bool
     {
@@ -144,7 +160,10 @@ class QueueService
     }
 
     /**
-     * Marca job come failed definitivamente
+     * Marca un job come fallito definitivamente.
+     * 
+     * Sposta il job nella tabella 'failed_jobs' con lo stack trace dell'errore
+     * per successiva ispezione manuale.
      */
     public function fail(int $jobId, Exception $exception): bool
     {

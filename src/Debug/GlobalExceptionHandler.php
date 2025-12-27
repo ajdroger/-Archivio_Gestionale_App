@@ -60,8 +60,7 @@ class GlobalExceptionHandler
 
         // 2. Fallback to JSON
         $response->getBody()->write(json_encode([
-            'error' => true,
-            'message' => 'Si è verificato un errore interno. Riprovare più tardi.',
+            'error' => 'Si è verificato un errore interno. Riprovare più tardi.',
             'debug_msg' => $displayErrorDetails ? $exception->getMessage() : null
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 

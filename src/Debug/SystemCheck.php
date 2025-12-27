@@ -90,21 +90,22 @@ class SystemCheck
         }
 
         // Check Audit Log
-        if (!file_exists(__DIR__ . '/../../logs/audit/audit.log')) {
+        $auditPath = __DIR__ . '/../../logs/audit.log';
+        if (!file_exists($auditPath)) {
             // Create if missing
-            file_put_contents(__DIR__ . '/../../logs/audit/audit.log', '');
-            $results['audit_log'] = ['status' => true, 'message' => "INFO: Creato file logs/audit/audit.log"];
+            file_put_contents($auditPath, '');
+            $results['audit_log'] = ['status' => true, 'message' => "INFO: Creato file logs/audit.log"];
         } else {
-            $results['audit_log'] = ['status' => is_writable(__DIR__ . '/../../logs/audit/audit.log'), 'message' => "Audit Log: Presente"];
+            $results['audit_log'] = ['status' => is_writable($auditPath), 'message' => "Audit Log: Presente"];
         }
 
         // Check Backups Directory
-        $backupsPath = __DIR__ . '/../../backups';
+        $backupsPath = __DIR__ . '/../../storage/backups';
         if (!is_dir($backupsPath)) {
             mkdir($backupsPath, 0777, true);
-            $results['backups_dir'] = ['status' => true, 'message' => "INFO: Creata directory backups/"];
+            $results['backups_dir'] = ['status' => true, 'message' => "INFO: Creata directory storage/backups/"];
         } else {
-            $results['backups_dir'] = ['status' => is_writable($backupsPath), 'message' => "Directory backups: Scrivibile"];
+            $results['backups_dir'] = ['status' => is_writable($backupsPath), 'message' => "Directory storage/backups: Scrivibile"];
         }
 
         return ['status' => $allOk, 'details' => $results];

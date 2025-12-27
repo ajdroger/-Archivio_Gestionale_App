@@ -24,7 +24,7 @@ afterEach(function () {
 test('registrazione fallisce se utente esiste gia', function () {
     /** @var \Tests\TestCase $this */
     $repo = new PDOSocioRepository($this->db);
-    $service = new RegistrationService($repo, new ValidationService(), new PdfGenerationService(), new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/test_pest_emails.txt'), new NullLogger());
+    $service = new RegistrationService($repo, new ValidationService(), new PdfGenerationService(), new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
 
     $data = [
         'nome' => 'Mario',
@@ -42,7 +42,7 @@ test('registrazione fallisce se utente esiste gia', function () {
     $service->registerNewMember($data);
 
     // Seconda registrazione DEVE fallire
-    expect(fn () => $service->registerNewMember($data))->toThrow(Exception::class, "Utente già registrato");
+    expect(fn() => $service->registerNewMember($data))->toThrow(Exception::class, "Utente già registrato");
 });
 
 test('pdf generato solo se pagamento effettuato', function () {
@@ -56,7 +56,7 @@ test('pdf generato solo se pagamento effettuato', function () {
         }
     };
 
-    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/test_pest_emails.txt'), new NullLogger());
+    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
 
     $data = [
         'nome' => 'Luigi',
@@ -78,7 +78,7 @@ test('pdf generato se pagamento presente', function () {
     // Let's use Real to verify integration
     $pdfService = new PdfGenerationService();
 
-    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/test_pest_emails.txt'), new NullLogger());
+    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
 
     $data = [
         'nome' => 'Anna',

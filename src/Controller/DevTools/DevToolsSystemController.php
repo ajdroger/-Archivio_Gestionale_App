@@ -6,6 +6,13 @@ use Mustache_Engine;
 use FratellanzaMilitare\Debug\ResilienceMonitor;
 use FratellanzaMilitare\Debug\SessionInspector;
 
+/**
+ * Controller per la gestione e il monitoraggio del sistema.
+ * 
+ * Raccoglie metriche vitali dal server (CPU, RAM, Disco),
+ * dal database (schema stats), da Redis e da Git.
+ * Fornisce dati per la dashboard e widget di monitoraggio.
+ */
 class DevToolsSystemController
 {
     private Mustache_Engine $mustache;
@@ -19,25 +26,177 @@ class DevToolsSystemController
         $this->pdo = $pdo;
     }
 
+    /**
+     * Recupera informazioni generali sul sistema.
+     * 
+     * Include versione PHP, OS, Driver DB, limiti di memoria e upload,
+     * e stato dettagliato di OPCache se attivo.
+     * 
+     * @return array
+     */
     public function getSystemInfo(): array
     {
         $db = $this->pdo;
+
+        // OPCache Granular
+        $opcacheStatus = function_exists('opcache_get_status') ? @opcache_get_status(false) : null;
+        $opcacheMem = $opcacheStatus['memory_usage'] ?? null;
+
         return [
             'php_version' => phpversion(),
             'os' => php_uname(),
             'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
             'db_driver' => $db->getAttribute(\PDO::ATTR_DRIVER_NAME),
-            'app_version' => '2.0 Mission-Critical Enterprise',
+            'app_version' => '3.2 Expert', // Updated version
             'memory_limit' => ini_get('memory_limit'),
+            'memory_usage_real' => $this->formatBytes(memory_get_usage(true)),
             'upload_max' => ini_get('upload_max_filesize'),
             'post_max' => ini_get('post_max_size'),
             'max_execution' => ini_get('max_execution_time') . 's',
             'disk_free' => $this->safeDiskSpace('free'),
             'disk_total' => $this->safeDiskSpace('total'),
             'disk_percent' => $this->safeDiskPercent(),
-            'opcache_enabled' => function_exists('opcache_get_status') && opcache_get_status() !== false,
-            'opcache_status' => function_exists('opcache_get_status') ? opcache_get_status(false) : null,
+            'opcache_enabled' => $opcacheStatus && ($opcacheStatus['opcache_enabled'] ?? false),
+            'opcache_stats' => $opcacheMem ? [
+                'used' => $this->formatBytes($opcacheMem['used_memory']),
+                'free' => $this->formatBytes($opcacheMem['free_memory']),
+                'wasted' => $this->formatBytes($opcacheMem['wasted_memory']),
+                'hit_rate' => round($opcacheStatus['opcache_statistics']['opcache_hit_rate'] ?? 0, 1),
+                'percent_used' => round(($opcacheMem['used_memory'] / ($opcacheMem['used_memory'] + $opcacheMem['free_memory'])) * 100, 1)
+            ] : null,
             'error_count' => $this->countRecentErrors()
+        ];
+    }
+
+    /**
+     * Recupera statistiche da Redis (se disponibile).
+     * 
+     * Tenta la connessione al server Redis configurato e recupera info
+     * su memoria, client connessi e chiavi.
+     * 
+     * @return array
+     */
+    public function getRedisStats(): array
+    {
+        $status = 'offline';
+        $info = [
+            'version' => 'N/A',
+            'uptime' => '-',
+            'used_memory' => '0B',
+            'connected_clients' => 0,
+            'total_connections' => 0,
+            'key_count' => 0
+        ];
+
+        try {
+            // Quick check if Predis is available (it is in composer)
+            if (class_exists('Predis\Client')) {
+                // Hardcoded localhost for now, or fetch from ENVs
+                $client = new \Predis\Client([
+                    'scheme' => 'tcp',
+                    'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+                    'port' => $_ENV['REDIS_PORT'] ?? 6379,
+                    'read_write_timeout' => 1 // Fast timeout
+                ]);
+                $client->connect();
+                if ($client->isConnected()) {
+                    $status = 'online';
+                    $rawInfo = $client->info();
+                    $info = [
+                        'version' => $rawInfo['Server']['redis_version'] ?? '?',
+                        'uptime' => ($rawInfo['Server']['uptime_in_days'] ?? 0) . 'd',
+                        'used_memory' => $rawInfo['Memory']['used_memory_human'] ?? '0B',
+                        'connected_clients' => $rawInfo['Clients']['connected_clients'] ?? 0,
+                        'total_connections' => $rawInfo['Stats']['total_connections_received'] ?? 0,
+                        'key_count' => $rawInfo['Keyspace']['db0']['keys'] ?? 0 // Assuming db0
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            $status = 'error';
+        }
+
+        return ['status' => $status, 'details' => $info];
+    }
+
+    /**
+     * Recupera informazioni sullo stato del repository Git.
+     * 
+     * Esegue comandi git per ottenere branch, ultimo commit e stato 'dirty' (modifiche non committate).
+     * 
+     * @return array
+     */
+    public function getGitInfo(): array
+    {
+        $baseDir = __DIR__ . '/../../../';
+        if (!is_dir($baseDir . '.git')) {
+            return ['active' => false];
+        }
+
+        try {
+            $branch = trim(shell_exec("cd $baseDir && git rev-parse --abbrev-ref HEAD"));
+            $commit = trim(shell_exec("cd $baseDir && git log -1 --format=\"%h|%s|%an|%ar\""));
+            $statusRaw = shell_exec("cd $baseDir && git status --porcelain");
+            $isDirty = !empty(trim($statusRaw));
+
+            $commits = explode('|', $commit);
+
+            return [
+                'active' => true,
+                'branch' => $branch,
+                'short_hash' => $commits[0] ?? '????',
+                'message' => $commits[1] ?? '',
+                'author' => $commits[2] ?? '',
+                'time' => $commits[3] ?? '',
+                'dirty' => $isDirty
+            ];
+        } catch (\Exception $e) {
+            return ['active' => false];
+        }
+    }
+
+    public function getPrivacyStats(): array
+    {
+        // 1. Log Redaction (Approximate)
+        $logFile = __DIR__ . '/../../../logs/app.log';
+        $maskedLogs = 0;
+        $maskedLogEntries = [];
+
+        if (file_exists($logFile)) {
+            $lastLines = $this->tailFile($logFile, 200);
+            foreach ($lastLines as $l) {
+                if (str_contains($l, '*****') || str_contains($l, '[REDACTED]')) {
+                    $maskedLogs++;
+                    // Extract timestamp and brief context
+                    preg_match('/^\[(.*?)\]/', $l, $matches);
+                    $ts = $matches[1] ?? 'N/A';
+                    $maskedLogEntries[] = ['timestamp' => $ts, 'snippet' => substr(strip_tags($l), 0, 50) . '...'];
+                }
+            }
+        }
+
+        // 2. Encrypted Secrets (Users with 2FA)
+        $encryptedUsers = [];
+        $encryptedSecrets = 0;
+        try {
+            $stmt = $this->pdo->query("SELECT username, id FROM users WHERE totp_secret IS NOT NULL AND LENGTH(totp_secret) > 32");
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $encryptedSecrets = count($rows);
+            foreach ($rows as $r) {
+                $encryptedUsers[] = ['username' => $r['username'], 'id' => $r['id']];
+            }
+        } catch (\Exception $e) {
+            $encryptedSecrets = 0;
+        }
+
+        return [
+            'masked_logs_count' => $maskedLogs,
+            'encrypted_secrets' => $encryptedSecrets,
+            'anonymized_records' => 0,
+            'details' => [
+                'users' => $encryptedUsers,
+                'logs' => $maskedLogEntries
+            ]
         ];
     }
 

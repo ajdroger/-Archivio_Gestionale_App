@@ -6,6 +6,12 @@ use Mustache_Engine;
 use FratellanzaMilitare\SecurityLayer\AuditTrail;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+/**
+ * Controller per la consultazione del Registro di Audit (Audit Log).
+ * 
+ * Permette di filtrare visualizzare le azioni tracciate nel sistema
+ * (login, modifiche DB, accessi sensibili) per scopi di sicurezza e compliance.
+ */
 class DevToolsAuditController
 {
     private Mustache_Engine $mustache;
@@ -17,6 +23,15 @@ class DevToolsAuditController
         $this->pdo = $pdo;
     }
 
+    /**
+     * Recupera e filtra i log di audit.
+     * 
+     * Accetta parametri di filtro via GET o POST (date, utente, risorsa).
+     * Utilizza il servizio AuditTrail per eseguire la query.
+     * 
+     * @param Request $request
+     * @return array Dati paginati dei log
+     */
     public function getLogs(Request $request): array
     {
         $params = array_merge($request->getQueryParams(), (array) $request->getParsedBody());

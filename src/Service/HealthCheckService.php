@@ -12,6 +12,17 @@ use FratellanzaMilitare\Service\RedisService;
  * 
  * Esegue health check completi di database, Redis, storage e queue system.
  */
+/**
+ * Servizio centralizzato per il monitoraggio della salute del sistema (Health Check).
+ * 
+ * Esegue test su:
+ * - Connettività Database
+ * - Disponibilità Redis
+ * - Scrivibilità Storage
+ * - Stato del sistema di Code
+ * 
+ * Aggrega i risultati per la dashboard o per API di monitoraggio esterne.
+ */
 class HealthCheckService
 {
     private PDO $pdo;
@@ -32,7 +43,9 @@ class HealthCheckService
     }
 
     /**
-     * Esegue tutti i health check
+     * Esegue tutti i health check configurati e restituisce un report aggregato.
+     * 
+     * @return array Report completo con stato globale, timestamp e dettagli per singolo servizio.
      */
     public function checkAll(): array
     {
@@ -55,7 +68,7 @@ class HealthCheckService
     }
 
     /**
-     * Check database connectivity
+     * Verifica la connettività al database eseguendo una query semplice (SELECT 1).
      */
     private function checkDatabase(): array
     {
@@ -84,7 +97,7 @@ class HealthCheckService
     }
 
     /**
-     * Check Redis connectivity
+     * Verifica lo stato di Redis (se configurato).
      */
     private function checkRedis(): array
     {
@@ -127,7 +140,7 @@ class HealthCheckService
     }
 
     /**
-     * Check storage writability
+     * Verifica i permessi di scrittura e lettura sulla directory di storage.
      */
     private function checkStorage(): array
     {
@@ -167,7 +180,7 @@ class HealthCheckService
     }
 
     /**
-     * Check queue system
+     * Verifica lo stato del sistema di code (se configurato).
      */
     private function checkQueue(): array
     {

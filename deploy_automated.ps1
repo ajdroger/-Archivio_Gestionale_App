@@ -1,48 +1,43 @@
-# Script di Deploy Automatico su GitHub e Vercel
+# Script di Deploy Automatico - Enterprise v2.1
 # Autore: Soobadur Mohammad Ajmeer
-# Data: 25/12/2025
+# Data Aggiornamento: 27/12/2025
 
-Write-Host "🚀 Avvio procedura di Deploy per utente: ajdroger" -ForegroundColor Green
+Write-Host "🚀 Avvio procedura di Deploy Enterprise" -ForegroundColor Green
+$ErrorActionPreference = "Stop"
 
-# 1. Verifica GitHub CLI
+# 1. Pre-Flight Checks
+Write-Host "`n🩺 Esecuzione Health Check..." -ForegroundColor Cyan
+php bin/tools/health_check.php
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ Health Check Fallito. Correggi gli errori prima del deploy." -ForegroundColor Red
+    exit 1
+}
+
+# 2. Test Suite
+Write-Host "`n🧪 Esecuzione Test Suite (Pest)..." -ForegroundColor Cyan
+vendor\bin\pest -c config\phpunit.xml --no-coverage 2>&1 | Tee-Object -FilePath "logs/tests/deploy_pest.txt"
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ Test Suite Fallita. Impossibile procedere." -ForegroundColor Red
+    exit 1
+}
+
+# 3. Verifica GitHub CLI
 if (-not (Get-Command "gh" -ErrorAction SilentlyContinue)) {
     Write-Host "⚠️  GitHub CLI (gh) non trovato." -ForegroundColor Yellow
-    Write-Host "Per favore installalo da: https://cli.github.com/"
-    Write-Host "Una volta installato, riavvia questo script."
-    exit
+    exit 1
 }
 
-# 2. Login Check
-Write-Host "🔑 Verifica login GitHub..."
-gh auth status
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "⚠️  Non sei loggato. Avvio login browser..." -ForegroundColor Yellow
-    Write-Host "❗ IMPORTANTE: Completa il login nel browser e usa il tuo Google Authenticator."
-    gh auth login -p https -w
-}
-
-# 3. Creazione Repository
-Write-Host "📦 Creazione repository privata 'fratellanza-militare-archivio'..."
-gh repo create fratellanza-militare-archivio --private --source=. --remote=origin
-
-# 4. Push
-Write-Host "⬆️  Caricamento codice (Push)..."
-git push -u origin main
+# 4. Git Push
+Write-Host "`n⬆️  Sincronizzazione GitHub..." -ForegroundColor Cyan
+git add .
+git commit -m "Deploy: Automated Update $(Get-Date -Format 'yyyy-MM-dd HH:mm')"
+git push origin master
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "✅ Codice caricato su GitHub con successo!" -ForegroundColor Green
-    Write-Host "🔗 URL: https://github.com/ajdroger/fratellanza-militare-archivio"
+    Write-Host "✅ Sincronizzazione Completata!" -ForegroundColor Green
 }
 else {
-    Write-Host "❌ Errore durante il push. Verifica che il repo non esista già." -ForegroundColor Red
+    Write-Host "⚠️  Push completato con warning o nulla da fare." -ForegroundColor Yellow
 }
-
-# 5. Vercel Instructions
-Write-Host "`n☁️  DEPLOY VERCEL" -ForegroundColor Cyan
-Write-Host "Per completare il deploy su Vercel:"
-Write-Host "1. Vai su https://vercel.com/new"
-Write-Host "2. Importa il repo 'fratellanza-militare-archivio'"
-Write-Host "3. Copia le variabili d'ambiente dal file .env (eccetto DB locale)"
-Write-Host "4. Clicca Deploy."
 
 Read-Host "Premere Invio per uscire..."

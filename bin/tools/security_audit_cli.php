@@ -15,10 +15,21 @@ $checks = [];
 
 // 1. Check Display Errors
 $displayErrors = ini_get('display_errors');
+$env = $_ENV['APP_ENV'] ?? 'production';
+$isDev = in_array($env, ['local', 'development', 'dev']);
+
+if ($isDev) {
+    $status = 'PASS';
+    $msg = "Current: $displayErrors (Allowed in $env)";
+} else {
+    $status = ($displayErrors == '0' || strtolower($displayErrors) == 'off') ? 'PASS' : 'FAIL';
+    $msg = "Current: $displayErrors (Should be Off in Production)";
+}
+
 $checks[] = [
     'name' => 'PHP Display Errors',
-    'status' => ($displayErrors == '0' || strtolower($displayErrors) == 'off') ? 'PASS' : 'FAIL',
-    'detail' => "Current: $displayErrors (Should be Off in Production)"
+    'status' => $status,
+    'detail' => $msg
 ];
 
 // 2. Check Directory Write Permissions (Basic)

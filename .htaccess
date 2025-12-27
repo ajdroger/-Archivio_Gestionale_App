@@ -5,8 +5,8 @@
 # Disable Directory Browsing
 Options -Indexes
 
-# Block access to SQLite databases, Environment files, Logs, Git, Configs
-<FilesMatch "\.(sqlite|sqlite3|db|env|log|ini|git|yml|xml)$">
+# Block access to SQLite databases, Environment files, Logs, Git, Configs, Text Logs
+<FilesMatch "\.(sqlite|sqlite3|db|env|log|txt|ini|git|yml|xml)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>

@@ -11,8 +11,25 @@ use FratellanzaMilitare\Debug\LogAnalyzer;
  * 
  * Handles script execution, renamer tool, log tracing, and terminal commands
  */
+/**
+ * Controller per l'esecuzione di script di manutenzione e debug.
+ * 
+ * Gestisce l'esecuzione sicura di script PHP e PowerShell, il tool di rinomina progetto,
+ * il tracciamento dei log e il terminale interattivo.
+ */
 class DevToolsScriptController
 {
+    /**
+     * Esegue uno script presente nella directory bin/ o tests/.
+     * 
+     * Implementa controlli di sicurezza per evitare directory traversal.
+     * Supporta script .php (eseguiti via php/pest) e .ps1 (via powershell).
+     * Registra l'output in un log dedicato.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON contenente l'output
+     */
     public function runScript(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
@@ -47,6 +64,16 @@ class DevToolsScriptController
             chdir($baseDir);
             $output = shell_exec($command . ' 2>&1');
             chdir($oldCwd);
+
+            // LOGGING: Save execution result to dedicated folder instead of root
+            $logDir = $baseDir . '/logs/debug';
+            if (!is_dir($logDir)) {
+                mkdir($logDir, 0777, true);
+            }
+            $executionLog = $logDir . '/script_executions.log';
+            $timestamp = date('Y-m-d H:i:s');
+            $logEntry = "[$timestamp] SCRIPT: $scriptPath\nCOMMAND: $command\nOUTPUT:\n$output\n" . str_repeat('-', 40) . "\n";
+            file_put_contents($executionLog, $logEntry, FILE_APPEND);
         } else {
             $output = "Tipo di file non supportato.";
         }
@@ -55,6 +82,13 @@ class DevToolsScriptController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * Avvia il tool di rinomina del progetto (SystemRenamer).
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON
+     */
     public function runRenamer(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
@@ -97,6 +131,13 @@ class DevToolsScriptController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * Recupera i log specifici per una Request ID (Trace Explorer).
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON
+     */
     public function logTrace(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
@@ -114,6 +155,16 @@ class DevToolsScriptController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * Endpoint per il terminale interattivo (Web Shell).
+     * 
+     * Esegue comandi shell arbitrari mantenendo la directory di lavoro in sessione.
+     * ATTENZIONE: Questo è un endpoint estremamente sensibile.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON output del comando
+     */
     public function terminal(Request $request, Response $response): Response
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

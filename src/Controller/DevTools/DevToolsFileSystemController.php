@@ -10,6 +10,13 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  * 
  * Handles file system browsing, reading, and editing
  */
+/**
+ * Controller per la gestione del FileSystem (Code Reactor).
+ * 
+ * Permette di navigare nelle directory del server (fsList),
+ * leggere il contenuto dei file (fsRead) e salvarne le modifiche (fsSave).
+ * Implementa restrizioni di ambito per sicurezza.
+ */
 class DevToolsFileSystemController
 {
     private string $basePath;
@@ -19,6 +26,13 @@ class DevToolsFileSystemController
         $this->basePath = $basePath ? realpath($basePath) : realpath(__DIR__ . '/../../../');
     }
 
+    /**
+     * Elenca il contenuto di una directory.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON con elenco file e directory
+     */
     public function fsList(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
@@ -60,6 +74,13 @@ class DevToolsFileSystemController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * Legge il contenuto di un file.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON contenente il testo del file
+     */
     public function fsRead(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
@@ -76,6 +97,15 @@ class DevToolsFileSystemController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * Salva le modifiche su un file.
+     * 
+     * Sovrascrive il file esistente con il nuovo contenuto ricevuto.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON di successo o errore
+     */
     public function fsSave(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();

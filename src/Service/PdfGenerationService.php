@@ -5,8 +5,21 @@ namespace FratellanzaMilitare\Service;
 use Dompdf\Dompdf;
 use FratellanzaMilitare\GestioneSoci\Socio;
 
+/**
+ * Servizio wrapper per la generazione di PDF con Dompdf.
+ * 
+ * Fornisce metodi rapidi per generare documenti standard come ricevute e attestati.
+ */
 class PdfGenerationService
 {
+    /**
+     * Genera la ricevuta di iscrizione in formato PDF.
+     * 
+     * @param Socio $socio
+     * @param float $amount Importo versato
+     * @param int $year Anno di riferimento
+     * @return string Contenuto binario del PDF
+     */
     public function generateRegistrationReceipt(Socio $socio, float $amount, int $year): string
     {
         // Template HTML (could be moved to an external .mustache file later)

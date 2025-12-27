@@ -272,7 +272,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const descriptions = {
             'segreteria': '<strong>Segreteria:</strong> Accesso completo alla gestione soci, iscrizioni e archivio digitale.',
             'admin': '<strong>Admin:</strong> Controllo totale del sistema, gestione utenti, database e strumenti di sviluppo.',
+            'direttore_associazione': '<strong>Direttore:</strong> Accesso completo (Write) e Dashboard intelligence.',
+            'collegio_sindacale': '<strong>Collegio Sindacale:</strong> Accesso Intelligence e Audit. Sola lettura Anagrafica.',
             'comando': '<strong>Comando:</strong> Accesso di alto livello per monitoraggio attività, statistiche e reportistica.',
+            'ente_universita': '<strong>Università:</strong> Accesso scopo ricerca e analisi demografiche (Stats Only).',
+            'ente_sanitario': '<strong>Sanità:</strong> Accesso reportistica sanitaria e monitoraggio (Stats Only).',
+            'ente_pubblico': '<strong>P.A. / Sicurezza:</strong> Accesso verifiche istituzionali e statistiche aggregate.',
             'sviluppo': '<strong>Sviluppo:</strong> Accesso agli strumenti tecnici, log e filesystem per manutenzione.',
             'auditor': '<strong>Auditor:</strong> Accesso sola lettura ai log di audit e coerenza dati (GDPR Compliance).',
             'ospite': '<strong>Ospite:</strong> Visione limitata dei dati senza possibilità di modifica.'
@@ -489,6 +494,141 @@ window.startHeartbeat = () => {
                         threatStatus.className = 'badge bg-transparent text-success border border-success border-opacity-50 fw-bold';
                     }
                 }
+
+                // Privacy Monitor
+                if (d.monitoring.privacy) {
+                    const p = d.monitoring.privacy;
+                    const totalMasked = (p.masked_logs_count || 0) + (p.encrypted_secrets || 0);
+                    updateText('mon-privacy-count', totalMasked);
+
+                    const privStatus = document.getElementById('mon-privacy-status');
+                    if (privStatus) {
+                        if (totalMasked > 0) {
+                            privStatus.innerText = 'PROTECTED';
+                            privStatus.className = 'badge bg-success bg-opacity-20 text-light border border-success border-opacity-25 fw-bold shadow-success-glow';
+                        } else {
+                            privStatus.innerText = 'INACTIVE';
+                            privStatus.className = 'badge bg-secondary bg-opacity-20 text-secondary border border-secondary border-opacity-25';
+                        }
+                    }
+
+                    // POPULATE PRIVACY DETAILS TABLE
+                    const privacyTable = document.getElementById('table-privacy-details');
+                    if (privacyTable && p.details) {
+                        const tbody = privacyTable.querySelector('tbody');
+                        if (tbody) {
+                            let rows = '';
+
+                            // 1. Users with Encryption
+                            if (p.details.users) {
+                                p.details.users.forEach(u => {
+                                    rows += `<tr>
+                                        <td class="ps-4 text-info fw-bold"><i class="fa-solid fa-user-lock me-2"></i>${u.username} <span class="text-muted small ms-1">(ID: ${u.id})</span></td>
+                                        <td><span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">ENCRYPTED</span></td>
+                                        <td class="text-muted font-monospace small">TOTP Secret Encrypted (AES-256)</td>
+                                    </tr>`;
+                                });
+                            }
+
+                            // 2. Redacted Logs
+                            if (p.details.logs) {
+                                p.details.logs.forEach(l => {
+                                    rows += `<tr>
+                                        <td class="ps-4 text-warning"><i class="fa-solid fa-clock me-2"></i>${l.timestamp}</td>
+                                        <td><span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">REDACTED LOG</span></td>
+                                        <td class="text-secondary font-monospace small text-truncate" style="max-width: 300px;">${l.snippet}</td>
+                                    </tr>`;
+                                });
+                            }
+
+                            if (rows === '') {
+                                rows = '<tr><td colspan="3" class="text-center p-4 text-muted fst-italic">Nessun evento di privacy rilevato nel periodo recente.</td></tr>';
+                            }
+                            tbody.innerHTML = rows;
+                        }
+                    }
+                }
+
+                // --- EXPERT MONITORING SUITE (Redis, Git, OPCache) ---
+                try {
+                    // 1. Redis Stats
+                    if (d.monitoring.redis) {
+                        const r = d.monitoring.redis;
+                        const rStatus = document.getElementById('infra-redis-status');
+                        if (rStatus) {
+                            rStatus.innerText = r.status.toUpperCase();
+                            rStatus.className = r.status === 'online'
+                                ? 'badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-bold shadow-success-glow'
+                                : 'badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 fw-bold';
+                        }
+                        if (r.details) {
+                            updateText('infra-redis-mem', r.details.used_memory || '0B');
+
+                            // Fix for accidental method access key collision: Use explicit 'key_count' from backend
+                            const keysVal = r.details.key_count || '0';
+                            updateText('infra-redis-keys', keysVal);
+
+                            updateText('infra-redis-uptime', (r.details.uptime || '-') + ' uptime');
+
+                            // Fake visual ring update (random subtle movement or logic if possible)
+                            const ring = document.getElementById('infra-redis-ring');
+                            if (ring && r.status === 'online') {
+                                ring.setAttribute('stroke-dasharray', '75, 100'); // Static "healthy" value for now
+                                ring.style.stroke = 'var(--bs-success)';
+                            } else if (ring) {
+                                ring.setAttribute('stroke-dasharray', '0, 100');
+                                ring.style.stroke = '#444';
+                            }
+                        }
+                    }
+
+                    // 2. Git Stats
+                    if (d.monitoring.git) {
+                        const g = d.monitoring.git;
+                        updateText('infra-git-branch', g.branch || 'HEAD');
+                        updateText('infra-git-hash', g.short_hash || '-------');
+                        updateText('infra-git-msg', g.message || 'No commit info');
+                        updateText('infra-git-author', g.author || '-');
+
+                        const gStatus = document.getElementById('infra-git-status');
+                        if (gStatus) {
+                            if (g.dirty) {
+                                gStatus.innerText = 'DIRTY (UNSAVED)';
+                                gStatus.className = 'badge bg-transparent text-warning border border-warning border-opacity-50 pulsate';
+                            } else {
+                                gStatus.innerText = 'CLEAN';
+                                gStatus.className = 'badge bg-success bg-opacity-20 text-success border border-success border-opacity-25';
+                            }
+                        }
+                    }
+
+                    // 3. OPCache Stats (From d.system.opcache_stats)
+                    // Handle DISABLED state gracefully
+                    if (d.system) {
+                        const op = d.system.opcache_stats;
+                        if (op) {
+                            updateText('infra-op-hit', op.hit_rate + '% Hit');
+                            updateText('infra-op-mem', `${op.used} Used / ${op.free} Free`);
+
+                            const opBar = document.getElementById('infra-op-bar');
+                            if (opBar) opBar.style.width = op.percent_used + '%';
+
+                            updateText('infra-op-used', op.used);
+                            updateText('infra-op-free', op.free);
+                            updateText('infra-op-wasted', op.wasted);
+                        } else {
+                            // Explicitly show disabled
+                            updateText('infra-op-hit', 'DISABLED');
+                            const opBar = document.getElementById('infra-op-bar');
+                            if (opBar) opBar.style.width = '0%';
+                            updateText('infra-op-mem', 'Not Available');
+                            updateText('infra-op-used', '-');
+                            updateText('infra-op-free', '-');
+                            updateText('infra-op-wasted', '-');
+                        }
+                    }
+                } catch (e) { console.warn('Monitoring widget error:', e); }
+
             }
         }).catch(err => console.warn('Heartbeat skipped:', err))
             .finally(() => setTimeout(poll, 3000)); // Poll every 3s

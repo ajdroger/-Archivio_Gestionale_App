@@ -17,7 +17,10 @@ test('statistics view renders', function () {
         ->method('getStatistics')
         ->willReturn(['total' => 10]);
 
-    $controller = new StatsDashboardController($mustache, $repo);
+    $resilience = $this->createMock(\FratellanzaMilitare\Debug\ResilienceMonitor::class);
+    $health = $this->createMock(\FratellanzaMilitare\Service\HealthCheckService::class);
+
+    $controller = new StatsDashboardController($mustache, $repo, $resilience, $health);
 
     $request = (new ServerRequestFactory())->createServerRequest('GET', '/stats');
     $response = (new ResponseFactory())->createResponse();

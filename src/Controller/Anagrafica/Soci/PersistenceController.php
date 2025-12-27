@@ -14,6 +14,12 @@ use Slim\Routing\RouteContext;
 /**
  * Controller dedicato alla persistenza e gestione dei dati dei soci.
  */
+/**
+ * Controller per la persistenza dei dati dei Soci.
+ * 
+ * Gestisce il ciclo di vita (CRUD) dei soci: Creazione, Modifica, Aggiornamento ed Eliminazione.
+ * Integra validazione e log per ogni operazione.
+ */
 class PersistenceController
 {
     private Mustache_Engine $mustache;
@@ -36,6 +42,13 @@ class PersistenceController
         $this->registrationService = $registrationService;
     }
 
+    /**
+     * Mostra il form di creazione socio.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     public function create(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $viewData = [
@@ -47,6 +60,16 @@ class PersistenceController
         return $response;
     }
 
+    /**
+     * Salva un nuovo socio (Store).
+     * 
+     * Utilizza RegistrationService per gestire la logica complessa di iscrizione.
+     * Gestisce i log di errore.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     public function store(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = $request->getParsedBody();
@@ -62,6 +85,14 @@ class PersistenceController
         return $response->withHeader('Location', $routeParser->urlFor('socio_list'))->withStatus(302);
     }
 
+    /**
+     * Mostra il form di modifica socio.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function edit(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $socio = $this->socioRepo->findByCodiceFiscale($args['cf']);
@@ -88,6 +119,17 @@ class PersistenceController
         return $response;
     }
 
+    /**
+     * Aggiorna i dati di un socio esistente.
+     * 
+     * Mappa i dati dal form all'entità Socio e salva le modifiche.
+     * Logga l'operazione di aggiornamento.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function update(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $socio = $this->socioRepo->findByCodiceFiscale($args['cf']);
@@ -113,6 +155,14 @@ class PersistenceController
         return $response->withHeader('Location', $routeParser->urlFor('socio_list'))->withStatus(302);
     }
 
+    /**
+     * Elimina (o archivia) un socio.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $this->socioRepo->delete($args['cf']);

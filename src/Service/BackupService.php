@@ -4,6 +4,18 @@ namespace FratellanzaMilitare\Service;
 
 use Psr\Log\LoggerInterface;
 
+/**
+ * Servizio per la gestione dei backup del database.
+ * 
+ * Si occupa di eseguire il dump del database MySQL utilizzando mysqldump,
+ * gestire la rotazione dei file vecchi e loggare l'esito delle operazioni.
+ */
+/**
+ * Servizio per la gestione dei backup del database.
+ * 
+ * Si occupa di eseguire il dump del database MySQL utilizzando mysqldump,
+ * gestire la rotazione dei file vecchi e loggare l'esito delle operazioni.
+ */
 class BackupService
 {
     private string $backupDir;
@@ -23,7 +35,22 @@ class BackupService
     }
 
     /**
-     * Esegue il backup del database MySQL
+     * Esegue il backup del database MySQL.
+     * 
+     * Rileva automaticamente il percorso di mysqldump (su Windows cerca percorsi comuni).
+     * Recupera le credenziali dall'ambiente (.env).
+     * Gestisce la rotazione automatica post-backup.
+     * 
+     * @return bool True se il backup è riuscito, False altrimenti.
+     */
+    /**
+     * Esegue il backup del database MySQL.
+     * 
+     * Rileva automaticamente il percorso di mysqldump (su Windows cerca percorsi comuni).
+     * Recupera le credenziali dall'ambiente (.env).
+     * Gestisce la rotazione automatica post-backup.
+     * 
+     * @return bool True se il backup è riuscito, False altrimenti.
      */
     public function executeBackup(): bool
     {
@@ -78,7 +105,14 @@ class BackupService
     }
 
     /**
-     * Rimuove i backup più vecchi della retention impostata
+     * Rimuove i backup più vecchi della retention impostata.
+     * 
+     * I file vengono mantenuti per il numero di giorni specificato nel costruttore.
+     */
+    /**
+     * Rimuove i backup più vecchi della retention impostata.
+     * 
+     * I file vengono mantenuti per il numero di giorni specificato nel costruttore.
      */
     private function rotateBackups(): void
     {

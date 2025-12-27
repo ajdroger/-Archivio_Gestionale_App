@@ -10,6 +10,11 @@ use Psr\Log\LoggerInterface;
 /**
  * Controller dedicato ad operazioni speciali e azioni di utilità sui soci.
  */
+/**
+ * Controller per azioni specifiche sui Soci.
+ * 
+ * Gestisce operazioni di utilità come il calcolo automatico del Codice Fiscale.
+ */
 class ActionController
 {
     private LoggerInterface $auditLogger;
@@ -21,6 +26,13 @@ class ActionController
 
     /**
      * Calcola il Codice Fiscale tramite il servizio dedicato.
+     * 
+     * Accetta dati anagrafici in POST e restituisce il CF calcolato.
+     * Gestisce e logga eventuali errori di calcolo.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface JSON
      */
     public function calculateFiscalCode(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {

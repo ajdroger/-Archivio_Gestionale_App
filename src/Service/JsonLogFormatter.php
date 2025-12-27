@@ -12,6 +12,12 @@ use Monolog\LogRecord;
  * 
  * Formatta log in JSON con context enrichment automatico.
  */
+/**
+ * Formattatore di log personalizzato in formato JSON.
+ * 
+ * Assicura che i log siano strutturati e facilmente parsabili (es. da stack ELK o Viewer JS).
+ * Include automaticamente metadati di contesto (IP, URI, Method) se disponibili.
+ */
 class JsonLogFormatter implements FormatterInterface
 {
     private string $applicationName;
@@ -21,6 +27,9 @@ class JsonLogFormatter implements FormatterInterface
         $this->applicationName = $applicationName;
     }
 
+    /**
+     * Formatta il singolo record di log in JSON.
+     */
     public function format(LogRecord $record): string
     {
         $data = [
@@ -44,6 +53,9 @@ class JsonLogFormatter implements FormatterInterface
         return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL;
     }
 
+    /**
+     * Formatta un batch di record.
+     */
     public function formatBatch(array $records): string
     {
         $formatted = '';

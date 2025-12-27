@@ -12,6 +12,17 @@ use FratellanzaMilitare\Service\ValidationService;
 use FratellanzaMilitare\Service\PdfGenerationService;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Servizio per la gestione della registrazione nuovi soci.
+ * 
+ * Orchestra il flusso di iscrizione:
+ * 1. Validazione dati (CF, Email).
+ * 2. Verifica duplicati.
+ * 3. Creazione Entità Socio.
+ * 4. Gestione pagamento quote.
+ * 5. Generazione PDF ricevuta.
+ * 6. Invio email conferma.
+ */
 class RegistrationService
 {
     private SocioRepository $repo;
@@ -36,6 +47,14 @@ class RegistrationService
         $this->uploadDir = __DIR__ . '/../../storage/uploads/';
     }
 
+    /**
+     * Registra un nuovo socio nel sistema.
+     * 
+     * @param array $data Dati provenienti dal form (POST)
+     * @return Socio L'entità Socio creata
+     * @throws \InvalidArgumentException Se i dati non sono validi
+     * @throws \Exception Se il socio esiste già
+     */
     public function registerNewMember(array $data): Socio
     {
         // 1. Basic Validation
@@ -81,6 +100,11 @@ class RegistrationService
         return $socio;
     }
 
+    /**
+     * Gestisce il processo di pagamento della quota associativa.
+     * 
+     * Crea un documento 'Copia Modulo Iscrizione', genera il PDF e invia notifica.
+     */
     private function processPayment(Socio $socio): void
     {
         $year = 2025; // Could be dynamic

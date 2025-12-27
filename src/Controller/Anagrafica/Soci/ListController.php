@@ -12,6 +12,11 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Controller dedicato alla visualizzazione dell'elenco dei soci.
  */
+/**
+ * Controller per la lista dei Soci.
+ * 
+ * Gestisce la visualizzazione tabellare dei soci con funzionalità di ricerca.
+ */
 class ListController
 {
     private Mustache_Engine $mustache;
@@ -25,6 +30,14 @@ class ListController
 
     /**
      * Visualizza la lista dei soci con supporto alla ricerca.
+     * 
+     * Se è presente il parametro 'q', esegue una ricerca full-text.
+     * Altrimenti restituisce l'elenco completo (potenzialmente paginato in futuro).
+     * Mappa i dati per la tabella in formato array per il template.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function list(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {

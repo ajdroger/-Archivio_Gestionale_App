@@ -32,7 +32,9 @@
 -->
 
 <!-- STILI PERSONALIZZATI & LOGICA CORE -->
-<script src="{{base_url}}/js/devtools/admin_devtools.js"></script>
+<!-- STILI PERSONALIZZATI & LOGICA CORE -->
+<link rel="stylesheet" href="{{base_url}}/css/components/devtools.css">
+<script src="{{base_url}}/js/components/devtools.js?v=3.2.3"></script>
 
 <!-- CONFIGURAZIONE GLOBALE: Token CSRF per sicurezza chiamate AJAX -->
 <script>
@@ -58,6 +60,8 @@
 <!-- Styles moved to style.css -->
 
 <!-- ######################################################################################## -->
+<!-- CSS has been moved to public/css/components/devtools.css -->
+<!-- ######################################################################################## -->
 <!-- LAYOUT PRINCIPALE -->
 <div class="d-flex min-vh-100 bg-black">
     
@@ -68,7 +72,7 @@
         AUMENTATA LARGHEZZA E CONTRASTO
         ========================================
     -->
-    <div class="d-flex flex-column flex-shrink-0 p-4 border-end border-secondary" style="width: 320px; background-color: #0a0a0a;">
+    <div class="d-flex flex-column flex-shrink-0 p-3 border-end border-secondary" style="width: 280px; background-color: #0a0a0a;">
         
         <!-- Intestazione Sidebar -->
         <div class="d-flex align-items-center mb-5 text-decoration-none">
@@ -141,9 +145,9 @@
     <div class="flex-grow-1 overflow-auto bg-black position-relative" style="padding-left: 0;">
         
         <!-- Top Bar Appiccicosa (Sticky) -->
-        <header class="py-4 px-5 border-bottom border-secondary d-flex justify-content-between align-items-center" style="background-color: #0a0a0a;">
+        <header class="py-3 px-4 border-bottom border-secondary d-flex justify-content-between align-items-center" style="background-color: #0a0a0a;">
             <div class="d-flex align-items-center">
-                <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO</h4>
+                <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO v2.2</h4>
             </div>
             <div class="d-flex gap-3">
                  <!-- Pulsante Toggle Terminale -->
@@ -158,31 +162,74 @@
 
         <!-- Contenitore Tab Panels -->
 
-        <div class="p-5 tab-content w-100" id="v-pills-tabContent">
-            
+        <div class="p-3 tab-content w-100" id="v-pills-tabContent">
+
             <!-- 
-                ************* TAB 1: DASHBOARD ************* 
+                ************* TAB 6: CODE REACTOR (MOVED TO TOP) ************* 
+                Editor di file e browser del filesystem del server.
             -->
+            <div class="tab-pane fade h-100" id="v-pills-editor" role="tabpanel">
+                <div class="row g-0 border border-secondary border-opacity-25 rounded overflow-hidden shadow-lg" style="height: 85vh;">
+                      
+                      <!-- Pannello File Tree (SX) -->
+                      <div class="col-lg-3 bg-dark border-end border-secondary border-opacity-25 d-flex flex-column bg-opacity-50 backdrop-blur h-100">
+                          <div class="p-2 border-bottom border-secondary border-opacity-25 bg-black bg-opacity-20 d-flex gap-2">
+                              <button class="btn btn-sm btn-link text-secondary hover-text-white" id="btn-fs-refresh" title="Ricarica Cartella">
+                                  <i class="fa-solid fa-sync"></i>
+                              </button>
+                              <input type="text" id="fs-path" class="form-control form-control-sm bg-transparent text-secondary border-0 font-monospace" value="/" readonly title="Percorso Corrente">
+                          </div>
+                          <div class="flex-grow-1 overflow-auto p-2 code-font small custom-scrollbar" id="fs-tree">
+                              <!-- Tree popolato via JS -->
+                          </div>
+                      </div>
+
+                       <!-- Pannello Editor (DX) -->
+                      <div class="col-lg-9 bg-black d-flex flex-column position-relative h-100">
+                           <!-- Editor Toolbar -->
+                           <div class="p-2 bg-dark border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                               <span class="text-white small fw-bold font-monospace ps-2 d-flex align-items-center">
+                                   <i class="fa-solid fa-file-code me-2 text-primary"></i> <span id="editor-filename">Nessun file selezionato</span>
+                               </span>
+                               <button class="btn btn-sm btn-success fw-bold px-3 d-flex align-items-center disabled" id="btn-fs-save" disabled>
+                                   <i class="fa-solid fa-save me-2"></i>SALVA MODIFICHE
+                               </button>
+                           </div>
+                           
+                           <!-- Avviso Irreversibilità -->
+                           <div class="alert alert-danger mb-0 rounded-0 py-1 px-3 small d-flex align-items-center bg-danger bg-opacity-10 border-bottom border-danger border-opacity-25" style="display: none;" id="editor-warning-bar">
+                               <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                               <strong>ATTENZIONE:</strong> Le modifiche ai file sono <u>irreversibili</u> e vengono applicate immediatamente al filesystem. Procedere con cautela.
+                           </div>
+                           
+                           <!-- Textarea Codice -->
+                           <textarea id="code-editor" class="flex-grow-1 w-100 bg-black text-light p-3 code-font border-0" 
+                                style="resize: none; outline: none; font-size: 0.9rem; line-height: 1.6; color: #d4d4d4;" 
+                                spellcheck="false" disabled placeholder="Seleziona un file per iniziare l'editing..."></textarea>
+                      </div>
+                </div>
+            </div>
+            
             <!-- 
                 ************* TAB 1: DASHBOARD (PREMIUM) ************* 
             -->
             <div class="tab-pane fade show active" id="v-pills-dash" role="tabpanel">
                 <!-- ROW 1: MISSION CONTROL HEADER & CRITICAL ALERTS -->
-                <div class="row g-4 mb-4">
+                <div class="row g-3 mb-3">
                     <!-- Health Status Hero -->
                     <div class="col-lg-8">
                          <div class="card glass-panel border-0 h-100 position-relative overflow-hidden shadow-lg">
                              <!-- Background Dynamic Gradient -->
                              <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-to-r from-green-900 to-black opacity-30" style="z-index: 0;"></div>
                              
-                             <div class="card-body p-5 position-relative z-index-1 d-flex justify-content-between align-items-center">
+                             <div class="card-body p-4 position-relative z-index-1 d-flex justify-content-between align-items-center">
                                  <div>
                                      <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                          <div class="badge bg-success bg-opacity-25 text-white border border-success border-opacity-50 rounded-pill px-3 py-2 uppercase-tracking shadow-success-glow">
                                              <i class="fa-solid fa-check-circle me-2"></i>SYSTEM ONLINE
                                          </div>
                                          {{#system.opcache_enabled}}
-                                         <div class="badge bg-info bg-opacity-20 text-info border border-info border-opacity-25 px-3 py-2 rounded-pill uppercase-tracking shadow-info-glow">
+                                         <div class="badge bg-transparent text-info border border-info border-opacity-25 px-3 py-2 rounded-pill uppercase-tracking shadow-info-glow">
                                              <i class="fa-solid fa-bolt me-2"></i>OPCACHE ACTIVE
                                          </div>
                                          {{/system.opcache_enabled}}
@@ -272,9 +319,9 @@
                 </div>
 
                 <!-- ROW 2: ADVANCED REAL-TIME MONITORING (NEW) -->
-                <div class="row g-4 mb-4">
+                <div class="row g-3 mb-3">
                     <!-- Threat Monitor (IDS) -->
-                    <div class="col-md-4">
+                    <div class="col-xl-3 col-md-6">
                         <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-danger">
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -293,7 +340,7 @@
                     </div>
 
                     <!-- Network Pulse (Latency) -->
-                    <div class="col-md-4">
+                    <div class="col-xl-3 col-md-6">
                         <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-info">
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -311,7 +358,7 @@
                     </div>
 
                     <!-- Active Traffic (Sessions) -->
-                    <div class="col-md-4">
+                    <div class="col-xl-3 col-md-6">
                         <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-success">
                             <div class="card-body p-3">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -328,10 +375,134 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Privacy Monitor (Mask Content) -->
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-light">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold text-white mb-0 small uppercase-tracking"><i class="fa-solid fa-mask me-2 text-white"></i>Privacy Masks</h6>
+                                    <span class="badge bg-secondary bg-opacity-20 text-light border border-secondary border-opacity-25" id="mon-privacy-status">CHECKING</span>
+                                </div>
+                                <div class="d-flex align-items-end justify-content-between">
+                                    <div>
+                                        <div class="fs-4 fw-bold text-white" id="mon-privacy-count">0</div>
+                                        <div class="text-muted text-xs">Masked Elements</div>
+                                    </div>
+                                    <i class="fa-solid fa-user-shield text-light opacity-25 fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 2.5: INFRASTRUCTURE & CODEBASE (EXPERT) -->
+                <div class="row g-3 mb-3">
+                    <!-- Redis Cache Node -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-danger">
+                             <div class="card-body p-3 position-relative overflow-hidden">
+                                 <!-- Watermark -->
+                                 <i class="fa-brands fa-laravel position-absolute text-danger opacity-10" style="font-size: 8rem; right: -20px; top: -20px; rotate: -15deg;"></i>
+                                 
+                                 <div class="d-flex justify-content-between align-items-center mb-3">
+                                     <h6 class="fw-bold text-white mb-0 small uppercase-tracking"><i class="fa-solid fa-server me-2 text-danger"></i>Redis Cache</h6>
+                                     <span class="badge bg-secondary bg-opacity-20 text-muted border border-secondary border-opacity-25" id="infra-redis-status">CONNECTING...</span>
+                                 </div>
+                                 <div class="d-flex align-items-center gap-3 mb-3">
+                                     <div class="position-relative" style="width: 60px; height: 60px;">
+                                         <svg viewBox="0 0 36 36" class="circular-chart red">
+                                           <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                           <path class="circle" id="infra-redis-ring" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                         </svg>
+                                         <div class="position-absolute top-50 start-50 translate-middle text-xs fw-bold text-danger">RAM</div>
+                                     </div>
+                                     <div>
+                                         <div class="fs-5 fw-bold text-white font-monospace" id="infra-redis-mem">...</div>
+                                         <div class="text-muted text-xs">Used Memory</div>
+                                     </div>
+                                 </div>
+                                 <div class="d-flex justify-content-between text-xs border-top border-secondary border-opacity-25 pt-2">
+                                     <span class="text-muted">Keyspace:</span>
+                                     <span class="text-white fw-bold font-monospace" id="infra-redis-keys">...</span>
+                                 </div>
+                                 <div class="d-flex justify-content-between text-xs pt-1">
+                                     <span class="text-muted">Uptime:</span>
+                                     <span class="text-white fw-bold font-monospace" id="infra-redis-uptime">...</span>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Git Version Control -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-light">
+                             <div class="card-body p-3">
+                                 <div class="d-flex justify-content-between align-items-center mb-3">
+                                     <h6 class="fw-bold text-white mb-0 small uppercase-tracking"><i class="fa-solid fa-code-branch me-2 text-light"></i>Git Versioning</h6>
+                                     <span class="badge bg-dark border border-secondary text-light font-monospace" id="infra-git-branch">SCANNING...</span>
+                                 </div>
+                                 <div class="bg-black bg-opacity-50 rounded p-2 mb-2 font-monospace text-xs text-muted border border-secondary border-opacity-25">
+                                     <div class="d-flex align-items-center text-white mb-1">
+                                         <i class="fa-solid fa-hashtag me-2 text-secondary"></i>
+                                         <span id="infra-git-hash">...</span>
+                                     </div>
+                                     <div class="text-truncate" style="max-width: 100%;" id="infra-git-msg">Fetching commit info...</div>
+                                 </div>
+                                 <div class="d-flex align-items-center justify-content-between mt-2">
+                                     <div class="text-xs text-secondary" id="infra-git-author">-</div>
+                                     <span class="badge bg-secondary bg-opacity-20 text-muted border border-secondary border-opacity-25" id="infra-git-status">CHECKING...</span>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- OPCache Engine -->
+                    <div class="col-lg-4 col-md-12">
+                        <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-info">
+                             <div class="card-body p-3">
+                                 <div class="d-flex justify-content-between align-items-center mb-2">
+                                     <h6 class="fw-bold text-white mb-0 small uppercase-tracking"><i class="fa-solid fa-microchip me-2 text-info"></i>OPCache Engine</h6>
+                                     <span class="text-info font-monospace fw-bold" id="infra-op-hit">Loading...</span>
+                                 </div>
+                                 
+                                 <!-- Memory Bar -->
+                                 <div class="text-xs text-muted mb-1 d-flex justify-content-between">
+                                     <span>Memory Usage</span>
+                                     <span id="infra-op-mem">0/0 MB</span>
+                                 </div>
+                                 <div class="progress bg-dark border border-secondary border-opacity-25 mb-3" style="height: 6px;">
+                                     <div class="progress-bar bg-info" role="progressbar" id="infra-op-bar" style="width: 0%"></div>
+                                 </div>
+
+                                 <!-- Stats Grid -->
+                                 <div class="row g-2 text-center text-xs">
+                                     <div class="col-4">
+                                         <div class="p-1 rounded bg-black bg-opacity-30 border border-secondary border-opacity-10">
+                                            <div class="text-muted">Used</div>
+                                            <div class="text-white fw-bold" id="infra-op-used">-</div>
+                                         </div>
+                                     </div>
+                                     <div class="col-4">
+                                         <div class="p-1 rounded bg-black bg-opacity-30 border border-secondary border-opacity-10">
+                                            <div class="text-muted">Free</div>
+                                            <div class="text-white fw-bold" id="infra-op-free">-</div>
+                                         </div>
+                                     </div>
+                                     <div class="col-4">
+                                         <div class="p-1 rounded bg-black bg-opacity-30 border border-secondary border-opacity-10">
+                                            <div class="text-muted">Wasted</div>
+                                            <div class="text-white fw-bold" id="infra-op-wasted">-</div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ROW 3: INTERACTIVE ACTIONS & DATABASE DEEP DIVE -->
-                <div class="row g-4 mb-4">
+                <div class="row g-3 mb-3">
                     <!-- Interactive System Actions -->
                     <div class="col-12">
                         <div class="card glass-panel border-0 shadow-sm border-start border-4 border-warning">
@@ -350,6 +521,39 @@
                                     <button class="btn btn-sm btn-dark border-secondary text-light hover-white" id="btn-sys-optimize">
                                         <i class="fa-solid fa-rocket me-2 text-info"></i>Optimize DB
                                     </button>
+                                    <button class="btn btn-sm btn-dark border-secondary text-light hover-white run-script-btn" data-path="bin/debug_tools/safe_test_runner.php">
+                                        <i class="fa-solid fa-shield-halved me-2 text-primary"></i>SafeRunner
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- ROW 4: PRIVACY AUDIT TRAIL (NEW) -->
+                <div class="row g-3 mb-3">
+                    <div class="col-12">
+                        <div class="card glass-panel border-0 shadow-sm border-start border-4 border-light">
+                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <h6 class="fw-bold text-white mb-0"><i class="fa-solid fa-list-ul me-2 text-light"></i>PRIVACY AUDIT TRAIL</h6>
+                                <span class="badge bg-dark border border-secondary text-muted">LIVE FEED</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
+                                    <table class="table table-dark-custom table-hover table-striped mb-0 small align-middle" id="table-privacy-details">
+                                        <thead class="bg-black bg-opacity-50">
+                                            <tr>
+                                                <th class="ps-4">TIMESTAMP / USER</th>
+                                                <th>TYPE</th>
+                                                <th>CONTEXT / SNIPPET</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td colspan="3" class="text-center p-4 text-muted"><i class="fa-solid fa-spinner fa-spin me-2"></i>Loading privacy data...</td></tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -357,7 +561,7 @@
                 </div>
 
                 <!-- ROW 3: DB & SESSION/ENV -->
-                <div class="row g-4">
+                <div class="row g-3">
                     <!-- Database Advanced Stats -->
                     <div class="col-md-6 col-lg-7">
                         <div class="card glass-panel border-0 h-100 shadow-sm">
@@ -638,14 +842,14 @@
                 <!-- SEZIONE PRINCIPALE: ADVANCED TOOLKIT SESSION -->
                 <div class="row mb-4">
                     <div class="col-12">
-                         <a href="/fratellanza-militare-archivio/tests/test_dashboard.php" class="text-decoration-none">
+                         <a href="/fratellanza-militare-archivio/bin/debug_tools/test_dashboard.php" class="text-decoration-none">
                             <div class="card glass-panel border-0 hover-card shadow-lg bg-gradient-to-r from-blue-900 to-black position-relative overflow-hidden" style="border-left: 5px solid #3b82f6 !important;">
                                 <!-- Background Image effect or similar could go here -->
                                 <div class="card-body p-5 d-flex justify-content-between align-items-center position-relative z-index-1">
                                     <div>
                                         <h2 class="text-white fw-bold mb-2 display-6">SESSIONE TOOLKIT AVANZATA</h2>
                                         <p class="text-white text-opacity-75 mb-0 lead" style="max-width: 600px;">
-                                            Accesso completo alla suite di testing (106+ Test), esecuzione <strong>One-Click</strong>, reportistica live e strumenti di debug visuale.
+                                            Accesso completo alla suite di testing (130+ Test), esecuzione <strong>One-Click</strong>, reportistica live e strumenti di debug visuale.
                                         </p>
                                     </div>
                                     <div class="d-flex align-items-center gap-4">
@@ -686,135 +890,102 @@
                     </div>
                 </div>
 
-                <!-- SEZIONE 1: UTILITY & CORE -->
+                <!-- QUICK ACTIONS SECTION -->
                 <div class="row g-4 mb-4">
                     <div class="col-12">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-terminal me-2"></i>UTILITY DI SISTEMA (Core)</h6>
+                        <h6 class="text-white small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-bolt me-2 text-warning"></i>QUICK ACTIONS</h6>
+                        
                         <div class="row g-3">
-                             {{#scripts.utilities}}
-                             <div class="col-md-6 col-xl-3">
-                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
-                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                         <div class="overflow-hidden me-3">
-                                             <div class="fw-bold text-warning font-monospace small mb-1 bg-warning bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                                 <i class="fa-solid fa-bolt me-1"></i> {{name}}
-                                             </div>
-                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
-                                         </div>
-                                         <button class="btn btn-sm btn-outline-warning run-script-btn px-3" data-path="{{path}}" title="Esegui Utility">
-                                             <i class="fa-solid fa-play"></i>
-                                         </button>
-                                     </div>
-                                 </div>
-                             </div>
-                             {{/scripts.utilities}}
-                             {{^scripts.utilities}}
-                             <div class="col-12 text-muted small fst-italic ps-2">Nessuna utility core rilevata.</div>
-                             {{/scripts.utilities}}
+                            <!-- Health Check -->
+                            <div class="col-md-4 col-lg-3">
+                                <button class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start run-script-btn" data-path="bin/tools/health_check.php">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success bg-opacity-20 p-2 rounded me-3 text-success"><i class="fa-solid fa-heart-pulse"></i></div>
+                                        <div>
+                                            <div class="fw-bold text-white">Health Check</div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Verifica sistema</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <!-- Backup DB -->
+                            <div class="col-md-4 col-lg-3">
+                                <button class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start run-script-btn" data-path="bin/maintenance/backup.php">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-info bg-opacity-20 p-2 rounded me-3 text-info"><i class="fa-solid fa-database"></i></div>
+                                        <div>
+                                            <div class="fw-bold text-white">Backup DB</div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Backup Immediato</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <!-- Clear Cache -->
+                            <div class="col-md-4 col-lg-3">
+                                <button class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start run-script-btn" data-path="bin/maintenance/clear_cache.php">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-warning bg-opacity-20 p-2 rounded me-3 text-warning"><i class="fa-solid fa-broom"></i></div>
+                                        <div>
+                                            <div class="fw-bold text-white">Clear Cache</div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Pulizia Cache</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            
+                            <!-- System Cleanup -->
+                            <div class="col-md-4 col-lg-3">
+                                <button class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start run-script-btn" data-path="bin/maintenance/cleanup_system.php">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-secondary bg-opacity-20 p-2 rounded me-3 text-secondary"><i class="fa-solid fa-trash-can"></i></div>
+                                        <div>
+                                            <div class="fw-bold text-white">Cleanup</div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Pulizia disco</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <!-- Test SMTP -->
+                            <div class="col-md-4 col-lg-3">
+                                <button class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start run-script-btn" data-path="bin/tools/test_smtp.php">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-20 p-2 rounded me-3 text-primary"><i class="fa-solid fa-envelope"></i></div>
+                                        <div>
+                                            <div class="fw-bold text-white">Test Mail</div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Verifica SMTP</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <!-- Security Audit -->
+                            <div class="col-md-4 col-lg-3">
+                                <button class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start run-script-btn" data-path="bin/tools/security_audit_cli.php">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-danger bg-opacity-20 p-2 rounded me-3 text-danger"><i class="fa-solid fa-shield-dog"></i></div>
+                                        <div>
+                                            <div class="fw-bold text-white">Security Scan</div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Audit Sicurezza</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            <!-- Safe Test Runner -->
+                            <div class="col-md-4 col-lg-3">
+                                <button class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start run-script-btn" data-path="bin/debug_tools/safe_test_runner.php">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success bg-opacity-20 p-2 rounded me-3 text-success"><i class="fa-solid fa-shield-halved"></i></div>
+                                        <div>
+                                            <div class="fw-bold text-white">Safe Test Runner</div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Backup & Test (130+)</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- SEZIONE 2: MANUTENZIONE -->
-                <div class="row g-4 mb-4">
-                    <div class="col-12">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-screwdriver-wrench me-2"></i>MANUTENZIONE & HEALTH</h6>
-                        <div class="row g-3">
-                             {{#scripts.maintenance}}
-                             <div class="col-md-6 col-xl-3">
-                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
-                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                         <div class="overflow-hidden me-3">
-                                             <div class="fw-bold text-success font-monospace small mb-1 bg-success bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                                 <i class="fa-solid fa-scroll me-1"></i> {{name}}
-                                             </div>
-                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
-                                         </div>
-                                         <button class="btn btn-sm btn-outline-success run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
-                                             <i class="fa-solid fa-play"></i>
-                                         </button>
-                                     </div>
-                                 </div>
-                             </div>
-                             {{/scripts.maintenance}}
-                             {{^scripts.maintenance}}
-                             <div class="col-12 text-muted small fst-italic ps-2">Nessuno script di manutenzione.</div>
-                             {{/scripts.maintenance}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SEZIONE 3: TOOLS & SETUP -->
-                <div class="row g-4 mb-4">
-                    <!-- General Tools -->
-                    <div class="col-12">
-                         <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-toolbox me-2"></i>STRUMENTI GENERALI & SETUP</h6>
-                         <div class="row g-3">
-                             {{#scripts.tools}}
-                             <div class="col-md-6 col-xl-3">
-                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
-                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                         <div class="overflow-hidden me-3">
-                                             <div class="fw-bold text-light font-monospace small mb-1 bg-light bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                                 <i class="fa-solid fa-microchip me-1"></i> {{name}}
-                                             </div>
-                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
-                                         </div>
-                                         <button class="btn btn-sm btn-outline-light run-script-btn px-3" data-path="{{path}}" title="Esegui Tool">
-                                             <i class="fa-solid fa-play"></i>
-                                         </button>
-                                     </div>
-                                 </div>
-                             </div>
-                             {{/scripts.tools}}
-                             
-                             <!-- Setup Scripts (Merged here for visuals or separate? User wants grid. Let's append setup here or make own block) -->
-                             {{#scripts.setup}}
-                             <div class="col-md-6 col-xl-3">
-                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
-                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                         <div class="overflow-hidden me-3">
-                                             <div class="fw-bold text-info font-monospace small mb-1 bg-info bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                                 <i class="fa-solid fa-database me-1"></i> {{name}}
-                                             </div>
-                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
-                                         </div>
-                                         <button class="btn btn-sm btn-outline-info run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
-                                             <i class="fa-solid fa-play"></i>
-                                         </button>
-                                     </div>
-                                 </div>
-                             </div>
-                             {{/scripts.setup}}
-                         </div>
-                    </div>
-                </div>
-
-                <!-- SEZIONE 4: DEBUG TOOLS (RISCHIOSO) -->
-                <div class="row g-4 mb-4">
-                     <div class="col-12">
-                        <h6 class="text-danger small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-bug me-2"></i>STRUMENTI DI DEBUG (Rischioso!)</h6>
-                        <div class="row g-3">
-                             {{#scripts.debug_tools}}
-                             <div class="col-md-6 col-xl-3">
-                                 <div class="card bg-dark bg-opacity-60 border-danger border-opacity-25 hover-card metric-card shadow-sm h-100">
-                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                         <div class="overflow-hidden me-3">
-                                             <div class="fw-bold text-danger font-monospace small mb-1 bg-danger bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                                 <i class="fa-solid fa-biohazard me-1"></i> {{name}}
-                                             </div>
-                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
-                                         </div>
-                                         <button class="btn btn-sm btn-outline-danger run-script-btn px-3" data-path="{{path}}" title="Esegui Debug">
-                                             <i class="fa-solid fa-play"></i>
-                                         </button>
-                                     </div>
-                                 </div>
-                             </div>
-                             {{/scripts.debug_tools}}
-                             {{^scripts.debug_tools}}
-                             <div class="col-12 text-muted small fst-italic ps-2">Nessun debug tool rilevato.</div>
-                             {{/scripts.debug_tools}}
                         </div>
                     </div>
                 </div>
@@ -824,12 +995,8 @@
             <!-- 
                 ************* TAB 5: DATABASE ************* 
                 Console SQL per query dirette (MySQL/MariaDB).
+                Supporta navigazione schema e editor query.
             -->
-            <!-- 
-                ************* TAB 5: DATABASE ************* 
-                Console SQL per query dirette (SQLite).
-            -->
-            <!-- SECTION: DATABASE CONSOLE -->
             <div class="tab-pane fade" id="v-pills-db" role="tabpanel">
                 <div class="d-flex flex-column h-100 gap-4">
                     
@@ -908,51 +1075,7 @@
                 </div>
             </div>
 
-            <!-- 
-                ************* TAB 6: CODE REACTOR ************* 
-                Editor di file e browser del filesystem del server.
-            -->
-            <div class="tab-pane fade h-100" id="v-pills-editor" role="tabpanel">
-                <div class="row g-0 h-100 border border-secondary border-opacity-25 rounded overflow-hidden shadow-lg" style="min-height: 750px;">
-                      
-                      <!-- Pannello File Tree (SX) -->
-                      <div class="col-lg-3 bg-dark border-end border-secondary border-opacity-25 d-flex flex-column bg-opacity-50 backdrop-blur">
-                          <div class="p-2 border-bottom border-secondary border-opacity-25 bg-black bg-opacity-20 d-flex gap-2">
-                              <button class="btn btn-sm btn-link text-secondary hover-text-white" id="btn-fs-refresh" title="Ricarica Cartella">
-                                  <i class="fa-solid fa-sync"></i>
-                              </button>
-                              <input type="text" id="fs-path" class="form-control form-control-sm bg-transparent text-secondary border-0 font-monospace" value="/" readonly title="Percorso Corrente">
-                          </div>
-                          <div class="flex-grow-1 overflow-auto p-2 code-font small custom-scrollbar" id="fs-tree">
-                              <!-- Tree popolato via JS -->
-                          </div>
-                      </div>
 
-                       <!-- Pannello Editor (DX) -->
-                      <div class="col-lg-9 bg-black d-flex flex-column position-relative">
-                           <!-- Editor Toolbar -->
-                           <div class="p-2 bg-dark border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
-                               <span class="text-white small fw-bold font-monospace ps-2 d-flex align-items-center">
-                                   <i class="fa-solid fa-file-code me-2 text-primary"></i> <span id="editor-filename">Nessun file selezionato</span>
-                               </span>
-                               <button class="btn btn-sm btn-success fw-bold px-3 d-flex align-items-center disabled" id="btn-fs-save" disabled>
-                                   <i class="fa-solid fa-save me-2"></i>SALVA MODIFICHE
-                               </button>
-                           </div>
-                           
-                           <!-- Avviso Irreversibilità -->
-                           <div class="alert alert-danger mb-0 rounded-0 py-1 px-3 small d-flex align-items-center bg-danger bg-opacity-10 border-bottom border-danger border-opacity-25" style="display: none;" id="editor-warning-bar">
-                               <i class="fa-solid fa-triangle-exclamation me-2"></i>
-                               <strong>ATTENZIONE:</strong> Le modifiche ai file sono <u>irreversibili</u> e vengono applicate immediatamente al filesystem. Procedere con cautela.
-                           </div>
-                           
-                           <!-- Textarea Codice -->
-                           <textarea id="code-editor" class="flex-grow-1 w-100 bg-black text-light p-3 code-font border-0" 
-                                style="resize: none; outline: none; font-size: 0.9rem; line-height: 1.6; color: #d4d4d4;" 
-                                spellcheck="false" disabled placeholder="Seleziona un file per iniziare l'editing..."></textarea>
-                      </div>
-                </div>
-            </div>
 
         </div> <!-- Fine Tab Content -->
 
@@ -1045,7 +1168,12 @@
                               <select name="role" id="role-select" class="form-select bg-black text-white border-secondary">
                                  <option value="segreteria" selected>Segreteria Operativa</option>
                                  <option value="admin">Amministratore di Sistema</option>
+                                 <option value="direttore_associazione">Direttore Associazione</option>
+                                 <option value="collegio_sindacale">Collegio Sindacale</option>
                                  <option value="comando">Comando Militare (Monitoraggio)</option>
+                                 <option value="ente_universita">Polo Accademico & Ricerca</option>
+                                 <option value="ente_sanitario">Ente Sanitario / Ospedaliero</option>
+                                 <option value="ente_pubblico">Pubblica Sicurezza / Protezione Civile</option>
                                  <option value="sviluppo">Technical Support / Dev</option>
                                  <option value="auditor">Audit & Compliance</option>
                                  <option value="ospite">Ospite (Sola Lettura)</option>

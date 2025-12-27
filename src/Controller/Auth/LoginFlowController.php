@@ -11,6 +11,12 @@ use Slim\Routing\RouteContext;
 /**
  * Controller dedicato al flusso di autenticazione iniziale (Fase 1).
  */
+/**
+ * Gestisce il flusso principale di autenticazione (Fase 1).
+ * 
+ * Si occupa di mostrare il form di login e verificare le credenziali primarie
+ * (username e password). Se valide, prepara la sessione per il 2FA.
+ */
 class LoginFlowController
 {
     private Mustache_Engine $mustache;
@@ -22,6 +28,12 @@ class LoginFlowController
 
     /**
      * Visualizza il form di login.
+     * 
+     * Renderizza il template 'login'.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function form(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -32,6 +44,14 @@ class LoginFlowController
 
     /**
      * Verifica le credenziali dell'utente (Fase 1).
+     * 
+     * Controlla username e hash password nel database.
+     * Se corretti, imposta 'partial_auth' in sessione e determina il ruolo normalizzato.
+     * Reindirizza alla verifica 2FA.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function verifyCredentials(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -40,6 +60,7 @@ class LoginFlowController
         $password = $data['password'] ?? '';
 
         $db = DatabaseConnection::getConnection();
+
         $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
         $stmt->execute([':username' => $username]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -55,6 +76,11 @@ class LoginFlowController
                 str_contains($rawRole, 'amministratore') || $rawRole === 'admin' => 'admin',
                 str_contains($rawRole, 'segreteria') => 'segreteria',
                 str_contains($rawRole, 'presidente') => 'presidente',
+                str_contains($rawRole, 'sindacale') || str_contains($rawRole, 'revisore') => 'collegio_sindacale',
+                str_contains($rawRole, 'direttore') => 'direttore_associazione',
+                str_contains($rawRole, 'universit') || str_contains($rawRole, 'ateneo') || str_contains($rawRole, 'ricerca') => 'ente_universita',
+                str_contains($rawRole, 'asl') || str_contains($rawRole, 'usl') || str_contains($rawRole, 'ospedal') || str_contains($rawRole, 'sanita') => 'ente_sanitario',
+                str_contains($rawRole, 'protezione') || str_contains($rawRole, 'polizia') || str_contains($rawRole, 'carabinieri') || str_contains($rawRole, 'prefettura') => 'ente_pubblico',
                 default => 'user'
             };
             $_SESSION['temp_user_role'] = $normalizedRole;
@@ -73,6 +99,12 @@ class LoginFlowController
 
     /**
      * Wrapper layout minimale per le pagine di auth autonoma.
+     * 
+     * Inietta CSS di base e Bootstrap per le pagine di login isolate.
+     * 
+     * @param string $content Il contenuto HTML principale
+     * @param string $title Il titolo della pagina
+     * @return string HTML completo
      */
     private function wrapLayout($content, $title)
     {

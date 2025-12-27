@@ -5,15 +5,27 @@ namespace FratellanzaMilitare\GestioneSoci;
 use FratellanzaMilitare\Enum\StatoDocumento;
 use DateTime;
 
+/**
+ * Classe base astratta per tutti i documenti del sistema.
+ * 
+ * Definisce le proprietà comuni (ID univoco, nome file, hash di integrità, stato, data caricamento).
+ * Fornisce metodi per metadati e verifica integrità.
+ */
 abstract class Documento
 {
-    public string $IdUnivoco; // UUID
-    public string $NomeFile;
-    public string $HashSHA256;
-    public StatoDocumento $Stato;
+    public string $IdUnivoco; // UUID per identificazione univoca
+    public string $NomeFile; // Nome originale del file
+    public string $HashSHA256; // Hash per verifica integrità (anti-tampering)
+    public StatoDocumento $Stato; // Enum stato (VALIDATO, IN_ATTESA, etc.)
     public DateTime $DataCaricamento;
 
-    public function getMetadati(): string // Ritorna il JSON codificato
+    /**
+     * Restituisce i metadati essenziali in formato JSON.
+     * Utile per API e serializzazione leggera.
+     * 
+     * @return string JSON
+     */
+    public function getMetadati(): string
     {
         return json_encode([
             'id' => $this->IdUnivoco,
@@ -25,7 +37,10 @@ abstract class Documento
     }
 
     /**
-     * @param string|null $content Contenuto opzionale con cui effettuare la verifica. Se nullo, l'implementazione potrebbe basarsi su controlli dello storage esterno.
+     * Verifica l'integrità del documento confrontando l'hash.
+     * 
+     * @param string|null $content Contenuto del file binario per il ricalcolo dell'hash.
+     * @return bool True se l'hash corrisponde (documento integro), False altrimenti.
      */
     public function verificaIntegrita(?string $content = null): bool
     {

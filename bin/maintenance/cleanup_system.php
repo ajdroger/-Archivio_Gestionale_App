@@ -36,14 +36,17 @@ foreach ($dirsToClean as $dir) {
 }
 
 // Rotate Logs
-$logDir = __DIR__ . '/../logs';
+$logDir = __DIR__ . '/../../logs';
 if (is_dir($logDir)) {
-    echo "Checking Logs in $logDir...\n";
-    foreach (glob("$logDir/*.log") as $logFile) {
-        if (filesize($logFile) > 10 * 1024 * 1024) { // 10MB
-            echo "Rotating $logFile...\n";
-            rename($logFile, $logFile . '.' . date('Y-m-d-His') . '.bak');
-            // Gzip archive?
+    echo "Checking Logs recursively in $logDir...\n";
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($logDir));
+    foreach ($iterator as $file) {
+        if ($file->isFile() && in_array($file->getExtension(), ['log', 'txt'])) {
+            if ($file->getSize() > 10 * 1024 * 1024) { // 10MB
+                $filePath = $file->getRealPath();
+                echo "Rotating $filePath...\n";
+                rename($filePath, $filePath . '.' . date('Y-m-d-His') . '.bak');
+            }
         }
     }
 }

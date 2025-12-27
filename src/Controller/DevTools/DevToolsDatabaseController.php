@@ -13,6 +13,12 @@ use FratellanzaMilitare\SecurityLayer\AuditTrail;
  * 
  * Handles database queries and audit log exports
  */
+/**
+ * Controller per la gestione diretta del Database.
+ * 
+ * Offre funzionalità per eseguire query raw (SQL Console) e
+ * per esportare dati (Audit Log) in formati PDF o CSV.
+ */
 class DevToolsDatabaseController
 {
     private Mustache_Engine $mustache;
@@ -36,6 +42,16 @@ class DevToolsDatabaseController
         return $this->pdo;
     }
 
+    /**
+     * Esegue una query SQL arbitraria.
+     * 
+     * Accetta una stringa SQL in POST e restituisce i risultati o il numero di righe affette.
+     * ATTENZIONE: Questo endpoint è potente e richiede permessi amministrativi.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON
+     */
     public function dbQuery(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
@@ -60,6 +76,15 @@ class DevToolsDatabaseController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * Esporta i log di audit in formato PDF.
+     * 
+     * Utilizza Dompdf per generare un report visualmente curato basato sui filtri correnti.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response Application PDF
+     */
     public function exportAuditPdf(Request $request, Response $response): Response
     {
         $params = $request->getQueryParams();
@@ -92,6 +117,15 @@ class DevToolsDatabaseController
             ->withHeader('Content-Disposition', 'attachment; filename="Audit_Log_FM_' . date('Y-m-d') . '.pdf"');
     }
 
+    /**
+     * Esporta i log di audit in formato CSV.
+     * 
+     * Genera un file CSV standard per l'importazione in Excel o altri tool.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response Text CSV
+     */
     public function exportAuditExcel(Request $request, Response $response): Response
     {
         $params = $request->getQueryParams();

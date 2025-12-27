@@ -12,6 +12,12 @@ use Closure;
  * High-level caching service con tag support e invalidation strategies.
  * Usa RedisService come backend ma fornisce API application-specific.
  */
+/**
+ * Servizio di astrazione per la gestione della Cache (Redis).
+ * 
+ * Fornisce metodi typed per operazioni comuni (get, set, remember) e pattern "cache-aside".
+ * Gestisce statistiche di hit/miss rate per monitoraggio performance.
+ */
 class CacheService
 {
     private RedisService $redis;
@@ -28,7 +34,8 @@ class CacheService
     }
 
     /**
-     * Get cached value
+     * Recupera un valore dalla cache.
+     * Aggiorna le statistiche interne di hit/miss.
      */
     public function get(string $key): mixed
     {
@@ -44,7 +51,7 @@ class CacheService
     }
 
     /**
-     * Set cached value
+     * Imposta un valore in cache con TTL.
      */
     public function set(string $key, mixed $value, int $ttl = 3600): bool
     {
@@ -52,7 +59,7 @@ class CacheService
     }
 
     /**
-     * Delete cached value
+     * Rimuove un elemento dalla cache.
      */
     public function delete(string $key): bool
     {
@@ -60,7 +67,14 @@ class CacheService
     }
 
     /**
-     * Cache-aside pattern
+     * Pattern Cache-Aside: restituisce (o calcola e salva) un valore.
+     * 
+     * Se la chiave esiste, la restituisce. Altrimenti esegue la callback,
+     * salva il risultato in cache e lo restituisce.
+     * 
+     * @param string $key Chiave cache
+     * @param Closure $callback Funzione per calcolare il valore in caso di miss
+     * @param int $ttl Time to live in secondi
      */
     public function remember(string $key, Closure $callback, int $ttl = 3600): mixed
     {
@@ -68,7 +82,7 @@ class CacheService
     }
 
     /**
-     * Invalidate all cache entries with specific tag
+     * Invalida tutte le chiavi che iniziano con un determinato tag/prefisso.
      */
     public function invalidateTag(string $tag): int
     {
@@ -76,7 +90,7 @@ class CacheService
     }
 
     /**
-     * Cache per lista soci con filtri
+     * Wrapper specifico per caching della lista soci (filtri included).
      */
     public function rememberSociList(array $filters, Closure $callback, int $ttl = 300): mixed
     {
@@ -85,7 +99,7 @@ class CacheService
     }
 
     /**
-     * Cache per statistiche dashboard
+     * Wrapper specifico per caching delle statistiche dashboard.
      */
     public function rememberStats(string $type, Closure $callback, int $ttl = 900): mixed
     {
@@ -94,7 +108,7 @@ class CacheService
     }
 
     /**
-     * Invalidate soci cache
+     * Invalida la cache relativa ai soci (es. dopo modifica).
      */
     public function invalidateSoci(): int
     {
@@ -102,7 +116,7 @@ class CacheService
     }
 
     /**
-     * Invalidate stats cache
+     * Invalida la cache delle statistiche.
      */
     public function invalidateStats(): int
     {
@@ -110,7 +124,7 @@ class CacheService
     }
 
     /**
-     * Get cache statistics
+     * Restituisce le statistiche di utilizzo della cache (Hit Rate).
      */
     public function getStats(): array
     {
@@ -127,7 +141,7 @@ class CacheService
     }
 
     /**
-     * Clear all application cache
+     * Svuota completamente la cache applicativa (FlushDB).
      */
     public function clearAll(): bool
     {

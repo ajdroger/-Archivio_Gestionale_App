@@ -1,8 +1,10 @@
 <?php
 
 /**
- * Database Integrity Checker
- * Verifies referential integrity, orphaned records, and data consistency
+ * Checker di Integrità del Database
+ * 
+ * Verifica l'integrità referenziale, record orfani, e consistenza dei dati.
+ * Utile per diagnosticare problemi di corruzione dati o bug logici.
  */
 
 require __DIR__ . '/../../vendor/autoload.php';
@@ -12,14 +14,14 @@ use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
 
-echo "🔍 DATABASE INTEGRITY CHECKER\n";
+echo "🔍 CONTROLLO INTEGRITÀ DATABASE\n";
 echo str_repeat('=', 60) . "\n\n";
 
 $pdo = DatabaseConnection::getConnection();
 $issues = [];
 
-// 1. Orphaned Documents (documents without soci)
-echo "1️⃣  Checking for orphaned documents...\n";
+// 1. Documenti Orfani (documenti senza socio associato)
+echo "1️⃣  Controllo documenti orfani...\n";
 $cfCol = 'socio_cf';
 $sql = "SELECT COUNT(*) as count 
         FROM documenti d 
@@ -29,8 +31,8 @@ $stmt = $pdo->query($sql);
 $orphanedDocs = $stmt->fetchColumn();
 
 if ($orphanedDocs > 0) {
-    echo "   ⚠️  Found $orphanedDocs orphaned document(s)\n";
-    $issues[] = "Orphaned documents: $orphanedDocs";
+    echo "   ⚠️  Trovati $orphanedDocs documento/i orfani\n";
+    $issues[] = "Documenti orfani: $orphanedDocs";
 
     // Show details
     $sql = "SELECT d.id, d.nome_file, d.$cfCol 
@@ -45,11 +47,11 @@ if ($orphanedDocs > 0) {
         echo "      - ID: {$orphan['id']}, File: {$orphan['nome_file']}, CF: {$orphan[$cfCol]}\n";
     }
 } else {
-    echo "   ✅ No orphaned documents\n";
+    echo "   ✅ Nessun documento orfano\n";
 }
 
-// 2. Missing Document Files
-echo "\n2️⃣  Checking for missing document files...\n";
+// 2. File Mancanti
+echo "\n2️⃣  Controllo file mancanti...\n";
 // WARNING: percorso_file column might allow NULL if file content is in DB? Assuming existing logic is correct.
 // But check column existence in schema? 'nome_file' exists. 'percorso_file' was not in my Migration!
 // Let's check SchemaTest/Migration. 'percorso_file' is NOT in the migration I just verified. 
@@ -62,10 +64,10 @@ echo "\n2️⃣  Checking for missing document files...\n";
 // NO `percorso_file`.
 // So this check was broken even before? Or `percorso_file` was removed during migration.
 // I will SKIP this check to avoid crashing if column missing.
-echo "   ℹ️  Skipping file check (percorso_file column not in V2 schema)\n";
+echo "   ℹ️  Skippo controllo file (colonna percorso_file non presente nello schema V2)\n";
 
-// 3. Duplicate Codici Fiscali
-echo "\n3️⃣  Checking for duplicate codici fiscali...\n";
+// 3. Codici Fiscali Duplicati
+echo "\n3️⃣  Controllo duplicati Codici Fiscali...\n";
 $sql = "SELECT codice_fiscale, COUNT(*) as count 
         FROM soci 
         GROUP BY codice_fiscale 
@@ -74,17 +76,17 @@ $stmt = $pdo->query($sql);
 $duplicates = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (!empty($duplicates)) {
-    echo sprintf("   ⚠️  Found %d duplicate(s)\n", count($duplicates));
+    echo sprintf("   ⚠️  Trovati %d duplicati\n", count($duplicates));
     foreach ($duplicates as $dup) {
-        echo "      - CF: {$dup['codice_fiscale']} (appears {$dup['count']} times)\n";
+        echo "      - CF: {$dup['codice_fiscale']} (appare {$dup['count']} volte)\n";
     }
-    $issues[] = "Duplicate codici fiscali: " . count($duplicates);
+    $issues[] = "Codici Fiscali duplicati: " . count($duplicates);
 } else {
-    echo "   ✅ No duplicate codici fiscali\n";
+    echo "   ✅ Nessun Codice Fiscale duplicato\n";
 }
 
-// 4. Invalid Email Formats
-echo "\n4️⃣  Checking email formats...\n";
+// 4. Formato Email Invalido
+echo "\n4️⃣  Controllo formato email...\n";
 $sql = "SELECT codice_fiscale, email FROM soci WHERE email IS NOT NULL AND email != ''";
 $stmt = $pdo->query($sql);
 $emails = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -100,14 +102,14 @@ foreach ($emails as $row) {
 }
 
 if ($invalidEmails > 0) {
-    echo sprintf("   ⚠️  Total invalid emails: %d\n", $invalidEmails);
-    $issues[] = "Invalid email formats: $invalidEmails";
+    echo sprintf("   ⚠️  Totale email non valide: %d\n", $invalidEmails);
+    $issues[] = "Formato email non valido: $invalidEmails";
 } else {
-    echo "   ✅ All emails valid\n";
+    echo "   ✅ Tutte le email sono valide\n";
 }
 
-// 5. Null Required Fields
-echo "\n5️⃣  Checking for NULL required fields...\n";
+// 5. Campi Obbligatori Nulli
+echo "\n5️⃣  Controllo campi obbligatori NULL...\n";
 $requiredFields = ['nome', 'cognome', 'codice_fiscale', 'matricola'];
 $nullFields = [];
 
@@ -116,7 +118,7 @@ foreach ($requiredFields as $field) {
     $sql = "SELECT COUNT(*) FROM soci WHERE $field IS NULL OR $field = ''";
     $count = $pdo->query($sql)->fetchColumn();
     if ($count > 0) {
-        echo "   ⚠️  Field '$field' is NULL/empty in $count record(s)\n";
+        echo "   ⚠️  Campo '$field' è NULL/vuoto in $count record\n";
         // Not a critical issue if matricola is optional? Schema says matricola nullable.
         // Code here treats it as issue.
         if ($field !== 'matricola')
@@ -125,11 +127,11 @@ foreach ($requiredFields as $field) {
 }
 
 if (empty($issues)) {
-    echo "   ✅ All required fields populated\n";
+    echo "   ✅ Tutti i campi obbligatori sono popolati\n";
 }
 
-// 6. Referential Integrity (Foreign Keys)
-echo "\n6️⃣  Checking referential integrity...\n";
+// 6. Integrità Referenziale (Foreign Keys)
+echo "\n6️⃣  Controllo integrità referenziale...\n";
 // Check if foreign key constraints exist
 $sql = "SELECT CONSTRAINT_NAME 
         FROM information_schema.TABLE_CONSTRAINTS 
@@ -139,14 +141,14 @@ $stmt = $pdo->query($sql);
 $fks = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 if (!empty($fks)) {
-    echo sprintf("   ✅ %d foreign key constraint(s) active\n", count($fks));
+    echo sprintf("   ✅ %d vincoli foreign key attivi\n", count($fks));
 } else {
-    echo "   ⚠️  No foreign key constraints found\n";
-    $issues[] = "Missing foreign key constraints";
+    echo "   ⚠️  Nessun vincolo foreign key trovato\n";
+    $issues[] = "Foreign key mancanti";
 }
 
-// 7. Data Statistics
-echo "\n7️⃣  Data Statistics:\n";
+// 7. Statistiche Dati
+echo "\n7️⃣  Statistiche Dati:\n";
 try {
     $stats = [
         'soci' => $pdo->query("SELECT COUNT(*) FROM soci")->fetchColumn(),
@@ -156,28 +158,28 @@ try {
     ];
 
     foreach ($stats as $table => $count) {
-        echo sprintf("   - %-15s: %d record(s)\n", $table, $count);
+        echo sprintf("   - %-15s: %d record\n", $table, $count);
     }
 } catch (\Exception $e) {
-    echo "   ⚠️  Could not fetch stats: " . $e->getMessage() . "\n";
+    echo "   ⚠️  Impossibile recuperare statistiche: " . $e->getMessage() . "\n";
 }
 
 // Summary
 echo "\n" . str_repeat('=', 60) . "\n";
-echo "📊 INTEGRITY CHECK SUMMARY\n";
+echo "📊 RIEPILOGO CONTROLLO INTEGRITÀ\n";
 echo str_repeat('=', 60) . "\n\n";
 
 if (empty($issues)) {
-    echo "✅ All integrity checks passed\n";
-    echo "\n🎉 DATABASE STATUS: HEALTHY\n";
+    echo "✅ Tutti i controlli passati con successo\n";
+    echo "\n🎉 STATO DATABASE: HEALTHY\n";
     exit(0);
 } else {
-    echo "⚠️  Issues found: " . count($issues) . "\n\n";
+    echo "⚠️  Problemi trovati: " . count($issues) . "\n\n";
     foreach ($issues as $issue) {
         echo "   - $issue\n";
     }
-    echo "\n💡 Recommendations:\n";
-    echo "   - Review issues manually.\n";
-    echo "\n⚠️  DATABASE STATUS: NEEDS ATTENTION\n";
+    echo "\n💡 Raccomandazioni:\n";
+    echo "   - Controllare i problemi manualmente.\n";
+    echo "\n⚠️  STATO DATABASE: RICHIEDE ATTENZIONE\n";
     exit(1);
 }

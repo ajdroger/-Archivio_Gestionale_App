@@ -12,8 +12,8 @@ $cacheDir = __DIR__ . '/../../cache';
 $output = [];
 
 if (!is_dir($cacheDir)) {
-    echo "Directory cache non trovata: $cacheDir";
-    exit;
+    echo "Nessuna cache da pulire (Directory non presente).\n";
+    exit(0); // Exit successfully
 }
 
 $files = new RecursiveIteratorIterator(

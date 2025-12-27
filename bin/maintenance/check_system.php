@@ -4,13 +4,13 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 // Registra la gestione globale degli errori con un logger temporaneo per CLI
 $cliLogger = new \Monolog\Logger('cli-system-check');
-$cliLogger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../logs/app.log', \Monolog\Logger::DEBUG));
+$cliLogger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../../logs/app.log', \Monolog\Logger::DEBUG));
 \FratellanzaMilitare\Debug\GlobalExceptionHandler::registerGlobalHandlers($cliLogger);
 
 use FratellanzaMilitare\Debug\SystemCheck;
 
 // Configurazione
-$logFile = __DIR__ . '/../logs/controllo_sistema.log';
+$logFile = __DIR__ . '/../../logs/controllo_sistema.log';
 $routesToCheck = [
     '/' => 'FratellanzaMilitare\Controller\HomeController:dashboard',
     '/soci' => 'FratellanzaMilitare\Controller\SocioController:list',

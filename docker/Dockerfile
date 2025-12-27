@@ -23,14 +23,14 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     opcache
 
 # Configure PHP
-COPY config/docker/php.ini /usr/local/etc/php/conf.d/custom.ini
+COPY docker/config/php.ini /usr/local/etc/php/conf.d/custom.ini
 
 # Configure Nginx
-COPY config/docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/config/nginx.conf /etc/nginx/http.d/default.conf
 RUN mkdir -p /run/nginx
 
 # Setup Supervisor
-COPY config/docker/supervisord.conf /etc/supervisord.conf
+COPY docker/config/supervisord.conf /etc/supervisord.conf
 
 # Set Working Directory
 WORKDIR /var/www/html

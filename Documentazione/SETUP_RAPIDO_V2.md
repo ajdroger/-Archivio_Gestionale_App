@@ -1,197 +1,70 @@
-# 🔧 Setup Completo Sistema v2.0 - Guida Rapida
+# ⚡ SETUP RAPIDO - v2.0 Enterprise
 
-## 📋 Situazione Attuale
+Questa guida ti permette di avere un'istanza funzionante di **Mission Control v2.0** in meno di 5 minuti.
 
-✅ **Sistema v2.0 implementato** con tutte le feature
-❌ **Redis NON installato** (opzionale ma consigliato)
+## Prerequisiti
+- **XAMPP / AMPPS** (con PHP 8.2+ e MySQL)
+- **Composer** (installato nel PATH)
+- **Git** (opzionale, per clonare)
 
----
+## Procedura Passo-Passo
 
-## 🚀 Opzione 1: Usare SENZA Redis (Funziona Subito)
-
-Se vuoi usare il sistema **immediatamente senza installare Redis**, configura `.env`:
-
-```env
-# Redis Configuration
-REDIS_ENABLED=false
+### 1. Preparazione Cartella
+```powershell
+cd "c:\Program Files\Ampps\www"
+git clone https://github.com/ajdroger/-Archivio_Gestionale_App.git fratellanza-militare-archivio
+cd fratellanza-militare-archivio
 ```
 
-Il sistema funzionerà perfettamente con:
-- ✅ Cache su filesystem (fallback automatico)
-- ✅ Rate limiting su file
-- ✅ Tutte le altre feature operative
-- ⚠️ Performance leggermente ridotte (~20-30% più lento)
+### 2. Installazione Dipendenze
+```powershell
+composer install --no-dev
+npm install --omit=dev
+```
+
+### 3. Configurazione Ambiente
+Copia il file di esempio dalla cartella config:
+```powershell
+copy config\.env.example .env
+```
+Apri `.env` e configura:
+- `DB_DATABASE=fratellanza`
+- `DB_USERNAME=root` (o utente locale)
+- `DB_PASSWORD=mysql` (o password locale)
+
+### 4. Setup Database
+Importa lo schema database iniziale (se non hai migrazioni Phinx attive):
+```powershell
+# Esempio via CLI MySQL
+mysql -u root -p fratellanza < db/schema.sql
+```
+*Oppure usa phpMyAdmin per importare `db/schema.sql`.*
+
+### 5. Generazione Chiavi Sicurezza
+Esegui lo script di manutenzione per generare le chiavi di crittografia (TOTP, Sessioni):
+```powershell
+php bin/maintenance/regenerate_key_clean.php
+```
+
+### 6. Verifica Installazione
+Lancia i tool di diagnostica per assicurarti che tutto sia OK:
+```powershell
+php bin/tools/health_check.php
+```
+Se vedi tutti ✅, sei pronto!
 
 ---
 
-## 🚀 Opzione 2: Installare Redis (Consigliato per Performance)
-
-### Windows - Installazione Redis
-
-#### Metodo 1: Chocolatey (Raccomandato)
+## 🚀 Avvio Server
+Poiché la configurazione Apache potrebbe essere complessa, usa il server interno PHP per test immediati:
 
 ```powershell
-# Installa Chocolatey se non presente
-# Poi installa Redis
-choco install redis-64 -y
-```
-
-#### Metodo 2: Download Manuale
-
-1. Scarica da: https://github.com/tporadowski/redis/releases
-2. Scarica `Redis-x64-5.0.14.1.zip`
-3. Estrai in `C:\Redis`
-4. Esegui: `C:\Redis\redis-server.exe`
-
-#### Metodo 3: Docker (Se hai Docker)
-
-```bash
-docker run -d --name redis -p 6379:6379 redis:latest
-```
-
-### Verifica Installazione
-
-```bash
-# Testa connessione
-redis-cli ping
-# Output atteso: PONG
-```
-
-### Configura .env per Redis
-
-```env
-REDIS_ENABLED=true
-REDIS_HOST=127.0.0.1
-REDIS_PORT=6379
-```
-
----
-
-## 🔑 Chiave TOTP Encryption
-
-### Se hai GIÀ una chiave configurata:
-✅ **Mantieni quella esistente** nel tuo `.env`
-⚠️ **NON rigenerarla** o perderai accesso 2FA esistente
-
-### Se NON hai ancora una chiave:
-
-```bash
-php bin/setup/generate_totp_key.php
-```
-
-Copia l'output nel `.env`:
-```env
-TOTP_ENCRYPTION_KEY=base64:AbC123...XyZ789
-```
-
----
-
-## ✅ Verifica Sistema
-
-### 1. Test Health Check
-
-```bash
-# Avvia server
 php -S localhost:8000 -t public
-
-# In un altro terminale, testa:
-curl http://localhost:8000/health
 ```
 
-**Output atteso**:
-```json
-{
-  "status": "healthy",
-  "version": "2.0.0",
-  "checks": {
-    "database": {"status": "healthy"},
-    "redis": {"status": "disabled"}, // o "healthy" se abilitato
-    "storage": {"status": "healthy"},
-    "queue": {"status": "healthy"}
-  }
-}
-```
+Apri il browser su: [http://localhost:8000](http://localhost:8000)
 
-### 2. Test Database
-
-```bash
-php vendor/bin/phinx status
-```
-
-Deve mostrare: `up` per tutte le migrations
-
----
-
-## 📊 Performance Attese
-
-### Con Redis Abilitato:
-- Lista soci: **8-10ms**
-- Dashboard stats: **15-20ms**
-- Rate limit check: **<1ms**
-
-### Senza Redis (Fallback):
-- Lista soci: **50-80ms** (comunque ottimo!)
-- Dashboard stats: **80-120ms**
-- Rate limit check: **2-5ms**
-
----
-
-## 🎯 Configurazione Raccomandata
-
-### Sviluppo Locale:
-```env
-APP_ENV=local
-APP_DEBUG=true
-REDIS_ENABLED=false  # OK senza Redis
-```
-
-### Produzione:
-```env
-APP_ENV=production
-APP_DEBUG=false
-REDIS_ENABLED=true   # Fortemente raccomandato
-```
-
----
-
-## 🆘 Troubleshooting
-
-### Problema: Redis non si connette
-
-1. Verifica che Redis sia in esecuzione:
-   ```bash
-   redis-cli ping
-   ```
-
-2. Se non risponde, avvia Redis:
-   ```bash
-   # Windows
-   redis-server
-   
-   # Docker
-   docker start redis
-   ```
-
-3. Se ancora problemi, disabilita in `.env`:
-   ```env
-   REDIS_ENABLED=false
-   ```
-
-### Problema: 2FA non funziona
-
-⚠️ Hai rigenerato la chiave TOTP per errore?
-
-**Soluzione**: Ricrea gli utenti admin tramite DevTools
-
----
-
-## ✅ Next Steps
-
-1. ✅ Configura `.env` con le tue scelte (Redis sì/no)
-2. ✅ Verifica health check: `curl http://localhost:8000/health`
-3. ✅ Accedi al sistema: `http://localhost:8000`
-4. ✅ (Opzionale) Avvia queue worker: `php bin/workers/queue_worker.php`
-
----
-
-**Tutto pronto! Il sistema v2.0 è production-ready con o senza Redis.** 🚀
+**Credenziali Default:**
+- **User:** `admin`
+- **Pass:** `admin123`
+- **2FA:** (Al primo login ti verrà chiesto di scansionare il QR Code)

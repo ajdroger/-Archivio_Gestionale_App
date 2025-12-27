@@ -2,6 +2,16 @@
 
 namespace FratellanzaMilitare\Service;
 
+/**
+ * Servizio per il calcolo del Codice Fiscale italiano.
+ * 
+ * Implementa l'algoritmo ufficiale (D.M. 12/03/1974):
+ * - Estrazione cognome (3 lettere)
+ * - Estrazione nome (3 lettere)
+ * - Data di nascita e sesso (5 caratteri)
+ * - Codice catastale comune (4 caratteri, lookup da file JSON)
+ * - Carattere di controllo (CIN)
+ */
 class FiscalCodeCalculator
 {
     private array $belfioreCodes;
@@ -19,6 +29,7 @@ class FiscalCodeCalculator
         '11' => 'S',
         '12' => 'T'
     ];
+    // ... skipped generic arrays for brevity in commenting ...
     private array $oddValues = [
         '0' => 1,
         '1' => 0,
@@ -106,6 +117,17 @@ class FiscalCodeCalculator
         }
     }
 
+    /**
+     * Calcola il Codice Fiscale.
+     * 
+     * @param string $nome
+     * @param string $cognome
+     * @param string $dataNascita Formato YYYY-MM-DD
+     * @param string $sesso 'M' o 'F'
+     * @param string $luogo Nome del comune di nascita
+     * @return string Codice Fiscale calcolato (16 caratteri)
+     * @throws \InvalidArgumentException Se il comune non viene trovato
+     */
     public function calculate(string $nome, string $cognome, string $dataNascita, string $sesso, string $luogo): string
     {
         $nome = $this->normalizeString($nome);
@@ -154,11 +176,17 @@ class FiscalCodeCalculator
         return $code;
     }
 
+    /**
+     * Normalizza la stringa rimuovendo accenti e caratteri non alfabetici.
+     */
     private function normalizeString(string $s): string
     {
         return preg_replace('/[^A-Z]/', '', strtoupper(iconv('UTF-8', 'ASCII//TRANSLIT', $s)));
     }
 
+    /**
+     * Calcola la parte del codice relativa al cognome (consonanti + vocali).
+     */
     private function extractSurnameCode(string $s): string
     {
         $consonants = $this->getConsonants($s);
@@ -167,6 +195,10 @@ class FiscalCodeCalculator
         return substr($combined, 0, 3);
     }
 
+    /**
+     * Calcola la parte del codice relativa al nome.
+     * Logica specifica: se 4+ consonanti, prende 1a, 3a, 4a.
+     */
     private function extractNameCode(string $s): string
     {
         $consonants = $this->getConsonants($s);
@@ -191,6 +223,9 @@ class FiscalCodeCalculator
         return preg_replace('/[^AEIOU]/', '', $s);
     }
 
+    /**
+     * Calcola il carattere di controllo (CIN) basato su posizioni pari/dispari.
+     */
     private function calculateControlChar(string $partialCode): string
     {
         if (strlen($partialCode) !== 15) {

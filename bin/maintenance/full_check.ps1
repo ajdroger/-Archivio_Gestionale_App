@@ -3,7 +3,7 @@ Write-Host "=== AVVIO CHECK DI MANUTENZIONE TOTALE ===" -ForegroundColor Cyan
 
 # 1. Esecuzione Test Unitari e Integrazione
 Write-Host "`n[1/3] Esecuzione Unit & Integration Tests..." -ForegroundColor Yellow
-php vendor/bin/pest --colors=always
+php vendor/bin/pest --colors=always 2>&1 | Tee-Object -FilePath "logs/tests/full_check_pest.txt"
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ATTENZIONE: Alcuni test sono falliti!" -ForegroundColor Red
@@ -11,6 +11,6 @@ if ($LASTEXITCODE -ne 0) {
 
 # 2. Diagnostica e Analisi Database
 Write-Host "`n[2/2] Esecuzione Diagnostica e Analisi Database..." -ForegroundColor Yellow
-php bin/diagnostics_runner.php
+php bin/tools/diagnostics_runner.php 2>&1 | Tee-Object -FilePath "logs/tests/full_check_diagnostics.txt"
 
 Write-Host "`n=== VERIFICA COMPLETATA ===" -ForegroundColor Cyan

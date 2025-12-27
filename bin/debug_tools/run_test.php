@@ -18,6 +18,13 @@ if (!$requestedFile || (!str_starts_with($requestedFile, $testsDir) && !str_star
     exit;
 }
 
+$flags = [];
+if (($_GET['verbose'] ?? '') === 'true')
+    $flags[] = '--verbose';
+if (($_GET['stop-on-failure'] ?? '') === 'true')
+    $flags[] = '--stop-on-failure';
+$flagsStr = implode(' ', $flags);
+
 $cmd = '';
 
 // Determine Runner Engine
@@ -27,12 +34,12 @@ if (str_starts_with($requestedFile, $testsDir)) {
 
     // Use PHP to run the script directly, avoiding .bat wrapper issues
     // IMPORTANT: cd to baseDir so it finds phpunit.xml and resolves paths correctly
-    $cmd = 'cd /d "' . $baseDir . '" && php "' . $pestScript . '" --configuration phpunit.xml --colors=always "' . $requestedFile . '" 2>&1';
+    $cmd = 'cd /d "' . $baseDir . '" && php "' . $pestScript . '" --configuration phpunit.xml --colors=always ' . $flagsStr . ' "' . $requestedFile . '" 2>&1';
 } else {
     // Runner for Scripts
     $ext = pathinfo($requestedFile, PATHINFO_EXTENSION);
     if ($ext === 'php') {
-        $cmd = 'php "' . $requestedFile . '" 2>&1';
+        $cmd = 'php "' . $requestedFile . '" ' . $flagsStr . ' 2>&1';
     } elseif ($ext === 'ps1') {
         $cmd = 'powershell -ExecutionPolicy Bypass -File "' . $requestedFile . '" 2>&1';
     } else {

@@ -8,8 +8,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
+
 /**
- * Controller dedicato alla visualizzazione del dettaglio di un singolo socio.
+ * Controller per la visualizzazione dettagliata della scheda Socio.
+ * 
+ * Recupera tutte le informazioni correlate a un socio (dati personali, documenti)
+ * e prepara la vista di dettaglio.
  */
 class DetailController
 {
@@ -26,6 +30,14 @@ class DetailController
 
     /**
      * Visualizza la scheda dettaglio del socio.
+     * 
+     * Recupera il socio per Codice Fiscale. Se non trovato restituisce 404 e logga l'errore.
+     * Mappa i documenti associati per la visualizzazione nel template.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args Argomenti della route (es. {cf})
+     * @return ResponseInterface
      */
     public function detail(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {

@@ -32,8 +32,7 @@ class RoleMiddleware implements MiddlewareInterface
             // JSON for AJAX
             if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
                 $response->getBody()->write(json_encode([
-                    'error' => true,
-                    'message' => 'Accesso negato: Ruolo non autorizzato (' . $userRole . ').',
+                    'error' => 'Accesso negato: Ruolo non autorizzato (' . $userRole . ').',
                 ]));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
             }

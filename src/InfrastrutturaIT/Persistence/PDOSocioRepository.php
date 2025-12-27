@@ -10,6 +10,13 @@ use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDODocumentoRepository;
 use PDO;
 use DateTime;
 
+/**
+ * Repository MySQL/MariaDB per la gestione dei Soci.
+ * 
+ * Implementa le operazioni CRUD complete e gestisce la persistenza del grafo
+ * degli oggetti (Socio -> Documenti). Utilizza transazioni per garantire
+ * l'integrità dei dati durante il salvataggio o l'aggiornamento.
+ */
 class PDOSocioRepository implements SocioRepository
 {
     private PDO $pdo;
@@ -21,6 +28,13 @@ class PDOSocioRepository implements SocioRepository
         $this->docRepo = new PDODocumentoRepository($this->pdo);
     }
 
+    /**
+     * Salva o aggiorna un socio e tutti i suoi documenti associati.
+     * 
+     * L'operazione è atomica (transazionale): se fallisce il salvataggio
+     * di un documento, viene effettuato il rollback dell'intera operazione.
+     * Sincronizza la collezione di documenti eliminando quelli rimossi.
+     */
     public function save(Socio $socio): void
     {
         $inTransaction = $this->pdo->inTransaction();
@@ -75,6 +89,11 @@ class PDOSocioRepository implements SocioRepository
         }
     }
 
+    /**
+     * Trova un socio per Codice Fiscale.
+     * 
+     * @return Socio|null L'entità trovata o null se inesistente.
+     */
     public function findByCodiceFiscale(string $cf): ?Socio
     {
         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ?");
@@ -88,6 +107,12 @@ class PDOSocioRepository implements SocioRepository
         return $this->mapRowToSocio($data);
     }
 
+    /**
+     * Recupera tutti i soci registrati.
+     * 
+     * Include una subquery ottimizzata per pre-calcolare lo stato dei pagamenti
+     * (is_pagato) ed evitare query N+1 successive.
+     */
     public function findAll(): array
     {
         $anno = (int) date('Y');
@@ -113,6 +138,9 @@ class PDOSocioRepository implements SocioRepository
         return $soci;
     }
 
+    /**
+     * Elimina un socio e i suoi dati associati dal database.
+     */
     public function delete(string $cf): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM soci WHERE codice_fiscale = ?");

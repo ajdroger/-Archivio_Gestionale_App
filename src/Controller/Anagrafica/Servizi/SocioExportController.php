@@ -9,6 +9,11 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Controller dedicato alle esportazioni di massa dei dati soci.
  */
+/**
+ * Controller per l'esportazione dati dei Soci.
+ * 
+ * Fornisce funzionalità per esportare l'elenco soci in formati portabili (CSV).
+ */
 class SocioExportController
 {
     private PDOSocioRepository $socioRepo;
@@ -18,6 +23,16 @@ class SocioExportController
         $this->socioRepo = $socioRepo;
     }
 
+    /**
+     * Esporta l'elenco completo dei soci in formato CSV.
+     * 
+     * Genera un file CSV al volo utilizzando uno stream di memoria.
+     * Include header e colonne principali (Nome, Cognome, CF, Stato, Morosità).
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface File download (text/csv)
+     */
     public function exportCsv(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $soci = $this->socioRepo->findAll();

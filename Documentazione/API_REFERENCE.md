@@ -1,7 +1,7 @@
 # 📚 API REFERENCE - Fratellanza Militare Archivio
 
-**Version**: 1.3.1 Mission-Critical + MySQL  
-**Base Path**: `/fratellanza-militare-archivio/public`
+**Version**: 2.0.1 Mission-Critical Enterprise (MySQL Edition)
+**Base Path**: `/` (Production Root)
 
 ---
 
@@ -346,4 +346,4 @@ All responses include:
 ---
 
 **Maintained By**: Soobadur Mohammad Ajmeer  
-**Last Updated**: 2025-12-25
+**Last Updated**: 2025-12-27

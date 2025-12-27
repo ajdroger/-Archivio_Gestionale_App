@@ -2,10 +2,18 @@
 
 namespace FratellanzaMilitare\Service;
 
+/**
+ * Servizio di validazione dati centralizzato.
+ * 
+ * Contiene regole per la verifica formale di Codici Fiscali, Email e File Upload.
+ */
 class ValidationService
 {
     /**
-     * Valida la correttezza formale di un Codice Fiscale italiano
+     * Valida la correttezza formale di un Codice Fiscale italiano.
+     * 
+     * Utilizza una Regex rigorosa per verificare la struttura (es. 6 lettere, 2 numeri, 1 lettera, etc).
+     * Non verifica l'esistenza reale della persona presso l'Agenzia delle Entrate, solo il formato.
      */
     public function isValidCodiceFiscale(string $cf): bool
     {
@@ -26,7 +34,7 @@ class ValidationService
     }
 
     /**
-     * Valida un indirizzo email
+     * Valida un indirizzo email.
      */
     public function isValidEmail(string $email): bool
     {
@@ -34,7 +42,11 @@ class ValidationService
     }
 
     /**
-     * Valida un file caricato (estensione e MIME type)
+     * Valida un file caricato (estensione e MIME type).
+     * 
+     * @param string $mimeType Tipo MIME del file
+     * @param int $size Dimensione in bytes
+     * @return bool True se il file è accettabile (tipo supportato e < 5MB)
      */
     public function isValidFileUpload(string $mimeType, int $size): bool
     {

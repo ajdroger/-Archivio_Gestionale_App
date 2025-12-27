@@ -37,5 +37,12 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest -c config/phpunit.xml --log-junit reports/pest_junit.xml",
+        "analyse": "vendor/bin/phpstan analyse -c config/phpstan.neon --error-format=table > reports/phpstan_report.txt",
+        "format": "vendor/bin/php-cs-fixer fix --config=config/.php-cs-fixer.dist.php",
+        "migrate": "vendor/bin/phinx migrate -c config/phinx.php",
+        "check:system": "php bin/tools/health_check.php"
     }
 }

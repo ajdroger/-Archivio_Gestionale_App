@@ -14,6 +14,13 @@ use Closure;
  * Gestisce connessione Redis e operazioni comuni come get, set, delete, flush.
  * Supporta caching con TTL e pattern remember per cache-aside.
  */
+/**
+ * Servizio wrapper per la gestione di Redis.
+ * 
+ * Implementa un client Redis con fallback (null object pattern) se disabilitato
+ * o se la connessione fallisce.
+ * Fornisce metodi helper per le operazioni comuni (get, set, increment, expire).
+ */
 class RedisService
 {
     private ClientInterface $client;
@@ -53,7 +60,7 @@ class RedisService
     }
 
     /**
-     * Get value from Redis
+     * Recupera un valore da Redis.
      */
     public function get(string $key): mixed
     {
@@ -71,7 +78,7 @@ class RedisService
     }
 
     /**
-     * Set value in Redis with optional TTL
+     * Imposta un valore in Redis con TTL opzionale.
      */
     public function set(string $key, mixed $value, ?int $ttl = null): bool
     {
@@ -94,7 +101,7 @@ class RedisService
     }
 
     /**
-     * Delete key from Redis
+     * Cancella una chiave da Redis.
      */
     public function delete(string $key): bool
     {
@@ -111,7 +118,7 @@ class RedisService
     }
 
     /**
-     * Clear all keys matching pattern
+     * Cancella tutte le chiavi che corrispondono a un pattern glob.
      */
     public function deletePattern(string $pattern): int
     {
@@ -132,7 +139,7 @@ class RedisService
     }
 
     /**
-     * Flush entire Redis database
+     * Svuota l'intero database Redis selezionato.
      */
     public function flush(): bool
     {
@@ -149,7 +156,7 @@ class RedisService
     }
 
     /**
-     * Increment counter (for rate limiting)
+     * Incrementa un contatore atomico (utile per rate limiting).
      */
     public function increment(string $key, int $by = 1): int
     {
@@ -166,7 +173,7 @@ class RedisService
     }
 
     /**
-     * Set expiration on key
+     * Imposta la scadenza (TTL) su una chiave esistente.
      */
     public function expire(string $key, int $seconds): bool
     {
@@ -183,7 +190,7 @@ class RedisService
     }
 
     /**
-     * Cache-aside pattern: get from cache or compute and store
+     * Pattern Cache-Aside: ottiene dalla cache o calcola e salva.
      */
     public function remember(string $key, Closure $callback, int $ttl = 3600): mixed
     {
@@ -204,7 +211,7 @@ class RedisService
     }
 
     /**
-     * Check if Redis is enabled and connected
+     * Verifica se Redis è abilitato e connesso.
      */
     public function isEnabled(): bool
     {

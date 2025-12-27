@@ -42,7 +42,7 @@ return function (App $app) {
     $app->get('/soci', SocioList::class . ':list')->setName('socio_list');
 
     // Anagrafica - Soci (Write) - SPECIFICHE PRIMA DI {cf}
-    $writeRole = new RoleMiddleware(['segreteria']);
+    $writeRole = new RoleMiddleware(['segreteria', 'direttore_associazione']);
     $app->group('/soci', function ($group) {
         // ROUTES SPECIFICHE PRIMA
         $group->get('/nuovo', SocioPersistence::class . ':create')->setName('socio_create');
@@ -67,7 +67,7 @@ return function (App $app) {
     $app->get('/soci/export/csv', SocioExport::class . ':exportCsv')->setName('socio_export')->add(new RateLimitMiddleware(30, 60));
 
     // Intelligence (Stats & Reports)
-    $statsRole = new RoleMiddleware(['presidente', 'segreteria']);
+    $statsRole = new RoleMiddleware(['presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
     $exportLimit = new RateLimitMiddleware(30, 60);
 
     $app->group('/statistiche', function ($group) use ($exportLimit) {

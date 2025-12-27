@@ -11,6 +11,12 @@ use Dompdf\Dompdf;
 /**
  * Controller dedicato alla generazione ed esportazione di report (PDF/Excel).
  */
+/**
+ * Controller per la generazione di reportistica avanzata.
+ * 
+ * Gestisce l'esportazione in PDF (tramite Dompdf) ed Excel/CSV
+ * delle statistiche e delle liste soci filtrate.
+ */
 class ReportExportController
 {
     private Mustache_Engine $mustache;
@@ -22,6 +28,16 @@ class ReportExportController
         $this->repository = $repository;
     }
 
+    /**
+     * Genera un report PDF completo.
+     * 
+     * Raccoglie statistiche e lista soci (filtrata opzionalmente),
+     * renderizza una vista HTML specifica ('report_pdf') e la converte in PDF.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface File download (application/pdf)
+     */
     public function exportPdf(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $params = $request->getQueryParams();
@@ -51,6 +67,16 @@ class ReportExportController
             ->withHeader('Content-Disposition', 'attachment; filename="Report_Soci_' . date('Y-m-d') . '.pdf"');
     }
 
+    /**
+     * Esporta i dati in formato CSV/Excel.
+     * 
+     * Gestisce filtri opzionali per esportare sottoinsiemi di dati.
+     * Utilizza UTF-8 BOM per compatibilità con Excel.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface File download (text/csv)
+     */
     public function exportExcel(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $params = $request->getQueryParams();

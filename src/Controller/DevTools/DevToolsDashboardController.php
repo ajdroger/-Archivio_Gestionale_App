@@ -15,6 +15,12 @@ use FratellanzaMilitare\Debug\SessionInspector;
  * 
  * Handles main dashboard and overview functionality
  */
+/**
+ * Controller principale del pannello DevTools.
+ * 
+ * Aggrega tutte le funzionalità di debug e amministrazione:
+ * System Info, Database, Audit, FileSystem e Code Reactor.
+ */
 class DevToolsDashboardController
 {
     private Mustache_Engine $mustache;
@@ -28,6 +34,16 @@ class DevToolsDashboardController
         $this->auditController = $auditController;
     }
 
+    /**
+     * Renderizza la Dashboard completa dei DevTools.
+     * 
+     * Recupera dati da tutti i sotto-controller (System, Audit, ecc.)
+     * per costruire la vista unificata 'devtools'.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
     public function dashboard(Request $request, Response $response): Response
     {
         // Delegated Logic
@@ -58,13 +74,24 @@ class DevToolsDashboardController
             'username' => $_SESSION['username'] ?? 'Utente',
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
             'session_debug' => $sessionDebug,
-            'body_class' => 'devtools-page'
+            'body_class' => 'devtools-page',
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })()
         ]);
 
         $response->getBody()->write($html);
         return $response;
     }
 
+    /**
+     * Endpoint AJAX per filtrare i log di audit.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON
+     */
     public function auditAjax(Request $request, Response $response): Response
     {
         $auditResult = $this->auditController->getLogs($request);
@@ -72,6 +99,16 @@ class DevToolsDashboardController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * Endpoint Heartbeat per monitoraggio Real-time.
+     * 
+     * Restituisce statistiche vitali (CPU, RAM, DB Latency, Intrusioni)
+     * aggiornate ogni pochi secondi dalla dashboard.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response JSON contenente metriche di sistema e sicurezza
+     */
     public function heartbeat(Request $request, Response $response): Response
     {
         // Clean any accidental output (warnings, whitespace)
@@ -106,7 +143,10 @@ class DevToolsDashboardController
                 'monitoring' => [
                     'sessions' => $sessions,
                     'latency' => $latency,
-                    'intrusion' => $intrusion
+                    'intrusion' => $intrusion,
+                    'privacy' => $this->systemController->getPrivacyStats(),
+                    'redis' => $this->systemController->getRedisStats(),
+                    'git' => $this->systemController->getGitInfo()
                 ]
             ];
 

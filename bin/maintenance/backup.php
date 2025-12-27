@@ -5,6 +5,14 @@ require __DIR__ . '/../../vendor/autoload.php';
 use DI\ContainerBuilder;
 use FratellanzaMilitare\Service\BackupService;
 
+/**
+ * Script di Backup Database
+ * 
+ * Questo script viene eseguito da cron/scheduler per creare dump del database.
+ * Utilizza il BackupService per gestire la logica di dump e rotazione.
+ * Supporta un Request ID per il tracciamento nei log anche da CLI.
+ */
+
 // 1. Inizializza il container
 $containerBuilder = new ContainerBuilder();
 foreach ((require __DIR__ . '/../../config/container.php') as $definitions) {

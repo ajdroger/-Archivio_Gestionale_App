@@ -15,6 +15,12 @@ use Slim\Routing\RouteContext;
 /**
  * Controller dedicato alla gestione fisica e logica dei documenti soci.
  */
+/**
+ * Controller per la gestione documentale dei soci.
+ * 
+ * Gestisce upload, download ed eliminazione di documenti (PDF, immagini, DOC)
+ * associandoli ai singoli soci. Integra validazione MIME/Size e Audit Log.
+ */
 class StorageController
 {
     private PDOSocioRepository $socioRepo;
@@ -28,6 +34,17 @@ class StorageController
         $this->validator = $validator;
     }
 
+    /**
+     * Gestisce l'upload di un documento per un socio.
+     * 
+     * Valida il file (dimensione, tipo), lo salva con un nome univoco (ID + filename originale)
+     * e crea un record DocumentoGenerico associato al socio.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function upload(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $socio = $this->socioRepo->findByCodiceFiscale($args['cf']);
@@ -65,6 +82,17 @@ class StorageController
         return $response->withHeader('Location', $routeParser->urlFor('socio_detail', ['cf' => $args['cf']]))->withStatus(302);
     }
 
+    /**
+     * Scarica un documento archiviato.
+     * 
+     * Verifica l'appartenenza del documento al socio e la sua esistenza su disco.
+     * Serve il file con i corretti header per il download.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function download(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $socio = $this->socioRepo->findByCodiceFiscale($args['cf']);
@@ -89,6 +117,17 @@ class StorageController
             ->withBody($fileStream);
     }
 
+    /**
+     * Elimina logicamente un documento dal socio.
+     * 
+     * NOTA: Attualmente non cancella il file fisico per policy di sicurezza/auditing,
+     * ma disassocia il record dal socio.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param array $args
+     * @return ResponseInterface
+     */
     public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $socio = $this->socioRepo->findByCodiceFiscale($args['cf']);

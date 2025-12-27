@@ -28,7 +28,7 @@ test('User Journey: Complete Lifecycle of a Socio via Modulo Anagrafica', functi
     $validator = new \FratellanzaMilitare\Service\ValidationService();
 
     $pdfService = new \FratellanzaMilitare\Service\PdfGenerationService();
-    $emailService = new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/test_journey_emails.txt');
+    $emailService = new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_journey_emails.txt');
     $registrationService = new \FratellanzaMilitare\Service\RegistrationService($repo, $validator, $pdfService, $emailService, $logger);
 
     $listCtrl = new ListController($mustache, $repo);

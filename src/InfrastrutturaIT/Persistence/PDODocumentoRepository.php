@@ -10,6 +10,13 @@ use FratellanzaMilitare\Enum\StatoDocumento;
 use PDO;
 use DateTime;
 
+/**
+ * Repository MySQL/MariaDB per la gestione dei Documenti.
+ * 
+ * Implementa le operazioni CRUD (Create, Read, Delete) per i documenti
+ * associati ai soci. Mappa diversi tipi di documenti su una singola tabella
+ * relazionale, utilizzando una strategia "Single Table Inheritance" semplificata.
+ */
 class PDODocumentoRepository implements DocumentoRepository
 {
     private PDO $pdo;
@@ -19,6 +26,13 @@ class PDODocumentoRepository implements DocumentoRepository
         $this->pdo = $pdo ?? DatabaseConnection::getConnection();
     }
 
+    /**
+     * Salva o aggiorna un documento nel database.
+     * 
+     * Esegue un upsert (ON DUPLICATE KEY UPDATE) per gestire creazione e modifica
+     * in modo idempotente. Serializza i campi specifici delle sottoclassi
+     * (ModuloIscrizione, ConsensoGDPR) nelle colonne dedicate.
+     */
     public function save(Documento $documento, string $socioCf): void
     {
         $tipo = 'GENERICO';
@@ -77,9 +91,12 @@ class PDODocumentoRepository implements DocumentoRepository
 
     public function findById(string $uuid): ?Documento
     {
-        return null;
+        return null; // Not implemented yet
     }
 
+    /**
+     * Recupera tutti i documenti associati a un socio.
+     */
     public function findBySocio(string $socioCf): array
     {
         $stmt = $this->pdo->prepare("SELECT * FROM documenti WHERE socio_cf = ?");
@@ -94,13 +111,12 @@ class PDODocumentoRepository implements DocumentoRepository
     }
 
     /**
-     * Batch loading for N+1 query optimization
+     * Caricamento batch per ottimizzazione N+1 query.
      * 
-     * Loads documents for multiple soci in a single query instead of N queries.
-     * Result: 101 queries → 2 queries for 100 soci
+     * Carica i documenti per molteplici soci in un'unica query.
      * 
-     * @param array<string> $codiciFiscali Array of codici fiscali
-     * @return array<string, array<Documento>> Map of CF => documents array
+     * @param array<string> $codiciFiscali Array di codici fiscali
+     * @return array<string, array<Documento>> Mappa CF => array di documenti
      */
     public function findBySocioBatch(array $codiciFiscali): array
     {
@@ -130,12 +146,18 @@ class PDODocumentoRepository implements DocumentoRepository
         return $grouped;
     }
 
+    /**
+     * Elimina fisicamente un documento dal database.
+     */
     public function delete(string $idUnivoco): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM documenti WHERE id_univoco = ?");
         $stmt->execute([$idUnivoco]);
     }
 
+    /**
+     * Converte una riga del database nell'oggetto Documento appropriato (Factory Method).
+     */
     private function mapRowToDocumento(array $row): Documento
     {
         $doc = null;

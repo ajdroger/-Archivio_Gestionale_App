@@ -20,8 +20,7 @@ class AdminMiddleware implements MiddlewareInterface
             // Se è una richiesta AJAX, restituiamo JSON
             if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest' || str_contains($request->getUri()->getPath(), '/devtools/run')) {
                 $response->getBody()->write(json_encode([
-                    'error' => true,
-                    'message' => 'Accesso negato: Autorizzazioni insufficienti.',
+                    'error' => 'Accesso negato: Autorizzazioni insufficienti.',
                     'output' => '[403 FORBIDDEN]'
                 ]));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(403);

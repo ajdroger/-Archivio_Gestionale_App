@@ -4,6 +4,13 @@ namespace FratellanzaMilitare\GestioneSoci;
 
 use DateTime;
 
+/**
+ * Entità che rappresenta il consenso GDPR di un socio.
+ * 
+ * Traccia le scelte di privacy (trattamento dati, cessione a terzi, marketing),
+ * la data di firma, la versione dell'informativa accettata e l'eventuale revoca.
+ * Estende Documento per storicizzazione (se necessario) o per analogia strutturale.
+ */
 class ConsensoGDPR extends Documento
 {
     public bool $TrattamentoDati;
@@ -16,7 +23,13 @@ class ConsensoGDPR extends Documento
     public ?string $MotivoRevoca = null;
 
     /**
-     * Aggiorna i consensi e logga l'azione
+     * Aggiorna i consensi e logga l'azione nell'Audit Trail.
+     * 
+     * @param bool $trattamento Consenso base obbligatorio/facoltativo
+     * @param bool $cessione Consenso cessione dati a terzi
+     * @param bool $marketing Consenso comunicazioni commerciali
+     * @param string $versione Identificativo versione informativa (es. "v2024.1")
+     * @param \FratellanzaMilitare\SecurityLayer\UtenteSistema $operatore Chi effettua l'operazione
      */
     public function aggiornaConsensi(
         bool $trattamento,
@@ -40,7 +53,13 @@ class ConsensoGDPR extends Documento
     }
 
     /**
-     * Revoca il consenso GDPR
+     * Revoca il consenso GDPR.
+     * 
+     * Imposta il flag Attivo a false e registra data e motivo della revoca.
+     * Questa azione inibisce trattamenti futuri ma mantiene lo storico.
+     * 
+     * @param string $motivo Ragione della revoca
+     * @param \FratellanzaMilitare\SecurityLayer\UtenteSistema $operatore
      */
     public function revoca(string $motivo, \FratellanzaMilitare\SecurityLayer\UtenteSistema $operatore): void
     {

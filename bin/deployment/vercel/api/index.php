@@ -11,10 +11,10 @@ use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 
 // Load Composer autoloader
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 // 1. Load Environment Variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->safeLoad();
 
 // 2. Secure Session Configuration
@@ -28,7 +28,7 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
 
 // 3. Build Container
 $containerBuilder = new ContainerBuilder();
-foreach ((require __DIR__ . '/../config/container.php') as $definitions) {
+foreach ((require __DIR__ . '/../../config/container.php') as $definitions) {
     $containerBuilder->addDefinitions($definitions);
 }
 $container = $containerBuilder->build();
@@ -46,11 +46,11 @@ $app = AppFactory::create();
 // $app->setBasePath('');
 
 // 5. Register Middleware
-$middleware = require __DIR__ . '/../config/middleware.php';
+$middleware = require __DIR__ . '/../../config/middleware.php';
 $middleware($app);
 
 // 6. Register Routes
-$routes = require __DIR__ . '/../config/routes.php';
+$routes = require __DIR__ . '/../../config/routes.php';
 $routes($app);
 
 // 7. Run

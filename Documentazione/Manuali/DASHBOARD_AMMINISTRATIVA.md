@@ -1,43 +1,71 @@
-# Dashboard Amministrativa - Mission-Critical Ops Center
+# Dashboard Amministrativa (Mission Control Center)
 
-Il sistema dispone di un hub di controllo avanzato per la manutenzione e il monitoraggio proattivo della resilienza (v1.3.1).
+**Edizione v2.0 Enterprise - Strumenti per SysAdmin**
 
-## 📍 Strumenti di Controllo
-
-### 1. Developer Dashboard (Web)
-**Accesso**: `/devtools` (Riservato Admin)
-La dashboard web integra il **Resilience Monitor** per una visione istantanea della salute del sistema:
-- **Database Status**: Verifica integrità fisica e vincoli relazionali.
-- **Backup State**: Monitoraggio della freschezza dei backup (Ultimo backup < 24h).
-- **Log Observer**: Anteprima degli ultimi eventi critici nel sistema.
-- **Quick Backup**: Pulsante per l'esecuzione istantanea del backup del database.
-
-### 2. Log Trace Explorer (Web)
-Integrato nei DevTools, permette di tracciare la "storia" di una richiesta tramite il **Correlation ID**:
-- Inserendo un `Request ID` (es. `676...`), il sistema estrae tutti i log (App e Audit) correlati a quell'evento.
-- Fondamentale per il debugging in tempo reale e la forensics post-incidente.
-
-### 3. Mission-Critical Console (CLI)
-**Comando**: `php bin/debug_console/console.php`
-Un terminale interattivo per sysadmin progettato per operare anche in caso di down dell'interfaccia web:
-- `health`: Report dettagliato della resilienza.
-- `trace <ID>`: Tracciamento log CLI.
-- `backup`: Gestione manuale della rotazione backup.
-
-## 🚀 Logica di Resilienza
-
-### Integrità Dati
-Il sistema esegue controlli **PRAGMA** proattivi. In caso di corruzione del file database, il monitor segnalerà immediatamente lo stato `FAIL` nella dashboard.
-
-### Disaster Recovery
-Il `BackupService` salva copie incrementali in `storage/backups/`. La console amministrativa permette di verificare la presenza di almeno 14 giorni di storico.
+Il sistema dispone di due livelli di controllo: **Web Dashboard** (per monitoraggio quotidiano) e **CLI Toolbox** (per diagnostica profonda e disaster recovery).
 
 ---
-## 🛡️ Accesso & Sicurezza
-L'accesso agli strumenti amministrativi è protetto da:
-- **AdminMiddleware**: Verifica dei permessi di ruolo.
-- **Session Hardening**: Cookie `Strict` e `HttpOnly` per prevenire attacchi XSS alla dashboard.
-- **Audit Logging**: Ogni azione compiuta in dashboard viene registrata con l'ID dell'amministratore.
+
+## 1. 🖥️ Web Dashboard (`/devtools`)
+
+Accessibile tramite il menu "Strumenti > Mission Control" (solo Amministratori).
+
+### 📊 Resilience Monitor
+- **Health Score**: Punteggio da 0 a 100% basato sullo stato del sistema.
+- **Security Hub**:
+    - Monitoraggio tentativi di accesso falliti.
+    - Stato rotazione 2FA utenti.
+- **Database Metrics**: Dimensione DB, tempi di risposta query e stato cache.
+
+### 📜 Log & Audit Explorer
+Strumento visuale per ispezionare il registro delle operazioni:
+- **Audit Trail**: Chi ha fatto cosa e quando (creazione, modifica, cancellazione).
+- **System Logs**: Errori tecnici filtrabili per livello (ERROR, WARNING, INFO).
 
 ---
-*Ultimo aggiornamento: 21 Dicembre 2025 - Edizione Mission-Critical*
+
+## 2. 🛠️ CLI Toolbox (`bin/tools`)
+
+In caso di malfunzionamento dell'interfaccia web, usa la riga di comando sul server.
+
+### Diagnostica
+```powershell
+# Check completo dello stato di salute
+php bin/tools/health_check.php
+
+# Audit di Sicurezza (privilegi file, config php)
+php bin/tools/security_audit_cli.php
+
+# Test Invio Email (SMTP)
+php bin/tools/test_smtp.php
+```
+
+### Manutenzione Database
+```powershell
+# Riparazione integrità Relazionale
+php bin/maintenance/check_integrity.php
+
+# Verifica Backup
+php bin/maintenance/backup_verify.php
+```
+
+---
+
+## 3. 🚨 Procedure di Emergenza
+
+### Backup Manuale
+Se devi eseguire un aggiornamento o una migrazione:
+```powershell
+php bin/maintenance/backup_daily.php
+```
+I file verranno salvati in `storage/backups/`.
+
+### Reset Chiavi Sicurezza
+Se sospetti una compromissione delle chiavi:
+```powershell
+php bin/maintenance/regenerate_key_clean.php
+```
+*⚠️ Attenzione: Questo disconnetterà tutti gli utenti attualmente loggati.*
+
+---
+*Manuale Tecnico - Fratellanza Militare IT Dept.*

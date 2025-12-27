@@ -29,6 +29,7 @@ return function (App $app) {
 
     // CSRF View Injection (Automated)
     $mustache = $container->get(Mustache_Engine::class);
+    $app->add(new \FratellanzaMilitare\Middleware\BasePathMiddleware($mustache));
     $app->add(new \FratellanzaMilitare\Middleware\CsrfViewMiddleware($mustache));
 
     // CSRF Protection
@@ -42,8 +43,7 @@ return function (App $app) {
         ]);
         $response = new \Slim\Psr7\Response();
         $response->getBody()->write(json_encode([
-            'error' => true,
-            'message' => 'Errore CSRF: Token non valido o sessione scaduta. Ricarica la pagina.',
+            'error' => 'Errore CSRF: Token non valido o sessione scaduta. Ricarica la pagina.',
             'output' => '[CSRF FAILURE]'
         ], JSON_UNESCAPED_UNICODE));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(403);

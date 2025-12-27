@@ -8,6 +8,12 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteContext;
 
+/**
+ * Controller per la gestione delle impostazioni utente.
+ * 
+ * Gestisce la visualizzazione del profilo, i dettagli account dell'utente corrente
+ * e la funzionalità di cambio password sicuro.
+ */
 class SettingsController
 {
     private Mustache_Engine $mustache;
@@ -17,11 +23,25 @@ class SettingsController
         $this->mustache = $mustache;
     }
 
+    /**
+     * Visualizza la pagina delle impostazioni utente.
+     * 
+     * Recupera i dati dell'utente loggato dal database e renderizza
+     * il template 'impostazioni'. Gestisce i redirect se l'utente non è autenticato.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
     public function view(Request $request, Response $response): Response
     {
+        $routeParser = RouteContext::fromRequest($request)->getRouteParser();
+        $loginUrl = $routeParser->urlFor('login');
+        $logoutUrl = $routeParser->urlFor('logout');
+
         $userId = $_SESSION['user_id'] ?? null;
         if (!$userId) {
-            return $response->withHeader('Location', '/login')->withStatus(302);
+            return $response->withHeader('Location', $loginUrl)->withStatus(302);
         }
 
         $db = DatabaseConnection::getConnection();
@@ -30,25 +50,42 @@ class SettingsController
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!$user) {
-            return $response->withHeader('Location', '/logout')->withStatus(302);
+            return $response->withHeader('Location', $logoutUrl)->withStatus(302);
         }
 
         // Add formatted fields for UI
         $user['last_login'] = date('d/m/Y H:i'); // Placeholder for session-based last login
         $user['email'] = "ajmeer03@gmail.com";
 
-        $html = $this->mustache->render('settings', [
+        $user['email'] = "ajmeer03@gmail.com";
+
+        $html = $this->mustache->render('impostazioni', [ // Restored original template name
             'title' => 'Impostazioni Profilo',
             'user' => $user,
             'user_initial' => strtoupper(substr($user['username'] ?? 'U', 0, 1)),
             'success' => $request->getAttribute('flash_success'),
             'error' => $request->getAttribute('flash_error'),
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })()
         ]);
 
         $response->getBody()->write($html);
         return $response;
     }
 
+    /**
+     * Gestisce l'aggiornamento della password utente.
+     * 
+     * Valida i dati in input (vecchia password, nuova, conferma),
+     * verifica la correttezza della vecchia password e aggiorna l'hash nel DB.
+     * Imposta messaggi flash di successo o errore.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
     public function updatePassword(Request $request, Response $response): Response
     {
         $userId = $_SESSION['user_id'] ?? null;

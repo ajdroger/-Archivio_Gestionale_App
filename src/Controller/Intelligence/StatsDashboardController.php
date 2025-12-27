@@ -3,6 +3,8 @@
 namespace FratellanzaMilitare\Controller\Intelligence;
 
 use FratellanzaMilitare\GestioneSoci\SocioRepository;
+use FratellanzaMilitare\Debug\ResilienceMonitor;
+use FratellanzaMilitare\Service\HealthCheckService;
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,31 +12,50 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Controller dedicato all'analisi dati e visualizzazione KPI.
  */
+/**
+ * Controller per la Dashboard di Intelligence e Statistiche.
+ * 
+ * Aggrega dati statistici, monitoraggio della salute del sistema e KPI dei soci.
+ * Gestisce caching delle query costose e endpoint API per l'aggiornamento real-time.
+ */
 class StatsDashboardController
 {
     private Mustache_Engine $mustache;
     private SocioRepository $repository;
+    private ResilienceMonitor $resilienceMonitor;
+    private HealthCheckService $healthCheck;
 
-    public function __construct(Mustache_Engine $mustache, SocioRepository $repository)
-    {
+    public function __construct(
+        Mustache_Engine $mustache,
+        SocioRepository $repository,
+        ResilienceMonitor $resilienceMonitor,
+        HealthCheckService $healthCheck
+    ) {
         $this->mustache = $mustache;
         $this->repository = $repository;
+        $this->resilienceMonitor = $resilienceMonitor;
+        $this->healthCheck = $healthCheck;
     }
 
     /**
      * Gestisce la visualizzazione della Dashboard di Intelligence.
      * 
-     * Questa funzione orchestra il recupero dei dati statistici, la gestione della cache
-     * e la preparazione (mapping) dei dati per la vista.
-     *
+     * Implementa strategie di caching (file-based) per ridurre il carico sul DB.
+     * Recupera e mappa i dati dei soci filtrati per il template Mustache.
+     * Gestisce richieste AJAX per aggiornamenti in tempo reale.
+     * 
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
     public function view(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        // 1. Recupero Parametri di Filtro dalla Query String
         $params = $request->getQueryParams();
+
+        // 0. API / Real-time Endpoint Detection
+        if (isset($params['action']) && $params['action'] === 'api') {
+            return $this->handleApiRequest($response);
+        }
         $sociFilters = [];
 
         // Mappatura dei filtri UI ai filtri del Repository
@@ -97,6 +118,8 @@ class StatsDashboardController
             'filtered_soci' => $sociViewModel,
             'filtered_count' => count($filteredSoci),
             'filters' => $params,
+            'monitoring' => $this->resilienceMonitor->monitorHealth(),
+            'health' => $this->healthCheck->checkAll(),
             'is_admin' => ($_SESSION['user_role'] ?? '') === 'admin',
             'username' => $_SESSION['username'] ?? 'Utente',
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1))
@@ -104,5 +127,31 @@ class StatsDashboardController
 
         $response->getBody()->write($html);
         return $response;
+    }
+
+    /**
+     * Endpoint API per aggiornamenti real-time.
+     * 
+     * Restituisce JSON con statistiche, monitoraggio e salute sistema.
+     * Utilizzato dal frontend per il refresh automatico dei widget.
+     * 
+     * @param ResponseInterface $response
+     * @return ResponseInterface JSON
+     */
+    private function handleApiRequest(ResponseInterface $response): ResponseInterface
+    {
+        $stats = $this->repository->getStatistics();
+        $monitoring = $this->resilienceMonitor->monitorHealth();
+        $health = $this->healthCheck->checkAll();
+
+        $data = [
+            'timestamp' => time(),
+            'stats' => $stats,
+            'monitoring' => $monitoring,
+            'health' => $health
+        ];
+
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }

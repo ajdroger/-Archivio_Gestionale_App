@@ -1,0 +1,219 @@
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --primary: #3b82f6;
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+}
+
+body {
+    background-color: #020617;
+    background-image: radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+    color: var(--text-main);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.9rem;
+    /* Base font size reduced */
+    overflow-y: scroll;
+    /* Always Show scrollbar to prevent shift */
+}
+
+/* --- LAYOUT UTILS --- */
+.glass-panel {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* --- CARD DESIGN --- */
+.suite-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    height: 100%;
+    max-height: 550px;
+    /* FIXED HEIGHT CONSTRAINT */
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.suite-card:hover {
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+}
+
+.suite-header {
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suite-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.suite-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    /* Internal Scroll */
+    padding: 8px;
+}
+
+/* --- LIST ITEMS --- */
+.test-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: background 0.15s;
+}
+
+.test-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.test-name {
+    font-family: 'Consolas', monospace;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
+}
+
+.btn-run-mini {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-run-mini:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* --- CONSOLE DRAWER --- */
+#terminal-drawer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 600px;
+    height: 400px;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    display: none;
+    /* Initially Hidden */
+    flex-direction: column;
+    z-index: 9999;
+    resize: both;
+    overflow: hidden;
+}
+
+#terminal-drag-handle {
+    background: #1e1e1e;
+    padding: 8px 12px;
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    user-select: none;
+}
+
+#terminal-drag-handle:active {
+    cursor: grabbing;
+}
+
+.term-btn {
+    background: transparent;
+    border: none;
+    color: #ccc;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.term-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.term-btn-close:hover {
+    background: #ef4444;
+}
+
+#terminal-content {
+    flex-grow: 1;
+    padding: 10px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.8rem;
+    color: #00ff00;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+/* Nuovi stili per il modal settings */
+.hover-bg-primary-fade:hover {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+.hover-bg-danger-fade:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+.transition-all {
+    transition: all 0.2s ease;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.shadow-blue-glow {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}

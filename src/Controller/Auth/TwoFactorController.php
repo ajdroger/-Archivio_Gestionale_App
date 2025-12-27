@@ -14,6 +14,12 @@ use Slim\Routing\RouteContext;
 /**
  * Controller dedicato alla gestione della Two-Factor Authentication (Fase 2).
  */
+/**
+ * Gestisce l'Autenticazione a Due Fattori (2FA).
+ * 
+ * Verifica il codice TOTP inserito dall'utente dopo il login primario.
+ * Se valido, eleva la sessione a 'authenticated'.
+ */
 class TwoFactorController
 {
     private Mustache_Engine $mustache;
@@ -27,6 +33,13 @@ class TwoFactorController
 
     /**
      * Visualizza il form per l'inserimento del codice 2FA.
+     * 
+     * Genera anche il QR Code se è il primo setup o se richiesto, basandosi
+     * sul segreto TOTP dell'utente (decriptato).
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function form(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -56,6 +69,13 @@ class TwoFactorController
 
     /**
      * Verifica il codice TOTP fornito dall'utente.
+     * 
+     * Se il codice è valido, completa il login, rigenera l'ID di sessione
+     * e reindirizza alla dashboard principale.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function verify(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -100,7 +120,8 @@ class TwoFactorController
     {
         return <<<html
 <!DOCTYPE html>
-<html lang="it"><head><meta charset="UTF-8"><title>$title</title>
+<html lang="it">
+<head><meta charset="UTF-8"><title>$title</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="css/premium.css">
 <style>body { background: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }</style>

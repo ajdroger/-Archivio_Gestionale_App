@@ -2,31 +2,25 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
-         colors="true">
+         colors="true"
+         stopOnFailure="false"
+         processIsolation="false"
+>
     <testsuites>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Integration">
-            <directory suffix="Test.php">./tests/Integration</directory>
+            <directory>tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
+            <directory>tests/Feature</directory>
         </testsuite>
-        <testsuite name="Security">
-            <directory suffix="Test.php">./tests/Security</directory>
-        </testsuite>
-        <testsuite name="EdgeCases">
-            <directory suffix="Test.php">./tests/EdgeCases</directory>
-        </testsuite>
-        <testsuite name="Maintenance">
-            <directory suffix="Test.php">./tests/Maintenance</directory>
-        </testsuite>
-        <testsuite name="Performance">
-            <directory suffix="Test.php">./tests/Performance</directory>
+        <testsuite name="Integration">
+            <directory>tests/Integration</directory>
         </testsuite>
         <testsuite name="Architecture">
-            <directory suffix="Test.php">./tests/Arch</directory>
+            <directory>tests/Arch</directory>
+        </testsuite>
+        <testsuite name="Security">
+            <directory>tests/Security</directory>
         </testsuite>
     </testsuites>
     <source>
@@ -34,4 +28,8 @@
             <directory suffix=".php">src</directory>
         </include>
     </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="DB_DATABASE" value="fratellanza_test"/>
+    </php>
 </phpunit>

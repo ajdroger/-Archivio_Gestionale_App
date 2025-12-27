@@ -8,9 +8,81 @@
                 <p class="text-secondary mb-0 mt-2">Analisi strategica in tempo reale. Intelligence su anagrafica e finanze.</p>
             </div>
             <div class="text-end">
-                <span class="badge bg-dark text-secondary border border-secondary px-3 py-2 font-monospace">
-                    <i class="fa-solid fa-clock-rotate-left me-2"></i>DATA RIF: {{stats.data_riferimento}}
+                <span id="live-indicator" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 font-monospace me-2 animate-pulse">
+                    <i class="fa-solid fa-signal me-2"></i>LIVE
                 </span>
+                <span class="badge bg-dark text-secondary border border-secondary px-3 py-2 font-monospace">
+                    <i class="fa-solid fa-clock-rotate-left me-2"></i>REF: <span id="data-ref">{{stats.data_riferimento}}</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Monitoring Grid -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card h-100 bg-dark border-secondary shadow-lg">
+            <div class="card-body text-center p-4">
+                <div class="fs-1 text-primary mb-3">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Integrità DB</h6>
+                <div id="mon-db">
+                    {{#monitoring.database.status}}
+                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25">OPERATIVO</span>
+                    {{/monitoring.database.status}}
+                    {{^monitoring.database.status}}
+                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25">ERRORE</span>
+                    {{/monitoring.database.status}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 bg-dark border-secondary shadow-lg">
+            <div class="card-body text-center p-4">
+                <div class="fs-1 text-success mb-3">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Storage Salute</h6>
+                <div id="mon-storage">
+                    {{#health.checks.storage.status}}
+                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25">{{health.checks.storage.message}}</span>
+                    {{/health.checks.storage.status}}
+                </div>
+                <small class="text-white-50 d-block mt-2 font-monospace" style="font-size:0.6rem">{{health.checks.storage.free_space}} LIBERI</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 bg-dark border-secondary shadow-lg">
+            <div class="card-body text-center p-4">
+                <div class="fs-1 text-info mb-3">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Backups (24h)</h6>
+                <div id="mon-backups">
+                    {{#monitoring.backups.status}}
+                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25">{{monitoring.backups.count}} BACKUPS</span>
+                    {{/monitoring.backups.status}}
+                    {{^monitoring.backups.status}}
+                    <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25">ALERT: {{monitoring.backups.message}}</span>
+                    {{/monitoring.backups.status}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 bg-dark border-secondary shadow-lg">
+            <div class="card-body text-center p-4">
+                <div class="fs-1 text-warning mb-3">
+                    <i class="fa-solid fa-server"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Server Uptime</h6>
+                <div id="mon-uptime">
+                    <span class="badge bg-dark text-white border border-secondary">{{health.uptime}}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -195,13 +267,24 @@
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<style>
+    @keyframes pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.95); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- 1. init DataTables ---
-        $('.statistics-table').DataTable({
+        const table = $('.statistics-table').DataTable({
             "paging": true,
             "pageLength": 10,
-            "lengthChange": false, // Cleaner UI
+            "lengthChange": false, 
             "searching": true,
             "info": true,
             "autoWidth": false,
@@ -215,12 +298,6 @@
             "dom": '<"d-flex justify-content-between mb-2"f>t<"d-flex justify-content-between mt-3"ip>',
             "initComplete": function() {
                 $('.dataTables_filter input').addClass('form-control form-control-sm bg-dark text-white border-secondary');
-                $('.page-link').addClass('bg-dark text-secondary border-secondary');
-                $('.page-item.active .page-link').addClass('bg-primary text-white border-primary');
-            },
-            "drawCallback": function() {
-                 $('.page-link').addClass('bg-dark text-secondary border-secondary');
-                 $('.page-item.active .page-link').removeClass('bg-dark text-secondary').addClass('bg-primary text-white border-primary');
             }
         });
 
@@ -228,58 +305,102 @@
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.borderColor = '#334155';
 
-        // Data from Backend
-        const stats = {
-            active: {{stats.attivi}},
-            total: {{stats.totale}},
-            paying: {{stats.paganti}},
-            late: {{stats.morosi}}
-        };
-        const nonActive = stats.total - stats.active;
-
-        // Status Chart
-        new Chart(document.getElementById('chartStatus'), {
+        const chartStatus = new Chart(document.getElementById('chartStatus'), {
             type: 'doughnut',
             data: {
-                labels: ['Attivi', 'Altri (Sosp/Canc)'],
+                labels: ['Attivi', 'Altri'],
                 datasets: [{
-                    data: [stats.active, nonActive],
-                    backgroundColor: ['#0ea5e9', '#475569'], // Sky-500, Slate-600
-                    borderWidth: 0,
-                    hoverOffset: 4
+                    data: [{{stats.attivi}}, {{stats.totale}} - {{stats.attivi}}],
+                    backgroundColor: ['#0ea5e9', '#475569'],
+                    borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
-                },
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
                 cutout: '70%'
             }
         });
 
-        // Financial Chart
-        new Chart(document.getElementById('chartFinancial'), {
+        const chartFinancial = new Chart(document.getElementById('chartFinancial'), {
             type: 'doughnut',
             data: {
                 labels: ['In Regola', 'Morosi'],
                 datasets: [{
-                    data: [stats.paying, stats.late],
-                    backgroundColor: ['#22c55e', '#ef4444'], // Green-500, Red-500
-                    borderWidth: 0,
-                    hoverOffset: 4
+                    data: [{{stats.paganti}}, {{stats.morosi}}],
+                    backgroundColor: ['#22c55e', '#ef4444'],
+                    borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
-                },
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
                 cutout: '70%'
             }
         });
+
+        // --- 3. Real-time Engine ---
+        function updateUI(data) {
+            // Update Headers
+            document.getElementById('data-ref').textContent = data.stats.data_riferimento;
+            
+            // Update KPI Cards
+            document.querySelector('.col-12 h3.text-white').textContent = data.stats.totale;
+            document.querySelector('.col-6:nth-child(2) h4').textContent = data.stats.perc_paganti + '%';
+            document.querySelector('.col-6:nth-child(3) h4').textContent = data.stats.perc_morosi + '%';
+
+            // Update Badges in Chart sections
+            document.querySelector('.badge.bg-info').textContent = 'ATTIVI: ' + data.stats.attivi;
+            document.querySelector('.badge.bg-secondary').textContent = 'TOTALE: ' + data.stats.totale;
+            document.querySelector('.badge.bg-success').textContent = 'IN REGOLA: ' + data.stats.paganti;
+            document.querySelector('.badge.bg-danger').textContent = 'MOROSI: ' + data.stats.morosi;
+
+            // Update Charts
+            chartStatus.data.datasets[0].data = [data.stats.attivi, data.stats.totale - data.stats.attivi];
+            chartStatus.update();
+
+            chartFinancial.data.datasets[0].data = [data.stats.paganti, data.stats.morosi];
+            chartFinancial.update();
+
+            // Update Monitoring
+            const dbStatus = data.monitoring.database.status ? 
+                '<span class="badge bg-success-subtle text-success border border-success border-opacity-25">OPERATIVO</span>' :
+                '<span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25">ERRORE</span>';
+            document.getElementById('mon-db').innerHTML = dbStatus;
+
+            const storageStatus = '<span class="badge bg-success-subtle text-success border border-success border-opacity-25">' + data.health.checks.storage.message + '</span>';
+            document.getElementById('mon-storage').innerHTML = storageStatus;
+            document.querySelector('#mon-storage + small').textContent = data.health.checks.storage.free_space + ' LIBERI';
+
+            const backupStatus = data.monitoring.backups.status ?
+                '<span class="badge bg-success-subtle text-success border border-success border-opacity-25">' + data.monitoring.backups.count + ' BACKUPS</span>' :
+                '<span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25">ALERT</span>';
+            document.getElementById('mon-backups').innerHTML = backupStatus;
+
+            document.getElementById('mon-uptime').innerHTML = '<span class="badge bg-dark text-white border border-secondary">' + data.health.uptime + '</span>';
+        }
+
+        async function fetchRealTime() {
+            try {
+                const indicator = document.getElementById('live-indicator');
+                indicator.classList.replace('text-success', 'text-warning');
+                
+                const response = await fetch('?action=api');
+                const data = await response.json();
+                
+                updateUI(data);
+                
+                indicator.classList.replace('text-warning', 'text-success');
+            } catch (error) {
+                console.error('Real-time update failed:', error);
+                document.getElementById('live-indicator').classList.replace('text-success', 'text-danger');
+            }
+        }
+
+        // Poll every 10 seconds
+        setInterval(fetchRealTime, 10000);
     });
 </script>
 

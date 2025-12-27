@@ -2,6 +2,12 @@
 
 namespace FratellanzaMilitare\Service;
 
+/**
+ * Implementazione del servizio Email su File (Log).
+ * 
+ * Utile per ambienti di sviluppo/test dove non si vuole inviare email reali.
+ * Scrive i dettagli delle email inviate su un file di log specificato.
+ */
 class FileEmailService implements EmailServiceInterface
 {
     private string $logFile;
@@ -11,6 +17,9 @@ class FileEmailService implements EmailServiceInterface
         $this->logFile = $logPath;
     }
 
+    /**
+     * Simula l'invio scrivendo su file.
+     */
     public function send(string $to, string $subject, string $body, array $attachments = []): bool
     {
         $date = date('Y-m-d H:i:s');

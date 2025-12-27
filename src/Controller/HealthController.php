@@ -9,6 +9,12 @@ use FratellanzaMilitare\Service\HealthCheckService;
 /**
  * Health Check Controller - Enhanced with comprehensive checks
  */
+/**
+ * Controller per il monitoraggio dello stato di salute del sistema.
+ * 
+ * Esegue una serie di controlli diagnostici (database, disco, servizi)
+ * per determinare se l'applicazione è operativa e funzionante correttamente.
+ */
 final class HealthController
 {
     private HealthCheckService $healthCheckService;
@@ -18,6 +24,16 @@ final class HealthController
         $this->healthCheckService = $healthCheckService;
     }
 
+    /**
+     * Esegue il check completo di salute.
+     * 
+     * Restituisce un JSON con lo stato di ogni servizio monitorato.
+     * Se il sistema è 'healthy', ritorna 200 OK, altrimenti 503 Service Unavailable.
+     * 
+     * @param Request $request
+     * @param Response $response
+     * @return Response
+     */
     public function check(Request $request, Response $response): Response
     {
         $result = $this->healthCheckService->checkAll();

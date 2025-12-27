@@ -17,6 +17,11 @@ abstract class TestCase extends BaseTestCase
     public ?Amministratore $admin = null;
     public ?Operatore $operatore = null;
     public ?string $logFile = null;
+    protected $app;
+
+    /** @var \PDO */
+    public $pdo;
+
     protected function setUp(): void
     {
         parent::setUp();

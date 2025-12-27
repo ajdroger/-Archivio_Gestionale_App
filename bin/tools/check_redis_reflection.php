@@ -1,5 +1,5 @@
 <?php
-require 'vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 $r = new ReflectionClass(Predis\Client::class);
 echo "Has get? " . ($r->hasMethod('get') ? 'YES' : 'NO') . "\n";

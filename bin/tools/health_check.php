@@ -1,8 +1,10 @@
 <?php
 
 /**
- * System Health Check - Complete Diagnostic Tool
- * Verifies all critical system components
+ * System Health Check - Strumento Diagnostico Completo
+ * 
+ * Verifica tutti i componenti critici del sistema:
+ * PHP, Estensioni, Database, Permessi, Variabili d'Ambiente, Disk Space, Memoria, Sicurezza.
  */
 
 require __DIR__ . '/../../vendor/autoload.php';
@@ -13,29 +15,30 @@ $dotenv->load();
 
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+// Load .env from project root (bin/tools/../../.env)
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 
-echo "🏥 SYSTEM HEALTH CHECK\n";
+echo "🏥 SYSTEM HEALTH CHECK (Diagnostica)\n";
 echo str_repeat('=', 60) . "\n\n";
 
 $results = [];
 $overallHealth = true;
 
 // 1. PHP Version Check
-echo "1️⃣  PHP Version Check... ";
+echo "1️⃣  Controllo Versione PHP... ";
 $phpVersion = phpversion();
 if (version_compare($phpVersion, '8.2.0', '>=')) {
     echo "✅ $phpVersion\n";
     $results['php'] = true;
 } else {
-    echo "❌ $phpVersion (Required: >= 8.2.0)\n";
+    echo "❌ $phpVersion (Richiesto: >= 8.2.0)\n";
     $results['php'] = false;
     $overallHealth = false;
 }
 
 // 2. Required Extensions
-echo "\n2️⃣  Required PHP Extensions:\n";
+echo "\n2️⃣  Estensioni PHP Richieste:\n";
 $requiredExtensions = ['pdo', 'pdo_mysql', 'mbstring', 'openssl', 'json', 'fileinfo'];
 foreach ($requiredExtensions as $ext) {
     echo "   - $ext: ";
@@ -43,22 +46,22 @@ foreach ($requiredExtensions as $ext) {
         echo "✅\n";
         $results["ext_$ext"] = true;
     } else {
-        echo "❌ MISSING\n";
+        echo "❌ MANCANTE\n";
         $results["ext_$ext"] = false;
         $overallHealth = false;
     }
 }
 
 // 3. Database Connection
-echo "\n3️⃣  Database Connection... ";
+echo "\n3️⃣  Connessione Database... ";
 try {
     $pdo = DatabaseConnection::getConnection();
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-    echo "✅ Connected ($driver)\n";
+    echo "✅ Connesso ($driver)\n";
     $results['database'] = true;
 
     // Check tables
-    echo "   - Tables: ";
+    echo "   - Tabelle: ";
     if ($driver === 'mysql') {
         $stmt = $pdo->query("SHOW TABLES");
     } else {
@@ -69,10 +72,10 @@ try {
     $missingTables = array_diff($requiredTables, $tables);
 
     if (empty($missingTables)) {
-        echo "✅ All present (" . count($tables) . " total)\n";
+        echo "✅ Tutte presenti (" . count($tables) . " totali)\n";
         $results['tables'] = true;
     } else {
-        echo "❌ Missing: " . implode(', ', $missingTables) . "\n";
+        echo "❌ Mancanti: " . implode(', ', $missingTables) . "\n";
         $results['tables'] = false;
         $overallHealth = false;
     }
@@ -84,15 +87,15 @@ try {
 }
 
 // 4. File Permissions
-echo "\n4️⃣  File Permissions:\n";
+echo "\n4️⃣  Permessi File:\n";
 $writablePaths = [
     'storage/uploads' => 'Uploads directory',
-    'storage/logs' => 'Logs directory',
-    'backups' => 'Backups directory',
+    'logs' => 'Logs directory',
+    'storage/backups' => 'Backups directory',
 ];
 
 foreach ($writablePaths as $path => $description) {
-    $fullPath = __DIR__ . '/../' . $path;
+    $fullPath = __DIR__ . '/../../' . $path;
     echo "   - $description: ";
 
     if (!file_exists($fullPath)) {
@@ -100,47 +103,47 @@ foreach ($writablePaths as $path => $description) {
     }
 
     if (is_writable($fullPath)) {
-        echo "✅ Writable\n";
+        echo "✅ Scrivibile\n";
         $results["perm_$path"] = true;
     } else {
-        echo "❌ Not writable\n";
+        echo "❌ Non scrivibile\n";
         $results["perm_$path"] = false;
         $overallHealth = false;
     }
 }
 
 // 5. Environment Variables
-echo "\n5️⃣  Environment Configuration:\n";
+echo "\n5️⃣  Configurazione Ambiente (.env):\n";
 $requiredEnvVars = ['DB_CONNECTION', 'DB_HOST', 'DB_DATABASE', 'DB_USERNAME'];
 foreach ($requiredEnvVars as $var) {
     echo "   - $var: ";
     if (!empty($_ENV[$var])) {
-        echo "✅ Set\n";
+        echo "✅ Impostata\n";
         $results["env_$var"] = true;
     } else {
-        echo "❌ Not set\n";
+        echo "❌ Non impostata\n";
         $results["env_$var"] = false;
         $overallHealth = false;
     }
 }
 
 // 6. Disk Space
-echo "\n6️⃣  Disk Space... ";
+echo "\n6️⃣  Spazio Disco... ";
 $freeSpace = disk_free_space(__DIR__ . '/..');
 $totalSpace = disk_total_space(__DIR__ . '/..');
 $freeSpaceMB = round($freeSpace / 1024 / 1024, 2);
 $usagePercent = round((1 - ($freeSpace / $totalSpace)) * 100, 2);
 
 if ($usagePercent < 90) {
-    echo "✅ {$freeSpaceMB}MB free ({$usagePercent}% used)\n";
+    echo "✅ {$freeSpaceMB}MB liberi ({$usagePercent}% usati)\n";
     $results['disk'] = true;
 } else {
-    echo "⚠️  {$freeSpaceMB}MB free ({$usagePercent}% used) - LOW\n";
+    echo "⚠️  {$freeSpaceMB}MB liberi ({$usagePercent}% usati) - BASSO\n";
     $results['disk'] = false;
 }
 
 // 7. Memory Limit
-echo "\n7️⃣  Memory Limit... ";
+echo "\n7️⃣  Memory Limit (Limite Memoria)... ";
 $memLimit = ini_get('memory_limit');
 $cliLimitOk = false;
 
@@ -156,7 +159,8 @@ if (preg_match('/^(\d+)(.)$/', $memLimit, $matches)) {
 
 // Check Index limit
 $indexLimitOk = false;
-$indexContent = file_get_contents(__DIR__ . '/../public/index.php');
+$indexFile = __DIR__ . '/../../public/index.php';
+$indexContent = file_get_contents($indexFile);
 if (preg_match("/ini_set\('memory_limit',\s*'([^']+)'\)/", $indexContent, $matches)) {
     $indexLimit = $matches[1];
     if (preg_match('/^(\d+)(.)$/', $indexLimit, $imm)) {
@@ -173,54 +177,55 @@ if ($cliLimitOk) {
     echo "✅ $memLimit (CLI)\n";
     $results['memory'] = true;
 } elseif ($indexLimitOk) {
-    echo "✅ Configured in public/index.php (Overridden to $indexLimit)\n";
+    echo "✅ Configurato in public/index.php (Sovrascritto a $indexLimit)\n";
     $results['memory'] = true;
 } else {
-    echo "⚠️  $memLimit (Recommended: >= 256M)\n";
+    echo "⚠️  $memLimit (Raccomandato: >= 256M)\n";
     $results['memory'] = false;
 }
 
 // 8. Security Headers Test
-echo "\n8️⃣  Security Configuration:\n";
+echo "\n8️⃣  Configurazione Sicurezza:\n";
 echo "   - HTTPS Redirect: ";
 $appEnv = $_ENV['APP_ENV'] ?? 'production';
 if ($appEnv === 'local' || $appEnv === 'development') {
-    echo "⚠️  Disabled (dev environment)\n";
+    echo "⚠️  Disabilitato (ambiente dev)\n";
 } else {
-    echo "✅ Enabled\n";
+    echo "✅ Abilitato\n";
 }
 
 echo "   - Session Security: ";
-$indexContent = file_get_contents(__DIR__ . '/../public/index.php');
+echo "   - Session Security: ";
+$indexContent = file_get_contents(__DIR__ . '/../../public/index.php');
 if (
     strpos($indexContent, "ini_set('session.cookie_httponly', 1)") !== false &&
     strpos($indexContent, "ini_set('session.use_only_cookies', 1)") !== false
 ) {
-    echo "✅ Configured (in public/index.php)\n";
+    echo "✅ Configurato (in public/index.php)\n";
     $results['session'] = true;
 } else {
-    echo "❌ Not properly configured in public/index.php\n";
+    echo "❌ Non configurato correttamente in public/index.php\n";
     $results['session'] = false;
     $overallHealth = false;
 }
 
 // Summary
 echo "\n" . str_repeat('=', 60) . "\n";
-echo "📊 HEALTH CHECK SUMMARY\n";
+echo "📊 RIEPILOGO HEALTH CHECK\n";
 echo str_repeat('=', 60) . "\n";
 
 $passed = array_filter($results, fn($v) => $v === true);
 $failed = array_filter($results, fn($v) => $v === false);
 
-echo sprintf("✅ Passed: %d\n", count($passed));
-echo sprintf("❌ Failed: %d\n", count($failed));
-echo sprintf("📈 Success Rate: %.1f%%\n", (count($passed) / count($results)) * 100);
+echo sprintf("✅ Passati: %d\n", count($passed));
+echo sprintf("❌ Falliti: %d\n", count($failed));
+echo sprintf("📈 Tasso di Successo: %.1f%%\n", (count($passed) / count($results)) * 100);
 
 if ($overallHealth) {
-    echo "\n🎉 OVERALL STATUS: ✅ HEALTHY\n";
+    echo "\n🎉 STATO GENERALE: ✅ HEALTHY (Ottimo)\n";
     exit(0);
 } else {
-    echo "\n⚠️  OVERALL STATUS: ❌ NEEDS ATTENTION\n";
-    echo "\nPlease fix the failed checks above before deploying to production.\n";
+    echo "\n⚠️  STATO GENERALE: ❌ RICHIEDE ATTENZIONE\n";
+    echo "\nPer favore correggi i check falliti prima del deploy in produzione.\n";
     exit(1);
 }

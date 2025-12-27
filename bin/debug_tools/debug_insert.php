@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
 use FratellanzaMilitare\SecurityLayer\TotpEncryptionService;

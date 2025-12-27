@@ -6,7 +6,7 @@ class QueryLogger
 {
     private string $logFile;
 
-    public function __construct(string $logPath = __DIR__ . '/../../debug_queries.log')
+    public function __construct(string $logPath = __DIR__ . '/../../logs/debug_queries.log')
     {
         $this->logFile = $logPath;
     }
