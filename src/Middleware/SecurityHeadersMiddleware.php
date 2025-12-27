@@ -20,11 +20,11 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
         // Content Security Policy
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' cdn.jsdelivr.net",
-            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com https://cdnjs.cloudflare.com",
-            "font-src 'self' fonts.gstatic.com cdn.jsdelivr.net https://cdnjs.cloudflare.com",
-            "img-src 'self' data: https:",
-            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com", // Updated for Bootstrap Source Maps
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net https://code.jquery.com https://cdn.datatables.net",
+            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.datatables.net",
+            "font-src 'self' fonts.gstatic.com cdn.jsdelivr.net https://cdnjs.cloudflare.com https://r2cdn.perplexity.ai",
+            "img-src 'self' data: https: https://cdn.datatables.net",
+            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "form-action 'self'"

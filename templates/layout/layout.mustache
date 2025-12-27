@@ -17,12 +17,12 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <link href="/fratellanza-militare-archivio/public/css/style.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column h-100">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-mc sticky-top mb-0">
         <div class="container">
-            <a class="navbar-brand" href="/fratellanza-militare-archivio/public/">
+            <a class="navbar-brand" href="{{base_url}}/">
                 <i class="fa-solid fa-shield-halved me-2 text-warning"></i>FM ARCHIVIO
             </a>
             
@@ -33,18 +33,18 @@
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item">
-                        <a class="nav-link" href="/fratellanza-militare-archivio/public/"><i class="fa-solid fa-gauge-high me-1"></i>Dashboard</a>
+                        <a class="nav-link" href="{{base_url}}/"><i class="fa-solid fa-gauge-high me-1"></i>Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/fratellanza-militare-archivio/public/soci"><i class="fa-solid fa-users-gear me-1"></i>Gestione Soci</a>
+                        <a class="nav-link" href="{{base_url}}/soci"><i class="fa-solid fa-users-gear me-1"></i>Gestione Soci</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/fratellanza-militare-archivio/public/statistiche"><i class="fa-solid fa-chart-pie me-1"></i>Report Center</a>
+                        <a class="nav-link" href="{{base_url}}/statistiche"><i class="fa-solid fa-chart-pie me-1"></i>Report Center</a>
                     </li>
                 </ul>
                 
                 <div class="ms-auto d-flex align-items-center">
-                    <a class="btn btn-outline-danger btn-sm rounded-pill px-3" href="/fratellanza-militare-archivio/public/logout">
+                    <a class="btn btn-outline-danger btn-sm rounded-pill px-3" href="{{base_url}}/logout">
                         <i class="fa-solid fa-power-off me-1"></i>Esci
                     </a>
                 </div>
@@ -92,3 +92,4 @@
     </script>
 </body>
 </html>
+

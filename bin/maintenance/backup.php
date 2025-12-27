@@ -7,7 +7,9 @@ use FratellanzaMilitare\Service\BackupService;
 
 // 1. Inizializza il container
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__ . '/../../config/container.php');
+foreach ((require __DIR__ . '/../../config/container.php') as $definitions) {
+    $containerBuilder->addDefinitions($definitions);
+}
 $container = $containerBuilder->build();
 
 // 1.5 Correlation ID for CLI

@@ -9,24 +9,12 @@ require __DIR__ . '/../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
-// --- DEBUG ROUTING V3 (TOP LEVEL) ---
-$logData = sprintf(
-    "[%s] Method: %s | URI: %s | Script: %s | HTTPS: %s | Host: %s\n",
-    date('Y-m-d H:i:s'),
-    $_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN',
-    $_SERVER['REQUEST_URI'] ?? 'UNKNOWN',
-    $_SERVER['SCRIPT_NAME'] ?? 'UNKNOWN',
-    $_SERVER['HTTPS'] ?? 'off',
-    $_SERVER['HTTP_HOST'] ?? 'UNKNOWN'
-);
-file_put_contents(__DIR__ . '/../logs/route_debug_v3.log', $logData, FILE_APPEND);
-// ------------------------------------
-
 // 1.5 Secure Session Configuration
+session_name('FRATELLANZA_SESS_V2'); // Force fresh session to clear any corrupted data
 ini_set('memory_limit', '256M');
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.cookie_samesite', 'Lax'); // Lax is safer for localhost development to prevent session drop
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
     ini_set('session.cookie_secure', 1);
 }
@@ -44,7 +32,9 @@ if (($_ENV['APP_ENV'] ?? 'production') === 'production') {
 
 // 2. Build Container
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__ . '/../config/container.php');
+foreach ((require __DIR__ . '/../config/container.php') as $definitions) {
+    $containerBuilder->addDefinitions($definitions);
+}
 $container = $containerBuilder->build();
 
 // Initialize AuditTrail Bridge for Singleton compatibility
@@ -55,7 +45,15 @@ $auditTrail->setPdo($container->get(PDO::class));
 // 3. Create App
 AppFactory::setContainer($container);
 $app = AppFactory::create();
-$app->setBasePath('/fratellanza-militare-archivio/public');
+
+// Automatic Base Path Detection
+// Allows the app to run in a subdirectory (e.g. /fratellanza-militare-archivio/public)
+// or at the domain root without manual configuration.
+$basePath = (function () {
+    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+    return $scriptDir === '/' ? '' : $scriptDir;
+})();
+$app->setBasePath($basePath);
 
 // 4. Register Middleware
 $middleware = require __DIR__ . '/../config/middleware.php';

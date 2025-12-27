@@ -1,5 +1,13 @@
 <?php
 
+use Dotenv\Dotenv;
+
+require __DIR__ . '/vendor/autoload.php';
+
+// Load .env
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
 return
     [
         'paths' => [
@@ -10,18 +18,31 @@ return
             'default_migration_table' => 'phinxlog',
             'default_environment' => 'development',
             'development' => [
-                'adapter' => 'sqlite',
-                'name' => '%%PHINX_CONFIG_DIR%%/database', // Maps to database.sqlite (suffix added by adapter usually, but check)
-                'suffix' => '.sqlite', // Phinx sqlite adapter appends suffix if not present
+                'adapter' => 'mysql',
+                'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
+                'name' => $_ENV['DB_DATABASE'] ?? 'fratellanza_db',
+                'user' => $_ENV['DB_USERNAME'] ?? 'root',
+                'pass' => $_ENV['DB_PASSWORD'] ?? '',
+                'port' => $_ENV['DB_PORT'] ?? 3306,
+                'charset' => 'utf8mb4',
             ],
             'production' => [
-                'adapter' => 'sqlite',
-                'name' => '%%PHINX_CONFIG_DIR%%/database',
-                'suffix' => '.sqlite',
+                'adapter' => 'mysql',
+                'host' => $_ENV['DB_HOST'],
+                'name' => $_ENV['DB_DATABASE'],
+                'user' => $_ENV['DB_USERNAME'],
+                'pass' => $_ENV['DB_PASSWORD'],
+                'port' => $_ENV['DB_PORT'],
+                'charset' => 'utf8mb4',
             ],
             'testing' => [
-                'adapter' => 'sqlite',
-                'memory' => true
+                'adapter' => 'mysql',
+                'host' => '127.0.0.1',
+                'name' => 'fratellanza_test',
+                'user' => 'root',
+                'pass' => '',
+                'port' => 3306,
+                'charset' => 'utf8mb4',
             ]
         ],
         'version_order' => 'creation'

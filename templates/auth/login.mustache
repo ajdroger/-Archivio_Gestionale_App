@@ -12,7 +12,7 @@
         </div>
         {{/error}}
 
-        <form action="/fratellanza-militare-archivio/public/login" method="POST">
+        <form action="{{base_url}}/login" method="POST">
             <input type="hidden" name="csrf_name" value="{{csrf.name}}">
             <input type="hidden" name="csrf_value" value="{{csrf.value}}">
             
@@ -33,3 +33,4 @@
         </form>
     </div>
 </div>
+

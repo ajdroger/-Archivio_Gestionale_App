@@ -1,139 +1,146 @@
 {{> layout_header }}
-<div class="row mb-5">
+
+<div class="row mb-4">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-end border-bottom border-secondary pb-4">
             <div>
                 <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-chart-line me-3 text-primary"></i>REPORTING CENTER</h2>
-                <p class="text-secondary mb-0 mt-2">Analisi aggregata in tempo reale dei parametri di sistema e anagrafica.</p>
+                <p class="text-secondary mb-0 mt-2">Analisi strategica in tempo reale. Intelligence su anagrafica e finanze.</p>
             </div>
             <div class="text-end">
-                <span class="badge bg-dark text-secondary border border-secondary px-3 py-2">
-                    <i class="fa-solid fa-clock-rotate-left me-2"></i>DATA RIFERIMENTO: {{stats.data_riferimento}}
+                <span class="badge bg-dark text-secondary border border-secondary px-3 py-2 font-monospace">
+                    <i class="fa-solid fa-clock-rotate-left me-2"></i>DATA RIF: {{stats.data_riferimento}}
                 </span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- KPI Cards Grid -->
+<!-- Charts Section -->
 <div class="row g-4 mb-5">
-    <div class="col-md-3">
-        <div class="card mc-stat-card h-100 shadow-lg">
-            <div class="card-body p-4 text-center">
-                <div class="mc-icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3">
-                    <i class="fa-solid fa-users"></i>
+    <!-- Membership Health Chart -->
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100 bg-dark border-secondary shadow-lg">
+            <div class="card-header border-secondary bg-transparent py-3">
+                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-info"></i>STATO SOCI</h6>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div style="height: 250px; width: 100%;">
+                    <canvas id="chartStatus"></canvas>
                 </div>
-                <div class="mc-stat-value text-white">{{stats.totale}}</div>
-                <div class="mc-stat-label">TOTALE SOCI</div>
-                <div class="progress mt-3 bg-dark" style="height: 4px;">
-                    <div class="progress-bar bg-primary" style="width: 100%"></div>
+                <div class="mt-3 text-center">
+                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 me-2">ATTIVI: {{stats.attivi}}</span>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">TOTALE: {{stats.totale}}</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card mc-stat-card h-100 shadow-lg border-bottom-success">
-            <div class="card-body p-4 text-center">
-                <div class="mc-icon-circle bg-success bg-opacity-10 text-success mx-auto mb-3">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
+    <!-- Financial Health Chart -->
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100 bg-dark border-secondary shadow-lg">
+            <div class="card-header border-secondary bg-transparent py-3">
+                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-success"></i>SALUTE FINANZIARIA</h6>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <div style="height: 250px; width: 100%;">
+                    <canvas id="chartFinancial"></canvas>
                 </div>
-                <div class="mc-stat-value text-white">{{stats.paganti}}</div>
-                <div class="mc-stat-label">IN REGOLA (2025)</div>
-                <div class="progress mt-3 bg-dark" style="height: 4px;">
-                    <div class="progress-bar bg-success" style="width: {{stats.perc_paganti}}%"></div>
+                <div class="mt-3 text-center">
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 me-2">IN REGOLA: {{stats.paganti}}</span>
+                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">MOROSI: {{stats.morosi}}</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card mc-stat-card h-100 shadow-lg border-bottom-danger">
-            <div class="card-body p-4 text-center">
-                <div class="mc-icon-circle bg-danger bg-opacity-10 text-danger mx-auto mb-3">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <div class="mc-stat-value text-white">{{stats.morosi}}</div>
-                <div class="mc-stat-label">MOROSITÀ RILEVATA</div>
-                <div class="progress mt-3 bg-dark" style="height: 4px;">
-                    <div class="progress-bar bg-danger" style="width: {{stats.perc_morosi}}%"></div>
+    <!-- Quick Metrics -->
+    <div class="col-md-12 col-xl-4">
+        <div class="row g-3 h-100">
+            <div class="col-12">
+                <div class="card h-100 bg-dark border-secondary shadow-lg p-3 d-flex align-items-center flex-row">
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 me-3 fs-3">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white fw-bold mb-0">{{stats.totale}}</h3>
+                        <div class="text-secondary small text-uppercase fw-bold">Soci Totali</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="card mc-stat-card h-100 shadow-lg border-bottom-info">
-            <div class="card-body p-4 text-center">
-                <div class="mc-icon-circle bg-info bg-opacity-10 text-info mx-auto mb-3">
-                    <i class="fa-solid fa-user-shield"></i>
+            <div class="col-6">
+                <div class="card h-100 bg-dark border-secondary shadow-lg p-3 text-center" title="Percentuale di soci in regola con i pagamenti per l'anno corrente">
+                    <h4 class="text-success fw-bold mb-0">{{stats.perc_paganti}}%</h4>
+                    <div class="text-secondary small fw-bold">PAGANTI REGOLARI</div>
+                    <div class="text-white-50" style="font-size: 0.7rem;">Compliance Aziendale</div>
                 </div>
-                <div class="mc-stat-value text-white">{{stats.attivi}}</div>
-                <div class="mc-stat-label">STATUS ATTIVO</div>
-                <div class="progress mt-3 bg-dark" style="height: 4px;">
-                    <div class="progress-bar bg-info" style="width: {{stats.perc_attivi}}%"></div>
+            </div>
+            <div class="col-6">
+                <div class="card h-100 bg-dark border-secondary shadow-lg p-3 text-center" title="Percentuale di soci con irregolarità amministrative">
+                    <h4 class="text-danger fw-bold mb-0">{{stats.perc_morosi}}%</h4>
+                    <div class="text-secondary small fw-bold">MOROSITÀ</div>
+                    <div class="text-white-50" style="font-size: 0.7rem;">Indice di Rischio</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- KPI Cards Grid (preserved) -->
+<!-- Detailed Data Analysis -->
 <div class="row g-4 mb-5">
-    <!-- ... (Previous KPI Cards, I should probably keep them or the user will lose them. I will assume the tool keeps them if I don't target them.
-    Wait, I am replacing lines 81-122 which are the previous "Details" and "Export" cards.
-    I will replace them with the new Tabs interface.
-    -->
-
     <div class="col-12">
         <div class="card bg-dark border-secondary shadow-lg">
-            <div class="card-header border-secondary bg-transparent py-3">
-                 <h5 class="text-white mb-0 fw-bold"><i class="fa-solid fa-users me-2 text-primary"></i>ANALISI ANAGRAFICA & STATO SOCI</h5>
+            <div class="card-header border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
+                 <h5 class="text-white mb-0 fw-bold"><i class="fa-solid fa-table-list me-2 text-warning"></i>ANALISI DETTAGLIATA</h5>
+                 
+                 <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-download me-2"></i>Export
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark border-secondary shadow">
+                        <li><a class="dropdown-item" href="{{base_url}}/statistiche/export/pdf?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-pdf me-2 text-danger"></i>Report PDF</a></li>
+                        <li><a class="dropdown-item" href="{{base_url}}/statistiche/export/excel?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-csv me-2 text-success"></i>Export Excel</a></li>
+                    </ul>
+                </div>
             </div>
             <div class="card-body p-4">
                 
-                <form action="" method="GET" class="row g-3 mb-4 bg-black bg-opacity-25 p-3 rounded border border-secondary">
+                <!-- Filters -->
+                <form action="" method="GET" class="row g-3 mb-4 bg-black bg-opacity-25 p-3 rounded border border-secondary align-items-end">
                     <div class="col-md-3">
-                        <label class="form-label text-secondary small">Stato Iscrizione</label>
-                        <select name="status" class="form-select bg-dark text-white border-secondary">
-                            <option value="">Tutti</option>
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Stato Iscrizione</label>
+                        <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary">
+                            <option value="">Tutti gli stati</option>
                             <option value="ATTIVO" {{#filters.status}}selected{{/filters.status}}>ATTIVO</option>
                             <option value="SOSPESO" {{#filters.status}}selected{{/filters.status}}>SOSPESO</option>
                             <option value="RADIATO" {{#filters.status}}selected{{/filters.status}}>RADIATO</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label text-secondary small">Stato Amministrativo</label>
-                        <select name="payment_status" class="form-select bg-dark text-white border-secondary">
-                            <option value="">Tutti</option>
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Situazione Contabile</label>
+                        <select name="payment_status" class="form-select form-select-sm bg-dark text-white border-secondary">
+                            <option value="">Tutte le posizioni</option>
                             <option value="in_regola">In Regola</option>
                             <option value="moroso">Moroso</option>
                         </select>
                     </div>
-                    <div class="col-md-6 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-filter me-2"></i>Filtra Dati</button>
-                        
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="fa-solid fa-download me-2"></i>Esporta
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" href="/fratellanza-militare-archivio/public/statistiche/export/pdf?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-pdf me-2 text-danger"></i>Report PDF</a></li>
-                                <li><a class="dropdown-item" href="/fratellanza-militare-archivio/public/statistiche/export/excel?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-csv me-2 text-success"></i>Export CSV</a></li>
-                            </ul>
-                        </div>
+                    <div class="col-md-2">
+                         <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold"><i class="fa-solid fa-filter me-2"></i>APPLICA</button>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <small class="text-secondary fst-italic">Risultati filtrati: <strong>{{filtered_count}}</strong></small>
                     </div>
                 </form>
 
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover table-striped align-middle">
-                        <thead>
+                    <table class="table table-dark table-hover table-striped align-middle bg-transparent statistics-table" style="width:100%">
+                        <thead class="text-secondary small text-uppercase">
                             <tr>
-                                <th>Socio</th>
-                                <th>Matricola</th>
-                                <th>Stato</th>
-                                <th>Posizione</th>
-                                <th>Azioni</th>
+                                <th title="Nome completo del socio">Socio</th>
+                                <th title="Numero di matricola univoco">Matricola</th>
+                                <th title="Stato attuale dell'iscrizione (Attivo, Sospeso, ecc)">Stato</th>
+                                <th title="Stato dei pagamenti per l'anno corrente">Posizione</th>
+                                <th class="text-end">Azioni</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,35 +148,39 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-circle bg-primary bg-opacity-25 text-primary me-3">{{DatiPersonali.Nome.0}}{{DatiPersonali.Cognome.0}}</div>
+                                        <div class="avatar-circle bg-primary bg-opacity-25 text-primary me-3 fw-bold rounded-circle d-flex justify-content-center align-items-center" style="width:35px; height:35px;">
+                                            {{DatiPersonali.Nome.0}}
+                                        </div>
                                         <div>
-                                            <div class="fw-bold">{{DatiPersonali.Cognome}} {{DatiPersonali.Nome}}</div>
+                                            <div class="fw-bold text-white">{{DatiPersonali.Cognome}} {{DatiPersonali.Nome}}</div>
                                             <div class="small text-secondary">{{DatiPersonali.Email}}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td><span class="font-monospace text-info">{{Matricola}}</span></td>
                                 <td>
-                                    <span class="badge bg-{{#Stato.isActive}}success{{/Stato.isActive}}{{^Stato.isActive}}secondary{{/Stato.isActive}}">
-                                        {{Stato.name}}
-                                    </span>
+                                    {{#Stato.isActive}}
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">ATTIVO</span>
+                                    {{/Stato.isActive}}
+                                    {{^Stato.isActive}}
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">{{Stato.name}}</span>
+                                    {{/Stato.isActive}}
                                 </td>
                                 <td>
                                     {{#verificaMorosita}}
-                                        <span class="badge bg-danger">MOROSO</span>
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25"><i class="fa-solid fa-circle-exclamation me-1"></i>MOROSO</span>
                                     {{/verificaMorosita}}
                                     {{^verificaMorosita}}
-                                        <span class="badge bg-success">IN REGOLA</span>
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25"><i class="fa-solid fa-check me-1"></i>IN REGOLA</span>
                                     {{/verificaMorosita}}
                                 </td>
-                                <td>
-                                    <a href="/fratellanza-militare-archivio/public/soci/{{CodiceFiscale}}" class="btn btn-sm btn-outline-light"><i class="fa-solid fa-eye"></i></a>
+                                <td class="text-end">
+                                    <a href="{{base_url}}/soci/{{CodiceFiscale}}" class="btn btn-sm btn-outline-light border-secondary text-secondary hover-white" title="Scheda"><i class="fa-solid fa-eye"></i></a>
                                 </td>
                             </tr>
                             {{/filtered_soci}}
                         </tbody>
                     </table>
-                    <div class="text-secondary small mt-2">Visualizzati {{filtered_count}} risultati</div>
                 </div>
 
             </div>
@@ -177,6 +188,100 @@
     </div>
 </div>
 
-<!-- Styles moved to style.css -->
+<!-- Scripts for Charts & DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. init DataTables ---
+        $('.statistics-table').DataTable({
+            "paging": true,
+            "pageLength": 10,
+            "lengthChange": false, // Cleaner UI
+            "searching": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Cerca nella lista...",
+                "paginate": { "previous": "<", "next": ">" },
+                "info": "_START_-_END_ di _TOTAL_"
+            },
+            "dom": '<"d-flex justify-content-between mb-2"f>t<"d-flex justify-content-between mt-3"ip>',
+            "initComplete": function() {
+                $('.dataTables_filter input').addClass('form-control form-control-sm bg-dark text-white border-secondary');
+                $('.page-link').addClass('bg-dark text-secondary border-secondary');
+                $('.page-item.active .page-link').addClass('bg-primary text-white border-primary');
+            },
+            "drawCallback": function() {
+                 $('.page-link').addClass('bg-dark text-secondary border-secondary');
+                 $('.page-item.active .page-link').removeClass('bg-dark text-secondary').addClass('bg-primary text-white border-primary');
+            }
+        });
+
+        // --- 2. init Charts ---
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = '#334155';
+
+        // Data from Backend
+        const stats = {
+            active: {{stats.attivi}},
+            total: {{stats.totale}},
+            paying: {{stats.paganti}},
+            late: {{stats.morosi}}
+        };
+        const nonActive = stats.total - stats.active;
+
+        // Status Chart
+        new Chart(document.getElementById('chartStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Attivi', 'Altri (Sosp/Canc)'],
+                datasets: [{
+                    data: [stats.active, nonActive],
+                    backgroundColor: ['#0ea5e9', '#475569'], // Sky-500, Slate-600
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Financial Chart
+        new Chart(document.getElementById('chartFinancial'), {
+            type: 'doughnut',
+            data: {
+                labels: ['In Regola', 'Morosi'],
+                datasets: [{
+                    data: [stats.paying, stats.late],
+                    backgroundColor: ['#22c55e', '#ef4444'], // Green-500, Red-500
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
+                },
+                cutout: '70%'
+            }
+        });
+    });
+</script>
 
 {{> layout_footer }}
+

@@ -64,4 +64,65 @@ class DevToolsDashboardController
         $response->getBody()->write($html);
         return $response;
     }
+
+    public function auditAjax(Request $request, Response $response): Response
+    {
+        $auditResult = $this->auditController->getLogs($request);
+        $response->getBody()->write(json_encode($auditResult));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function heartbeat(Request $request, Response $response): Response
+    {
+        // Clean any accidental output (warnings, whitespace)
+        if (ob_get_length())
+            ob_clean();
+
+        try {
+            // Wrappers for safety to prevent single component failure from crashing output
+            $sessions = -1;
+            try {
+                $sessions = $this->systemController->getActiveSessionsCount();
+            } catch (\Throwable $e) {
+                // Log simplified error if needed
+            }
+
+            $latency = ['db_ms' => -1, 'status' => 'error'];
+            try {
+                $latency = $this->systemController->getLatencyMetrics();
+            } catch (\Throwable $e) {
+            }
+
+            $intrusion = ['count' => -1, 'status' => 'error'];
+            try {
+                $intrusion = $this->systemController->getIntrusionStats();
+            } catch (\Throwable $e) {
+            }
+
+            $data = [
+                'system' => $this->systemController->getSystemInfo(),
+                'database_schema' => $this->systemController->getSchemaStats(),
+                'health' => $this->systemController->getHealth(),
+                'monitoring' => [
+                    'sessions' => $sessions,
+                    'latency' => $latency,
+                    'intrusion' => $intrusion
+                ]
+            ];
+
+        } catch (\Throwable $e) {
+            // Fatal panic fallback
+            $data = [
+                'error' => true,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(), // Keep file and line for better debugging in fallback
+                'line' => $e->getLine()
+            ];
+        }
+
+        $response->getBody()->write(json_encode($data, JSON_THROW_ON_ERROR | JSON_PARTIAL_OUTPUT_ON_ERROR));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
 }

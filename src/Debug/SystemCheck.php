@@ -31,7 +31,8 @@ class SystemCheck
     private function checkExtensions(): array
     {
         $results = [];
-        $requiredExtensions = ['pdo', 'pdo_sqlite', 'json', 'mbstring', 'xdebug'];
+        // Removed pdo_sqlite, added pdo_mysql
+        $requiredExtensions = ['pdo', 'pdo_mysql', 'json', 'mbstring', 'xdebug'];
         foreach ($requiredExtensions as $ext) {
             $loaded = extension_loaded($ext);
             $results[$ext] = [
@@ -51,10 +52,13 @@ class SystemCheck
             // Basic query to test connection
             $pdo->query("SELECT 1");
 
+            // Assuming MySQL, path is the Host info
+            $info = $pdo->getAttribute(\PDO::ATTR_CONNECTION_STATUS) ?? 'MySQL Host';
+
             return [
                 'status' => true,
                 'message' => "Database ($driver): CONNESSO (OK)",
-                'path' => $driver === 'sqlite' ? ($_ENV['DB_PATH'] ?? 'database.sqlite') : ($pdo->getAttribute(\PDO::ATTR_CONNECTION_STATUS) ?? 'MySQL Host')
+                'path' => $info
             ];
         } catch (\Exception $e) {
             return [
@@ -122,7 +126,8 @@ class SystemCheck
     private function checkRecentBackups(): array
     {
         $backupDir = __DIR__ . '/../../storage/backups';
-        $backups = glob($backupDir . '/database_backup_*.sqlite');
+        // Now looking for .sql files (standard dumb)
+        $backups = glob($backupDir . '/*.sql');
 
         if (empty($backups)) {
             return [
@@ -152,23 +157,12 @@ class SystemCheck
             $pdo = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
             $driver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
-            if ($driver === 'sqlite') {
-                $stmt = $pdo->query("PRAGMA integrity_check");
-                $result = $stmt->fetchColumn();
-                return [
-                    'status' => $result === 'ok',
-                    'message' => "Integrità SQLite: " . ($result === 'ok' ? 'OK' : 'CORROTTO'),
-                    'detail' => $result
-                ];
-            } else {
-                // MySQL: CHECK TABLE is an option but excessive for "integrity" of the whole DB.
-                // Just return OK if connected.
-                return [
-                    'status' => true,
-                    'message' => "Integrità MySQL: Gestito dal motore InnoDB",
-                    'detail' => 'OK'
-                ];
-            }
+            // MySQL: CHECK TABLE is an option but excessive for "integrity" of the whole DB.
+            return [
+                'status' => true,
+                'message' => "Integrità MySQL: Gestito dal motore InnoDB",
+                'detail' => 'OK'
+            ];
         } catch (\Exception $e) {
             return [
                 'status' => false,

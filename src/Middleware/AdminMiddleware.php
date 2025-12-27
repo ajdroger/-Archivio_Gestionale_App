@@ -28,7 +28,8 @@ class AdminMiddleware implements MiddlewareInterface
             }
 
             // Altrimenti redirect alla home con messaggio di errore (se implementato)
-            return $response->withHeader('Location', '/fratellanza-militare-archivio/public/')->withStatus(302);
+            $routeParser = \Slim\Routing\RouteContext::fromRequest($request)->getRouteParser();
+            return $response->withHeader('Location', $routeParser->urlFor('dashboard'))->withStatus(302);
         }
 
         return $handler->handle($request);

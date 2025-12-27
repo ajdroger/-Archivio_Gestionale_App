@@ -28,6 +28,7 @@ switch ($choice) {
             $db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
             $inspector = new \FratellanzaMilitare\Debug\DatabaseInspector($db);
             echo "Stato: " . $inspector->checkIntegrity() . "\n";
+            echo "Dimensione: " . $inspector->getDatabaseSize() . "\n";
             foreach ($inspector->getTablesSummary() as $table) {
                 echo "- {$table['name']}: {$table['rows']} record\n";
             }

@@ -28,7 +28,9 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
 
 // 3. Build Container
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__ . '/../config/container.php');
+foreach ((require __DIR__ . '/../config/container.php') as $definitions) {
+    $containerBuilder->addDefinitions($definitions);
+}
 $container = $containerBuilder->build();
 
 // Initialize AuditTrail Bridge for Singleton compatibility

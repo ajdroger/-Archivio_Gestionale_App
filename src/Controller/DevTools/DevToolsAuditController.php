@@ -19,7 +19,7 @@ class DevToolsAuditController
 
     public function getLogs(Request $request): array
     {
-        $params = $request->getQueryParams();
+        $params = array_merge($request->getQueryParams(), (array) $request->getParsedBody());
 
         $auditFilters = [];
         if (!empty($params['start_date'])) {

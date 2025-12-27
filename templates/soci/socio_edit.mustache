@@ -5,12 +5,12 @@
             <div class="card-header bg-transparent py-4 border-bottom border-secondary">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-user-pen me-2 text-warning"></i>REVISIONE RECORD: <span class="text-info opacity-75">{{socio.nome}} {{socio.cognome}}</span></h4>
-                    <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Annulla Modifiche</a>
+                    <a href="{{base_url}}/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Annulla Modifiche</a>
                 </div>
             </div>
             
             <div class="card-body p-4 p-md-5">
-                <form action="/fratellanza-militare-archivio/public/soci/{{socio.codice_fiscale}}/aggiorna" method="POST">
+                <form action="{{base_url}}/soci/{{socio.codice_fiscale}}/aggiorna" method="POST">
                     <!-- CSRF Token -->
                     <input type="hidden" name="csrf_name" value="{{csrf.name}}">
                     <input type="hidden" name="csrf_value" value="{{csrf.value}}">
@@ -76,7 +76,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 pt-3 border-top border-secondary pt-5">
-                        <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary">ANNULLA</a>
+                        <a href="/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary">ANNULLA</a>
                         <button type="submit" class="btn btn-warning btn-lg px-5 shadow-sm fw-bold"><i class="fa-solid fa-check-double me-2"></i>APPlica MODIFICHE</button>
                     </div>
                 </form>
@@ -87,3 +87,4 @@
 
 <!-- Styles moved to style.css -->
 {{> layout_footer }}
+

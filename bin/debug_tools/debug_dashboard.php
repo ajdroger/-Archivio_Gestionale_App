@@ -1,6 +1,6 @@
 <?php
 /**
- * Fratellanza Militare - Debug Dashboard (Premium v2)
+ * Fratellanza Militare - Debug Dashboard (Premium v2.1 Horizontal)
  * Interfaccia grafica aggregata con design moderno.
  */
 
@@ -34,20 +34,66 @@ $logs = $logViewer->listLogs();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Debug Dashboard - Fratellanza Militare</title>
-    <link rel="stylesheet" href="/fratellanza-militare-archivio/public/css/premium.css">
+    <!-- Cache Buster -->
+    <link rel="stylesheet" href="/fratellanza-militare-archivio/public/css/premium.css?v=<?php echo time(); ?>">
     <script src="/fratellanza-militare-archivio/public/script/app.js" defer></script>
+    <style>
+        .horizontal-wrapper {
+            display: flex;
+            overflow-x: auto;
+            gap: 25px;
+            padding-bottom: 15px;
+        }
+
+        .dash-card {
+            min-width: 400px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .btn-giant {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+            color: white;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+            transition: transform 0.2s;
+            text-decoration: none;
+            margin-bottom: 30px;
+        }
+
+        .btn-giant:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" style="max-width: 95%;">
         <header>
-            <h1>🛠️ Debug Operations Center</h1>
-            <a href="../tests/test_dashboard.php" class="btn" style="background: #818cf8; color: #fff;">Vai ai Test</a>
+            <h1>🛠️ Debug Operations Center v2.1</h1>
         </header>
 
-        <div class="grid">
+        <!-- GIANT BUTTON TO TOOLKIT -->
+        <a href="../tests/test_dashboard.php" class="btn-giant">
+            🚀 VAI ALLA SESSIONE TOOLKIT (100+ TEST)
+            <div style="font-size: 0.9rem; font-weight: normal; margin-top: 5px; opacity: 0.9;">
+                Layout Orizzontale | Esecuzione One-Click | Verificati 106+ Test
+            </div>
+        </a>
+
+        <h2 style="color: #94a3b8; margin-bottom: 15px;">Monitoraggio Sistema (Orizzontale)</h2>
+        <div class="horizontal-wrapper">
             <!-- System Health -->
-            <div class="card">
+            <div class="dash-card">
                 <h2>🩺 Stato Sistema</h2>
                 <table>
                     <tr>
@@ -70,7 +116,7 @@ $logs = $logViewer->listLogs();
             </div>
 
             <!-- Database Info -->
-            <div class="card">
+            <div class="dash-card">
                 <h2>🗄️ Database SQLite</h2>
                 <div style="margin-bottom: 15px;">
                     <span class="badge">Integrità: <span
@@ -96,7 +142,7 @@ $logs = $logViewer->listLogs();
             </div>
 
             <!-- Logs -->
-            <div class="card">
+            <div class="dash-card">
                 <h2>📄 Monitor Log</h2>
                 <div style="margin-bottom: 15px;">
                     <?php
@@ -123,7 +169,7 @@ $logs = $logViewer->listLogs();
             </div>
         </div>
 
-        <div class="card" style="margin-top: 25px; border-top: 4px solid #fbbf24;">
+        <div class="dash-card" style="margin-top: 25px; border-top: 4px solid #fbbf24;">
             <h2>⚡ Strumenti Rapidi</h2>
             <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap;">
                 <a href="env_check.php" class="btn">Ambiente</a>

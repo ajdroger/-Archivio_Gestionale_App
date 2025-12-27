@@ -9,7 +9,7 @@ use FratellanzaMilitare\Debug\LogAnalyzer;
 /**
  * DevTools Script Controller
  * 
- * Handles script execution, renamer tool, and log tracing
+ * Handles script execution, renamer tool, log tracing, and terminal commands
  */
 class DevToolsScriptController
 {
@@ -111,6 +111,61 @@ class DevToolsScriptController
         $logs = $analyzer->getLogsByRequestId($requestId);
 
         $response->getBody()->write(json_encode(['logs' => $logs]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function terminal(Request $request, Response $response): Response
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['term_cwd'])) {
+            $_SESSION['term_cwd'] = realpath(__DIR__ . '/../../../');
+        }
+
+        $input = $request->getParsedBody();
+        $cmd = $input['cmd'] ?? '';
+
+        if (empty($cmd)) {
+            $response->getBody()->write(json_encode(['output' => '', 'cwd' => $_SESSION['term_cwd']]));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+
+        $cwd = $_SESSION['term_cwd'];
+        $output = '';
+
+        if (preg_match('/^cd\s+(.+)$/', $cmd, $matches)) {
+            $target = trim($matches[1]);
+
+            if ($target === '..') {
+                $newDir = dirname($cwd);
+            } elseif (str_starts_with($target, '/') || str_starts_with($target, '\\') || preg_match('/^[a-zA-Z]:/', $target)) {
+                $newDir = $target;
+            } else {
+                $newDir = $cwd . DIRECTORY_SEPARATOR . $target;
+            }
+
+            if (is_dir($newDir)) {
+                $_SESSION['term_cwd'] = realpath($newDir);
+            } else {
+                $output = "Impossibile trovare il percorso: $target";
+            }
+        } elseif (strtolower($cmd) === 'cls' || strtolower($cmd) === 'clear') {
+            $output = '__CLEAR__';
+        } else {
+            $fullCmd = 'cd /d "' . $cwd . '" && ' . $cmd . ' 2>&1';
+            $output = shell_exec($fullCmd);
+
+            if (strpos(PHP_OS, 'WIN') !== false && $output) {
+                $output = mb_convert_encoding($output, 'UTF-8', 'CP850');
+            }
+        }
+
+        $response->getBody()->write(json_encode([
+            'output' => $output,
+            'cwd' => $_SESSION['term_cwd']
+        ]));
         return $response->withHeader('Content-Type', 'application/json');
     }
 }

@@ -15,7 +15,7 @@ return function (App $app) {
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {
         ini_set('session.cookie_httponly', 1);
-        ini_set('session.cookie_samesite', 'Strict'); // Più restrittivo per max sicurezza
+        ini_set('session.cookie_samesite', 'Lax'); // Lax avoids session loss on localhost redirects/ajax
         ini_set('session.cookie_path', '/');
         ini_set('session.gc_maxlifetime', 3600); // 1 ora di validità
 
@@ -56,11 +56,18 @@ return function (App $app) {
     // Authentication
     $app->add(new \FratellanzaMilitare\Middleware\AuthMiddleware());
 
-    // Rate Limiting
-    $app->add(new \FratellanzaMilitare\Middleware\RateLimitMiddleware(100, 60, $logger));
+    // Rate Limiting (con Redis support)
+    $redisService = $container->has(\FratellanzaMilitare\Service\RedisService::class)
+        ? $container->get(\FratellanzaMilitare\Service\RedisService::class)
+        : null;
+    $app->add(new \FratellanzaMilitare\Middleware\RateLimitMiddleware(100, 60, $redisService, $logger));
 
     // Error Middleware
     $errorMiddleware = $app->addErrorMiddleware(true, true, true, $logger);
     $customErrorHandler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler($logger, $mustache);
     $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
+
+    // Routing Middleware - Must be added LAST to run FIRST
+    // This allows subsequent middleware (like Auth) to access RouteContext
+    $app->addRoutingMiddleware();
 };

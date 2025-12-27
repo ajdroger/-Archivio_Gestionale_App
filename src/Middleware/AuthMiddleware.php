@@ -12,23 +12,38 @@ class AuthMiddleware implements MiddlewareInterface
 {
     public function process(Request $request, RequestHandler $handler): Response
     {
-        // Controllo Sessione Semplificato
-        // Nella simulazione, assumiamo che se esiste una specifica chiave di sessione, l'utente è loggato.
-        // Per scopi di sviluppo/demo, lo salteremo se non stiamo simulando esplicitamente un flusso di login.
-        // O meglio: iniziamo con un bypass per ora, ma strutturiamolo correttamente.
-
-        // Session is already started in index.php
-
-
+        // Session check
         if (!isset($_SESSION['user_id'])) {
-            $path = $request->getUri()->getPath();
-            // Allow login routes
-            if (strpos($path, '/login') !== false || $path === '/fratellanza-militare-archivio/public/login') {
+            $routeContext = \Slim\Routing\RouteContext::fromRequest($request);
+            $route = $routeContext->getRoute();
+
+            // If no route matched (404), let the app handle it (or let ErrorMiddleware catch it)
+            if (empty($route)) {
                 return $handler->handle($request);
             }
 
+            $routeName = $route->getName();
+            $publicRoutes = [
+                'login',
+                'login_verify',
+                'login_2fa',
+                'login_2fa_verify',
+                'logout',
+                'register',
+                'register_verify' // Add others if needed
+            ];
+
+            // Allow public routes
+            if (in_array($routeName, $publicRoutes)) {
+                return $handler->handle($request);
+            }
+
+            // Redirect to login
             $response = new SlimResponse();
-            return $response->withHeader('Location', '/fratellanza-militare-archivio/public/login')->withStatus(302);
+            $routeParser = $routeContext->getRouteParser();
+            $loginUrl = $routeParser->urlFor('login');
+
+            return $response->withHeader('Location', $loginUrl)->withStatus(302);
         }
 
         return $handler->handle($request);

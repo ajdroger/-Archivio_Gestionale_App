@@ -5,14 +5,14 @@
             <div class="card-header bg-transparent py-4 border-bottom border-secondary">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-user-plus me-2 text-primary"></i>INIZIALIZZAZIONE NUOVO RECORD SOCIO</h4>
-                    <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Torna all'Archivio</a>
+                    <a href="/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Torna all'Archivio</a>
                 </div>
             </div>
             
             <div class="card-body p-4 p-md-5">
                 <p class="text-secondary mb-5 fs-6 opacity-75">Inserire i parametri vitali per la registrazione crittografata del nuovo membro nel sistema centrale.</p>
 
-                <form action="/fratellanza-militare-archivio/public/soci/salva" method="POST">
+                <form action="/soci/salva" method="POST">
                     <!-- CSRF Token -->
                     <input type="hidden" name="csrf_name" value="{{csrf.name}}">
                     <input type="hidden" name="csrf_value" value="{{csrf.value}}">
@@ -120,7 +120,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 pt-3">
-                        <a href="/fratellanza-militare-archivio/public/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary">ANNULLA</a>
+                        <a href="{{base_url}}/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary">ANNULLA</a>
                         <button type="submit" class="btn btn-primary btn-lg px-5 shadow-primary fw-bold"><i class="fa-solid fa-floppy-disk me-2"></i>COMMIT RECORD</button>
                     </div>
                 </form>
@@ -161,7 +161,7 @@
             formData.append('csrf_name', document.querySelector('input[name="csrf_name"]').value);
             formData.append('csrf_value', document.querySelector('input[name="csrf_value"]').value);
 
-            const response = await fetch('/fratellanza-militare-archivio/public/soci/calcola-cf', {
+            const response = await fetch('{{base_url}}/soci/calcola-cf', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: formData
@@ -190,3 +190,4 @@
     // Auto-search logic for Belfiore (Optional UX enhancement could go here later)
 </script>
 {{> layout_footer }}
+

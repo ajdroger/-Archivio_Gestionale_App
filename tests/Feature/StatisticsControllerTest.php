@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Controller\StatisticsController;
+use FratellanzaMilitare\Controller\Intelligence\StatsDashboardController;
 use FratellanzaMilitare\GestioneSoci\SocioRepository;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
@@ -17,7 +17,7 @@ test('statistics view renders', function () {
         ->method('getStatistics')
         ->willReturn(['total' => 10]);
 
-    $controller = new StatisticsController($mustache, $repo);
+    $controller = new StatsDashboardController($mustache, $repo);
 
     $request = (new ServerRequestFactory())->createServerRequest('GET', '/stats');
     $response = (new ResponseFactory())->createResponse();

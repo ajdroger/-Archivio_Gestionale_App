@@ -1,6 +1,7 @@
 <?php
 
-use FratellanzaMilitare\Controller\SocioController;
+use FratellanzaMilitare\Controller\Anagrafica\Soci\ListController;
+use FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController;
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use FratellanzaMilitare\GestioneSoci\Socio;
 use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
@@ -18,7 +19,6 @@ test('socio list renders', function () {
 
     $repo = $this->createMock(PDOSocioRepository::class);
 
-    // Mock socio object
     $socio = new Socio();
     $socio->CodiceFiscale = "CF123";
     $socio->Matricola = "M123";
@@ -35,15 +35,9 @@ test('socio list renders', function () {
         ->method('findAll')
         ->willReturn([$socio]);
 
-    $logger = $this->createMock(LoggerInterface::class);
-    $validator = new \FratellanzaMilitare\Service\ValidationService();
+    $controller = new ListController($mustache, $repo);
 
-    $registrationService = $this->createMock(\FratellanzaMilitare\Service\RegistrationService::class);
-    $controller = new SocioController($mustache, $repo, $logger, $validator, $registrationService);
-
-    $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('GET', '/soci')
-        ->withAttribute('csrf_name', 'csrf')
-        ->withAttribute('csrf_value', 'val'));
+    $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('GET', '/soci'));
     $response = (new ResponseFactory())->createResponse();
 
     $result = $controller->list($request, $response);
@@ -54,27 +48,20 @@ test('socio list renders', function () {
 test('socio create stores data', function () {
     /** @var \Tests\TestCase $this */
     $mustache = $this->createMock(Mustache_Engine::class);
-
     $repo = $this->createMock(PDOSocioRepository::class);
-    // Delegate to Service, so controller doesn't call save directly on repo
-
     $logger = $this->createMock(LoggerInterface::class);
-
     $validator = new \FratellanzaMilitare\Service\ValidationService();
 
-    // Mock RegistrationService with expectation
     $registrationService = $this->createMock(\FratellanzaMilitare\Service\RegistrationService::class);
-    // Expect registerNewMember to be called once
     $registrationService->expects($this->once())
         ->method('registerNewMember')
         ->willReturnCallback(function ($data) {
-            // Mock returning a dummy Socio
             $s = new Socio();
             $s->CodiceFiscale = $data['codice_fiscale'];
             return $s;
         });
 
-    $controller = new SocioController($mustache, $repo, $logger, $validator, $registrationService);
+    $controller = new PersistenceController($mustache, $repo, $logger, $validator, $registrationService);
 
     $data = [
         'codice_fiscale' => 'NEWCF12345678901',
@@ -83,7 +70,7 @@ test('socio create stores data', function () {
         'pagamento_effettuato' => '1'
     ];
 
-    $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('POST', '/soci')
+    $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('POST', '/soci/salva')
         ->withParsedBody($data));
     $response = (new ResponseFactory())->createResponse();
 

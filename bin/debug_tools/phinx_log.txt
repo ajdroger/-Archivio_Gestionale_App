@@ -1,0 +1,52 @@
+Phinx by CakePHP - https://phinx.org. 0.16.10
+
+using config file phinx.php
+using config parser php
+using migration paths
+ - C:\Program Files\Ampps\www\fratellanza-militare-archivio\db\migrations
+using seed paths
+ - C:\Program Files\Ampps\www\fratellanza-militare-archivio\db\seeds
+warning no environment specified, defaulting to: development
+using adapter mysql
+using database fratellanza_db
+ordering by creation time
+Migration file
+    C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251221000000_initial_schema.php
+    C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251221193304_add_audit_log_table.php
+    C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251224102314_add_performance_indices.php
+Valid migration file C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251221000000_initial_schema.php.
+Loading class InitialSchema from C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251221000000_initial_schema.php.
+Running InitialSchema.
+Valid migration file C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251221193304_add_audit_log_table.php.
+Loading class AddAuditLogTable from C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251221193304_add_audit_log_table.php.
+Running AddAuditLogTable.
+Valid migration file C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251224102314_add_performance_indices.php.
+Loading class AddPerformanceIndices from C:\Program Files\Ampps\www\fratellanza-militare-archivio/db/migrations\20251224102314_add_performance_indices.php.
+Running AddPerformanceIndices.
+
+ == 20251221000000 InitialSchema: migrating
+START TRANSACTION;
+ -- createTable('soci')
+CREATE TABLE `soci` (`codice_fiscale` VARCHAR(16) NULL, `matricola` VARCHAR(255) NULL, `nome` VARCHAR(255) NULL, `cognome` VARCHAR(255) NULL, `data_nascita` DATE NULL, `indirizzo` VARCHAR(255) NULL, `email` VARCHAR(255) NULL, `telefono` VARCHAR(255) NULL, `stato_iscrizione` VARCHAR(255) NULL, PRIMARY KEY (`codice_fiscale`)) ENGINE = InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+PDOException: SQLSTATE[42000]: Syntax error or access violation: 1171 All parts of a PRIMARY KEY must be NOT NULL; if you need NULL in a key, use UNIQUE instead in C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\PdoAdapter.php:210
+Stack trace:
+#0 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\PdoAdapter.php(210): PDO->exec()
+#1 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\MysqlAdapter.php(358): Phinx\Db\Adapter\PdoAdapter->execute()
+#2 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\AdapterWrapper.php(354): Phinx\Db\Adapter\MysqlAdapter->createTable()
+#3 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Adapter\TimedOutputAdapter.php(114): Phinx\Db\Adapter\AdapterWrapper->createTable()
+#4 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Plan\Plan.php(147): Phinx\Db\Adapter\TimedOutputAdapter->createTable()
+#5 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Table.php(725): Phinx\Db\Plan\Plan->execute()
+#6 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Db\Table.php(621): Phinx\Db\Table->executeActions()
+#7 C:\Program Files\Ampps\www\fratellanza-militare-archivio\db\migrations\20251221000000_initial_schema.php(22): Phinx\Db\Table->create()
+#8 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Migration\Manager\Environment.php(109): InitialSchema->change()
+#9 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(413): Phinx\Migration\Manager\Environment->executeMigration()
+#10 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Migration\Manager.php(384): Phinx\Migration\Manager->executeMigration()
+#11 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Console\Command\Migrate.php(96): Phinx\Migration\Manager->migrate()
+#12 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\symfony\console\Command\Command.php(341): Phinx\Console\Command\Migrate->execute()
+#13 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\symfony\console\Application.php(1079): Symfony\Component\Console\Command\Command->run()
+#14 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\symfony\console\Application.php(356): Symfony\Component\Console\Application->doRunCommand()
+#15 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\src\Phinx\Console\PhinxApplication.php(75): Symfony\Component\Console\Application->doRun()
+#16 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\symfony\console\Application.php(195): Phinx\Console\PhinxApplication->doRun()
+#17 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\robmorgan\phinx\bin\phinx(28): Symfony\Component\Console\Application->run()
+#18 C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\bin\phinx(119): include('...')
+#19 {main}

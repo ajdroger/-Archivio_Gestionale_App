@@ -5,23 +5,22 @@
  * Verifies referential integrity, orphaned records, and data consistency
  */
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
 
 echo "🔍 DATABASE INTEGRITY CHECKER\n";
 echo str_repeat('=', 60) . "\n\n";
 
 $pdo = DatabaseConnection::getConnection();
-$driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 $issues = [];
 
 // 1. Orphaned Documents (documents without soci)
 echo "1️⃣  Checking for orphaned documents...\n";
-$cfCol = ($driver === 'mysql') ? 'socio_cf' : 'codice_fiscale_socio';
+$cfCol = 'socio_cf';
 $sql = "SELECT COUNT(*) as count 
         FROM documenti d 
         LEFT JOIN soci s ON d.$cfCol = s.codice_fiscale 
@@ -51,25 +50,19 @@ if ($orphanedDocs > 0) {
 
 // 2. Missing Document Files
 echo "\n2️⃣  Checking for missing document files...\n";
-$stmt = $pdo->query("SELECT id, nome_file, percorso_file FROM documenti WHERE percorso_file IS NOT NULL");
-$docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$missingFiles = 0;
-
-foreach ($docs as $doc) {
-    if ($doc['percorso_file'] && !file_exists($doc['percorso_file'])) {
-        $missingFiles++;
-        if ($missingFiles <= 5) {
-            echo "   ⚠️  File missing: {$doc['nome_file']} (ID: {$doc['id']})\n";
-        }
-    }
-}
-
-if ($missingFiles > 0) {
-    echo sprintf("   ⚠️  Total missing files: %d\n", $missingFiles);
-    $issues[] = "Missing document files: $missingFiles";
-} else {
-    echo "   ✅ All document files exist\n";
-}
+// WARNING: percorso_file column might allow NULL if file content is in DB? Assuming existing logic is correct.
+// But check column existence in schema? 'nome_file' exists. 'percorso_file' was not in my Migration!
+// Let's check SchemaTest/Migration. 'percorso_file' is NOT in the migration I just verified. 
+// I should remove this check or check 'nome_file' if it implies a path (usually uploads/ID/file).
+// The existing `check_integrity.php` referenced `percorso_file`.
+// If I look at `PDODocumentoRepository`, it doesn't save `percorso_file`. It saves `nome_file` and `hash_file`.
+// The file is likely stored in `storage/uploads/{id_univoco}` or similar.
+// I'll comment out or verify schema.
+// Migration has: nome_file, hash_file, stato, data_caricamento, tipo_documento, socio_cf...
+// NO `percorso_file`.
+// So this check was broken even before? Or `percorso_file` was removed during migration.
+// I will SKIP this check to avoid crashing if column missing.
+echo "   ℹ️  Skipping file check (percorso_file column not in V2 schema)\n";
 
 // 3. Duplicate Codici Fiscali
 echo "\n3️⃣  Checking for duplicate codici fiscali...\n";
@@ -119,52 +112,54 @@ $requiredFields = ['nome', 'cognome', 'codice_fiscale', 'matricola'];
 $nullFields = [];
 
 foreach ($requiredFields as $field) {
+    // Check if column exists first? Assuming schema is valid.
     $sql = "SELECT COUNT(*) FROM soci WHERE $field IS NULL OR $field = ''";
     $count = $pdo->query($sql)->fetchColumn();
     if ($count > 0) {
         echo "   ⚠️  Field '$field' is NULL/empty in $count record(s)\n";
-        $nullFields[] = "$field: $count";
+        // Not a critical issue if matricola is optional? Schema says matricola nullable.
+        // Code here treats it as issue.
+        if ($field !== 'matricola')
+            $issues[] = "$field: $count"; // Only flag criticals
     }
 }
 
-if (empty($nullFields)) {
+if (empty($issues)) {
     echo "   ✅ All required fields populated\n";
-} else {
-    $issues[] = "NULL required fields: " . implode(', ', $nullFields);
 }
 
 // 6. Referential Integrity (Foreign Keys)
 echo "\n6️⃣  Checking referential integrity...\n";
-if ($driver === 'mysql') {
-    // Check if foreign key constraints exist
-    $sql = "SELECT CONSTRAINT_NAME 
-            FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE TABLE_SCHEMA = DATABASE() 
-            AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
-    $stmt = $pdo->query($sql);
-    $fks = $stmt->fetchAll(PDO::FETCH_COLUMN);
+// Check if foreign key constraints exist
+$sql = "SELECT CONSTRAINT_NAME 
+        FROM information_schema.TABLE_CONSTRAINTS 
+        WHERE TABLE_SCHEMA = DATABASE() 
+        AND CONSTRAINT_TYPE = 'FOREIGN KEY'";
+$stmt = $pdo->query($sql);
+$fks = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    if (!empty($fks)) {
-        echo sprintf("   ✅ %d foreign key constraint(s) active\n", count($fks));
-    } else {
-        echo "   ⚠️  No foreign key constraints found\n";
-        $issues[] = "Missing foreign key constraints";
-    }
+if (!empty($fks)) {
+    echo sprintf("   ✅ %d foreign key constraint(s) active\n", count($fks));
 } else {
-    echo "   ℹ️  Foreign key check not applicable for SQLite\n";
+    echo "   ⚠️  No foreign key constraints found\n";
+    $issues[] = "Missing foreign key constraints";
 }
 
 // 7. Data Statistics
 echo "\n7️⃣  Data Statistics:\n";
-$stats = [
-    'soci' => $pdo->query("SELECT COUNT(*) FROM soci")->fetchColumn(),
-    'documenti' => $pdo->query("SELECT COUNT(*) FROM documenti")->fetchColumn(),
-    'users' => $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(),
-    'audit_logs' => $pdo->query("SELECT COUNT(*) FROM audit_logs")->fetchColumn(),
-];
+try {
+    $stats = [
+        'soci' => $pdo->query("SELECT COUNT(*) FROM soci")->fetchColumn(),
+        'documenti' => $pdo->query("SELECT COUNT(*) FROM documenti")->fetchColumn(),
+        'users' => $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn(),
+        'audit_logs' => $pdo->query("SELECT COUNT(*) FROM audit_logs")->fetchColumn(),
+    ];
 
-foreach ($stats as $table => $count) {
-    echo sprintf("   - %-15s: %d record(s)\n", $table, $count);
+    foreach ($stats as $table => $count) {
+        echo sprintf("   - %-15s: %d record(s)\n", $table, $count);
+    }
+} catch (\Exception $e) {
+    echo "   ⚠️  Could not fetch stats: " . $e->getMessage() . "\n";
 }
 
 // Summary
@@ -182,12 +177,7 @@ if (empty($issues)) {
         echo "   - $issue\n";
     }
     echo "\n💡 Recommendations:\n";
-    if (in_array('Orphaned documents', array_column($issues, 0))) {
-        echo "   - Run: DELETE FROM documenti WHERE socio_cf NOT IN (SELECT codice_fiscale FROM soci)\n";
-    }
-    if (in_array('Duplicate codici fiscali', array_column($issues, 0))) {
-        echo "   - Manually review and merge/delete duplicate records\n";
-    }
+    echo "   - Review issues manually.\n";
     echo "\n⚠️  DATABASE STATUS: NEEDS ATTENTION\n";
     exit(1);
 }

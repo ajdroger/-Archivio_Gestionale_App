@@ -15,7 +15,8 @@
         "phpstan/phpstan": "^2.1",
         "friendsofphp/php-cs-fixer": "^3.92",
         "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-arch": "^3.1"
+        "pestphp/pest-plugin-arch": "^3.1",
+        "zircote/swagger-php": "^4.10"
     },
     "require": {
         "slim/slim": "^4.15",
@@ -29,7 +30,8 @@
         "vlucas/phpdotenv": "^5.6",
         "dompdf/dompdf": "^3.1",
         "phpmailer/phpmailer": "^7.0",
-        "defuse/php-encryption": "^2.4"
+        "defuse/php-encryption": "^2.4",
+        "predis/predis": "^2.2"
     },
     "config": {
         "allow-plugins": {

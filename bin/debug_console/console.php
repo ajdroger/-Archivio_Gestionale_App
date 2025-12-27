@@ -9,11 +9,13 @@ use FratellanzaMilitare\Service\BackupService;
 
 // Inizializza il container
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__ . '/../../config/container.php');
+foreach ((require __DIR__ . '/../../config/container.php') as $definitions) {
+    $containerBuilder->addDefinitions($definitions);
+}
 $container = $containerBuilder->build();
 
 echo "================================================\n";
-echo "   MISSION-CRITICAL DEBUG CONSOLE v2.0\n";
+echo "   APP_VER: 2.0 Mission-Critical Enterprise\n";
 echo "================================================\n";
 
 function printUsage()

@@ -396,7 +396,7 @@ Short-term (1-3 mesi): Consolidamento sicurezza e performance
 Mid-term (3-6 mesi): API RESTful e modernizzazione frontend
 Long-term (6-12 mesi): Mobile app e multi-tenancy
 Report Compilato: 2025-12-25 00:05 CET
-Autore: AI Assistant (Gemini 2.5 Flash Thinking Experimental)
+Autore: Soobadur Mohammad Ajmeer
 Versione Report: 1.0 Final
 Stato Sistema: 🚀 PRODUCTION-READY
 

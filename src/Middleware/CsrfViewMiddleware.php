@@ -20,10 +20,9 @@ class CsrfViewMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // Get CSRF token from attributes (set by Slim\Csrf\Guard)
-        $csrfNameKey = $request->getAttribute('csrf_name');
-        $csrfValueKey = $request->getAttribute('csrf_value');
-        $csrfName = $request->getAttribute($csrfNameKey);
-        $csrfValue = $request->getAttribute($csrfValueKey);
+        // Get CSRF token directly from attributes matching Slim/Csrf defaults
+        $csrfName = $request->getAttribute('csrf_name');
+        $csrfValue = $request->getAttribute('csrf_value');
 
         // Slim 4 CSRF stores the *keys* in attributes 'csrf_name' and 'csrf_value' by default?
         // Actually, looking at the Controller code:
@@ -59,10 +58,25 @@ class CsrfViewMiddleware implements MiddlewareInterface
 
         // Since we want to Avoid manual injection in controllers, we need the renderer to know about it.
         // If Mustache_Engine is shared, can we add a helper?
+        // Helper CSRF
         $this->mustache->addHelper('csrf', [
             'name' => $request->getAttribute('csrf_name'),
             'value' => $request->getAttribute('csrf_value')
         ]);
+
+        // Helpers Auth (Global Injection)
+        $this->mustache->addHelper('is_admin', ($_SESSION['user_role'] ?? '') === 'admin');
+        $this->mustache->addHelper('username', $_SESSION['username'] ?? 'Utente');
+        $this->mustache->addHelper('user_initial', strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)));
+
+        // Helper Base URL
+        // Helper Base URL - Manually calculated to avoid RouteContext dependencies
+        $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        $basePath = $scriptDir === '/' ? '' : $scriptDir;
+        $this->mustache->addHelper('base_url', $basePath);
+
+        // Ensure global window.BASE_URL is also correct in templates
+        // (Handled by template injection)
 
         return $handler->handle($request);
     }

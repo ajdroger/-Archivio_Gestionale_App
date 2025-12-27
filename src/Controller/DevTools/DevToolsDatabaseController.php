@@ -16,10 +16,24 @@ use FratellanzaMilitare\SecurityLayer\AuditTrail;
 class DevToolsDatabaseController
 {
     private Mustache_Engine $mustache;
+    private ?\PDO $pdo = null;
 
     public function __construct(Mustache_Engine $mustache)
     {
         $this->mustache = $mustache;
+    }
+
+    public function setConnection(\PDO $pdo): void
+    {
+        $this->pdo = $pdo;
+    }
+
+    private function getConnection(): \PDO
+    {
+        if ($this->pdo === null) {
+            $this->pdo = DatabaseConnection::getConnection();
+        }
+        return $this->pdo;
     }
 
     public function dbQuery(Request $request, Response $response): Response
@@ -28,7 +42,7 @@ class DevToolsDatabaseController
         $sql = $data['sql'] ?? '';
 
         try {
-            $pdo = DatabaseConnection::getConnection();
+            $pdo = $this->getConnection();
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
 
@@ -50,7 +64,7 @@ class DevToolsDatabaseController
     {
         $params = $request->getQueryParams();
 
-        $db = DatabaseConnection::getConnection();
+        $db = $this->getConnection();
         $auditTrail = AuditTrail::getInstance();
         $auditTrail->setPdo($db);
 
@@ -82,7 +96,7 @@ class DevToolsDatabaseController
     {
         $params = $request->getQueryParams();
 
-        $db = DatabaseConnection::getConnection();
+        $db = $this->getConnection();
         $auditTrail = AuditTrail::getInstance();
         $auditTrail->setPdo($db);
 

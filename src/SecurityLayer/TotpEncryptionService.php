@@ -74,8 +74,10 @@ class TotpEncryptionService
 
             return Crypto::decrypt($ciphertext, $this->key);
         } catch (WrongKeyOrModifiedCiphertextException $e) {
-            // Decryption failed - possibly a legacy unencrypted secret
-            return $encryptedSecret;
+            // Decryption failed. Since we verified it was encrypted (isEncrypted check),
+            // returning the ciphertext would cause a crash in TotpProvider.
+            // Return null to indicate failure.
+            return null;
         } catch (\Exception $e) {
             return null;
         }

@@ -13,12 +13,10 @@ use DateTime;
 class PDODocumentoRepository implements DocumentoRepository
 {
     private PDO $pdo;
-    private bool $isMysql;
 
     public function __construct(?PDO $pdo = null)
     {
         $this->pdo = $pdo ?? DatabaseConnection::getConnection();
-        $this->isMysql = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql';
     }
 
     public function save(Documento $documento, string $socioCf): void
@@ -45,30 +43,17 @@ class PDODocumentoRepository implements DocumentoRepository
             $firma = $documento->DataFirma->format('Y-m-d H:i:s');
         }
 
-        $fkCol = $this->isMysql ? 'socio_cf' : 'codice_fiscale_socio';
-        $hashCol = $this->isMysql ? 'hash_file' : 'hash_sha256';
-        $sql = "";
-
-        if ($this->isMysql) {
-            // MySQL
-            $sql = "INSERT INTO documenti (
-                id_univoco, nome_file, $hashCol, stato, data_caricamento, tipo_documento, $fkCol,
-                anno_solare, quota_versata, metodo_pagamento,
-                trattamento_dati, cessione_terzi, marketing, data_firma
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE 
-                nome_file=VALUES(nome_file), $hashCol=VALUES($hashCol), stato=VALUES(stato), 
-                data_caricamento=VALUES(data_caricamento), tipo_documento=VALUES(tipo_documento), $fkCol=VALUES($fkCol),
-                anno_solare=VALUES(anno_solare), quota_versata=VALUES(quota_versata), metodo_pagamento=VALUES(metodo_pagamento),
-                trattamento_dati=VALUES(trattamento_dati), cessione_terzi=VALUES(cessione_terzi), marketing=VALUES(marketing), data_firma=VALUES(data_firma)";
-        } else {
-            // SQLite
-            $sql = "INSERT OR REPLACE INTO documenti (
-                id_univoco, nome_file, $hashCol, stato, data_caricamento, tipo_documento, $fkCol,
-                anno_solare, quota_versata, metodo_pagamento,
-                trattamento_dati, cessione_terzi, marketing, data_firma
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        }
+        // MySQL Logic
+        $sql = "INSERT INTO documenti (
+            id_univoco, nome_file, hash_file, stato, data_caricamento, tipo_documento, socio_cf,
+            anno_solare, quota_versata, metodo_pagamento,
+            trattamento_dati, cessione_terzi, marketing, data_firma
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+            nome_file=VALUES(nome_file), hash_file=VALUES(hash_file), stato=VALUES(stato), 
+            data_caricamento=VALUES(data_caricamento), tipo_documento=VALUES(tipo_documento), socio_cf=VALUES(socio_cf),
+            anno_solare=VALUES(anno_solare), quota_versata=VALUES(quota_versata), metodo_pagamento=VALUES(metodo_pagamento),
+            trattamento_dati=VALUES(trattamento_dati), cessione_terzi=VALUES(cessione_terzi), marketing=VALUES(marketing), data_firma=VALUES(data_firma)";
 
         $stmt = $this->pdo->prepare($sql);
 
@@ -97,8 +82,7 @@ class PDODocumentoRepository implements DocumentoRepository
 
     public function findBySocio(string $socioCf): array
     {
-        $fkCol = $this->isMysql ? 'socio_cf' : 'codice_fiscale_socio';
-        $stmt = $this->pdo->prepare("SELECT * FROM documenti WHERE $fkCol = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM documenti WHERE socio_cf = ?");
         $stmt->execute([$socioCf]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -124,12 +108,10 @@ class PDODocumentoRepository implements DocumentoRepository
             return [];
         }
 
-        $fkCol = $this->isMysql ? 'socio_cf' : 'codice_fiscale_socio';
-
         // Create placeholders for IN clause
         $placeholders = implode(',', array_fill(0, count($codiciFiscali), '?'));
 
-        $sql = "SELECT * FROM documenti WHERE $fkCol IN ($placeholders) ORDER BY $fkCol, data_caricamento DESC";
+        $sql = "SELECT * FROM documenti WHERE socio_cf IN ($placeholders) ORDER BY socio_cf, data_caricamento DESC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($codiciFiscali);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -141,7 +123,7 @@ class PDODocumentoRepository implements DocumentoRepository
         }
 
         foreach ($rows as $row) {
-            $cf = $row[$fkCol];
+            $cf = $row['socio_cf'];
             $grouped[$cf][] = $this->mapRowToDocumento($row);
         }
 
@@ -174,22 +156,7 @@ class PDODocumentoRepository implements DocumentoRepository
 
         $doc->IdUnivoco = $row['id_univoco'];
         $doc->NomeFile = $row['nome_file'];
-        // Fix: MySQL migration mapped 'hash_sha256' to 'hash_file' in schema, but here code expects 'hash_sha256' in SQLite.
-        // I should check if I changed the column name in MySQL.
-        // Yes, I mapped 'hash_file' => 'hash_sha256'.
-        // So MySQL column name is likely 'hash_file' IF I used the destination key as column name.
-        // Destination column (MySQL) 'hash_file'. Source 'hash_sha256'.
-        // So I need to use 'hash_file' for MySQL and 'hash_sha256' for SQLite.
-
-        // Wait, the column name in SQLite is 'hash_sha256' (based on INSERT line 47).
-        // My migration script created MySQL table with: `hash_file VARCHAR(64) DEFAULT NULL`.
-        // So MySQL uses `hash_file`.
-
-        $hashCol = $this->isMysql ? 'hash_file' : 'hash_sha256';
-
-        $doc->IdUnivoco = $row['id_univoco'];
-        $doc->NomeFile = $row['nome_file'];
-        $doc->HashSHA256 = $row[$hashCol] ?? '';
+        $doc->HashSHA256 = $row['hash_file'] ?? '';
         $doc->DataCaricamento = new DateTime($row['data_caricamento']);
 
         // Handle Stato (enum) with fallback for invalid values

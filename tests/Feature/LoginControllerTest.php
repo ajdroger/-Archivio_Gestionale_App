@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Controller\LoginController;
+use FratellanzaMilitare\Controller\Auth\LoginFlowController;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 
@@ -11,12 +11,9 @@ test('login form renders', function () {
         ->method('render')
         ->willReturn('<form>Login</form>');
 
-    $controller = new LoginController($mustache);
+    $controller = new LoginFlowController($mustache);
 
-    $request = (new ServerRequestFactory())->createServerRequest('GET', '/login')
-        ->withAttribute('csrf_name', 'csrf_name')
-        ->withAttribute('csrf_value', 'csrf_token');
-
+    $request = (new ServerRequestFactory())->createServerRequest('GET', '/login');
     $response = (new ResponseFactory())->createResponse();
 
     $result = $controller->form($request, $response);
@@ -28,14 +25,13 @@ test('login verify success redirects', function () {
     /** @var \Tests\TestCase $this */
     $mustache = $this->createMock(Mustache_Engine::class);
 
-    $controller = new LoginController($mustache);
+    $controller = new LoginFlowController($mustache);
 
     $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('POST', '/login')
-        ->withParsedBody(['username' => 'admin', 'password' => 'password']));
+        ->withParsedBody(['username' => 'admin', 'password' => 'admin123']));
 
     $response = (new ResponseFactory())->createResponse();
 
-    // Start Session for testing
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }

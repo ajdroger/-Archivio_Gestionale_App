@@ -64,7 +64,7 @@
 
 <div class="row g-4">
     <div class="col-md-4">
-        <a href="/fratellanza-militare-archivio/public/soci" class="text-decoration-none">
+        <a href="{{base_url}}/soci" class="text-decoration-none">
             <div class="card h-100 border-0 shadow-sm hover-up" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important; transition: all 0.3s ease;">
                 <div class="card-body p-4 text-center">
                     <div class="display-5 text-primary mb-3"><i class="fa-solid fa-users-viewfinder"></i></div>
@@ -76,7 +76,7 @@
     </div>
     
     <div class="col-md-4">
-        <a href="/fratellanza-militare-archivio/public/soci/nuovo" class="text-decoration-none">
+        <a href="{{base_url}}/soci/nuovo" class="text-decoration-none">
             <div class="card h-100 border-0 shadow-sm hover-up" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important; transition: all 0.3s ease;">
                  <div class="card-body p-4 text-center">
                     <div class="display-5 text-success mb-3"><i class="fa-solid fa-user-plus"></i></div>
@@ -87,72 +87,15 @@
         </a>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const stats = {{{stats_json}}};
-            
-            // Common Config
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.05)';
-            
-            // 1. Status Chart (Doughnut)
-            const ctxStatus = document.getElementById('chartStatus').getContext('2d');
-            new Chart(ctxStatus, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Attivi', 'Morosi'],
-                    datasets: [{
-                        data: [stats.attivi, stats.morosi],
-                        backgroundColor: ['#10b981', '#ef4444'], // Emerald-500, Red-500
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
-                    }
-                }
-            });
-            
-            // 2. Trend Chart (Line)
-            const ctxTrend = document.getElementById('chartTrend').getContext('2d');
-            new Chart(ctxTrend, {
-                type: 'line',
-                data: {
-                    labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
-                    datasets: [{
-                        label: 'Iscrizioni Validate',
-                        data: stats.trend_iscritti,
-                        borderColor: '#38bdf8', // Sky-400
-                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#0f172a',
-                        pointBorderColor: '#38bdf8',
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { precision: 0 } }
-                    }
-                }
-            });
-        });
+        // Passaggio dati dal backend al frontend
+        window.dashboardData = {{{stats_json}}};
     </script>
+    <script src="{{base_url}}/js/devtools/admin_dashboard.js"></script>
     
     <div class="col-md-4">
-        <a href="/fratellanza-militare-archivio/public/statistiche" class="text-decoration-none">
+        <a href="{{base_url}}/statistiche" class="text-decoration-none">
             <div class="card h-100 border-0 shadow-sm hover-up" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important; transition: all 0.3s ease;">
                  <div class="card-body p-4 text-center">
                     <div class="display-5 text-info mb-3"><i class="fa-solid fa-chart-line"></i></div>
@@ -166,3 +109,4 @@
 
 
 {{> layout_footer }}
+

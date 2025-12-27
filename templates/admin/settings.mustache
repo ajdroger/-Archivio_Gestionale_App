@@ -6,6 +6,19 @@
                 <h5 class="mb-0 text-white fw-bold"><i class="fa-solid fa-user-shield me-2 text-primary"></i>SECURITY & ACCOUNT CONTROL</h5>
             </div>
             <div class="card-body p-4 p-md-5">
+                {{#success}}
+                <div class="alert alert-success border-0 bg-success bg-opacity-10 text-success mb-4 d-flex align-items-center">
+                    <i class="fa-solid fa-circle-check me-2 fs-4"></i>
+                    <div>{{success}}</div>
+                </div>
+                {{/success}}
+                {{#error}}
+                <div class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger mb-4 d-flex align-items-center">
+                    <i class="fa-solid fa-triangle-exclamation me-2 fs-4"></i>
+                    <div>{{error}}</div>
+                </div>
+                {{/error}}
+
                 <div class="d-flex align-items-center mb-5 p-4 rounded bg-black bg-opacity-20 border border-secondary border-opacity-25">
                     <div class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold fs-2 shadow-sm border border-primary border-opacity-25" style="width: 80px; height: 80px;">
                         {{user_initial}}
@@ -14,12 +27,14 @@
                         <h3 class="mb-1 text-white fw-bold">{{user.username}}</h3>
                         <div class="d-flex gap-2">
                             <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">{{user.role}}</span>
-                            <span class="badge bg-dark text-secondary border border-secondary px-2"><i class="fa-solid fa-history me-1"></i>ULTIMO ACCESSO: {{user.last_login}}</span>
+                            <span class="badge bg-dark text-secondary border border-secondary px-2"><i class="fa-solid fa-history me-1"></i>UTENTE REGISTRATO IL: {{user.created_at}}</span>
                         </div>
                     </div>
                 </div>
 
-                <form class="mt-4">
+                <form action="{{base_url}}/impostazioni" method="POST" class="mt-4">
+                    <input type="hidden" name="{{csrf.name}}" value="{{csrf.value}}">
+                    
                     <div class="row g-4">
                         <div class="col-md-6 border-end border-secondary border-opacity-25">
                             <h5 class="mc-section-title mb-4"><i class="fa-solid fa-envelope me-2 text-primary"></i>IDENTITÀ DIGITALE</h5>
@@ -36,15 +51,15 @@
                             <h5 class="mc-section-title mb-4"><i class="fa-solid fa-key me-2 text-warning"></i>AGGIORNAMENTO CREDENZIALI</h5>
                             <div class="form-group mb-3">
                                 <label class="mc-label" for="old_pass">PASSWORD ATTUALE</label>
-                                <input type="password" id="old_pass" class="mc-input text-white" placeholder="••••••••">
+                                <input type="password" id="old_pass" name="old_password" class="mc-input text-white" placeholder="••••••••" required>
                             </div>
                             <div class="form-group mb-3">
                                 <label class="mc-label" for="new_pass">NUOVA PASSWORD</label>
-                                <input type="password" id="new_pass" class="mc-input text-white" placeholder="Certificata 12+ char">
+                                <input type="password" id="new_pass" name="new_password" class="mc-input text-white" placeholder="Certificata 8+ char" required minlength="8">
                             </div>
                             <div class="form-group mb-4">
                                 <label class="mc-label" for="conf_pass">CONFERMA NUOVA PASSWORD</label>
-                                <input type="password" id="conf_pass" class="mc-input text-white" placeholder="Ripeti password">
+                                <input type="password" id="conf_pass" name="confirm_password" class="mc-input text-white" placeholder="Ripeti password" required minlength="8">
                             </div>
                         </div>
                     </div>
@@ -63,3 +78,4 @@
 <!-- Styles moved to style.css -->
 
 {{> layout_footer }}
+

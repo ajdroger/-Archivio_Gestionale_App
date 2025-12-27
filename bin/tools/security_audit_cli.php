@@ -7,6 +7,10 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
+// Load Environment Variables
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
+$dotenv->load();
+
 $checks = [];
 
 // 1. Check Display Errors
@@ -41,16 +45,34 @@ foreach ($criticalDirs as $dir => $shouldBeWritable) {
 // 3. Database Integrity
 $db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
 try {
-    $stmt = $db->query("PRAGMA integrity_check");
-    $result = $stmt->fetchColumn();
-    $checks[] = [
-        'name' => 'SQLite Integrity',
-        'status' => ($result === 'ok') ? 'PASS' : 'FAIL',
-        'detail' => $result
-    ];
+    $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
+
+    if ($driver === 'sqlite') {
+        $stmt = $db->query("PRAGMA integrity_check");
+        $result = $stmt->fetchColumn();
+        $checks[] = [
+            'name' => 'SQLite Integrity',
+            'status' => ($result === 'ok') ? 'PASS' : 'FAIL',
+            'detail' => $result
+        ];
+    } elseif ($driver === 'mysql') {
+        // MySQL equivalent check (checking connection and basic table status)
+        $stmt = $db->query("SELECT 1"); // Basic ping
+        $checks[] = [
+            'name' => 'MySQL Connectivity',
+            'status' => $stmt ? 'PASS' : 'FAIL',
+            'detail' => 'Connection established successfully'
+        ];
+    } else {
+        $checks[] = [
+            'name' => 'Database Check',
+            'status' => 'WARN',
+            'detail' => "Driver verification not implemented for: $driver"
+        ];
+    }
 } catch (Exception $e) {
     $checks[] = [
-        'name' => 'SQLite Integrity',
+        'name' => 'Database Integrity',
         'status' => 'FAIL',
         'detail' => $e->getMessage()
     ];

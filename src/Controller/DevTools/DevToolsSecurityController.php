@@ -68,7 +68,9 @@ class DevToolsSecurityController
             $stmt->execute([$user, $hash, $role, $encryptedSecret]);
             $response->getBody()->write(json_encode(['success' => true]));
         } catch (\PDOException $e) {
-            return $this->jsonError($response, 'Username already exists or DB error.');
+        } catch (\PDOException $e) {
+            // Check for specific error codes if needed, but for now return specific message for debugging
+            return $this->jsonError($response, 'DB Error: ' . $e->getMessage());
         }
         return $response->withHeader('Content-Type', 'application/json');
     }

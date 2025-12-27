@@ -1,18 +1,34 @@
+/**
+ * @file premium.css
+ * @description Foglio di stile "Premium" per interfacce utente moderne e ad alto contrasto.
+ * Utilizza una palette scura (Dark Mode) con accenti vibranti.
+ * 
+ * @author Soobadur Mohammad Ajmeer
+ * @version 2.0.0
+ */
+
+/* --- Configurazione Base (Dark Mode) --- */
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Font moderno */
     background: #0f172a;
+    /* Slate 900 - Sfondo molto scuro */
     color: #f1f5f9;
+    /* Slate 100 - Testo molto chiaro */
     padding: 40px;
     margin: 0;
 }
 
+/* Contenitore principale centrato */
 .container {
     max-width: 1200px;
     margin: 0 auto;
 }
 
+/* --- Header e Tipografia --- */
 header {
     border-bottom: 2px solid #1e293b;
+    /* Linea separatrice sottile */
     padding-bottom: 20px;
     margin-bottom: 30px;
     display: flex;
@@ -20,33 +36,24 @@ header {
     align-items: center;
 }
 
+/* Titolo con effetto gradiente testuale */
 h1 {
     margin: 0;
     font-size: 2rem;
     background: linear-gradient(90deg, #f87171, #fbbf24);
+    /* Da rosso a oro */
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    /* Rende il testo trasparente per mostrare il gradiente */
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 20px;
-}
-
-.card {
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
+/* Sottotitoli delle sezioni */
 h2 {
     margin-top: 0;
     font-size: 1.25rem;
     color: #94a3b8;
+    /* Slate 400 - Testo secondario */
     border-bottom: 1px solid #334155;
     padding-bottom: 10px;
     display: flex;
@@ -54,16 +61,39 @@ h2 {
     gap: 10px;
 }
 
+/* --- Sistema a Griglia e Cards --- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    /* Responsive grid */
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    /* Slate 800 - Sfondo card */
+    border: 1px solid #334155;
+    /* Bordo sottile per definizione */
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    /* Ombra leggera */
+}
+
+/* --- Indicatori di Stato --- */
 .status-ok {
     color: #4ade80;
+    /* Verde acceso */
     font-weight: bold;
 }
 
 .status-fail {
     color: #f87171;
+    /* Rosso acceso */
     font-weight: bold;
 }
 
+/* --- Tabelle --- */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -78,11 +108,12 @@ table td {
     transition: background 0.2s;
 }
 
+/* Effetto hover sulle righe della tabella */
 tr:hover td {
     background: rgba(51, 65, 85, 0.3);
 }
 
-/* --- Form Styles --- */
+/* --- Stili Form (Input e Label) --- */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -99,12 +130,14 @@ tr:hover td {
     margin-bottom: 8px;
     font-weight: 500;
     color: #cbd5e1;
+    /* Slate 300 */
 }
 
 .form-control {
     width: 100%;
     padding: 10px 12px;
     background: #1e293b;
+    /* Sfondo scuro input */
     border: 1px solid #475569;
     border-radius: 6px;
     color: #f1f5f9;
@@ -114,9 +147,11 @@ tr:hover td {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+/* Stato focus input con glow effect */
 .form-control:focus {
     outline: none;
     border-color: #38bdf8;
+    /* Sky 400 */
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
@@ -124,12 +159,14 @@ tr:hover td {
     color: #64748b;
 }
 
+/* Checkbox container personalizzato */
 .form-check {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 15px;
     background: rgba(56, 189, 248, 0.1);
+    /* Sfondo blu molto leggero */
     border: 1px solid rgba(56, 189, 248, 0.2);
     border-radius: 8px;
     color: #e0f2fe;
@@ -139,9 +176,10 @@ input[type="checkbox"] {
     width: 18px;
     height: 18px;
     accent-color: #38bdf8;
+    /* Colore spunta */
 }
 
-/* --- Action Links & Buttons --- */
+/* --- Azioni e Bottoni --- */
 .actions-container {
     display: flex;
     gap: 15px;
@@ -150,8 +188,29 @@ input[type="checkbox"] {
     border-top: 1px solid #334155;
 }
 
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #38bdf8;
+    /* Sky 400 - Primario */
+    color: #0f172a;
+    /* Testo scuro su bottone chiaro */
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+}
+
+.btn:hover {
+    background: #7dd3fc;
+    transform: translateY(-2px);
+    /* Leggero lift */
+}
+
 .btn-secondary {
     background: #475569;
+    /* Slate 600 - Secondario */
     color: #f1f5f9;
 }
 
@@ -159,7 +218,7 @@ input[type="checkbox"] {
     background: #64748b;
 }
 
-/* --- Dashboard Quick Actions --- */
+/* --- Quick Actions (Dashboard) --- */
 .quick-actions-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -197,6 +256,7 @@ input[type="checkbox"] {
     color: #38bdf8;
 }
 
+/* --- Badge generici --- */
 .badge {
     display: inline-block;
     padding: 3px 8px;
@@ -206,26 +266,11 @@ input[type="checkbox"] {
     color: #94a3b8;
 }
 
-.btn {
-    display: inline-block;
-    padding: 8px 16px;
-    background: #38bdf8;
-    color: #0f172a;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: transform 0.2s;
-}
-
-.btn:hover {
-    background: #7dd3fc;
-    transform: translateY(-2px);
-}
-
+/* --- Log e Code Blocks --- */
 .log-container {
     max-height: 250px;
     overflow-y: auto;
+    /* Scroll verticale se necessario */
 }
 
 code {
@@ -236,7 +281,7 @@ code {
     font-size: 0.9rem;
 }
 
-/* Specifici per la Test Dashboard */
+/* --- Badge Specifici Dashboard di Test --- */
 .badge-unit {
     background: #0369a1;
     color: #e0f2fe;
@@ -267,6 +312,7 @@ code {
     color: #fff;
 }
 
+/* --- Statistiche --- */
 .stats {
     display: flex;
     gap: 15px;

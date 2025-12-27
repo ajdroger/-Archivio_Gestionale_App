@@ -20,7 +20,7 @@ class BackupVerifier
 
     public function __construct()
     {
-        $this->backupDir = __DIR__ . '/../../backups';
+        $this->backupDir = __DIR__ . '/../../storage/backups';
     }
 
     public function run(): void

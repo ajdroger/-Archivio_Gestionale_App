@@ -9,8 +9,8 @@ $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../../logs/a
 
 use FratellanzaMilitare\GestioneSoci\Socio; // Forza l'autoloading per sicurezza
 
-$srcDir = __DIR__ . '/../src';
-$outputFile = __DIR__ . '/../Documentazione/API_REFERENCE.md';
+$srcDir = __DIR__ . '/../../src';
+$outputFile = __DIR__ . '/../../Documentazione/API_REFERENCE.md';
 $docContent = "# Riferimento Tecnico API\n\nGenerato automaticamente via `bin/generate_docs.php` il " . date('d/m/Y H:i:s') . "\n\n";
 
 // Mappa il prefisso logico del Namespace al percorso fisico

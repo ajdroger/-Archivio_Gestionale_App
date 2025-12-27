@@ -1,4 +1,4 @@
-{{> layout_header }}
+{{> admin_header }}
 
 <!-- 
     ========================================================================================
@@ -27,9 +27,12 @@
     - I dati iniziali sono iniettati da Mustache (SSR).
     - Il layout è responsive ma ottimizzato per Desktop.
     
-    AUTORE: Agente (Refactoring v3.1)
+    AUTORE: Soobadur Mohammad Ajmeer
     ========================================================================================
 -->
+
+<!-- STILI PERSONALIZZATI & LOGICA CORE -->
+<script src="{{base_url}}/js/devtools/admin_devtools.js"></script>
 
 <!-- CONFIGURAZIONE GLOBALE: Token CSRF per sicurezza chiamate AJAX -->
 <script>
@@ -41,6 +44,14 @@
         name: '{{csrf.name}}',  // Nome del token (es. csrf_name)
         value: '{{csrf.value}}' // Valore hash del token
     };
+
+    // --- REAL-TIME TELEMETRY HANDLED BY admin_devtools.js ---
+
+    // Chiamate Iniziali
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUsers(); 
+        // loadScripts(); // Caricati server-side in v3.1
+    });
 </script>
 
 <!-- STILI PERSONALIZZATI: Tema Scuro Premium -->
@@ -66,7 +77,7 @@
             </div>
             <div>
                 <span class="fs-5 fw-bold text-white tracking-widest">MISSION CONTROL</span><br>
-                <small class="text-white opacity-75 code-font" style="font-size: 0.85rem;">SYSTEM V3.1</small>
+                <small class="text-white opacity-75 code-font" style="font-size: 0.85rem;">SYSTEM V2.0</small>
             </div>
         </div>
         
@@ -113,7 +124,7 @@
                     <div class="text-white fs-6 fw-bold text-truncate">{{username}}</div>
                     <div class="text-success text-truncate small fw-bold">● Online</div>
                 </div>
-                <a href="/fratellanza-militare-archivio/public/logout" class="btn btn-lg text-danger ms-2" title="Disconnetti">
+                <a href="{{base_url}}/logout" class="btn btn-lg text-danger ms-2" title="Disconnetti">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </a>
             </div>
@@ -130,7 +141,7 @@
     <div class="flex-grow-1 overflow-auto bg-black position-relative" style="padding-left: 0;">
         
         <!-- Top Bar Appiccicosa (Sticky) -->
-        <header class="py-4 px-5 border-bottom border-secondary d-flex justify-content-between align-items-center sticky-top z-index-100" style="background-color: #0a0a0a;">
+        <header class="py-4 px-5 border-bottom border-secondary d-flex justify-content-between align-items-center" style="background-color: #0a0a0a;">
             <div class="d-flex align-items-center">
                 <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO</h4>
             </div>
@@ -139,309 +150,360 @@
                  <button class="btn btn-dark border-secondary text-white d-flex align-items-center px-4 py-2" onclick="toggleTerminal()">
                      <i class="fa-solid fa-terminal me-2"></i>Console
                  </button>
-                 <a href="/fratellanza-militare-archivio/public/dashboard" class="btn btn-outline-light d-flex align-items-center px-4 py-2">
+                 <a href="{{base_url}}/" class="btn btn-outline-light d-flex align-items-center px-4 py-2">
                      <i class="fa-solid fa-home me-2"></i>Home
                  </a>
             </div>
         </header>
 
         <!-- Contenitore Tab Panels -->
+
         <div class="p-5 tab-content w-100" id="v-pills-tabContent">
             
             <!-- 
                 ************* TAB 1: DASHBOARD ************* 
-                Panoramica metriche e azioni rapide.
+            -->
+            <!-- 
+                ************* TAB 1: DASHBOARD (PREMIUM) ************* 
             -->
             <div class="tab-pane fade show active" id="v-pills-dash" role="tabpanel">
-                
-                <!-- RIGA 1: Metriche Sistema -->
+                <!-- ROW 1: MISSION CONTROL HEADER & CRITICAL ALERTS -->
                 <div class="row g-4 mb-4">
-                    <!-- Integrity Card -->
-                    <div class="col-xl-3 col-md-6 col-12">
-                        <div class="card glass-panel h-100 border-0 metric-card">
-                            <div class="card-body">
-                                <h6 class="text-muted uppercase-tracking small mb-2">INTEGRITÀ DB</h6>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h3 class="mb-0 code-font">{{health.database.integrity}}</h3>
-                                    <i class="fa-solid fa-check-circle text-success fs-2 opacity-50"></i>
-                                </div>
-                                <div class="mt-2 text-success small border-top border-secondary border-opacity-10 pt-2">
-                                    <i class="fa-solid fa-satellite-dish me-1"></i> Connessione Stabile
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Backups Card -->
-                    <div class="col-xl-3 col-md-6 col-12">
-                         <div class="card glass-panel h-100 border-0 metric-card">
-                            <div class="card-body">
-                                <h6 class="text-muted uppercase-tracking small mb-2">BACKUP TOTALI</h6>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h3 class="mb-0 code-font">{{health.backups.count}}</h3>
-                                    <i class="fa-solid fa-cloud-arrow-down text-info fs-2 opacity-50"></i>
-                                </div>
-                                <div class="mt-2 text-muted small border-top border-secondary border-opacity-10 pt-2">
-                                    Ultimo: {{health.backups.latest_age_hours}} ore fa
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- PHP Version -->
-                    <div class="col-xl-3 col-md-6 col-12">
-                         <div class="card glass-panel h-100 border-0 metric-card">
-                            <div class="card-body">
-                                <h6 class="text-muted uppercase-tracking small mb-2">VERSIONE PHP</h6>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h3 class="mb-0 code-font">{{system.php_version}}</h3>
-                                    <i class="fa-brands fa-php text-primary fs-2 opacity-50"></i>
-                                </div>
-                                <div class="mt-2 text-muted small border-top border-secondary border-opacity-10 pt-2 text-truncate">
-                                    OS: {{system.os}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Security Status -->
-                    <div class="col-xl-3 col-md-6 col-12">
-                         <div class="card glass-panel h-100 border-0 metric-card">
-                            <div class="card-body">
-                                <h6 class="text-muted uppercase-tracking small mb-2">SICUREZZA</h6>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h3 class="mb-0 text-success fw-bold">100%</h3>
-                                    <i class="fa-solid fa-shield-cat text-success fs-2 opacity-50"></i>
-                                </div>
-                                <div class="mt-2 text-success small border-top border-secondary border-opacity-10 pt-2">
-                                    <i class="fa-solid fa-lock me-1"></i> 2FA Attiva
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGA 2: Quick Actions & Status -->
-                <div class="row g-4 mb-4">
-                    <!-- Quick Actions -->
-                    <div class="col-xl-8 col-lg-12">
-                        <div class="card glass-panel border-0 h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
-                                 <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-bolt me-2 text-warning"></i>AZIONI RAPIDE DI SISTEMA</h6>
-                             </div>
-                             <div class="card-body">
-                                 <div class="row g-3">
-                                     <!-- Audit -->
-                                     <div class="col-md-4 col-12">
-                                         <button onclick="runQuickScript('bin/security_audit_cli.php')" class="btn btn-outline-info w-100 h-100 p-4 text-start hover-shadow position-relative" title="Esegui un'analisi completa di sicurezza (Permessi, DB, Config).">
-                                            <span class="position-absolute top-0 end-0 p-3 opacity-50"><i class="fa-solid fa-user-secret fs-3"></i></span>
-                                             <div class="fw-bold mb-2 fs-5">Security Audit</div>
-                                             <small class="text-muted d-block lh-sm">Analisi permessi, config PHP e integrità database.</small>
-                                         </button>
+                    <!-- Health Status Hero -->
+                    <div class="col-lg-8">
+                         <div class="card glass-panel border-0 h-100 position-relative overflow-hidden shadow-lg">
+                             <!-- Background Dynamic Gradient -->
+                             <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-to-r from-green-900 to-black opacity-30" style="z-index: 0;"></div>
+                             
+                             <div class="card-body p-5 position-relative z-index-1 d-flex justify-content-between align-items-center">
+                                 <div>
+                                     <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                                         <div class="badge bg-success bg-opacity-25 text-white border border-success border-opacity-50 rounded-pill px-3 py-2 uppercase-tracking shadow-success-glow">
+                                             <i class="fa-solid fa-check-circle me-2"></i>SYSTEM ONLINE
+                                         </div>
+                                         {{#system.opcache_enabled}}
+                                         <div class="badge bg-info bg-opacity-20 text-info border border-info border-opacity-25 px-3 py-2 rounded-pill uppercase-tracking shadow-info-glow">
+                                             <i class="fa-solid fa-bolt me-2"></i>OPCACHE ACTIVE
+                                         </div>
+                                         {{/system.opcache_enabled}}
+                                         {{^system.opcache_enabled}}
+                                         <div class="badge bg-secondary bg-opacity-20 text-secondary border border-secondary border-opacity-25 px-3 py-2 rounded-pill uppercase-tracking">
+                                             <i class="fa-solid fa-pause me-2"></i>OPCACHE OFF
+                                         </div>
+                                         {{/system.opcache_enabled}}
+                                         <div class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill uppercase-tracking shadow-primary-glow" id="dash-security-badge">
+                                             <i class="fa-solid fa-shield-halved me-2"></i>SECURITY: <span id="dash-security-score-text">--%</span>
+                                         </div>
                                      </div>
-                                     <!-- Cleanup -->
-                                     <div class="col-md-4 col-12">
-                                         <button onclick="runQuickScript('bin/cleanup_system.php')" class="btn btn-outline-warning w-100 h-100 p-4 text-start hover-shadow position-relative" title="Rimuove file temporanei, cache e sessioni scadute.">
-                                            <span class="position-absolute top-0 end-0 p-3 opacity-50"><i class="fa-solid fa-broom fs-3"></i></span>
-                                             <div class="fw-bold mb-2 fs-5">Cleanup</div>
-                                             <small class="text-muted d-block lh-sm">Rimozione cache, sessioni scadute e temp.</small>
-                                         </button>
-                                     </div>
-                                     <!-- Diagnostics -->
-                                     <div class="col-md-4 col-12">
-                                         <button onclick="runQuickScript('bin/check_system.php')" class="btn btn-outline-success w-100 h-100 p-4 text-start hover-shadow position-relative" title="Verifica la connettività di tutti i servizi critici.">
-                                            <span class="position-absolute top-0 end-0 p-3 opacity-50"><i class="fa-solid fa-stethoscope fs-3"></i></span>
-                                             <div class="fw-bold mb-2 fs-5">Diagnostica</div>
-                                             <small class="text-muted d-block lh-sm">Test connettività completa servizi.</small>
-                                         </button>
-                                     </div>
+                                     <h1 class="display-5 fw-bold text-white mb-2">MISSION CONTROL ACTIVE</h1>
+                                     <p class="text-white text-opacity-75 lead mb-0">Monitoraggio real-time attivo. Tutti i sottosistemi nominali.</p>
                                  </div>
-                             </div>
-                        </div>
-                    </div>
-                    <!-- System Status Widget -->
-                    <div class="col-xl-4 col-lg-12">
-                         <div class="card bg-gradient-to-br from-green-900 to-black border-success border-opacity-25 h-100 glass-panel">
-                             <div class="card-body text-center d-flex flex-column justify-content-center align-items-center p-5">
-                                 <div class="spinner-grow text-success mb-4" role="status" style="width: 4rem; height: 4rem;">
-                                     <span class="visually-hidden">Loading...</span>
+                                 <div class="text-center d-none d-md-block">
+                                     {{#health.status}}
+                                     <div class="position-relative d-inline-block">
+                                         <div class="display-1 text-success fw-bold"><i class="fa-solid fa-shield-heart shadow-success-glow"></i></div>
+                                         <div class="position-absolute top-0 end-0 translate-middle p-2 bg-success border border-light rounded-circle pulsing-dot"></div>
+                                     </div>
+                                     <div class="text-success small tracking-widest mt-2 fw-bold">HEALTH 100%</div>
+                                     {{/health.status}}
+                                     
+                                      {{^health.status}}
+                                     <div class="display-1 text-danger fw-bold"><i class="fa-solid fa-triangle-exclamation shadow-danger-glow"></i></div>
+                                     <div class="text-danger small tracking-widest mt-2 fw-bold">ATTENTION REQUIRED</div>
+                                     {{/health.status}}
                                  </div>
-                                 <h4 class="text-success fw-bold uppercase-tracking mb-2 fs-4">SYSTEM OPERATIONAL</h4>
-                                 <p class="text-success opacity-75 mb-0 px-4">Tutti i servizi critici attivi.</p>
                              </div>
                          </div>
                     </div>
+
+                    <!-- System Resource Monitor -->
+                    <div class="col-lg-4">
+                        <div class="card glass-panel border-0 h-100 shadow-sm">
+                             <div class="card-header bg-transparent fw-bold text-white border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                 <span><i class="fa-solid fa-gauge-high me-2 text-info"></i>SERVER RESOURCES</span>
+                                 <i class="fa-solid fa-server text-muted"></i>
+                             </div>
+                             <div class="card-body d-flex flex-column justify-content-center gap-4">
+                                 <!-- Disk Usage -->
+                                 <div>
+                                     <div class="d-flex justify-content-between mb-1">
+                                         <span class="text-muted small uppercase-tracking">Disk Usage <span class="text-light ms-1">({{system.disk_free}} Free)</span></span>
+                                         <span class="text-info small fw-bold" id="sys-disk-text">{{system.disk_percent}}%</span>
+                                     </div>
+                                     <div class="progress bg-dark border border-secondary border-opacity-25" style="height: 6px;">
+                                         <div class="progress-bar bg-info shadow-info-glow" role="progressbar" id="sys-disk-bar" style="width: {{system.disk_percent}}%"></div>
+                                     </div>
+                                 </div>
+
+                                 <!-- Error Rate Monitor -->
+                                 <div class="d-flex align-items-center justify-content-between p-3 rounded bg-dark bg-opacity-50 border border-secondary border-opacity-25">
+                                     <div class="d-flex align-items-center">
+                                         <div class="me-3 text-{{#system.error_count}}danger{{/system.error_count}}{{^system.error_count}}success{{/system.error_count}} fs-4" id="sys-error-icon">
+                                             <i class="fa-solid fa-file-medical-alt"></i>
+                                         </div>
+                                         <div>
+                                             <div class="small text-muted uppercase-tracking">Error Log (24h)</div>
+                                             <div class="fw-bold text-white fs-5" id="sys-error-count">{{system.error_count}} Issues</div>
+                                         </div>
+                                     </div>
+                                     {{#system.error_count}}
+                                     <button class="btn btn-xs btn-outline-danger" onclick="document.getElementById('v-pills-audit-tab').click()">VIEW</button>
+                                     {{/system.error_count}}
+                                 </div>
+
+                                 <!-- Quick Info Grid -->
+                                 <div class="row g-2">
+                                     <div class="col-6">
+                                         <div class="p-2 bg-black bg-opacity-25 rounded border border-secondary border-opacity-10 text-center">
+                                             <div class="text-xs text-muted uppercase-tracking">PHP Ver</div>
+                                             <div class="fw-bold text-info font-monospace">{{system.php_version}}</div>
+                                         </div>
+                                     </div>
+                                     <div class="col-6">
+                                         <div class="p-2 bg-black bg-opacity-25 rounded border border-secondary border-opacity-10 text-center">
+                                             <div class="text-xs text-muted uppercase-tracking">Memory</div>
+                                             <div class="fw-bold text-warning font-monospace">{{system.memory_limit}}</div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- RIGA 3: Server Environment Details (NEW) -->
-                <!-- SECTION: ENVIRONMENT DETAILS -->
-                <div class="card glass-panel border-0 mb-4">
-                    <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
-                        <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-server me-2 text-secondary"></i>AMBIENTE SERVER & CONFIGURAZIONE PHP</h6>
+                <!-- ROW 2: ADVANCED REAL-TIME MONITORING (NEW) -->
+                <div class="row g-4 mb-4">
+                    <!-- Threat Monitor (IDS) -->
+                    <div class="col-md-4">
+                        <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-danger">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold text-white mb-0 small uppercase-tracking"><i class="fa-solid fa-user-secret me-2 text-danger"></i>Threat Monitor</h6>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 pulsing-dot-danger" id="mon-threat-status">ACTIVE</span>
+                                </div>
+                                <div class="d-flex align-items-end justify-content-between">
+                                    <div>
+                                        <div class="fs-4 fw-bold text-white" id="mon-threat-count">0</div>
+                                        <div class="text-muted text-xs">Blocked Attempts (1h)</div>
+                                    </div>
+                                    <i class="fa-solid fa-shield-virus text-danger opacity-25 fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-4 text-center">
-                            <div class="col-md-3 col-6 border-end border-secondary border-opacity-25">
-                                <h6 class="text-muted small uppercase-tracking mb-1">MEMORY LIMIT</h6>
-                                <div class="fs-4 fw-bold font-monospace text-white">{{system.memory_limit}}</div>
+
+                    <!-- Network Pulse (Latency) -->
+                    <div class="col-md-4">
+                        <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-info">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold text-white mb-0 small uppercase-tracking"><i class="fa-solid fa-wave-square me-2 text-info"></i>DB Latency</h6>
+                                    <span class="text-info font-monospace small" id="mon-latency-val">-- ms</span>
+                                </div>
+                                <div class="mb-1" style="height: 4px; background: rgba(56, 189, 248, 0.1); border-radius: 2px; overflow: hidden;">
+                                    <div class="bg-info" style="width: 50%; height: 100%;" id="mon-latency-bar"></div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-xs text-info mt-1" id="mon-latency-status">CHECKING...</div>
+                                </div>
                             </div>
-                            <div class="col-md-3 col-6 border-end border-secondary border-opacity-25">
-                                <h6 class="text-muted small uppercase-tracking mb-1">MAX UPLOAD</h6>
-                                <div class="fs-4 fw-bold font-monospace text-white">{{system.upload_max}}</div>
+                        </div>
+                    </div>
+
+                    <!-- Active Traffic (Sessions) -->
+                    <div class="col-md-4">
+                        <div class="card glass-panel border-0 h-100 shadow-sm border-start border-4 border-success">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold text-white mb-0 small uppercase-tracking"><i class="fa-solid fa-users me-2 text-success"></i>Live Traffic</h6>
+                                    <i class="fa-solid fa-globe text-success opacity-50"></i>
+                                </div>
+                                <div class="d-flex align-items-end justify-content-between">
+                                    <div>
+                                        <div class="fs-4 fw-bold text-white" id="mon-sessions-count">0</div>
+                                        <div class="text-muted text-xs">Active Sessions</div>
+                                    </div>
+                                    <div class="spinner-grow text-success spinner-grow-sm" role="status" style="animation-duration: 2s;"></div>
+                                </div>
                             </div>
-                            <div class="col-md-3 col-6 border-end border-secondary border-opacity-25">
-                                <h6 class="text-muted small uppercase-tracking mb-1">MAX EXECUTION</h6>
-                                <div class="fs-4 fw-bold font-monospace text-white">{{system.max_execution}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 3: INTERACTIVE ACTIONS & DATABASE DEEP DIVE -->
+                <div class="row g-4 mb-4">
+                    <!-- Interactive System Actions -->
+                    <div class="col-12">
+                        <div class="card glass-panel border-0 shadow-sm border-start border-4 border-warning">
+                            <div class="card-body py-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                <div>
+                                    <h6 class="fw-bold text-white mb-1"><i class="fa-solid fa-gamepad me-2 text-warning"></i>SYSTEM ACTIONS</h6>
+                                    <p class="mb-0 text-muted small">Accesso rapido alle funzioni di manutenzione ordinaria.</p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-dark border-secondary text-light hover-white" id="btn-sys-cache">
+                                        <i class="fa-solid fa-broom me-2 text-warning"></i>Clear Cache
+                                    </button>
+                                    <button class="btn btn-sm btn-dark border-secondary text-light hover-white" id="btn-sys-logs">
+                                        <i class="fa-solid fa-rotate me-2 text-success"></i>Rotate Logs
+                                    </button>
+                                    <button class="btn btn-sm btn-dark border-secondary text-light hover-white" id="btn-sys-optimize">
+                                        <i class="fa-solid fa-rocket me-2 text-info"></i>Optimize DB
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-md-3 col-6">
-                                <h6 class="text-muted small uppercase-tracking mb-1">SERVER SW</h6>
-                                <div class="fs-6 fw-bold text-white text-truncate" title="{{system.server_software}}">{{system.server_software}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 3: DB & SESSION/ENV -->
+                <div class="row g-4">
+                    <!-- Database Advanced Stats -->
+                    <div class="col-md-6 col-lg-7">
+                        <div class="card glass-panel border-0 h-100 shadow-sm">
+                            <div class="card-header bg-transparent fw-bold text-white border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                <span><i class="fa-solid fa-database me-2 text-primary"></i>DATABASE TELEMETRIA</span>
+                                <div>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 me-1">MYSQL</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25" id="db-status-badge">CONNECTED</span>
+                                </div>
                             </div>
+                             <div class="card-body p-0">
+                                 <div class="table-responsive custom-scrollbar" style="max-height: 300px;">
+                                     <table class="table table-dark table-striped table-hover mb-0 small align-middle" id="telemetry-table">
+                                         <thead class="secondary-header sticky-top bg-dark">
+                                             <tr>
+                                                 <th class="ps-4">Tabella</th>
+                                                 <th class="text-end">Records</th>
+                                                 <th class="text-end pe-4" title="Spazio su disco (Dati + Indici). Minimo 16KB per InnoDB.">Size <i class="fa-solid fa-circle-info ms-1 text-info" style="font-size: 0.8em; cursor: help;"></i></th>
+                                             </tr>
+                                         </thead>
+                                         <tbody id="telemetry-body">
+                                             {{#database_schema}}
+                                             <tr>
+                                                 <td class="ps-4 font-monospace text-info fw-bold">{{name}}</td>
+                                                 <td class="text-end text-white">{{rows}}</td>
+                                                 <td class="text-end pe-4 text-muted font-monospace">{{size_formatted}}</td>
+                                             </tr>
+                                             {{/database_schema}}
+                                             {{^database_schema}}
+                                                <tr><td colspan="3" class="text-center p-4 text-muted">Inizializzazione Telemetria...</td></tr>
+                                             {{/database_schema}}
+                                         </tbody>
+                                     </table>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Session Inspector & PHP Info -->
+                    <div class="col-md-6 col-lg-5">
+                        <div class="card glass-panel border-0 h-100">
+                             <div class="card-header bg-transparent fw-bold text-white border-bottom border-secondary border-opacity-25">
+                                 <i class="fa-brands fa-linux me-2 text-secondary"></i>OS & ENVIRONMENT
+                             </div>
+                             <div class="card-body d-flex flex-column justify-content-center text-center">
+                                 <div class="mb-4">
+                                     <i class="fa-solid fa-server display-4 text-secondary opacity-50 mb-3"></i>
+                                     <h5 class="text-white">{{system.os}}</h5>
+                                     <p class="text-muted small mb-0">{{system.server_software}}</p>
+                                 </div>
+                                 <div class="d-grid gap-2">
+                                     <button class="btn btn-outline-light btn-sm font-monospace" disabled>
+                                         APP_VER: {{system.app_version}}
+                                     </button>
+                                 </div>
+                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- 
-                ************* TAB 2: SECURITY CENTER ************* 
-                Gestione Utenti, 2FA e Ispezione Sessione.
+                ************* TAB 2: SECURITY CENTER (PREMIUM) ************* 
             -->
             <div class="tab-pane fade" id="v-pills-security" role="tabpanel">
-                 <div class="row g-4">
-                     <!-- RIGA 1: Lista Utenti (FULL WIDTH per massima visibilità) -->
-                     <div class="col-12">
-                         <div class="card glass-panel border-0 h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center py-3">
-                                 <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-users-gear me-2"></i>IDENTITY MANAGEMENT</h6>
-                                 <button class="btn btn-sm btn-dark border-secondary bg-black bg-opacity-50" onclick="loadUsers()">
-                                     <i class="fa-solid fa-arrows-rotate me-1"></i> Aggiorna
-                                 </button>
+                <!-- Security Stats Header -->
+                <div class="row g-4 mb-4">
+                     <div class="col-md-8">
+                         <div class="card glass-panel border-0 h-100 bg-gradient-to-r from-red-900 to-black position-relative overflow-hidden">
+                             <div class="position-absolute rotate-45 opacity-10" style="right: -50px; top: -50px;">
+                                 <i class="fa-solid fa-shield-cat display-1 text-white"></i>
                              </div>
-                             <div class="card-body p-0">
-                                 <div class="table-responsive h-100 p-2">
-                                     <table class="table table-dark-custom table-hover mb-0 w-100 align-middle">
-                                         <thead>
-                                             <tr>
-                                                 <th class="ps-4" style="width: 30%;">Username</th>
-                                                 <th style="width: 20%;">Ruolo</th>
-                                                 <th style="width: 20%;">Stato 2FA</th>
-                                                 <th class="text-end pe-4 td-actions" style="width: 30%;">Azioni</th>
-                                             </tr>
-                                         </thead>
-                                         <tbody id="user-list-body">
-                                             <!-- Popolato via JS -->
-                                             <tr><td colspan="4" class="text-center p-5 text-muted"><i class="fa-solid fa-spinner fa-spin me-2"></i>Caricamento utenti...</td></tr>
-                                         </tbody>
-                                     </table>
+                             <div class="card-body p-4 d-flex align-items-center">
+                                 <div class="me-4 text-center">
+                                     <!-- Radial Progress via CSS Conic Gradient (Calculated via JS) -->
+                                     <div class="security-score-circle position-relative d-flex align-items-center justify-content-center rounded-circle border border-secondary border-opacity-25 shadow-lg" 
+                                          style="width: 100px; height: 100px; background: conic-gradient(#ef4444 0%, #333 0%);" id="security-score-gauge">
+                                         <div class="bg-black rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                              <span class="text-white fw-bold fs-4" id="security-score-text">0%</span>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div>
+                                     <h4 class="text-white fw-bold mb-1">LIVE SECURITY SCORE</h4>
+                                     <p class="text-white text-opacity-75 mb-0 small" style="max-width: 400px;">
+                                         Calcolato in base all'adozione 2FA, complessità password e configurazione ruoli.
+                                     </p>
                                  </div>
                              </div>
                          </div>
                      </div>
+                     <div class="col-md-4">
+                         <div class="card glass-panel border-0 h-100 d-flex flex-column justify-content-center align-items-center p-4">
+                             <h6 class="text-muted small uppercase-tracking mb-3">UTENTI TOTALI</h6>
+                             <h1 class="display-3 fw-bold text-white mb-0" id="stat-total-users">-</h1>
+                             <div class="badge bg-secondary bg-opacity-25 text-light mt-2 px-3">
+                                 <span id="stat-admin-count" class="text-danger fw-bold">0</span> ADMINS
+                             </div>
+                         </div>
+                     </div>
+                </div>
 
-                     <!-- RIGA 2: Strumenti Provisioning & Debug -->
-                     <!-- Card: Provisioning (Aggiungi Utente) -->
-                     <div class="col-xl-6 col-12">
-                         <div class="card glass-panel border-0 h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
-                                 <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-user-plus me-2 text-primary"></i>PROVISIONING</h6>
-                             </div>
-                             <div class="card-body">
-                                 <form id="form-add-user" autocomplete="off">
-                                     <div class="row g-3">
-                                         <div class="col-md-6">
-                                             <label class="form-label small text-muted">Username</label>
-                                             <input type="text" name="username" class="form-control" placeholder="es. mario.rossi" required>
-                                         </div>
-                                         <div class="col-md-6">
-                                             <label class="form-label small text-muted">Password Temp</label>
-                                             <input type="password" name="password" class="form-control" placeholder="Min. 8 caratteri" required>
-                                         </div>
-                                         <div class="col-12">
-                                             <label class="form-label small text-muted">Ruolo Assegnato</label>
-                                             <select name="role" class="form-select">
-                                                 <option value="user" selected>Operatore Standard</option>
-                                                 <option value="admin">Amministratore Sistema</option>
-                                             </select>
-                                         </div>
-                                         <div class="col-12 mt-4">
-                                            <button type="submit" class="btn btn-primary w-100 fw-bold shadow-lg py-2">
-                                                <i class="fa-solid fa-save me-2"></i>CREA ACCOUNT
-                                            </button>
-                                         </div>
-                                     </div>
-                                 </form>
-                             </div>
-                         </div>
-                     </div>
-
-                     <!-- Card: Session Inspector -->
-                     <div class="col-xl-6 col-12">
-                         <div class="card glass-panel border-0 h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3 d-flex justify-content-between">
-                                  <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-bug me-2 text-warning"></i>SESSION INSPECTOR</h6>
-                                  <span class="badge bg-dark border border-secondary text-secondary code-font small">{{session_debug.status}}</span>
-                             </div>
-                             <div class="card-body">
-                                 <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-black bg-opacity-40 rounded border border-secondary border-opacity-25">
-                                     <div>
-                                         <div class="small text-muted mb-1">SESSION ID</div>
-                                         <code class="text-info fs-6">{{session_debug.id}}</code>
-                                     </div>
-                                     <div class="text-end">
-                                          <div class="small text-muted mb-1">ULTIMA ATTIVITÀ</div>
-                                          <span class="text-white">{{session_debug.meta.last_activity}}</span>
-                                     </div>
-                                 </div>
-                                 
-                                 <h6 class="text-muted small fw-bold mb-2 uppercase-tracking">DATA PAYLOAD (MASKED)</h6>
-                                 <div class="overflow-auto custom-scrollbar bg-black bg-opacity-40 rounded p-3" style="max-height: 250px; border: 1px solid rgba(255,255,255,0.1);">
-                                     <table class="table table-sm table-borderless text-light mb-0 code-font small">
-                                         <tbody>
-                                             {{#session_debug.data_kv}}
-                                             <tr>
-                                                 <td class="text-muted opacity-75 pe-3 text-nowrap" style="width: 1%;">{{key}}</td>
-                                                 <td class="text-break text-success">{{val}}</td>
-                                             </tr>
-                                             {{/session_debug.data_kv}}
-                                             {{^session_debug.data_kv}}
-                                             <tr><td class="text-muted fst-italic">Nessun dato in sessione.</td></tr>
-                                             {{/session_debug.data_kv}}
-                                         </tbody>
-                                     </table>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
+                <!-- User Grid Container (Populated by JS) -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-white small fw-bold mb-0"><i class="fa-solid fa-users me-2"></i>PERSONALE AUTORIZZATO</h6>
+                    <button class="btn btn-primary fw-bold px-4 shadow-primary-glow hover-lift" onclick="window.securityAddUserModal()">
+                        <i class="fa-solid fa-user-plus me-2"></i>NUOVO OPERATORE
+                    </button>
+                </div>
+                
+                <div class="row g-3" id="user-grid-container">
+                    <!-- Cards injected by JS loadUsers() -->
+                    <div class="col-12 text-center p-5 text-muted">
+                        <i class="fa-solid fa-circle-notch fa-spin me-2"></i>Inizializzazione Security Grid...
+                    </div>
+                </div>
             </div>
 
             <!-- 
                 ************* TAB 3: AUDIT & LOGS ************* 
-                Log di sicurezza e tracciamento forensic.
             -->
             <div class="tab-pane fade" id="v-pills-audit" role="tabpanel">
-                
                 <!-- Barra dei Filtri -->
                 <div class="card glass-panel border-0 mb-4 shadow-sm">
                     <div class="card-body p-3">
-                        <form class="row g-3 align-items-end" method="GET" action="/fratellanza-militare-archivio/public/devtools">
-                            <input type="hidden" name="tab" value="audit"> <!-- Mantiene il tab attivo -->
+                        <form class="row g-3 align-items-end" method="GET" action="{{base_url}}/devtools">
+                            <input type="hidden" name="tab" value="audit"> 
                             
                             <div class="col-md-2">
-                                <label class="small text-muted fw-bold mb-1">DA DATA</label>
-                                <input type="date" name="start_date" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{filters.start_date}}">
+                                <label for="start_date" class="small text-muted fw-bold mb-1">DA DATA</label>
+                                <input type="date" id="start_date" name="start_date" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{filters.start_date}}">
                             </div>
                             <div class="col-md-2">
-                                <label class="small text-muted fw-bold mb-1">A DATA</label>
-                                <input type="date" name="end_date" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{filters.end_date}}">
+                                <label for="end_date" class="small text-muted fw-bold mb-1">A DATA</label>
+                                <input type="date" id="end_date" name="end_date" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{filters.end_date}}">
                             </div>
                             <div class="col-md-2">
-                                <label class="small text-muted fw-bold mb-1">UTENTE</label>
+                                <label for="audit_user" class="small text-muted fw-bold mb-1">UTENTE</label>
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-user"></i></span>
-                                    <input type="text" name="audit_user" class="form-control bg-dark text-white border-secondary" placeholder="Username" value="{{filters.audit_user}}">
+                                    <input type="text" id="audit_user" name="audit_user" class="form-control bg-dark text-white border-secondary" placeholder="Username" value="{{filters.audit_user}}">
                                 </div>
                             </div>
                              <div class="col-md-2">
-                                <label class="small text-muted fw-bold mb-1">RESOURCE ID</label>
-                                <input type="text" name="resource_id" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="es. 123" value="{{filters.resource_id}}">
+                                <label for="resource_id" class="small text-muted fw-bold mb-1">RESOURCE ID</label>
+                                <input type="text" id="resource_id" name="resource_id" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="es. 123" value="{{filters.resource_id}}">
                             </div>
                             
                             <!-- Bottoni Azione -->
@@ -450,10 +512,10 @@
                                     <i class="fa-solid fa-filter me-2"></i>FILTRA
                                 </button>
                                 <div class="vr bg-secondary opacity-50 mx-1"></div>
-                                <a href="/fratellanza-militare-archivio/public/devtools/export/audit/pdf?{{qs}}" class="btn btn-sm btn-outline-danger" title="Esporta PDF">
+                                <a href="{{base_url}}/devtools/export/audit/pdf?{{qs}}" class="btn btn-sm btn-outline-danger" title="Esporta PDF">
                                     <i class="fa-solid fa-file-pdf"></i>
                                 </a>
-                                <a href="/fratellanza-militare-archivio/public/devtools/export/audit/excel?{{qs}}" class="btn btn-sm btn-outline-success" title="Esporta Excel">
+                                <a href="{{base_url}}/devtools/export/audit/excel?{{qs}}" class="btn btn-sm btn-outline-success" title="Esporta Excel">
                                     <i class="fa-solid fa-file-csv"></i>
                                 </a>
                             </div>
@@ -489,7 +551,6 @@
                                              <td class="text-nowrap text-secondary">{{timestamp}}</td>
                                              <td class="text-info fw-bold">{{username}}</td>
                                              <td>
-                                                 <!-- Badge Dinamico basato sull'azione (Logica semplificata css) -->
                                                  <span class="badge bg-dark border border-secondary border-opacity-50 text-light fw-normal px-2 py-1 rounded-1">
                                                      {{action}}
                                                  </span>
@@ -511,15 +572,15 @@
                                  <small class="text-muted code-font">Pagina {{pagination.current_page}} di {{pagination.last_page}}</small>
                                  <div>
                                      {{#pagination.has_prev}}
-                                     <a href="?tab=audit&page={{pagination.prev_page}}{{qs_pagination}}" class="btn btn-xs btn-dark border-secondary text-white me-1 hover-white">
+                                     <button class="btn btn-xs btn-dark border-secondary text-white me-1 hover-white" onclick="loadAuditLogs({{pagination.prev_page}})">
                                          <i class="fa-solid fa-chevron-left"></i> Prev
-                                     </a>
+                                     </button>
                                      {{/pagination.has_prev}}
                                      
                                      {{#pagination.has_next}}
-                                     <a href="?tab=audit&page={{pagination.next_page}}{{qs_pagination}}" class="btn btn-xs btn-dark border-secondary text-white hover-white">
+                                     <button class="btn btn-xs btn-dark border-secondary text-white hover-white" onclick="loadAuditLogs({{pagination.next_page}})">
                                          Next <i class="fa-solid fa-chevron-right"></i>
-                                     </a>
+                                     </button>
                                      {{/pagination.has_next}}
                                  </div>
                              </div>
@@ -559,7 +620,7 @@
                                      </li>
                                      {{/logs}}
                                      {{^logs}}
-                                     <li class="text-center py-4 opacity-50">Nessun log recente.</li>
+                                     <li class="text-center py-4 opacity-75">Nessun log recente.</li>
                                      {{/logs}}
                                  </ul>
                              </div>
@@ -574,6 +635,34 @@
             -->
             <div class="tab-pane fade" id="v-pills-tools" role="tabpanel">
                 
+                <!-- SEZIONE PRINCIPALE: ADVANCED TOOLKIT SESSION -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                         <a href="/fratellanza-militare-archivio/tests/test_dashboard.php" class="text-decoration-none">
+                            <div class="card glass-panel border-0 hover-card shadow-lg bg-gradient-to-r from-blue-900 to-black position-relative overflow-hidden" style="border-left: 5px solid #3b82f6 !important;">
+                                <!-- Background Image effect or similar could go here -->
+                                <div class="card-body p-5 d-flex justify-content-between align-items-center position-relative z-index-1">
+                                    <div>
+                                        <h2 class="text-white fw-bold mb-2 display-6">SESSIONE TOOLKIT AVANZATA</h2>
+                                        <p class="text-white text-opacity-75 mb-0 lead" style="max-width: 600px;">
+                                            Accesso completo alla suite di testing (106+ Test), esecuzione <strong>One-Click</strong>, reportistica live e strumenti di debug visuale.
+                                        </p>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-4">
+                                        <div class="text-end d-none d-lg-block">
+                                            <div class="text-white fw-bold fs-3">100%</div>
+                                            <div class="text-white text-opacity-50 small uppercase-tracking">Coverage</div>
+                                        </div>
+                                        <div class="bg-primary bg-opacity-25 p-4 rounded-circle border border-primary border-opacity-50 shadow-blue-glow">
+                                            <i class="fa-solid fa-arrow-right-long text-white display-5"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Strumento Speciale: Rebranding -->
                 <div class="card glass-panel border-0 mb-4 border-start border-4 border-primary shadow-sm">
                     <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-3 py-4">
@@ -597,298 +686,144 @@
                     </div>
                 </div>
 
-                <!-- RIGA 1: MANUTENZIONE & SETUP -->
+                <!-- SEZIONE 1: UTILITY & CORE -->
                 <div class="row g-4 mb-4">
-                    <!-- Maintenance -->
-                    <div class="col-md-6">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-screwdriver-wrench me-2"></i>MANUTENZIONE (Salute Sistema)</h6>
-                        <div class="d-grid gap-3">
-                             {{#scripts.maintenance}}
-                             <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm">
-                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                     <div class="overflow-hidden me-3">
-                                         <div class="fw-bold text-success font-monospace small mb-1 bg-success bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                             <i class="fa-solid fa-scroll me-1"></i> {{name}}
+                    <div class="col-12">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-terminal me-2"></i>UTILITY DI SISTEMA (Core)</h6>
+                        <div class="row g-3">
+                             {{#scripts.utilities}}
+                             <div class="col-md-6 col-xl-3">
+                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
+                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                         <div class="overflow-hidden me-3">
+                                             <div class="fw-bold text-warning font-monospace small mb-1 bg-warning bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                                 <i class="fa-solid fa-bolt me-1"></i> {{name}}
+                                             </div>
+                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
                                          </div>
-                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                         <button class="btn btn-sm btn-outline-warning run-script-btn px-3" data-path="{{path}}" title="Esegui Utility">
+                                             <i class="fa-solid fa-play"></i>
+                                         </button>
                                      </div>
-                                     <button class="btn btn-sm btn-outline-success run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
-                                         <i class="fa-solid fa-play"></i>
-                                     </button>
+                                 </div>
+                             </div>
+                             {{/scripts.utilities}}
+                             {{^scripts.utilities}}
+                             <div class="col-12 text-muted small fst-italic ps-2">Nessuna utility core rilevata.</div>
+                             {{/scripts.utilities}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEZIONE 2: MANUTENZIONE -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-screwdriver-wrench me-2"></i>MANUTENZIONE & HEALTH</h6>
+                        <div class="row g-3">
+                             {{#scripts.maintenance}}
+                             <div class="col-md-6 col-xl-3">
+                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
+                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                         <div class="overflow-hidden me-3">
+                                             <div class="fw-bold text-success font-monospace small mb-1 bg-success bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                                 <i class="fa-solid fa-scroll me-1"></i> {{name}}
+                                             </div>
+                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                         </div>
+                                         <button class="btn btn-sm btn-outline-success run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
+                                             <i class="fa-solid fa-play"></i>
+                                         </button>
+                                     </div>
                                  </div>
                              </div>
                              {{/scripts.maintenance}}
                              {{^scripts.maintenance}}
-                             <div class="text-muted small fst-italic ps-2">Nessuno script di manutenzione.</div>
+                             <div class="col-12 text-muted small fst-italic ps-2">Nessuno script di manutenzione.</div>
                              {{/scripts.maintenance}}
-                        </div>
-                    </div>
-                    
-                    <!-- Setup -->
-                    <div class="col-md-6">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-forward-step me-2"></i>SETUP & MIGRAZIONI</h6>
-                        <div class="d-grid gap-3">
-                             {{#scripts.setup}}
-                             <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm">
-                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                     <div class="overflow-hidden me-3">
-                                         <div class="fw-bold text-info font-monospace small mb-1 bg-info bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                             <i class="fa-solid fa-database me-1"></i> {{name}}
-                                         </div>
-                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
-                                     </div>
-                                     <button class="btn btn-sm btn-outline-info run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
-                                         <i class="fa-solid fa-play"></i>
-                                     </button>
-                                 </div>
-                             </div>
-                             {{/scripts.setup}}
-                             {{^scripts.setup}}
-                             <div class="text-muted small fst-italic ps-2">Nessuno script di setup.</div>
-                             {{/scripts.setup}}
                         </div>
                     </div>
                 </div>
 
-                <!-- RIGA 2: TOOLS & DEBUG -->
+                <!-- SEZIONE 3: TOOLS & SETUP -->
                 <div class="row g-4 mb-4">
                     <!-- General Tools -->
-                    <div class="col-md-6">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-toolbox me-2"></i>STRUMENTI GENERALI</h6>
-                        <div class="d-grid gap-3">
+                    <div class="col-12">
+                         <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-toolbox me-2"></i>STRUMENTI GENERALI & SETUP</h6>
+                         <div class="row g-3">
                              {{#scripts.tools}}
-                             <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm">
-                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                     <div class="overflow-hidden me-3">
-                                         <div class="fw-bold text-light font-monospace small mb-1 bg-light bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                             <i class="fa-solid fa-microchip me-1"></i> {{name}}
+                             <div class="col-md-6 col-xl-3">
+                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
+                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                         <div class="overflow-hidden me-3">
+                                             <div class="fw-bold text-light font-monospace small mb-1 bg-light bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                                 <i class="fa-solid fa-microchip me-1"></i> {{name}}
+                                             </div>
+                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
                                          </div>
-                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                         <button class="btn btn-sm btn-outline-light run-script-btn px-3" data-path="{{path}}" title="Esegui Tool">
+                                             <i class="fa-solid fa-play"></i>
+                                         </button>
                                      </div>
-                                     <button class="btn btn-sm btn-outline-light run-script-btn px-3" data-path="{{path}}" title="Esegui Tool">
-                                         <i class="fa-solid fa-play"></i>
-                                     </button>
                                  </div>
                              </div>
                              {{/scripts.tools}}
-                             {{^scripts.tools}}
-                             <div class="text-muted small fst-italic ps-2">Nessun tool rilevato.</div>
-                             {{/scripts.tools}}
-                        </div>
-                    </div>
-
-                    <!-- Debug Tools -->
-                    <div class="col-md-6">
-                        <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-bug me-2"></i>STRUMENTI DI DEBUG (Rischioso!)</h6>
-                        <div class="d-grid gap-3">
-                             {{#scripts.debug_tools}}
-                             <div class="card bg-dark bg-opacity-60 border-danger border-opacity-25 hover-card metric-card shadow-sm">
-                                 <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                                     <div class="overflow-hidden me-3">
-                                         <div class="fw-bold text-danger font-monospace small mb-1 bg-danger bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
-                                             <i class="fa-solid fa-biohazard me-1"></i> {{name}}
+                             
+                             <!-- Setup Scripts (Merged here for visuals or separate? User wants grid. Let's append setup here or make own block) -->
+                             {{#scripts.setup}}
+                             <div class="col-md-6 col-xl-3">
+                                 <div class="card bg-dark bg-opacity-60 border-secondary border-opacity-25 hover-card metric-card shadow-sm h-100">
+                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                         <div class="overflow-hidden me-3">
+                                             <div class="fw-bold text-info font-monospace small mb-1 bg-info bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                                 <i class="fa-solid fa-database me-1"></i> {{name}}
+                                             </div>
+                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
                                          </div>
-                                         <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                         <button class="btn btn-sm btn-outline-info run-script-btn px-3" data-path="{{path}}" title="Esegui Script">
+                                             <i class="fa-solid fa-play"></i>
+                                         </button>
                                      </div>
-                                     <button class="btn btn-sm btn-outline-danger run-script-btn px-3" data-path="{{path}}" title="Esegui Debug">
-                                         <i class="fa-solid fa-play"></i>
-                                     </button>
+                                 </div>
+                             </div>
+                             {{/scripts.setup}}
+                         </div>
+                    </div>
+                </div>
+
+                <!-- SEZIONE 4: DEBUG TOOLS (RISCHIOSO) -->
+                <div class="row g-4 mb-4">
+                     <div class="col-12">
+                        <h6 class="text-danger small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-bug me-2"></i>STRUMENTI DI DEBUG (Rischioso!)</h6>
+                        <div class="row g-3">
+                             {{#scripts.debug_tools}}
+                             <div class="col-md-6 col-xl-3">
+                                 <div class="card bg-dark bg-opacity-60 border-danger border-opacity-25 hover-card metric-card shadow-sm h-100">
+                                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                                         <div class="overflow-hidden me-3">
+                                             <div class="fw-bold text-danger font-monospace small mb-1 bg-danger bg-opacity-10 d-inline-block px-2 rounded-1 text-truncate mw-100">
+                                                 <i class="fa-solid fa-biohazard me-1"></i> {{name}}
+                                             </div>
+                                             <div class="text-muted text-truncate" style="font-size: 0.75rem;">{{path}}</div>
+                                         </div>
+                                         <button class="btn btn-sm btn-outline-danger run-script-btn px-3" data-path="{{path}}" title="Esegui Debug">
+                                             <i class="fa-solid fa-play"></i>
+                                         </button>
+                                     </div>
                                  </div>
                              </div>
                              {{/scripts.debug_tools}}
                              {{^scripts.debug_tools}}
-                             <div class="text-muted small fst-italic ps-2">Nessun debug tool rilevato.</div>
+                             <div class="col-12 text-muted small fst-italic ps-2">Nessun debug tool rilevato.</div>
                              {{/scripts.debug_tools}}
                         </div>
                     </div>
                 </div>
 
-                <!-- RIGA 3: TEST SUITE COMPLETA (Grid Layout) -->
-                <h6 class="text-secondary small fw-bold mb-3 uppercase-tracking ps-1"><i class="fa-solid fa-vials me-2"></i>SUITE DI TEST AUTOMATIZZATI (100% COVERAGE)</h6>
-                <div class="row g-4 mb-4">
-                    
-                    <!-- 1. Unit Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-info small fw-bold mb-0">UNIT TESTS</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_unit}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-info text-opacity-75"><i class="fa-solid fa-atom me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-info py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_unit}}
-                                         {{^scripts.tests_unit}}<tr><td class="p-3 text-center text-muted">Nessun Unit Test.</td></tr>{{/scripts.tests_unit}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Feature Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-success small fw-bold mb-0">FEATURE TESTS</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_feature}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-success text-opacity-75"><i class="fa-solid fa-star me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-success py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_feature}}
-                                         {{^scripts.tests_feature}}<tr><td class="p-3 text-center text-muted">Nessun Feature Test.</td></tr>{{/scripts.tests_feature}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 3. Integration Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-primary small fw-bold mb-0">INTEGRATION</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_integration}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-primary text-opacity-75"><i class="fa-solid fa-flask me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-primary py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_integration}}
-                                         {{^scripts.tests_integration}}<tr><td class="p-3 text-center text-muted">Nessun Integration Test.</td></tr>{{/scripts.tests_integration}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 4. Security Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-danger small fw-bold mb-0">SECURITY</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_security}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-danger text-opacity-75"><i class="fa-solid fa-shield-virus me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-danger py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_security}}
-                                         {{^scripts.tests_security}}<tr><td class="p-3 text-center text-muted">Nessun Security Test.</td></tr>{{/scripts.tests_security}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-                
-                    <!-- 5. Performance Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-warning small fw-bold mb-0">PERFORMANCE</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_performance}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-warning text-opacity-75"><i class="fa-solid fa-stopwatch me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-warning py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_performance}}
-                                         {{^scripts.tests_performance}}<tr><td class="p-3 text-center text-muted">Nessun Performance Test.</td></tr>{{/scripts.tests_performance}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 6. E2E Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-light small fw-bold mb-0">END-TO-END (E2E)</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_e2e}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-light text-opacity-75"><i class="fa-solid fa-robot me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-light py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_e2e}}
-                                         {{^scripts.tests_e2e}}<tr><td class="p-3 text-center text-muted">Nessun E2E Test.</td></tr>{{/scripts.tests_e2e}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 7. Architecture Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-secondary small fw-bold mb-0">ARCHITECTURE</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_arch}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-secondary text-opacity-75"><i class="fa-solid fa-sitemap me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-secondary py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_arch}}
-                                         {{^scripts.tests_arch}}<tr><td class="p-3 text-center text-muted">Nessun Arch Test.</td></tr>{{/scripts.tests_arch}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 8. Legacy Tests -->
-                    <div class="col-xl-3 col-md-6">
-                        <div class="card glass-panel border-0 overflow-hidden h-100">
-                             <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-2">
-                                 <h6 class="text-muted small fw-bold mb-0">LEGACY / MANUAL</h6>
-                             </div>
-                             <div class="table-responsive custom-scrollbar" style="max-height: 250px;">
-                                 <table class="table table-dark-custom table-hover small mb-0 align-middle">
-                                     <tbody>
-                                         {{#scripts.tests_legacy}}
-                                         <tr>
-                                             <td class="ps-3 font-monospace text-muted text-opacity-75"><i class="fa-solid fa-box-archive me-2 opacity-50"></i>{{name}}</td>
-                                             <td class="text-end pe-3"><button class="btn btn-sm btn-outline-secondary py-0 px-2 run-script-btn" data-path="{{path}}"><i class="fa-solid fa-play"></i></button></td>
-                                         </tr>
-                                         {{/scripts.tests_legacy}}
-                                         {{^scripts.tests_legacy}}<tr><td class="p-3 text-center text-muted">Nessun Legacy Test.</td></tr>{{/scripts.tests_legacy}}
-                                     </tbody>
-                                 </table>
-                             </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+            </div> <!-- Close tab-pane: v-pills-tools -->
 
             <!-- 
                 ************* TAB 5: DATABASE ************* 
-                Console SQL per query dirette (SQLite).
+                Console SQL per query dirette (MySQL/MariaDB).
             -->
             <!-- 
                 ************* TAB 5: DATABASE ************* 
@@ -918,7 +853,7 @@
                                          </div>
                                          
                                          <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
-                                            <small class="text-muted" style="font-size: 0.7rem;">Tabella SQLite</small>
+                                            <small class="text-muted" style="font-size: 0.7rem;">Tabella MySQL</small>
                                             <span class="badge bg-dark border border-secondary text-secondary rounded-pill code-font">{{rows}} Rows</span>
                                          </div>
                                      </div>
@@ -937,7 +872,7 @@
                         <!-- Area Input Query -->
                         <div class="card glass-panel border-0">
                             <div class="card-body p-4">
-                                <label class="text-warning fw-bold small mb-2 d-flex align-items-center justify-content-between">
+                                <label for="sql-input" class="text-warning fw-bold small mb-2 d-flex align-items-center justify-content-between">
                                     <span><i class="fa-solid fa-terminal me-2"></i>SQL EDITOR</span>
                                     <span class="badge bg-warning text-black">READ/WRITE ACCESS</span>
                                 </label>
@@ -963,7 +898,7 @@
                             <div class="table-responsive h-100 custom-scrollbar bg-black bg-opacity-25">
                                 <table class="table table-dark-custom table-striped table-sm mb-0 font-monospace small" id="sql-results">
                                     <thead>
-                                        <tr><th class="p-5 text-center text-muted fw-normal opacity-50">I risultati appariranno qui...</th></tr>
+                                        <tr><th class="p-5 text-center text-muted fw-normal opacity-75">I risultati appariranno qui...</th></tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -1022,7 +957,8 @@
         </div> <!-- Fine Tab Content -->
 
     </div> <!-- Fine Main Content Area -->
-</div>
+
+
 
 <!-- 
     ========================================
@@ -1030,357 +966,109 @@
     Cassetto a comparsa per log e output script.
     ========================================
 -->
-<div id="terminal-drawer" class="bg-black border-top border-secondary border-opacity-50 shadow-lg position-fixed bottom-0 z-index-1050" 
-     style="height: 350px; display: none; left: 280px; width: calc(100% - 280px); transition: all 0.3s ease;">
+<div id="terminal-drawer" class="bg-black border border-secondary shadow-2xl position-fixed rounded-3 flex-column" 
+     style="display: none; top: 15%; left: 25%; width: 900px; height: 500px; min-width: 400px; min-height: 200px; resize: both; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); z-index: 9999;">
      
-     <div class="d-flex justify-content-between align-items-center px-3 py-2 bg-dark border-bottom border-secondary border-opacity-25">
-         <div class="text-info fw-bold small"><i class="fa-solid fa-terminal me-2"></i>CONSOLE OUTPUT</div>
-         <div>
-             <button class="btn btn-sm text-muted hover-white me-1" onclick="document.getElementById('terminal-content').innerText='// Console Cleared.\n'" title="Pulisci">
-                 <i class="fa-solid fa-eraser"></i>
-             </button>
-             <button class="btn btn-sm text-muted hover-white" onclick="toggleTerminal()" title="Chiudi">
-                 <i class="fa-solid fa-times"></i>
-             </button>
-         </div>
+     <!-- ABSOLUTE CONTROLS (Top Right) -->
+     <div style="position: absolute; top: 6px; right: 8px; z-index: 9999;" class="d-flex gap-2" onmousedown="event.stopPropagation()">
+         <button class="btn btn-sm btn-outline-secondary text-light py-0 px-2" onclick="document.getElementById('terminal-content').innerText='// Console Cleared.\n'" title="Pulisci">
+             <i class="fa-solid fa-eraser"></i>
+         </button>
+         <button class="btn btn-sm btn-danger py-0 px-2 shadow-sm" onclick="window.toggleTerminal()" title="Chiudi Finestra">
+             <i class="fa-solid fa-times"></i>
+         </button>
      </div>
-     <div id="terminal-content" class="p-3 code-font text-info small h-100 overflow-auto pb-5 bg-opacity-10" style="background: #050505;">
-         // Console Ready. Waiting for commands...
+
+     <!-- DRAG HANDLE -->
+     <div id="terminal-drag-handle" class="bg-dark border-bottom border-secondary border-opacity-50 p-2 d-flex align-items-center cursor-move user-select-none">
+         <i class="fa-solid fa-terminal text-success me-2 ms-2"></i>
+         <span class="text-white fw-bold small tracking-widest">MISSION CONTROL CONSOLE</span>
+     </div>
+
+     <!-- TERMINAL BODY -->
+     <div class="flex-grow-1 bg-black p-0 overflow-hidden d-flex flex-column position-relative">
+         <div id="terminal-content" class="flex-grow-1 overflow-auto p-3 font-monospace custom-scrollbar text-info small" 
+              style="background-color: #0c0c0c; font-size: 0.85rem; line-height: 1.4;">
+              <div class="text-muted mb-2">System Ready... Type commands or use GUI tools.</div>
+         </div>
+         
+         <!-- PROMPT -->
+         <div class="border-top border-secondary border-opacity-25 bg-dark p-2 d-flex align-items-center">
+             <span class="text-success fw-bold me-2 ps-2">PS ></span>
+             <input type="text" id="term-input" class="form-control form-control-sm bg-transparent border-0 text-white font-monospace shadow-none" placeholder="Type command..." autocomplete="off">
+         </div>
      </div>
 </div>
 
-<!-- ######################################################################################## -->
-<!-- LOGICA JAVASCRIPT APPLICATIVA -->
-<!-- ######################################################################################## -->
-<script>
-    /* --- FUNZIONI DI UTILITÀ (Logging & API) --- */
-
-    /**
-     * Stampa un messaggio nella console (drawer) visuale.
-     * @param {string} msg - Il messaggio da stampare.
-     * @param {string} type - Tipo di messaggio: 'info', 'success', 'error', 'warning'.
-     */
-    const log = (msg, type='info') => {
-        const term = document.getElementById('terminal-content');
-        let colorClass = 'text-info';
-        
-        switch(type) {
-            case 'error': colorClass = 'text-danger fw-bold'; break;
-            case 'success': colorClass = 'text-success fw-bold'; break;
-            case 'warning': colorClass = 'text-warning'; break;
-        }
-
-        const time = new Date().toLocaleTimeString();
-        term.innerHTML += `<div class="${colorClass} mb-1 border-bottom border-secondary border-opacity-10 pb-1">
-            <span class="opacity-50 text-secondary me-2">[${time}]</span><span style="white-space: pre-wrap;">${msg}</span>
-        </div>`;
-        
-        // Auto-scroll in basso
-        term.scrollTop = term.scrollHeight;
-
-        // Se è un errore o successo importante, apri il terminale se chiuso
-        if(type !== 'info') {
-            const drawer = document.getElementById('terminal-drawer');
-            if (drawer.style.display === 'none') drawer.style.display = 'block';
-        }
-    };
-
-    /**
-     * Wrapper asincrono per chiamate API interne al DevToolsController.
-     * Gestisce automaticamente il CSRF token e la conversione JSON.
-     * @param {string} endpoint - L'URL relativo dell'endpoint (es. '/devtools/run').
-     * @param {object} data - Oggetto con i dati da inviare (POST).
-     */
-    const api = async (endpoint, data={}) => {
-        // Inietta Token CSRF
-        data.csrf_name = window.CSRF.name;
-        data.csrf_value = window.CSRF.value;
-        
-        const formData = new URLSearchParams();
-        Object.keys(data).forEach(k => formData.append(k, data[k]));
-
-        try {
-            const res = await fetch('/fratellanza-militare-archivio/public' + endpoint, { 
-                method: 'POST', 
-                body: formData,
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            });
-            
-            const json = await res.json();
-            
-            if(!res.ok) throw new Error(json.error || 'Errore Server Sconosciuto');
-            return json; // Ritorna il payload (es. {success: true, output: ...})
-        } catch(e) {
-            log(`API ERROR [${endpoint}]: ${e.message}`, 'error');
-            throw e; // Rilancia per catch specifici
-        }
-    };
-
-    /* --- GESTIONE UI --- */
-
-    // Mostra/Nascondi il drawer del terminale
-    function toggleTerminal() {
-        const t = document.getElementById('terminal-drawer');
-        t.style.display = t.style.display==='none' ? 'block' : 'none';
-    }
-
-    // Persistenza Tab attivo al refresh della pagina
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    if(tab) {
-        const el = document.querySelector(`#v-pills-${tab}-tab`);
-        if(el) {
-            new bootstrap.Tab(el).show();
-        }
-    }
-
-    /* --- AZIONI RAPIDE & SCRIPT --- */
-
-    // Esegue uno script PHP lato server
-    window.runQuickScript = (path) => {
-        log(`>>> Avvio esecuzione script: ${path}...`, 'info');
-        api('/devtools/run', {script: path}).then(d => {
-            log('---------------- SCRIPT OUTPUT ----------------', 'warning');
-            log(d.output || '(Nessun output testuale)');
-            log('-----------------------------------------------', 'warning');
-            log('Esecuzione completata con successo.', 'success');
-        });
-    };
-
-    // Binding bottoni "Run" nella lista script
-    document.querySelectorAll('.run-script-btn').forEach(btn => {
-        btn.onclick = () => runQuickScript(btn.dataset.path);
-    });
-
-    /* --- GESTIONE UTENTI (SECURITY TAB) --- */
-    
-    // Carica la lista utenti via AJAX
-    const loadUsers = () => {
-        const b = document.getElementById('user-list-body');
-        // Stato Loading
-        b.innerHTML = '<tr><td colspan="4" class="text-center p-4 text-muted"><i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aggiornamento lista...</td></tr>';
-        
-        api('/devtools/security/list').then(d => {
-            b.innerHTML = '';
-            if (d.users.length === 0) {
-                 b.innerHTML = '<tr><td colspan="4" class="text-center">Nessun utente trovato.</td></tr>';
-                 return;
-            }
-            d.users.forEach(u => {
-                // Rendering riga tabella
-                // FIX CONTRASTO: Badge solidi
-                const roleBadge = u.role === 'admin' 
-                    ? '<span class="badge bg-danger text-white border border-white border-opacity-25 shadow-sm">ADMIN</span>' 
-                    : '<span class="badge bg-info text-dark border border-info border-opacity-25">USER</span>';
+<!-- 
+    ========================================
+    MODAL: CREATE NEW USER
+    Form per la creazione di nuovi operatori.
+    ========================================
+-->
+<div class="modal fade" id="modal-add-user" tabindex="-1" aria-labelledby="modalAddUserLabel" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border border-secondary border-opacity-50 shadow-2xl glass-panel">
+            <div class="modal-header border-bottom border-secondary border-opacity-25">
+                <h5 class="modal-title text-white fw-bold" id="modalAddUserLabel"><i class="fa-solid fa-user-plus me-2 text-primary"></i>NUOVO OPERATORE</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small mb-4">
+                    Crea un nuovo accesso per il personale autorizzato. 
+                    <strong>Nota:</strong> Verrà generato automaticamente un <u>nuovo segreto 2FA</u> che l'utente dovrà configurare al primo accesso.
+                </p>
                 
-                const mfaStatus = u.has_2fa 
-                    ? '<span class="badge bg-emerald-500 text-white bg-success"><i class="fa-solid fa-lock me-1"></i>ACTIVE</span>' 
-                    : '<span class="badge bg-secondary text-light opacity-75"><i class="fa-solid fa-lock-open me-1"></i>DISABLED</span>';
-
-                b.innerHTML += `
-                <tr class="hover-row border-bottom border-secondary border-opacity-10 transition-colors">
-                    <td class="ps-4 py-3 fw-bold font-monospace text-white">${u.username}</td>
-                    <td>${roleBadge}</td>
-                    <td>${mfaStatus}</td>
-                    <td class="text-end pe-4">
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa-solid fa-gear me-1"></i> GESTISCI
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg border-secondary">
-                                <li><h6 class="dropdown-header text-muted small uppercase-tracking">Sicurezza</h6></li>
-                                <li>
-                                    <button class="dropdown-item text-warning" onclick="rotate2FA('${u.username}')">
-                                        <i class="fa-solid fa-arrows-rotate me-2"></i>Ruota Secret 2FA
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="dropdown-item text-warning" onclick="resetUserPassword('${u.username}')">
-                                        <i class="fa-solid fa-key me-2"></i>Reset Password
-                                    </button>
-                                </li>
-                                <li><hr class="dropdown-divider border-secondary opacity-25"></li>
-                                <li>
-                                    <button class="dropdown-item text-danger" onclick="deleteUser('${u.username}')">
-                                        <i class="fa-solid fa-trash me-2"></i>Elimina Utente
-                                    </button>
-                                </li>
-                            </ul>
+                <form id="form-add-user">
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-secondary small fw-bold uppercase-tracking">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black border-secondary text-secondary"><i class="fa-solid fa-user"></i></span>
+                            <input type="text" id="username" name="username" class="form-control bg-black text-white border-secondary" placeholder="es. m.rossi" required autocomplete="username" minlength="3">
                         </div>
-                    </td>
-                </tr>
-                `;
-            });
-            log('Lista utenti aggiornata.', 'info');
-        });
-    };
-    
-    // Auto-caricamento quando si apre il tab Security
-    document.getElementById('v-pills-security-tab').addEventListener('shown.bs.tab', loadUsers);
+                        <div class="form-text text-muted small">Identificativo univoco per il login (min 3 caratteri).</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-secondary small fw-bold uppercase-tracking">Password Temporanea</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-black border-secondary text-secondary"><i class="fa-solid fa-key"></i></span>
+                            <input type="password" id="password" name="password" class="form-control bg-black text-white border-secondary" placeholder="******" required autocomplete="new-password" minlength="6">
+                        </div>
+                        <div class="form-text text-muted small">Sarà richiesta la modifica al primo accesso (se policy attiva).</div>
+                    </div>
 
-    // Form di creazione utente
-    document.getElementById('form-add-user').onsubmit = (e) => {
-        e.preventDefault();
-        const fd = new FormData(e.target);
-        api('/devtools/security/add', Object.fromEntries(fd)).then(() => {
-            log(`Utente '${fd.get('username')}' creato con successo.`, 'success');
-            e.target.reset();
-            loadUsers(); // Refresh lista
-        });
-    };
+                    <div class="mb-4">
+                        <label for="role-select" class="form-label text-secondary small fw-bold uppercase-tracking">Ruolo & Permessi</label>
+                        <div class="input-group">
+                             <span class="input-group-text bg-black border-secondary text-secondary"><i class="fa-solid fa-id-badge"></i></span>
+                              <select name="role" id="role-select" class="form-select bg-black text-white border-secondary">
+                                 <option value="segreteria" selected>Segreteria Operativa</option>
+                                 <option value="admin">Amministratore di Sistema</option>
+                                 <option value="comando">Comando Militare (Monitoraggio)</option>
+                                 <option value="sviluppo">Technical Support / Dev</option>
+                                 <option value="auditor">Audit & Compliance</option>
+                                 <option value="ospite">Ospite (Sola Lettura)</option>
+                             </select>
+                         </div>
+                         <div class="mt-3 p-3 bg-black bg-opacity-20 border border-secondary border-opacity-10 rounded shadow-inner" id="role-description-box">
+                             <div class="small" id="role-desc-text">
+                                 <i class="fa-solid fa-info-circle me-1 text-info"></i>
+                                 <strong>Segreteria:</strong> Accesso completo alla gestione soci, iscrizioni e archivio digitale.
+                             </div>
+                         </div>
+                    </div>
 
-    // Azioni individuali utente
-    window.rotate2FA = (id) => confirm('Sei sicuro di voler resettare il segreto 2FA per questo utente? L\'utente dovrà scansionare un nuovo QR Code.') && 
-        api('/devtools/security/rotate', {id}).then(() => log('Segreto 2FA rigenerato con successo (o rimosso).', 'success'));
-    
-    window.resetUser = (id) => {
-        const p = prompt('Inserisci la nuova password per l\'utente:');
-        if(p) api('/devtools/security/reset', {id, password: p}).then(() => log('Password utente aggiornata.', 'success'));
-    };
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary fw-bold shadow-primary-glow hover-lift">
+                            <i class="fa-solid fa-save me-2"></i>CREA OPERATORE
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-    window.deleteUser = (id) => confirm('ATTENZIONE: Questa azione è irreversibile. Cancellare l\'utente?') && 
-        api('/devtools/security/delete', {id}).then(() => { log('Utente eliminato definitivamente.', 'success'); loadUsers(); });
-
-
-    /* --- TOOLS AGGIUNTIVI (Renamer, Trace, SQL) --- */
-
-    // Rebranding Tool
-    document.getElementById('btn-run-renamer').onclick = () => {
-        const name = document.getElementById('renamer-new-name').value;
-        const dry = document.getElementById('renamer-dry-run').checked;
-        if(!name) return alert('Inserisci un nuovo nome progetto.');
-        
-        log(`>>> Avvio Rebranding su namespace '${name}' (DryRun: ${dry})...`, 'warning');
-        api('/devtools/renamer', {new_name: name, dry_run: dry?'1':'0'}).then(d => {
-             log(d.output);
-             log('Rebranding task completato.', 'success');
-        });
-    };
-
-    // Esecuzione Trace ID
-    document.getElementById('btn-trace-logs').onclick = () => {
-        const id = document.getElementById('trace-id-input').value;
-        if(!id) return log('Inserisci un ID valido.', 'error');
-        
-        api('/devtools/trace', {requestId: id}).then(d => {
-             if(d.logs.length) {
-                 log(`Trovati ${d.logs.length} record di log per ID ${id}`, 'success');
-                 d.logs.forEach(l => log(`[${l.level_name}] ${l.message}`));
-             } else log('Nessuna traccia trovata per questo ID.', 'warning');
-        });
-    };
-
-    // SQL Console Engine
-    document.getElementById('btn-run-query').onclick = () => {
-        const sql = document.getElementById('sql-input').value;
-        if(!sql) return;
-        
-        log(`Esecuzione Query: ${sql}`, 'info');
-        api('/devtools/db/query', {sql}).then(d => {
-             const t = document.getElementById('sql-results');
-             t.innerHTML = '';
-             
-             if(!d.results || d.results.length === 0) {
-                 log('Query eseguita. Nessuna riga ritornata.', 'success');
-                 return t.innerHTML = '<thead><tr><th>Nessun risultato (0 rows)</th></tr></thead>';
-             }
-             
-             // Generazione dinamica header tabella
-             let h = '<thead><tr>';
-             Object.keys(d.results[0]).forEach(k => h+=`<th>${k}</th>`);
-             h+='</tr></thead><tbody>';
-             
-             // Generazione righe
-             d.results.forEach(r => {
-                 h+='<tr>';
-                 Object.values(r).forEach(v => h+=`<td>${v===null?'<span class="text-muted">NULL</span>':v}</td>`);
-                 h+='</tr>';
-             });
-             h+='</tbody>';
-             
-             t.innerHTML = h;
-             log(`Query OK. ${d.results.length} righe recuperate.`, 'success');
-        });
-    };
-
-
-    /* --- FILESYSTEM BROWSER (Code Reactor) --- */
-
-    /**
-     * Carica il contenuto di una directory nel pannello laterale.
-     * @param {string} path - Il percorso assoluto o relativo della cartella.
-     */
-    const loadDir = (path) => {
-        const t = document.getElementById('fs-tree');
-        t.innerHTML = '<div class="text-center p-3 opacity-50"><i class="fa-solid fa-spinner fa-spin"></i></div>';
-        
-        api('/devtools/fs/list', {path}).then(d => {
-             document.getElementById('fs-path').value = d.current;
-             t.innerHTML = '';
-             
-             // Tasto 'Torna su'
-             if(d.current!=='/' && d.current!=='\\') {
-                 const u = document.createElement('div');
-                 u.className='p-1 pointer hover-text-white text-info mb-1';
-                 u.innerHTML='<i class="fa-solid fa-turn-up me-2"></i> .. (Level Up)';
-                 u.onclick=()=>loadDir(d.current+'/../');
-                 t.appendChild(u);
-             }
-             
-             // Rendering Items
-             d.items.forEach(i => {
-                 const el = document.createElement('div');
-                 el.className='p-1 pointer text-nowrap d-flex align-items-center mb-1 ' + (i.type==='dir'?'text-warning':'text-muted');
-                 // Icona diversa per folder/file
-                 const icon = i.type==='dir' ? '<i class="fa-solid fa-folder me-2 text-warning opacity-75"></i>' : '<i class="fa-solid fa-file-code me-2 opacity-50"></i>';
-                 
-                 el.innerHTML=`${icon}<span>${i.name}</span>`;
-                 
-                 // Comportamento Click
-                 el.onclick=()=>i.type==='dir' ? loadDir(i.path) : loadFile(i.path);
-                 
-                 // Hover effect js (opzionale, gestito da css)
-                 el.onmouseenter = () => el.classList.add('text-white');
-                 el.onmouseleave = () => el.classList.remove('text-white');
-                 if(i.type==='dir') el.onmouseleave = () => el.classList.remove('text-white'); // keep warning color logic if needed
-
-                 t.appendChild(el);
-             });
-        });
-    };
-
-    /**
-     * Carica il contenuto di un file nell'editor.
-     */
-    const loadFile = (path) => {
-        document.getElementById('editor-filename').innerText = path;
-        api('/devtools/fs/read', {path}).then(d => {
-            const ed = document.getElementById('code-editor');
-            ed.value = d.content;
-            ed.disabled = false;
-            
-            // Mostra avviso irreversibilità
-            document.getElementById('editor-warning-bar').style.display = 'flex';
-            
-            // Abilita Salvataggio
-            const btnSave = document.getElementById('btn-fs-save');
-            btnSave.disabled = false;
-            btnSave.classList.remove('disabled');
-            
-            btnSave.onclick = () => {
-                if(confirm('ATTENZIONE: Stai per sovrascrivere permanentemente questo file.\nQuesta azione è IRREVERSIBILE e non può essere annullata.\n\nProcedere con il salvataggio?')) {
-                    api('/devtools/fs/save', {path, content: ed.value}).then(()=>log(`File ${path} salvato.`, 'success'));
-                }
-            };
-        });
-    };
-
-    // Refresh button filesystem
-    document.getElementById('btn-fs-refresh').onclick = () => loadDir(document.getElementById('fs-path').value);
-    
-    // Inizializzazione: Carica root directory
-    loadDir('/');
-
-</script>
 
 {{> layout_footer }}

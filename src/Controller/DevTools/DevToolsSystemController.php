@@ -31,8 +31,37 @@ class DevToolsSystemController
             'memory_limit' => ini_get('memory_limit'),
             'upload_max' => ini_get('upload_max_filesize'),
             'post_max' => ini_get('post_max_size'),
-            'max_execution' => ini_get('max_execution_time') . 's'
+            'max_execution' => ini_get('max_execution_time') . 's',
+            'disk_free' => $this->safeDiskSpace('free'),
+            'disk_total' => $this->safeDiskSpace('total'),
+            'disk_percent' => $this->safeDiskPercent(),
+            'opcache_enabled' => function_exists('opcache_get_status') && opcache_get_status() !== false,
+            'opcache_status' => function_exists('opcache_get_status') ? opcache_get_status(false) : null,
+            'error_count' => $this->countRecentErrors()
         ];
+    }
+
+    private function safeDiskSpace($type)
+    {
+        try {
+            $bytes = $type === 'free' ? @disk_free_space('.') : @disk_total_space('.');
+            return $bytes !== false ? $this->formatBytes($bytes) : 'N/A';
+        } catch (\Throwable $e) {
+            return 'N/A';
+        }
+    }
+
+    private function safeDiskPercent()
+    {
+        try {
+            $free = @disk_free_space('.');
+            $total = @disk_total_space('.');
+            if ($total === false || $total <= 0)
+                return 0;
+            return round((1 - ($free / $total)) * 100, 1);
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     public function getHealth(): array
@@ -58,16 +87,21 @@ class DevToolsSystemController
         $db = $this->pdo;
         $schemaStats = [];
         try {
-            $driver = $db->getAttribute(\PDO::ATTR_DRIVER_NAME);
-            if ($driver === 'mysql') {
-                $tables = $db->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()")->fetchAll(\PDO::FETCH_COLUMN);
-            } else {
-                $tables = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")->fetchAll(\PDO::FETCH_COLUMN);
-            }
+            $tables = $db->query("SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()")->fetchAll(\PDO::FETCH_COLUMN);
 
             foreach ($tables as $t) {
-                $count = $db->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
-                $schemaStats[] = ['name' => $t, 'rows' => $count];
+                // Get precise rows (COUNT*) and data size
+                $stats = $db->query("SHOW TABLE STATUS LIKE '$t'")->fetch(\PDO::FETCH_ASSOC);
+                $rowCount = $db->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
+
+                $sizeBytes = ($stats['Data_length'] ?? 0) + ($stats['Index_length'] ?? 0);
+
+                $schemaStats[] = [
+                    'name' => $t,
+                    'rows' => $rowCount,
+                    'size_bytes' => $sizeBytes,
+                    'size_formatted' => $this->formatBytes($sizeBytes)
+                ];
             }
         } catch (\Exception $e) {
             // Fail silently
@@ -80,9 +114,11 @@ class DevToolsSystemController
         $logs = [];
         $logFile = __DIR__ . '/../../../logs/app.log';
         if (file_exists($logFile)) {
-            $lines = array_slice(file($logFile), -10);
+            $lines = $this->tailFile($logFile, 20); // Last 20 lines
             foreach ($lines as $line) {
-                $logs[] = ['content' => substr($line, 0, 120) . '...'];
+                if (trim($line)) {
+                    $logs[] = ['content' => substr($line, 0, 160) . (strlen($line) > 160 ? '...' : '')];
+                }
             }
         }
         return $logs;
@@ -90,28 +126,30 @@ class DevToolsSystemController
 
     public function scanScripts(): array
     {
-        // Moved from DashboardController
         $baseDir = __DIR__ . '/../../../';
-        // ... (Scan logic implementation can be copied or delegated)
-        // For brevity in this refactor, I will implement the scanDir internally here 
-        // effectively moving it from DashboardController
 
         return [
-            'tests_unit' => $this->scanDir($baseDir . 'tests/Unit'),
-            'tests_feature' => $this->scanDir($baseDir . 'tests/Feature'),
-            // ... other directories
+            'maintenance' => $this->scanDir($baseDir . 'bin/maintenance'),
+            'setup' => $this->scanDir($baseDir . 'bin/setup'),
             'tools' => $this->scanDir($baseDir . 'bin/tools'),
+            'debug_tools' => $this->scanDir($baseDir . 'bin/debug_tools'),
+            'utilities' => $this->scanDir($baseDir . 'bin/tools'), // General tools moved here
         ];
     }
 
-    private function scanDir(string $dir): array
+    private function scanDir(string $dir, bool $recursive = true): array
     {
         $files = [];
         if (!is_dir($dir)) {
             return [];
         }
 
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        if ($recursive) {
+            $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        } else {
+            $iterator = new \DirectoryIterator($dir);
+        }
+
         foreach ($iterator as $file) {
             if ($file->isFile()) {
                 $filename = $file->getFilename();
@@ -129,5 +167,105 @@ class DevToolsSystemController
             }
         }
         return $files;
+    }
+    public function getActiveSessionsCount(): int
+    {
+        $sessionPath = session_save_path();
+        if (empty($sessionPath)) {
+            $sessionPath = sys_get_temp_dir();
+        }
+        // Count files initiating with sess_
+        $files = glob($sessionPath . '/sess_*');
+        // Filter by age (e.g. last 30 mins) if needed, but raw count is faster for now
+        // Let's filter slightly to check only valid files
+        return $files ? count($files) : 0;
+    }
+
+    public function getLatencyMetrics(): array
+    {
+        $start = microtime(true);
+        try {
+            $this->pdo->query('SELECT 1');
+            $dbLatency = round((microtime(true) - $start) * 1000); // ms
+        } catch (\Exception $e) {
+            $dbLatency = 999;
+        }
+        return [
+            'db_ms' => $dbLatency,
+            'status' => $dbLatency < 50 ? 'excellent' : ($dbLatency < 200 ? 'good' : 'slow')
+        ];
+    }
+
+    public function getIntrusionStats(): array
+    {
+        $logFile = __DIR__ . '/../../../logs/app.log';
+        if (!file_exists($logFile)) {
+            return ['count' => 0, 'status' => 'clean'];
+        }
+
+        // Optimized read: Read last 50KB instead of whole file
+        $content = $this->tailFile($logFile, 100);
+        $count = 0;
+        foreach ($content as $line) {
+            if (stripos($line, 'Login failed') !== false || stripos($line, 'Unauthorized') !== false || stripos($line, 'suspicious') !== false) {
+                $count++;
+            }
+        }
+        return [
+            'count' => $count,
+            'status' => $count === 0 ? 'clean' : ($count < 5 ? 'warning' : 'danger')
+        ];
+    }
+
+    private function countRecentErrors(): int
+    {
+        $logFile = __DIR__ . '/../../../logs/app.log';
+        if (!file_exists($logFile))
+            return 0;
+
+        $lines = $this->tailFile($logFile, 100);
+        $count = 0;
+        foreach ($lines as $line) {
+            if (stripos($line, '.ERROR') !== false || stripos($line, 'CRITICAL') !== false) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    /**
+     * Efficiently read the last N lines of a file using fseek
+     */
+    private function tailFile(string $file, int $lines): array
+    {
+        $f = @fopen($file, "rb");
+        if ($f === false)
+            return [];
+
+        fseek($f, -1, SEEK_END);
+        if (ftell($f) < 2)
+            return []; // Empty or small
+
+        $chunkSize = 4096;
+        $output = '';
+        $readLines = 0;
+
+        while (ftell($f) > 0 && $readLines <= $lines) {
+            $seek = min(ftell($f), $chunkSize);
+            fseek($f, -$seek, SEEK_CUR);
+            $output = ($chunk = fread($f, $seek)) . $output;
+            fseek($f, -mb_strlen($chunk, '8bit'), SEEK_CUR);
+            $readLines = substr_count($output, "\n");
+        }
+
+        fclose($f);
+        return array_slice(explode("\n", $output), -$lines);
+    }
+
+    private function formatBytes($size, $precision = 2)
+    {
+        $base = log($size, 1024);
+        $suffixes = array('', 'KB', 'MB', 'GB', 'TB');
+        return round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
     }
 }

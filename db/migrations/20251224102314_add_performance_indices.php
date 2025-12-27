@@ -29,9 +29,7 @@ final class AddPerformanceIndices extends AbstractMigration
 
         // Soci (Used for filtering by status and searching)
         $this->table('soci')
-            ->addIndex(['stato'])
-            // Composite index for fast searching if needed, but single indices are often enough for SQLite
-            ->addIndex(['codice_fiscale'])
+            ->addIndex(['stato_iscrizione'])
             ->addIndex(['nome', 'cognome'])
             ->update();
     }

@@ -12,15 +12,21 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class DevToolsFileSystemController
 {
+    private string $basePath;
+
+    public function __construct(?string $basePath = null)
+    {
+        $this->basePath = $basePath ? realpath($basePath) : realpath(__DIR__ . '/../../../');
+    }
+
     public function fsList(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
-        $basePath = realpath(__DIR__ . '/../../../');
         $requestPath = $data['path'] ?? '/';
 
-        $targetPath = realpath($basePath . '/' . $requestPath);
-        if (!$targetPath || !str_starts_with($targetPath, $basePath)) {
-            $targetPath = $basePath;
+        $targetPath = realpath($this->basePath . '/' . $requestPath);
+        if (!$targetPath || !str_starts_with($targetPath, $this->basePath)) {
+            $targetPath = $this->basePath;
         }
 
         $items = [];
@@ -32,7 +38,7 @@ class DevToolsFileSystemController
                 }
                 $fullPath = $targetPath . '/' . $item;
                 $isDir = is_dir($fullPath);
-                $relPath = str_replace($basePath, '', $fullPath);
+                $relPath = str_replace($this->basePath, '', $fullPath);
                 $relPath = str_replace('\\', '/', $relPath);
 
                 $items[] = [
@@ -45,10 +51,10 @@ class DevToolsFileSystemController
             }
         }
 
-        usort($items, fn($a, $b) => $b['type'] <=> $a['type']);
+        usort($items, fn($a, $b) => $a['type'] <=> $b['type']);
 
         $response->getBody()->write(json_encode([
-            'current' => str_replace('\\', '/', str_replace($basePath, '', $targetPath)) ?: '/',
+            'current' => str_replace('\\', '/', str_replace($this->basePath, '', $targetPath)) ?: '/',
             'items' => $items
         ]));
         return $response->withHeader('Content-Type', 'application/json');
@@ -58,10 +64,9 @@ class DevToolsFileSystemController
     {
         $data = $request->getParsedBody();
         $path = $data['path'] ?? '';
-        $basePath = realpath(__DIR__ . '/../../../');
-        $fullPath = realpath($basePath . '/' . $path);
+        $fullPath = realpath($this->basePath . '/' . $path);
 
-        if (!$fullPath || !str_starts_with($fullPath, $basePath) || !is_file($fullPath)) {
+        if (!$fullPath || !str_starts_with($fullPath, $this->basePath) || !is_file($fullPath)) {
             $response->getBody()->write(json_encode(['error' => 'File non trovato o accesso negato.']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
         }
@@ -76,10 +81,9 @@ class DevToolsFileSystemController
         $data = $request->getParsedBody();
         $path = $data['path'] ?? '';
         $content = $data['content'] ?? '';
-        $basePath = realpath(__DIR__ . '/../../../');
-        $fullPath = realpath($basePath . '/' . $path);
+        $fullPath = realpath($this->basePath . '/' . $path);
 
-        if (!$fullPath || !str_starts_with($fullPath, $basePath) || !is_file($fullPath)) {
+        if (!$fullPath || !str_starts_with($fullPath, $this->basePath) || !is_file($fullPath)) {
             $response->getBody()->write(json_encode(['error' => 'File non valido.']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }

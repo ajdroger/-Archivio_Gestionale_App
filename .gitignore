@@ -39,6 +39,7 @@ desktop.ini
 # Uploads & Backups
 storage/uploads/*
 !storage/uploads/.gitkeep
+storage/backups/*
 backups/*
 !backups/.gitkeep
 

@@ -10,7 +10,7 @@
                     <!-- Search handled by DataTables -->
                     <!-- <form ... </form> -->
                     
-                    <a href="/fratellanza-militare-archivio/public/soci/nuovo" class="btn btn-primary px-4 shadow shadow-primary"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a>
+                    <a href="{{base_url}}/soci/nuovo" class="btn btn-primary px-4 shadow shadow-primary"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a>
                 </div>
             </div>
         </div>
@@ -27,7 +27,31 @@
                         <th class="border-secondary" style="width: 20%;">Contatti App</th>
                         <th class="text-center border-secondary" style="width: 10%;">Status</th>
                         <th class="text-center border-secondary" style="width: 10%;">Morosità</th>
-                        <th class="text-end pe-4 border-secondary" style="width: 20%;">Controllo</th>
+                        <th class="text-end pe-4 border-secondary" style="width: 10%;">Controllo</th>
+                    </tr>
+                    <!-- Filter Row -->
+                    <tr class="filter-row" style="background: rgba(15, 23, 42, 0.8);">
+                        <th class="ps-4 pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Cerca Nome/Nascita..."></th>
+                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Matricola"></th>
+                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Codice Fiscale"></th>
+                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Email/Tel"></th>
+                        <th class="pb-2 text-center border-secondary">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary small">
+                                <option value="">Tutti</option>
+                                <option value="ATTIVO">ATTIVO</option>
+                                <option value="SOSPESO">SOSPESO</option>
+                                <option value="DIMISSIONARIO">DIMISSIONARIO</option>
+                                <option value="CANCELLATO">CANCELLATO</option>
+                            </select>
+                        </th>
+                        <th class="pb-2 text-center border-secondary">
+                            <select class="form-select form-select-sm bg-dark text-white border-secondary small">
+                                <option value="">Tutti</option>
+                                <option value="MOROSO">MOROSO</option>
+                                <option value="OK">OK</option>
+                            </select>
+                        </th>
+                        <th class="borer-secondary"></th>
                     </tr>
                 </thead>
                 <tbody class="border-top-0">
@@ -71,8 +95,8 @@
                         </td>
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <a href="/fratellanza-militare-archivio/public/soci/{{cf}}" class="btn btn-sm btn-outline-info border-info border-opacity-25" title="Dettagli"><i class="fa-solid fa-fingerprint"></i></a>
-                                    <a href="/fratellanza-militare-archivio/public/soci/{{cf}}/modifica" class="btn btn-sm btn-outline-warning border-warning border-opacity-25" title="Modifica"><i class="fa-solid fa-user-pen"></i></a>
+                                    <a href="{{base_url}}/soci/{{cf}}" class="btn btn-sm btn-outline-info border-info border-opacity-25" title="Dettagli"><i class="fa-solid fa-fingerprint"></i></a>
+                                    <a href="{{base_url}}/soci/{{cf}}/modifica" class="btn btn-sm btn-outline-warning border-warning border-opacity-25" title="Modifica"><i class="fa-solid fa-user-pen"></i></a>
                                     <button type="button" class="btn btn-sm btn-outline-danger border-danger border-opacity-25" title="Elimina" 
                                             data-bs-toggle="modal" 
                                             data-bs-target="#deleteModal"
@@ -92,7 +116,7 @@
                                 </div>
                                 <h4 class="text-secondary fw-light">Nessun record trovato nel database</h4>
                                 <p class="text-secondary small">I filtri correnti non hanno prodotto risultati o l'archivio è vuoto.</p>
-                                 <a href="/fratellanza-militare-archivio/public/soci/nuovo" class="btn btn-outline-primary mt-3"><i class="fa-solid fa-user-plus me-2"></i>Inizializza Primo Socio</a>
+                                 <a href="{{base_url}}/soci/nuovo" class="btn btn-outline-primary mt-3"><i class="fa-solid fa-user-plus me-2"></i>Inizializza Primo Socio</a>
                             </td>
                         </tr>
                         {{/soci}}
@@ -103,7 +127,7 @@
         <div class="card-footer border-top border-secondary bg-transparent py-3 small text-secondary d-flex justify-content-between align-items-center">
             <span><i class="fa-solid fa-database me-2 opacity-50"></i>Record caricati: <strong>{{soci.length}}</strong></span>
             <div class="btn-group btn-group-sm">
-                <a href="/fratellanza-militare-archivio/public/soci/export/csv" class="btn btn-outline-secondary border-secondary text-success"><i class="fa-solid fa-file-export me-2"></i>Esporta CSV</a>
+                <a href="{{base_url}}/soci/export/csv" class="btn btn-outline-secondary border-secondary text-success"><i class="fa-solid fa-file-export me-2"></i>Esporta CSV</a>
                 <button onclick="window.print()" class="btn btn-outline-secondary border-secondary"><i class="fa-solid fa-print me-2"></i>Esporta PDF</button>
             </div>
         </div>
@@ -133,20 +157,71 @@
         </div>
     </div>
     
+    <!-- DataTables for Pagination & Search -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Delete Modal Logic
             var deleteModal = document.getElementById('deleteModal');
-            deleteModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var cf = button.getAttribute('data-cf');
-                var nome = button.getAttribute('data-nome');
-                
-                var modalBodyName = deleteModal.querySelector('#modal-delete-name');
-                var modalForm = deleteModal.querySelector('#modal-delete-form');
-    
-                modalBodyName.textContent = nome;
-                modalForm.action = '/fratellanza-militare-archivio/public/soci/' + cf + '/elimina';
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var cf = button.getAttribute('data-cf');
+                    var nome = button.getAttribute('data-nome');
+                    
+                    var modalBodyName = deleteModal.querySelector('#modal-delete-name');
+                    var modalForm = deleteModal.querySelector('#modal-delete-form');
+        
+                    modalBodyName.textContent = nome;
+                    modalForm.action = '{{base_url}}/soci/' + cf + '/elimina';
+                });
+            }
+
+            // DataTables Initialization
+            var table = $('.smart-table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                "pageLength": 10,
+                "orderCellsTop": true, // Critical for input filters
+                "language": {
+                    "search": "<i class='fa-solid fa-search text-secondary me-2'></i>Cerca in tutto:",
+                    "lengthMenu": "Mostra _MENU_",
+                    "info": "Record _START_-_END_ di _TOTAL_",
+                    "infoEmpty": "Nessun dato",
+                    "infoFiltered": "(su _MAX_)",
+                    "paginate": {
+                        "first": '<i class="fa-solid fa-angles-left"></i>',
+                        "last": '<i class="fa-solid fa-angles-right"></i>',
+                        "next": '<i class="fa-solid fa-angle-right"></i>',
+                        "previous": '<i class="fa-solid fa-angle-left"></i>'
+                    },
+                    "zeroRecords": "Nessun socio trovato con questi criteri"
+                },
+                "dom": '<"d-flex justify-content-between align-items-center mb-3"<"text-secondary"l><"search-box"f>>t<"d-flex justify-content-between align-items-center mt-3"<"text-secondary small"i><"pagination-box"p>>',
+                "initComplete": function() {
+                    // Custom Styling for Dark Theme
+                    $('.dataTables_filter input').addClass('form-control form-control-sm bg-dark text-white border-secondary').css('display', 'inline-block').css('width', 'auto');
+                    $('.dataTables_length select').addClass('form-select form-select-sm bg-dark text-white border-secondary').css('display', 'inline-block').css('width', 'auto');
+                    $('.page-link').addClass('bg-dark text-secondary border-secondary');
+                    $('.page-item.active .page-link').addClass('bg-primary text-white border-primary').removeClass('bg-dark text-secondary');
+                    
+                    // Style Pagination on draw
+                    this.api().on('draw', function() {
+                        $('.page-link').addClass('bg-dark text-secondary border-secondary');
+                        $('.page-item.active .page-link').removeClass('bg-dark text-secondary').addClass('bg-primary text-white border-primary');
+                    });
+                }
             });
         });
     </script>
     {{> layout_footer }}
+

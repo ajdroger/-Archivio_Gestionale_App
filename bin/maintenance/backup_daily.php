@@ -2,8 +2,17 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use Psr\Log\LoggerInterface;
+use FratellanzaMilitare\Service\BackupService;
+use Psr\Log\AbstractLogger;
+
+// Simple logger so we see output
+class ConsoleLogger extends AbstractLogger
+{
+    public function log($level, $message, array $context = []): void
+    {
+        echo strtoupper($level) . ": $message\n";
+    }
+}
 
 // 1. Security Check (CLI Only)
 if (php_sapi_name() !== 'cli') {
@@ -29,17 +38,19 @@ if (!is_dir($backupDir)) {
 echo "Starting Backup...\n";
 echo "Target: {$zipPath}\n";
 
-$zipPath = $backupDir . '/' . $filename;
-
-// Ensure backup dir exists
-if (!is_dir($backupDir)) {
-    mkdir($backupDir, 0755, true);
+// 4. Generate MySQL Dump via Service
+echo "Generating MySQL Dump...\n";
+$service = new BackupService('', $backupDir, new ConsoleLogger(), 7); // 7 days retention for SQLs
+if (!$service->executeBackup()) {
+    echo "Warning: MySQL Dump failed. Proceeding with files only.\n";
 }
 
-echo "Starting Backup...\n";
-echo "Target: {$zipPath}\n";
+// Find latest .sql to include in ZIP
+$sqlFiles = glob($backupDir . '/*.sql');
+usort($sqlFiles, fn($a, $b) => filemtime($b) - filemtime($a));
+$latestSql = $sqlFiles[0] ?? null;
 
-$dbFile = $rootDir . '/database.sqlite';
+// 5. Create ZIP
 $uploadDir = $rootDir . '/storage/uploads';
 
 if (class_exists('ZipArchive')) {
@@ -49,13 +60,13 @@ if (class_exists('ZipArchive')) {
         die("Error: Cannot create zip file.\n");
     }
 
-    // 4. Add Database
-    if (file_exists($dbFile)) {
-        echo "Adding database.sqlite...\n";
-        $zip->addFile($dbFile, 'database.sqlite');
+    // Add Database Dump
+    if ($latestSql) {
+        echo "Adding database dump: " . basename($latestSql) . "\n";
+        $zip->addFile($latestSql, 'database_dump.sql');
     }
 
-    // 5. Add Uploads
+    // Add Uploads
     if (is_dir($uploadDir)) {
         echo "Adding uploads...\n";
         $files = new RecursiveIteratorIterator(
@@ -76,38 +87,38 @@ if (class_exists('ZipArchive')) {
 } elseif (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
     echo "ZipArchive not found. Using PowerShell Compress-Archive...\n";
 
-    $paths = [];
-    if (file_exists($dbFile))
-        $paths[] = $dbFile;
-    if (is_dir($uploadDir))
-        $paths[] = $uploadDir;
+    $pathsToZip = [];
+    if ($latestSql) {
+        $pathsToZip[] = $latestSql;
+    }
+    if (is_dir($uploadDir)) {
+        $pathsToZip[] = $uploadDir;
+    }
 
-    if (empty($paths)) {
+    if (empty($pathsToZip)) {
         die("Nothing to backup.\n");
     }
 
-    // Escape paths for PowerShell
-    $pathArgs = implode(', ', array_map(fn($p) => "'$p'", $paths));
+    // Escape paths
+    $pathArgs = implode(', ', array_map(fn($p) => "'$p'", $pathsToZip));
+    // Destination needs to be absolute
+    $dest = realpath($backupDir) . DIRECTORY_SEPARATOR . $filename;
 
-    // Command
-    $cmd = "powershell -Command \"Compress-Archive -Path @($pathArgs) -DestinationPath '$zipPath' -Force\"";
-
+    $cmd = "powershell -Command \"Compress-Archive -Path @($pathArgs) -DestinationPath '$dest' -Force\"";
     echo "Executing: $cmd\n";
+
     exec($cmd, $output, $returnCode);
 
     if ($returnCode !== 0) {
         echo "PowerShell Error Output:\n" . implode("\n", $output) . "\n";
-        die("Error: PowerShell backup failed.\n");
+        die("Error: PowerShell backup failed. Code: $returnCode\n");
     }
-
-} else {
-    die("Error: ZipArchive extension missing and not on Windows.\n");
 }
 
-echo "Backup created successfully.\n";
+echo "Backup ZIP created successfully.\n";
 
-// 6. Retention Policy (Delete > 7 days)
-echo "Running retention policy (7 days)...\n";
+// 6. Retention Policy for ZIPs (Delete > 7 days)
+echo "Running retention policy for ZIPs (7 days)...\n";
 $retentionDays = 7;
 $files = glob($backupDir . '/*.zip');
 $now = time();
@@ -115,7 +126,7 @@ $now = time();
 foreach ($files as $file) {
     if (is_file($file)) {
         if ($now - filemtime($file) >= 60 * 60 * 24 * $retentionDays) {
-            echo "Deleting old backup: " . basename($file) . "\n";
+            echo "Deleting old backup ZIP: " . basename($file) . "\n";
             unlink($file);
         }
     }

@@ -14,13 +14,11 @@ class PDOSocioRepository implements SocioRepository
 {
     private PDO $pdo;
     private PDODocumentoRepository $docRepo;
-    private bool $isMysql;
 
     public function __construct(?PDO $pdo = null)
     {
         $this->pdo = $pdo ?? DatabaseConnection::getConnection();
         $this->docRepo = new PDODocumentoRepository($this->pdo);
-        $this->isMysql = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql';
     }
 
     public function save(Socio $socio): void
@@ -30,24 +28,13 @@ class PDOSocioRepository implements SocioRepository
             $this->pdo->beginTransaction();
         }
         try {
-
-            // Determine Status Column Name
-            $statusCol = $this->isMysql ? 'stato_iscrizione' : 'stato';
-
-            $sql = "";
-            if ($this->isMysql) {
-                // MySQL
-                $sql = "INSERT INTO soci (codice_fiscale, matricola, nome, cognome, data_nascita, indirizzo, email, telefono, $statusCol) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-                        ON DUPLICATE KEY UPDATE 
-                        matricola=VALUES(matricola), nome=VALUES(nome), cognome=VALUES(cognome), 
-                        data_nascita=VALUES(data_nascita), indirizzo=VALUES(indirizzo), email=VALUES(email), 
-                        telefono=VALUES(telefono), $statusCol=VALUES($statusCol)";
-            } else {
-                // SQLite
-                $sql = "INSERT OR REPLACE INTO soci (codice_fiscale, matricola, nome, cognome, data_nascita, indirizzo, email, telefono, $statusCol) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            }
+            // MySQL Logic (Strict)
+            $sql = "INSERT INTO soci (codice_fiscale, matricola, nome, cognome, data_nascita, indirizzo, email, telefono, stato_iscrizione) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE 
+                    matricola=VALUES(matricola), nome=VALUES(nome), cognome=VALUES(cognome), 
+                    data_nascita=VALUES(data_nascita), indirizzo=VALUES(indirizzo), email=VALUES(email), 
+                    telefono=VALUES(telefono), stato_iscrizione=VALUES(stato_iscrizione)";
 
             $stmt = $this->pdo->prepare($sql);
 
@@ -64,20 +51,15 @@ class PDOSocioRepository implements SocioRepository
             ]);
 
             // Sync Associated Documents
-            // 1. Get existing IDs from DB
             $existingDocs = $this->docRepo->findBySocio($socio->CodiceFiscale);
             $existingIds = array_map(fn($d) => $d->IdUnivoco, $existingDocs);
-
-            // 2. Get current IDs from Entity
             $currentIds = array_map(fn($d) => $d->IdUnivoco, $socio->DocumentiAssociati);
 
-            // 3. Find IDs to delete (in DB but not in Entity)
             $idsToDelete = array_diff($existingIds, $currentIds);
             foreach ($idsToDelete as $id) {
                 $this->docRepo->delete($id);
             }
 
-            // 4. Save current documents (Insert/Update)
             foreach ($socio->DocumentiAssociati as $doc) {
                 $this->docRepo->save($doc, $socio->CodiceFiscale);
             }
@@ -109,7 +91,8 @@ class PDOSocioRepository implements SocioRepository
     public function findAll(): array
     {
         $anno = (int) date('Y');
-        // Portable Subquery
+
+        // MySQL uses 'socio_cf' and standard SQL
         $sql = "SELECT s.*, 
                 (SELECT 1 FROM documenti d 
                  WHERE d.socio_cf = s.codice_fiscale 
@@ -119,23 +102,13 @@ class PDOSocioRepository implements SocioRepository
                  LIMIT 1) as is_pagato
                 FROM soci s";
 
-        // Note: 'documenti' table column 'codice_fiscale_socio' was renamed to 'socio_cf' in MySQL Migration.
-        // We must ensure the query uses the correct column name.
-        // But if I want to support BOTH (for fallback), I check schema or driver.
-        // Since migration changed the name in MySQL, and I am rewriting this file, I should use 'socio_cf' for MySQL and 'codice_fiscale_socio' for SQLite?
-        // Or I should have kept the column name same.
-        // I will use a helper property for column name.
-
-        $fkCol = $this->isMysql ? 'socio_cf' : 'codice_fiscale_socio';
-        $sql = str_replace('d.socio_cf', "d.$fkCol", $sql);
-
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$anno]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $soci = [];
         foreach ($rows as $row) {
-            $soci[] = $this->mapRowToSocio($row, false); // Skip heavy document hydration
+            $soci[] = $this->mapRowToSocio($row, false);
         }
         return $soci;
     }
@@ -153,9 +126,8 @@ class PDOSocioRepository implements SocioRepository
         $socio->Matricola = $row['matricola'] ?? '-';
 
         try {
-            // MySQL uses 'stato_iscrizione', SQLite uses 'stato'
-            // Check both
-            $statusName = $row['stato'] ?? ($row['stato_iscrizione'] ?? 'IN_ATTESA');
+            // MySQL standard column
+            $statusName = $row['stato_iscrizione'] ?? 'IN_ATTESA';
             $socio->Stato = constant("FratellanzaMilitare\\Enum\\StatoIscrizione::{$statusName}");
         } catch (\Throwable $e) {
             $socio->Stato = StatoIscrizione::IN_ATTESA;
@@ -192,14 +164,12 @@ class PDOSocioRepository implements SocioRepository
     public function getStatistics(): array
     {
         $annoCorrente = (int) date('Y');
-        $fkCol = $this->isMysql ? 'socio_cf' : 'codice_fiscale_socio';
-        $statusCol = $this->isMysql ? 'stato_iscrizione' : 'stato';
 
         // Total Soci
         $total = $this->pdo->query("SELECT COUNT(*) FROM soci")->fetchColumn();
 
         // Active Soci
-        $stmtActive = $this->pdo->prepare("SELECT COUNT(*) FROM soci WHERE $statusCol = ?");
+        $stmtActive = $this->pdo->prepare("SELECT COUNT(*) FROM soci WHERE stato_iscrizione = ?");
         $stmtActive->execute([StatoIscrizione::ATTIVO->name]);
         $attivi = $stmtActive->fetchColumn();
 
@@ -207,7 +177,7 @@ class PDOSocioRepository implements SocioRepository
         $sqlPaganti = "SELECT COUNT(*) FROM soci s 
                        WHERE EXISTS (
                            SELECT 1 FROM documenti d 
-                           WHERE d.$fkCol = s.codice_fiscale 
+                           WHERE d.socio_cf = s.codice_fiscale 
                            AND d.tipo_documento = 'MODULO_ISCRIZIONE' 
                            AND d.anno_solare = ? 
                            AND d.stato = 'VALIDATO'
@@ -218,11 +188,8 @@ class PDOSocioRepository implements SocioRepository
 
         $morosi = $total - $paganti;
 
-        // 1. Financial Trend
-        // SQLite: strftime('%m', data). MySQL: MONTH(data)
-        $monthExpr = $this->isMysql ? "MONTH(data_caricamento)" : "strftime('%m', data_caricamento)";
-
-        $sqlTrend = "SELECT $monthExpr as mese, COUNT(*) as count 
+        // 1. Financial Trend (MySQL MONTH())
+        $sqlTrend = "SELECT MONTH(data_caricamento) as mese, COUNT(*) as count 
                      FROM documenti 
                      WHERE tipo_documento = 'MODULO_ISCRIZIONE' 
                      AND stato = 'VALIDATO' 
@@ -238,13 +205,8 @@ class PDOSocioRepository implements SocioRepository
             $trend[(int) $row['mese']] = (int) $row['count'];
         }
 
-        // 2. Demographics
-        // Age Calc
-        if ($this->isMysql) {
-            $ageExpr = "TIMESTAMPDIFF(YEAR, data_nascita, CURDATE())";
-        } else {
-            $ageExpr = "cast(strftime('%Y.%m%d', 'now') - strftime('%Y.%m%d', data_nascita) as int)";
-        }
+        // 2. Demographics (MySQL TIMESTAMPDIFF)
+        $ageExpr = "TIMESTAMPDIFF(YEAR, data_nascita, CURDATE())";
 
         $sqlAge = "SELECT 
                     CASE 
@@ -258,7 +220,7 @@ class PDOSocioRepository implements SocioRepository
                    FROM (
                        SELECT $ageExpr as age
                        FROM soci
-                       WHERE $statusCol = 'ATTIVO'
+                       WHERE stato_iscrizione = 'ATTIVO'
                    ) as sub
                    GROUP BY range_label";
 
@@ -278,6 +240,9 @@ class PDOSocioRepository implements SocioRepository
             'attivi' => (int) $attivi,
             'morosi' => (int) $morosi,
             'paganti' => (int) $paganti,
+            'perc_attivi' => $total > 0 ? round(($attivi / $total) * 100, 1) : 0,
+            'perc_paganti' => $total > 0 ? round(($paganti / $total) * 100, 1) : 0,
+            'perc_morosi' => $total > 0 ? round(($morosi / $total) * 100, 1) : 0,
             'trend_iscritti' => array_values($trend),
             'demografica' => $demografica,
             'data_riferimento' => date('d/m/Y H:i')
@@ -288,15 +253,14 @@ class PDOSocioRepository implements SocioRepository
     {
         $term = "%$query%";
         $anno = (int) date('Y');
-        $fkCol = $this->isMysql ? 'socio_cf' : 'codice_fiscale_socio';
 
-        // Concat
-        $concat = $this->isMysql ? "CONCAT(s.nome, ' ', s.cognome)" : "(s.nome || ' ' || s.cognome)";
-        $concatRev = $this->isMysql ? "CONCAT(s.cognome, ' ', s.nome)" : "(s.cognome || ' ' || s.nome)";
+        // MySQL CONCAT
+        $concat = "CONCAT(s.nome, ' ', s.cognome)";
+        $concatRev = "CONCAT(s.cognome, ' ', s.nome)";
 
         $sql = "SELECT s.*, 
                 (SELECT 1 FROM documenti d 
-                 WHERE d.$fkCol = s.codice_fiscale 
+                 WHERE d.socio_cf = s.codice_fiscale 
                  AND d.tipo_documento = 'MODULO_ISCRIZIONE' 
                  AND d.anno_solare = ? 
                  AND d.stato = 'VALIDATO' 
@@ -325,12 +289,10 @@ class PDOSocioRepository implements SocioRepository
     public function findByFilters(array $filters): array
     {
         $anno = (int) date('Y');
-        $fkCol = $this->isMysql ? 'socio_cf' : 'codice_fiscale_socio';
-        $statusCol = $this->isMysql ? 'stato_iscrizione' : 'stato';
 
         $sql = "SELECT s.*, 
                 (SELECT 1 FROM documenti d 
-                 WHERE d.$fkCol = s.codice_fiscale 
+                 WHERE d.socio_cf = s.codice_fiscale 
                  AND d.tipo_documento = 'MODULO_ISCRIZIONE' 
                  AND d.anno_solare = ? 
                  AND d.stato = 'VALIDATO' 
@@ -340,7 +302,7 @@ class PDOSocioRepository implements SocioRepository
         $params = [$anno];
 
         if (!empty($filters['stato'])) {
-            $sql .= " AND s.$statusCol = ?";
+            $sql .= " AND s.stato_iscrizione = ?";
             $params[] = $filters['stato'];
         }
 
@@ -367,47 +329,35 @@ class PDOSocioRepository implements SocioRepository
         return $soci;
     }
 
-    /**
-     * Hard delete socio from database (GDPR Art. 17 - Right to Erasure)
-     * Permanently removes all personal data including documents from filesystem
-     * 
-     * @param string $codiceFiscale
-     * @return bool Success
-     */
     public function hardDelete(string $codiceFiscale): bool
     {
         try {
             $this->pdo->beginTransaction();
 
-            // 1. Get and delete all associated document files
-            $driver = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
-            $cfCol = ($driver === 'mysql') ? 'socio_cf' : 'codice_fiscale_socio';
-            $stmtDocs = $this->pdo->prepare("SELECT percorso_file FROM documenti WHERE $cfCol = ?");
+            $stmtDocs = $this->pdo->prepare("SELECT id_univoco, nome_file FROM documenti WHERE socio_cf = ?");
             $stmtDocs->execute([$codiceFiscale]);
-            $files = $stmtDocs->fetchAll(PDO::FETCH_COLUMN);
+            $docs = $stmtDocs->fetchAll(PDO::FETCH_ASSOC);
 
-            foreach ($files as $file) {
-                if ($file && file_exists($file)) {
-                    @unlink($file);
+            foreach ($docs as $doc) {
+                // Percorso convenzionale dei file
+                $filePath = __DIR__ . '/../../../storage/uploads/' . $doc['id_univoco'] . '_' . $doc['nome_file'];
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
                 }
             }
 
-            // 2. Delete from documenti table (CASCADE should handle, but explicit for clarity)
-            $colName = ($driver === 'mysql') ? 'socio_cf' : 'codice_fiscale_socio';
-            $stmtDelDocs = $this->pdo->prepare("DELETE FROM documenti WHERE $colName = ?");
+            $stmtDelDocs = $this->pdo->prepare("DELETE FROM documenti WHERE socio_cf = ?");
             $stmtDelDocs->execute([$codiceFiscale]);
 
-            // 3. Delete from soci table
             $stmtDelSocio = $this->pdo->prepare("DELETE FROM soci WHERE codice_fiscale = ?");
             $stmtDelSocio->execute([$codiceFiscale]);
 
             $this->pdo->commit();
 
-            // 5. Audit log (pseudonymized for compliance, system action)
             $pseudoCF = substr($codiceFiscale, 0, 3) . '***' . substr($codiceFiscale, -3);
             $trail = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
             $trail->logEvento(
-                null, // System action, no user
+                null,
                 'GDPR_HARD_DELETE',
                 $pseudoCF
             );
@@ -421,13 +371,6 @@ class PDOSocioRepository implements SocioRepository
         }
     }
 
-    /**
-     * Export all personal data for a single socio (GDPR Art. 15 & 20)
-     * Returns machine-readable JSON format for data portability
-     * 
-     * @param string $codiceFiscale
-     * @return array Complete data export
-     */
     public function exportGDPRData(string $codiceFiscale): array
     {
         $socio = $this->findByCodiceFiscale($codiceFiscale);
@@ -435,19 +378,14 @@ class PDOSocioRepository implements SocioRepository
             return [];
         }
 
-        // Fetch additional data from database (dates not in Socio object)
-        $statusCol = $this->isMysql ? 'stato_iscrizione' : 'stato';
-        $stmt = $this->pdo->prepare("SELECT data_iscrizione, data_scadenza FROM soci WHERE codice_fiscale = ?");
-        $stmt->execute([$codiceFiscale]);
-        $dbData = $stmt->fetch(PDO::FETCH_ASSOC);
+        // In questa versione dello schema, data_iscrizione e data_scadenza sono gestite via documenti
+        $dbData = ['data_iscrizione' => null, 'data_scadenza' => null];
 
         $docRepo = new PDODocumentoRepository($this->pdo);
 
-        // Safe document loading with error handling
         try {
             $documents = $docRepo->findBySocio($codiceFiscale);
         } catch (\Exception $e) {
-            // If document loading fails, continue with empty array
             $documents = [];
         }
 

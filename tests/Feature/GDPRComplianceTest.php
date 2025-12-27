@@ -5,6 +5,11 @@ use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 describe('GDPR Compliance Tests', function () {
 
+    beforeEach(function () {
+        $pdo = DatabaseConnection::getConnection();
+        $pdo->exec("DELETE FROM soci WHERE codice_fiscale IN ('TSTDLT85M01H501Z', 'TSTEXP85M01H501Z', 'TSTAUD85M01H501Z')");
+    });
+
     test('hardDelete removes all personal data permanently', function () {
         $pdo = DatabaseConnection::getConnection();
         $repo = new PDOSocioRepository($pdo);

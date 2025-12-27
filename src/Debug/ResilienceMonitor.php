@@ -111,13 +111,19 @@ class ResilienceMonitor
             return ['status' => false, 'message' => 'Log file mancante'];
         }
 
-        // Legge le ultime 10 righe per verificare la presenza di request_id
-        $lines = array_slice(file($logFile), -10);
+        // Memory-safe check: Read only last 10KB
         $foundId = false;
-        foreach ($lines as $line) {
-            if (strpos($line, 'request_id') !== false) {
+        $fp = @fopen($logFile, 'rb');
+        if ($fp) {
+            fseek($fp, -10240, SEEK_END); // Go back 10KB (or start if smaller)
+            if (ftell($fp) < 0)
+                rewind($fp); // Reset if file is smaller than 10KB
+
+            $chunk = fread($fp, 10240);
+            fclose($fp);
+
+            if ($chunk && strpos($chunk, 'request_id') !== false) {
                 $foundId = true;
-                break;
             }
         }
 

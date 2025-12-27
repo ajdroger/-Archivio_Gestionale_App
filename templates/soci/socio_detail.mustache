@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="d-grid mt-5">
-                    <a href="/fratellanza-militare-archivio/public/soci/{{socio.cf}}/modifica" class="btn btn-warning fw-bold shadow-sm"><i class="fa-solid fa-user-pen me-2"></i>REVISIONA DATI</a>
+                    <a href="{{base_url}}/soci/{{socio.cf}}/modifica" class="btn btn-warning fw-bold shadow-sm"><i class="fa-solid fa-user-pen me-2"></i>REVISIONA DATI</a>
                 </div>
             </div>
         </div>
@@ -73,13 +73,13 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
-                                        <a href="/fratellanza-militare-archivio/public/soci/{{socio_cf}}/documenti/{{id}}/download" 
+                                        <a href="{{base_url}}/soci/{{socio_cf}}/documenti/{{id}}/download" 
                                            class="btn btn-sm btn-outline-primary border-primary border-opacity-25" 
                                            title="Download">
                                             <i class="fa-solid fa-cloud-arrow-down"></i>
                                         </a>
                                         
-                                        <form action="/fratellanza-militare-archivio/public/soci/{{socio_cf}}/documenti/{{id}}/elimina" 
+                                        <form action="{{base_url}}/soci/{{socio_cf}}/documenti/{{id}}/elimina" 
                                               method="POST" 
                                               onsubmit="return confirm('CONFERMA ELIMINAZIONE FISICA: L\'operazione è irreversibile e verrà tracciata nell\'audit trail.');">
                                             <input type="hidden" name="csrf_name" value="{{csrf_name}}">
@@ -110,7 +110,7 @@
                 </div>
             </div>
              <div class="card-footer bg-black bg-opacity-20 border-top border-secondary py-4 px-4 text-end">
-                <form action="/fratellanza-militare-archivio/public/soci/{{socio.cf}}/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-4 align-items-end w-100">
+                <form action="{{base_url}}/soci/{{socio.cf}}/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-4 align-items-end w-100">
                     <input type="hidden" name="csrf_name" value="{{csrf.name}}">
                     <input type="hidden" name="csrf_value" value="{{csrf.value}}">
                     
@@ -160,3 +160,4 @@
 
 <!-- Styles moved to style.css -->
 {{> layout_footer }}
+
