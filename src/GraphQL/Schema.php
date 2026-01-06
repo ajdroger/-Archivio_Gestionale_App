@@ -3,44 +3,15 @@ declare(strict_types=1);
 
 namespace FratellanzaMilitare\GraphQL;
 
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema as GraphQLSchema;
-use FratellanzaMilitare\GraphQL\Types\SocioType;
+use FratellanzaMilitare\GraphQL\Types\QueryType;
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 class Schema
 {
     public static function build(PDOSocioRepository $repo): GraphQLSchema
     {
-        $socioType = new SocioType();
-
-        $queryType = new ObjectType([
-            'name' => 'Query',
-            'fields' => [
-                'socio' => [
-                    'type' => $socioType,
-                    'description' => 'Recupera un singolo socio per CF',
-                    'args' => [
-                        'codiceFiscale' => Type::nonNull(Type::string())
-                    ],
-                    'resolve' => function ($root, $args) use ($repo) {
-                        return $repo->findByCodiceFiscale($args['codiceFiscale']);
-                    }
-                ],
-                'soci' => [
-                    'type' => Type::listOf($socioType),
-                    'description' => 'Lista paginata di soci',
-                    'args' => [
-                        'page' => ['type' => Type::int(), 'defaultValue' => 1],
-                        'perPage' => ['type' => Type::int(), 'defaultValue' => 50]
-                    ],
-                    'resolve' => function ($root, $args) use ($repo) {
-                        return $repo->findAllPaginated($args['page'], $args['perPage']);
-                    }
-                ]
-            ]
-        ]);
+        $queryType = new QueryType($repo);
 
         return new GraphQLSchema([
             'query' => $queryType

@@ -1,0 +1,21 @@
+PHP Version: 8.2+
+Composer: Latest Stable
+Node.js: 18+ (LTS recommended)
+NPM: 9+
+
+Required PHP Extensions:
+- pdo
+- pdo_mysql (for MySQL/MariaDB)
+- pdo_sqlite (for SQLite)
+- json
+- mbstring
+- openssl
+- xml
+- curl
+- zip
+- gd (for image processing/PDF)
+- intl
+
+Optional Requirements:
+- Redis Server (highly recommended for Session & Cache performance)
+- php-redis extension

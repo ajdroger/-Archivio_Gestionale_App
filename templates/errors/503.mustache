@@ -1,0 +1,22 @@
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-6 text-center">
+        <div class="error-icon mb-4">
+            <i class="fa-solid fa-person-digging fa-5x text-info opacity-75"></i>
+        </div>
+        <h1 class="display-1 fw-bold text-white mb-2">503</h1>
+        <h2 class="h4 text-secondary mb-4">Servizio Non Disponibile</h2>
+        <p class="lead text-secondary mb-5">
+            Il sistema è momentaneamente in manutenzione. Torneremo online a breve.
+        </p>
+        
+        {{#debug_msg}}
+        <div class="alert alert-dark text-start mb-4 font-monospace small">
+            <i class="fa-solid fa-bug me-2"></i><strong>Debug:</strong> {{debug_msg}}
+        </div>
+        {{/debug_msg}}
+
+        <a href="{{base_url}}/" class="btn btn-outline-light rounded-pill px-4" onclick="location.reload(); return false;">
+             <i class="fa-solid fa-rotate me-2"></i>Riprova
+        </a>
+    </div>
+</div>

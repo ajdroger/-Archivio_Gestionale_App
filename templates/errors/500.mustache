@@ -1,0 +1,27 @@
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-6 text-center">
+        <div class="error-icon mb-4">
+            <i class="fa-solid fa-triangle-exclamation fa-5x text-danger opacity-75"></i>
+        </div>
+        <h1 class="display-1 fw-bold text-white mb-2">500</h1>
+        <h2 class="h4 text-secondary mb-4">Errore del Server</h2>
+        <p class="lead text-secondary mb-5">
+            Si è verificato un errore interno imprevisto. Il nostro team è stato notificato.
+        </p>
+        
+        {{#debug_msg}}
+        <div class="alert alert-dark text-start mb-4 font-monospace small overflow-auto" style="max-height: 200px;">
+            <i class="fa-solid fa-bug me-2"></i><strong>Debug:</strong>
+            <pre class="mt-2 text-warning">{{debug_msg}}</pre>
+            {{#trace}}
+            <hr class="border-secondary">
+            <pre class="small text-muted">{{trace}}</pre>
+            {{/trace}}
+        </div>
+        {{/debug_msg}}
+
+        <a href="{{base_url}}/" class="btn btn-primary rounded-pill px-4">
+            <i class="fa-solid fa-house me-2"></i>Torna alla Dashboard
+        </a>
+    </div>
+</div>

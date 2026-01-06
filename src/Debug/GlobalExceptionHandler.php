@@ -36,7 +36,14 @@ class GlobalExceptionHandler
         bool $logErrors,
         bool $logErrorDetails
     ): ResponseInterface {
-        $this->logException($exception, 'HTTP_500', [
+        // Determine Status Code
+        $statusCode = 500;
+        if ($exception instanceof \Slim\Exception\HttpException) {
+            $statusCode = $exception->getCode();
+        }
+
+        // Log Exception
+        $this->logException($exception, 'HTTP_' . $statusCode, [
             'method' => $request->getMethod(),
             'uri' => (string) $request->getUri()
         ]);
@@ -46,25 +53,40 @@ class GlobalExceptionHandler
 
         // 1. Render HTML if requested and Engine is available
         if ($this->mustache && str_contains($acceptHeader, 'text/html')) {
-            $html = $this->mustache->render('error', [
-                'title' => 'Errore del Sistema',
-                'message' => 'Si è verificato un problema tecnico imprevisto.',
-                'code' => 500,
+            // Determine template based on status code
+            $template = "errors/{$statusCode}";
+            if (!file_exists(__DIR__ . "/../../Templates/errors/{$statusCode}.mustache")) {
+                $template = "errors/generic";
+            }
+
+            $viewData = [
+                'title' => 'Errore ' . $statusCode,
+                'code' => $statusCode,
+                'message' => $exception->getMessage(),
                 'debug_msg' => $displayErrorDetails ? $exception->getMessage() : null,
                 'trace' => $displayErrorDetails ? $exception->getTraceAsString() : null,
                 'year' => date('Y')
-            ]);
+            ];
+
+            // Render content first
+            $content = $this->mustache->render($template, $viewData);
+
+            // Render layout with content
+            $html = $this->mustache->render('layout/layout', array_merge($viewData, ['content' => $content]));
+
             $response->getBody()->write($html);
-            return $response->withHeader('Content-Type', 'text/html')->withStatus(500);
+            return $response->withHeader('Content-Type', 'text/html')->withStatus($statusCode);
         }
 
         // 2. Fallback to JSON
         $response->getBody()->write(json_encode([
-            'error' => 'Si è verificato un errore interno. Riprovare più tardi.',
+            'error' => true,
+            'code' => $statusCode,
+            'message' => 'Si è verificato un errore.',
             'debug_msg' => $displayErrorDetails ? $exception->getMessage() : null
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
     }
 
     private function logException(Throwable $t, string $code, array $extraContext = []): void

@@ -25,11 +25,41 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Bootstrap Slim App
+        $containerBuilder = new \DI\ContainerBuilder();
+        $root = dirname(__DIR__);
+
+        // Load definitions
+        $definitions = require $root . '/config/container.php';
+        foreach ($definitions as $def) {
+            $containerBuilder->addDefinitions($def);
+        }
+
+        $container = $containerBuilder->build();
+
+        // Database Connection for Tests
         if ($this->db === null) {
+            // Use in-memory SQLite or test DB if configured, otherwise use real connection (careful!)
+            // For now, assuming environment setup in Pest.php handles DB_DATABASE
             $this->db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
         }
+
+        // Setup AuditTrail
         $audit = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
         $audit->setPdo($this->db);
+
+        // CREATE APP
+        \Slim\Factory\AppFactory::setContainer($container);
+        $this->app = \Slim\Factory\AppFactory::create();
+
+        // Register Middleware
+        $middleware = require $root . '/config/middleware.php';
+        $middleware($this->app);
+
+        // Register Routes
+        $routes = require $root . '/config/routes.php';
+        $routes($this->app);
     }
 
     protected function tearDown(): void

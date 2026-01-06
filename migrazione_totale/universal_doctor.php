@@ -163,13 +163,25 @@ if (file_exists("$rootDir/vendor/autoload.php")) {
         $dotenv = Dotenv\Dotenv::createImmutable($rootDir);
         $dotenv->safeLoad();
 
-        $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-        $db = $_ENV['DB_DATABASE'] ?? 'fratellanza_db';
-        $user = $_ENV['DB_USERNAME'] ?? 'root';
-        $pass = $_ENV['DB_PASSWORD'] ?? '';
+        $connectionType = $_ENV['DB_CONNECTION'] ?? 'mysql';
 
-        echo "[CONN] Tento connessione a mysql:host=$host;dbname=$db...\n";
-        $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
+        if ($connectionType === 'sqlite') {
+            $dbPath = $_ENV['DB_DATABASE'] ?? __DIR__ . '/../../database.sqlite';
+            // Resolve relative path if needed
+            if (!file_exists($dbPath) && file_exists($rootDir . '/' . $dbPath)) {
+                $dbPath = $rootDir . '/' . $dbPath;
+            }
+            echo "[CONN] Tento connessione a sqlite:$dbPath...\n";
+            $pdo = new PDO("sqlite:$dbPath");
+        } else {
+            $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
+            $db = $_ENV['DB_DATABASE'] ?? 'fratellanza_db';
+            $user = $_ENV['DB_USERNAME'] ?? 'root';
+            $pass = $_ENV['DB_PASSWORD'] ?? '';
+
+            echo "[CONN] Tento connessione a mysql:host=$host;dbname=$db...\n";
+            $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
+        }
         echo "[OK] Connessione al Database RIUSCITA.\n";
 
         // Check Tabelle

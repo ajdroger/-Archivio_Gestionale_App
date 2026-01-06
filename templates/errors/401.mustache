@@ -1,0 +1,27 @@
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-6 text-center">
+        <div class="error-icon mb-4">
+            <i class="fa-solid fa-user-lock fa-5x text-danger opacity-75"></i>
+        </div>
+        <h1 class="display-1 fw-bold text-white mb-2">401</h1>
+        <h2 class="h4 text-secondary mb-4">Accesso Non Autorizzato</h2>
+        <p class="lead text-secondary mb-5">
+            È necessario effettuare l'accesso per visualizzare questa pagina.
+        </p>
+        
+        {{#debug_msg}}
+        <div class="alert alert-dark text-start mb-4 font-monospace small">
+            <i class="fa-solid fa-bug me-2"></i><strong>Debug:</strong> {{debug_msg}}
+        </div>
+        {{/debug_msg}}
+
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="{{base_url}}/login" class="btn btn-primary rounded-pill px-4">
+                <i class="fa-solid fa-right-to-bracket me-2"></i>Accedi
+            </a>
+            <a href="{{base_url}}/" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fa-solid fa-house me-2"></i>Home
+            </a>
+        </div>
+    </div>
+</div>
