@@ -39,10 +39,26 @@ class SettingsControllerTest extends TestCase
         $responseMock = $this->createMock(ResponseInterface::class);
         $streamMock = $this->createMock(StreamInterface::class);
 
+        // Mock RouteParser
+        $routeParserMock = $this->createMock(\Slim\Interfaces\RouteParserInterface::class);
+        $routeParserMock->method('urlFor')->willReturn('/mock-url');
+
+        // Mock RoutingResults
+        $routingResultsMock = $this->createMock(\Slim\Routing\RoutingResults::class);
+
+        // Configure Request attributes expected by RouteContext
+        $requestMock->method('getAttribute')
+            ->willReturnMap([
+                [\Slim\Routing\RouteContext::ROUTE_PARSER, null, $routeParserMock],
+                [\Slim\Routing\RouteContext::ROUTING_RESULTS, null, $routingResultsMock],
+                ['flash_success', null, null],
+                ['flash_error', null, null]
+            ]);
+
         // Expect Mustache render call
         $this->mustacheMock->expects($this->once())
             ->method('render')
-            ->with('settings', $this->callback(function ($data) {
+            ->with('impostazioni', $this->callback(function ($data) {
                 return $data['title'] === 'Impostazioni Profilo'
                     && $data['user']['username'] === 'admin'
                     && $data['user_initial'] === 'A';

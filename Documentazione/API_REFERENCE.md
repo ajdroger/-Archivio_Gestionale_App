@@ -345,5 +345,5 @@ All responses include:
 
 ---
 
-**Maintained By**: Soobadur Mohammad Ajmeer  
+**Author**: Soobadur Mohammad Ajmeer ©  
 **Last Updated**: 2025-12-27

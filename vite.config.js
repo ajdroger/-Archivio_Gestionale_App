@@ -48,9 +48,14 @@ export default defineConfig({
                 main: path.resolve(__dirname, 'resources/js/main.js')
             },
             output: {
-                entryFileNames: 'assets/[name].js',
-                chunkFileNames: 'assets/[name].js',
                 assetFileNames: 'assets/[name].[ext]'
+            }
+        },
+        minify: 'terser', // Explicit minification
+        terserOptions: {
+            compress: {
+                drop_console: true, // Remove console logs in production
+                drop_debugger: true
             }
         }
     },

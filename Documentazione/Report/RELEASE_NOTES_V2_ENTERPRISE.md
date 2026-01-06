@@ -2,7 +2,7 @@
 
 **Data Rilascio**: 27 Dicembre 2025
 **Stato**: 🟢 Production Ready
-**Autore**: Soobadur Mohammad Ajmeer
+**Autore**: Soobadur Mohammad Ajmeer ©
 
 ---
 

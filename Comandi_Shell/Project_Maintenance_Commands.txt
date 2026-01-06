@@ -1,0 +1,29 @@
+
+# ==========================================
+# COMANDI MANUTENZIONE PROGETTO (Custom)
+# ==========================================
+# Questi comandi sono specifici per "Fratellanza Militare Archivio"
+# Eseguire dalla root del progetto: C:\Program Files\Ampps\www\fratellanza-militare-archivio
+
+# --- HEALTH CHECK & DIAGNOSTICA ---
+php bin/tools/health_check.php                # Controllo completo salute sistema (DB, Permessi, PHP)
+php src/Debug/SystemCheck.php                 # Controllo rapido stato classi e servizi
+
+# --- DATABASE & MIGRATIONS ---
+php bin/restored/restore_soci_500.php         # [FACTORY] Svuota Soci e ne crea 500 finti
+php bin/restored/restore_users_14.php         # [FACTORY] Ripristina i 14 utenti di sistema default
+php bin/restored/reset_db_factory.php         # [NUCLEAR] Reset completo del database (Wipe totale)
+php bin/maintenance/check_integrity.php       # Controlla orfani e consistenza dati associati
+
+# --- MIGRAZIONE & PORTABILITA' ---
+migrazione_totale\LANCIA_MIGRAZIONE.bat       # (Windows) Doppio clic per setup automatico su nuovo PC
+php migrazione_totale/universal_doctor.php    # Script manuale di auto-riparazione ambiente
+
+# --- PULIZIA & MANUTENZIONE ---
+php bin/restored/clean_temp_files.php         # Pulisce log e file temporanei
+php bin/restored/reset_audit_logs.php         # Svuota i log di sicurezza (Audit Trail)
+php bin/maintenance/backup.php                # Esegue un backup SQL del database in storage/backups/
+
+# --- DEBUGGING STRUMENTTI ---
+php bin/debug_tools/test_smtp.php             # Test invio email (configurazione .env)
+php bin/debug_tools/check_redis_reflection.php # Verifica se Redis è attivo e raggiungibile

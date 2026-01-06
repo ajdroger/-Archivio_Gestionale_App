@@ -1,0 +1,277 @@
+PHPUnit 11.5.33 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.2.29
+Configuration: C:\Program Files\Ampps\www\fratellanza-militare-archivio\phpunit.xml
+
+.......
+   PASS  Tests\Unit\AmministratoreTest
+  Γ£ô crea utente                                                     0.09s  
+  Γ£ô models                                                          0.02s  
+  Γ£ô crea utente amministratore                                      0.06s  
+  Γ£ô revoca permessi                                                 0.02s  
+  Γ£ô visualizza audit log                                            0.01s  
+  Γ£ô visualizza audit log senza filtri                               0.02s  
+  Γ£ô genera report audit                                             0.02s  
+..
+   PASS  Tests\Unit\BackupIntegrityTest
+  Γ£ô BackupService esegue la copia del database                      0.23s  
+  Γ£ô BackupService ruota i vecchi backup correttamente               0.13s  
+..
+   PASS  Tests\Unit\Controller\DevTools\DevToolsDatabaseControllerTest
+  Γ£ô db query executes select                                        0.03s  
+  Γ£ô db query executes update
+....
+   PASS  Tests\Unit\Controller\DevTools\DevToolsFileSystemControllerTest
+  Γ£ô fs list returns correct structure                               0.01s  
+  Γ£ô fs read reads content
+  Γ£ô fs save updates content                                         0.02s  
+  Γ£ô security cant traverse up
+.
+   PASS  Tests\Unit\DocumentoTest
+  Γ£ô verifica integrita documento                                    0.01s  
+.
+   PASS  Tests\Unit\EmailServiceTest
+  Γ£ô email service writes to log file                                0.03s  
+E.
+   FAIL  Tests\Unit\InfrastructureTest
+  Γ¿» google drive adapter uploads and downloads                      1.79s  
+  Γ£ô ocr engine processes image                                      0.01s  
+........
+   PASS  Tests\Unit\OperatoreTest
+  Γ£ô carica pratica                                                  0.03s  
+  Γ£ô carica pratica senza codice fiscale throws exception            0.02s  
+  Γ£ô carica pratica senza tipo throws exception                      0.04s  
+  Γ£ô ricerca socio                                                   0.05s  
+  Γ£ô ricerca socio per nome                                          0.04s  
+  Γ£ô ricerca socio per matricola                                     0.02s  
+  Γ£ô stampa report                                                   0.05s  
+  Γ£ô stampa report senza parametri                                   0.02s  
+......
+   PASS  Tests\Unit\Service\CacheServiceTest
+  Γ£ô get returns value from redis                                    0.01s  
+  Γ£ô get returns null on miss                                        0.10s  
+  Γ£ô set delegates to redis                                          0.14s  
+  Γ£ô remember returns cached value
+  Γ£ô invalidate soci calls delete pattern
+  Γ£ô remember soci list generates correct key
+....
+   PASS  Tests\Unit\Service\QueueServiceTest
+  Γ£ô push inserts job                                                0.01s  
+  Γ£ô pop returns null if no job
+  Γ£ô pop returns job and reserves it                                 0.37s  
+  Γ£ô complete deletes job
+Redis GET error: Redis down
+........
+   PASS  Tests\Unit\Service\RedisServiceTest
+  Γ£ô get deserializes value                                          0.01s  
+  Γ£ô get returns null on failure                                     0.06s  
+  Γ£ô set serializes value
+  Γ£ô set with ttl
+  Γ£ô delete delegates to client
+  Γ£ô remember returns cached value
+  Γ£ô remember computes and stores value
+  Γ£ô disabled service returns defaults
+.........
+   PASS  Tests\Unit\Service\ValidationServiceTest
+  Γ£ô valid codice fiscale                                            0.01s  
+  Γ£ô invalid codice fiscale length
+  Γ£ô invalid codice fiscale format
+  Γ£ô valid email
+  Γ£ô invalid email
+  Γ£ô valid pdf upload
+  Γ£ô valid image upload
+  Γ£ô invalid mime type
+  Γ£ô file too large
+...
+   PASS  Tests\Unit\SocioTest
+  Γ£ô socio can be instantiated                                       0.02s  
+  Γ£ô aggiorna anagrafica                                             0.01s  
+  Γ£ô verifica morosita                                               0.01s  
+..
+   PASS  Tests\Feature\Controller\HealthControllerTest
+  Γ£ô check returns200 when healthy                                   0.01s  
+  Γ£ô check returns503 when unhealthy
+E
+   FAIL  Tests\Feature\Controller\SettingsControllerTest
+  Γ¿» view renders settings template
+.
+   PASS  Tests\Feature\CorrelationIdTest
+  Γ£ô request id is logged in context                                 1.02s  
+.
+   PASS  Tests\Feature\ExampleTest
+  Γ£ô example                                                         0.01s  
+.  63 / 130 ( 48%)
+...
+   PASS  Tests\Feature\GDPRComplianceTest
+  Γ£ô GDPR Compliance Tests ΓåÆ hardDelete removes all personal data pΓÇª 0.04s  
+  Γ£ô GDPR Compliance Tests ΓåÆ exportGDPRData returns complete personΓÇª 0.07s  
+  Γ£ô GDPR Compliance Tests ΓåÆ exportGDPRData handles non-existent soΓÇª 0.01s  
+  Γ£ô GDPR Compliance Tests ΓåÆ hardDelete creates audit log entry      0.04s  
+.
+   PASS  Tests\Feature\HomeControllerTest
+  Γ£ô home dashboard renders correctly                                0.02s  
+..
+   PASS  Tests\Feature\LoginControllerTest
+  Γ£ô login form renders                                              0.01s  
+  Γ£ô login verify success redirects                                  0.07s  
+..
+   PASS  Tests\Feature\SocioControllerTest
+  Γ£ô socio list renders                                              0.01s  
+  Γ£ô socio create stores data                                        0.01s  
+.
+   PASS  Tests\Feature\StatisticsControllerTest
+  Γ£ô statistics view renders                                         0.01s  
+.
+   PASS  Tests\Feature\TestPdfGenerationTest
+  Γ£ô it generates physical pdf on socio creation with payment        4.65s  
+.
+   PASS  Tests\Feature\UserJourneyTest
+  Γ£ô User Journey: Complete Lifecycle of a Socio via Modulo AnagrafΓÇª 0.07s  
+...
+   PASS  Tests\Integration\DatabaseSchemaTest
+  Γ£ô required tables exist                                           0.04s  
+  Γ£ô socio table schema                                              0.01s  
+  Γ£ô documenti table schema                                          0.01s  
+.
+   PASS  Tests\Integration\PersistenceTest
+  Γ£ô can save and retrieve socio                                     0.04s  
+...
+   PASS  Tests\Integration\RegistrationServicePestTest
+  Γ£ô registrazione fallisce se utente esiste gia                     0.06s  
+  Γ£ô pdf generato solo se pagamento effettuato                       0.03s  
+  Γ£ô pdf generato se pagamento presente                              0.06s  
+.
+   PASS  Tests\Integration\RegistrationServiceTest
+  Γ£ô Integration: Registration Service Register New Member Flow      0.07s  
+..
+   PASS  Tests\Integration\RepositoryEdgeCasesTest
+  Γ£ô repository handles special characters in search                 0.03s  
+  Γ£ô repository handles unicode characters                           0.02s  
+.........
+   PASS  Tests\Integration\SearchRobustnessTest
+  Γ£ô search finds by first name only                                 0.03s  
+  Γ£ô search finds by last name only                                  0.02s  
+  Γ£ô search finds by combined first and last name                    0.02s  
+  Γ£ô search finds by combined last and first name                    0.02s  
+  Γ£ô search finds by partial codice fiscale                          0.03s  
+  Γ£ô search finds by full codice fiscale                             0.04s  
+  Γ£ô search finds by matricola                                       0.02s  
+  Γ£ô search finds by email                                           0.03s  
+  Γ£ô search finds by phone                                           0.03s  
+.....
+   PASS  Tests\Integration\SecurityWorkflowTest
+  Γ£ô workflow creazione utente e operazioni                          0.11s  
+  Γ£ô workflow verifica permessi negati                               0.03s  
+  Γ£ô workflow export audit trail                                     0.07s  
+  Γ£ô workflow revoca permessi                                        0.02s  
+  Γ£ô workflow amministratore accesso totale                          0.01s  
+.
+   PASS  Tests\Integration\TransactionResilienceTest
+  Γ£ô verifica rollback su errore durante il salvataggio dei documenΓÇª 0.02s  
+...
+   PASS  Tests\Arch\ArchitectureTest
+  Γ£ô controllers                                                    17.28s  
+  Γ£ô debug                                                           3.46s  
+  Γ£ô models                                                          0.60s  
+.....
+   PASS  Tests\Security\AccessControlTest
+  Γ£ô operatore ha permessi base                                      0.01s  
+  Γ£ô operatore non ha permessi amministrativi
+  Γ£ô amministratore ha accesso completo
+  Γ£ô grant permesso a nuovo ruolo
+  Γ£ô grant non aggiunge duplicati
+.......
+   PASS  Tests\Security\AuditTrailTest
+  Γ£ô log evento                                                      0.02s  
+  Γ£ô esportazione json                                               0.01s  
+  Γ£ô esportazione csv                                                0.01s  
+  Γ£ô esportazione formato non supportato throws exception
+  Γ£ô ricerca azioni con filtri                                       0.02s  
+  Γ£ô genera report today                                             0.02s  
+  Γ£ô scrittura su database                                           0.01s  
+........
+   PASS  Tests\Security\DependencyVulnerabilityTest
+  Γ£ô composer packages have no known vulnerabilities                 3.09s  
+  Γ£ô npm packages have no known vulnerabilities                      0.73s  
+  Γ£ô composer.lock file exists and is valid                          0.04s  
+  Γ£ô package-lock.json file exists and is valid                      0.01s  
+  Γ£ô no deprecated composer packages in production dependencies
+  Γ£ô critical security packages are installed
+  Γ£ô sensitive files are protected in .gitignore
+  Γ£ô defuse encryption library is installed for TOTP security
+..
+   PASS  Tests\Security\GDPRAnonymizationTest
+  Γ£ô cf anonymization                                                0.02s  
+  Γ£ô username anonymization                                          0.01s  
+.
+   PASS  Tests\Security\MiddlewareTest
+  Γ£ô security headers are added
+. 126 / 130 ( 96%)
+.
+   PASS  Tests\Security\ResilientSessionTest
+  Γ£ô SessionManager rigenera l'ID di sessione correttamente
+  Γ£ô verifica configurazione sicura dei cookie di sessione
+...                                                            130 / 130 (100%)
+   PASS  Tests\Security\SecurityHeadersTest
+  Γ£ô SecurityHeadersMiddleware Tests ΓåÆ adds Content-Security-Policy header
+  Γ£ô SecurityHeadersMiddleware Tests ΓåÆ adds X-Frame-Options DENY header
+  Γ£ô SecurityHeadersMiddleware Tests ΓåÆ all security headers are present
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Unit\InfrastructureTest > google drive adapterΓÇª   Error   
+  Class "FratellanzaMilitare\InfrastrutturaIT\GoogleDriveAdapter" not found
+
+  at tests\Unit\InfrastructureTest.php:7
+      3Γûò use FratellanzaMilitare\InfrastrutturaIT\GoogleDriveAdapter;
+      4Γûò use FratellanzaMilitare\InfrastrutturaIT\OCREngine;
+      5Γûò 
+      6Γûò test('google drive adapter uploads and downloads', function () {
+  Γ₧£   7Γûò     $adapter = new GoogleDriveAdapter();
+      8Γûò 
+      9Γûò     $url = $adapter->upload("test_file.pdf", "FakeContent");
+     10Γûò     expect($url)->toContain("drive.google.com");
+     11Γûò
+
+  1   tests\Unit\InfrastructureTest.php:7
+
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\Controller\SettingsControlleΓÇª  RuntimeException   
+  Cannot create RouteContext before routing has been completed
+
+  at vendor\slim\slim\Slim\Routing\RouteContext.php:37
+     33Γûò         $routingResults = $serverRequest->getAttribute(self::ROUTING_RESULTS);
+     34Γûò         $basePath = $serverRequest->getAttribute(self::BASE_PATH);
+     35Γûò 
+     36Γûò         if ($routeParser === null || $routingResults === null) {
+  Γ₧£  37Γûò             throw new RuntimeException('Cannot create RouteContext before routing has been completed');
+     38Γûò         }
+     39Γûò 
+     40Γûò         /** @var RouteInterface|null $route */
+     41Γûò         /** @var RouteParserInterface $routeParser */
+
+  1   vendor\slim\slim\Slim\Routing\RouteContext.php:37
+  2   src\Controller\SettingsController.php:38
+
+
+  Tests:    2 failed, 128 passed (390 assertions)
+  Duration: 36.13s
+
+
+
+Time: 00:37.289, Memory: 44.00 MB
+
+There were 2 errors:
+
+1) P\Tests\Unit\InfrastructureTest::__pest_evaluable_google_drive_adapter_uploads_and_downloads
+Error: Class "FratellanzaMilitare\InfrastrutturaIT\GoogleDriveAdapter" not found
+
+C:\Program Files\Ampps\www\fratellanza-militare-archivio\tests\Unit\InfrastructureTest.php:7
+
+2) Tests\Feature\Controller\SettingsControllerTest::testViewRendersSettingsTemplate
+RuntimeException: Cannot create RouteContext before routing has been completed
+
+C:\Program Files\Ampps\www\fratellanza-militare-archivio\vendor\slim\slim\Slim\Routing\RouteContext.php:37
+C:\Program Files\Ampps\www\fratellanza-militare-archivio\src\Controller\SettingsController.php:38
+C:\Program Files\Ampps\www\fratellanza-militare-archivio\tests\Feature\Controller\SettingsControllerTest.php:63
+
+ERRORS!
+Tests: 130, Assertions: 390, Errors: 2.

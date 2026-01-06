@@ -1,6 +1,6 @@
 # Report Finale: Refactoring Frontend Assets
 **Data:** 26 Dicembre 2025
-**Autore:** Soobadur Mohammad Ajmeer
+**Autore:** Soobadur Mohammad Ajmeer ©
 
 ## Obiettivo
 Separare chiaramente le responsabilità (Separation of Concerns) estraendo JavaScript e CSS inline dai template Mustache in file statici dedicati, migliorando la manutenibilità e la leggibilità del codice.

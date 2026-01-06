@@ -1,0 +1,26 @@
+
+# ==========================================
+# GUIDA COMANDI PHP & COMPOSER
+# ==========================================
+
+# --- PHP BASE ---
+php -v                                        # Controlla versione PHP (Richiesto 8.1+)
+php -m                                        # Lista estensioni installate
+php <nome_file.php>                           # Esegue uno script PHP da riga di comando
+php -S localhost:8000 -t public/              # Avvia server di sviluppo integrato (se non usi Apache)
+
+# --- COMPOSER (Gestore Pacchetti) ---
+composer install                              # Installa tutte le dipendenze definite in composer.lock
+composer update                               # Aggiorna le dipendenze alle ultime versioni compatibili
+composer require <pacchetto>                  # Installa un nuovo pacchetto (es. monolog/monolog)
+composer remove <pacchetto>                   # Rimuove un pacchetto
+composer dump-autoload                        # Rigenera la mappa delle classi (utile se non trova classi nuove)
+composer validate                             # Controlla se il file composer.json è valido
+
+# --- RECTIFY / STANDARDS ---
+vendor/bin/php-cs-fixer fix src/              # Corregge automaticamente lo stile del codice (PSR-12)
+vendor/bin/phpstan analyse src/               # Analisi statica per trovare bug senza eseguire codice
+
+# --- ERRORI COMUNI ---
+# "Class not found": Esegui `composer dump-autoload`
+# "Memory exhausted": Aumenta memory_limit nel php.ini CLI o usa `php -d memory_limit=-1 compos...`

@@ -6,6 +6,7 @@ use FratellanzaMilitare\GestioneSoci\SocioRepository;
 use FratellanzaMilitare\Debug\ResilienceMonitor;
 use FratellanzaMilitare\Service\HealthCheckService;
 use Mustache_Engine;
+use Predis\Client as RedisClient;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -24,17 +25,20 @@ class StatsDashboardController
     private SocioRepository $repository;
     private ResilienceMonitor $resilienceMonitor;
     private HealthCheckService $healthCheck;
+    private ?RedisClient $redis;
 
     public function __construct(
         Mustache_Engine $mustache,
         SocioRepository $repository,
         ResilienceMonitor $resilienceMonitor,
-        HealthCheckService $healthCheck
+        HealthCheckService $healthCheck,
+        ?RedisClient $redis = null
     ) {
         $this->mustache = $mustache;
         $this->repository = $repository;
         $this->resilienceMonitor = $resilienceMonitor;
         $this->healthCheck = $healthCheck;
+        $this->redis = $redis;
     }
 
     /**
@@ -66,26 +70,55 @@ class StatsDashboardController
             $sociFilters['moroso'] = ($params['payment_status'] === 'moroso');
         }
 
-        // 2. Strategia di Caching (Performance Optimization)
-        // Evitiamo di ricalcolare le statistiche pesanti (COUNT implicite) ad ogni refresh.
-        // La cache vive per 300 secondi (5 minuti).
-        $cacheFile = __DIR__ . '/../../../../var/cache/stats_cache.json';
+        // 2. Strategia di Caching (Redis + File Fallback)
+        $cacheKey = 'stats_dashboard_data';
+        $cacheTTL = 300; // 5 minuti
         $useCache = empty($params['refresh']) && (php_sapi_name() !== 'cli');
+        $stats = null;
 
-        if ($useCache && file_exists($cacheFile) && (time() - filemtime($cacheFile) < 300)) {
-            // HIT: Recupero dati dalla cache
-            $stats = json_decode(file_get_contents($cacheFile), true);
-        } else {
+        if ($useCache) {
+            // TENTATIVO 1: Redis
+            if ($this->redis) {
+                try {
+                    $cachedStats = $this->redis->get($cacheKey);
+                    if ($cachedStats) {
+                        $stats = json_decode($cachedStats, true);
+                    }
+                } catch (\Exception $e) {
+                    // Redis fail silent -> fallback to file
+                }
+            }
+
+            // TENTATIVO 2: File Cache (se Redis fallisce o non c'è)
+            if (!$stats) {
+                $cacheFile = __DIR__ . '/../../../../var/cache/stats_cache.json';
+                if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTTL)) {
+                    $stats = json_decode(file_get_contents($cacheFile), true);
+                }
+            }
+        }
+
+        if (!$stats) {
             // MISS: Ricalcolo statistiche dal DB
             $stats = $this->repository->getStatistics();
+            $encodedStats = json_encode($stats);
 
-            // Assicuriamoci che la directory di cache esista
+            // Scrittura Redis
+            if ($this->redis) {
+                try {
+                    $this->redis->setex($cacheKey, $cacheTTL, $encodedStats);
+                } catch (\Exception $e) {
+                    // Ignore
+                }
+            }
+
+            // Scrittura File Cache (Backup)
+            $cacheFile = __DIR__ . '/../../../../var/cache/stats_cache.json';
             $dir = dirname($cacheFile);
             if (!is_dir($dir)) {
                 @mkdir($dir, 0777, true);
             }
-            // Scrittura atomica (o quasi) della cache
-            @file_put_contents($cacheFile, json_encode($stats));
+            @file_put_contents($cacheFile, $encodedStats);
         }
 
         // 3. Recupero Lista Soci Filtrata

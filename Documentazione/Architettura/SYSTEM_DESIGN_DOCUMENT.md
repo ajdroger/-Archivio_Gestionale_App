@@ -5,11 +5,13 @@
 | :--- | :--- |
 | **Version Number** | 2.0.1 |
 | **Issue Date** | December 27, 2025 |
+| **Author** | Soobadur Mohammad Ajmeer © |
 | **Classification** | Private (Internal Use Only) |
 | **Architecture** | Cloud-Ready Hybrid (MySQL/Local) |
 
 **Copyright Notice**
-© Fratellanza Militare di Firenze, 2025
+Soobadur Mohammad Ajmeer ©
+Oragnizzazione: Fratellanza Militare di Firenze
 
 ---
 

@@ -5,7 +5,7 @@ class: lead
 backgroundColor: #ffffff
 paginate: true
 header: 'Fratellanza Militare | Archivio Mission-Critical v1.3.1'
-footer: 'Soobadur Mohammad Ajmeer - Lead Architect | 21/12/2025'
+footer: 'Soobadur Mohammad Ajmeer © - Lead Architect | 21/12/2025'
 
 style: |
   /* CONFIGURAZIONE VISIVA MISSION-CRITICAL */
@@ -73,7 +73,7 @@ hr { border-color: #ffcc00; width: 60%; }
 
 <br>
 
-**A cura di:** *Soobadur Mohammad Ajmeer*
+**A cura di:** *Soobadur Mohammad Ajmeer ©*
 Lead Developer & Architect
 
 ---
@@ -221,5 +221,5 @@ Si rilascia il nulla osta tecnico per il deploy.
 
 <br>
 
-**Soobadur Mohammad Ajmeer**
+**Soobadur Mohammad Ajmeer ©**
 *Lead Developer & Architect*

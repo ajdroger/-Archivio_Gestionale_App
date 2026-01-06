@@ -70,4 +70,7 @@ return function (App $app) {
     // Routing Middleware - Must be added LAST to run FIRST
     // This allows subsequent middleware (like Auth) to access RouteContext
     $app->addRoutingMiddleware();
+
+    // Sentry Monitoring (Runs first)
+    $app->add(new \FratellanzaMilitare\Middleware\SentryMiddleware());
 };

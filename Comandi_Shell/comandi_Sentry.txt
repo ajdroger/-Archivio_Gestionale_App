@@ -1,0 +1,32 @@
+Install
+To install the PHP SDK, you need to be using Composer in your project. For more details about Composer, see the Composer documentation.
+
+composer require sentry/sentry
+Install the Excimer extension via PECL:
+
+pecl install excimer
+The Excimer PHP extension supports PHP 7.2 and up. Excimer requires Linux or macOS and doesn't support Windows. For additional ways to install Excimer, see  Sentry documentation.
+Configure SDK
+
+Copy DSN
+To capture all errors, even the one during the startup of your application, you should initialize the Sentry PHP SDK as soon as possible.
+
+\Sentry\init([
+  'dsn' => 'https://755da8c63aa2dd97ce035f5cdf2b1ab0@o4510609847615488.ingest.de.sentry.io/4510609859346512',
+  // Specify a fixed sample rate
+  'traces_sample_rate' => 1.0,
+  // Set a sampling rate for profiling - this is relative to traces_sample_rate
+  'profiles_sample_rate' => 1.0,
+  // Enable logs to be sent to Sentry
+  'enable_logs' => true,
+]);
+To instrument certain regions of your code, you can create transactions to capture them.
+In order to receive stack trace arguments in your errors, make sure to set zend.exception_ignore_args: Off in your php.ini
+Verify
+In PHP you can either capture a caught exception or capture the last error with captureLastError.
+
+try {
+  $this->functionFailsForSure();
+} catch (\Throwable $exception) {
+  \Sentry\captureException($exception);
+}

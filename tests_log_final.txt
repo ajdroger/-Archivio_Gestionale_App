@@ -1,0 +1,685 @@
+
+   PASS  Tests\Unit\AmministratoreTest
+  ✓ crea utente                                                       0.10s  
+  ✓ models                                                            0.01s  
+  ✓ crea utente amministratore                                        0.07s  
+  ✓ revoca permessi                                                   0.02s  
+  ✓ visualizza audit log                                              0.02s  
+  ✓ visualizza audit log senza filtri                                 0.02s  
+  ✓ genera report audit                                               0.02s  
+
+   PASS  Tests\Unit\BackupIntegrityTest
+  ✓ BackupService esegue la copia del database                        0.13s  
+  ✓ BackupService ruota i vecchi backup correttamente                 0.11s  
+
+   PASS  Tests\Unit\Controller\DevTools\DevToolsDatabaseControllerTest
+  ✓ db query executes select                                          0.03s  
+  ✓ db query executes update
+
+   PASS  Tests\Unit\Controller\DevTools\DevToolsFileSystemControllerTest
+  ✓ fs list returns correct structure                                 0.01s  
+  ✓ fs read reads content
+  ✓ fs save updates content                                           0.01s  
+  ✓ security cant traverse up
+
+   PASS  Tests\Unit\DatabaseInspectorTest
+  ✓ inspect returns connection status                                 0.01s  
+
+   PASS  Tests\Unit\DocumentoTest
+  ✓ verifica integrita documento                                      0.01s  
+
+   PASS  Tests\Unit\EmailServiceTest
+  ✓ email service writes to log file                                  0.02s  
+
+   PASS  Tests\Unit\GlobalExceptionHandlerTest
+  ✓ handler can be instantiated                                       0.01s  
+
+   PASS  Tests\Unit\InfrastructureTest
+  ✓ google drive adapter uploads and downloads                        0.01s  
+  ✓ ocr engine processes image                                        0.01s  
+
+   PASS  Tests\Unit\LogAnalyzerTest
+  ✓ analyze returns summary                                           0.01s  
+
+   PASS  Tests\Unit\OperatoreTest
+  ✓ carica pratica                                                    0.02s  
+  ✓ carica pratica senza codice fiscale throws exception              0.01s  
+  ✓ carica pratica senza tipo throws exception                        0.01s  
+  ✓ ricerca socio                                                     0.01s  
+  ✓ ricerca socio per nome                                            0.01s  
+  ✓ ricerca socio per matricola                                       0.01s  
+  ✓ stampa report                                                     0.02s  
+  ✓ stampa report senza parametri                                     0.01s  
+
+   PASS  Tests\Unit\QueryBuilderTest
+  ✓ select basic query                                                0.02s  
+  ✓ select with where clause                                          0.01s  
+  ✓ pagination adds limit and offset                                  0.01s  
+  ✓ complex query with joins and ordering
+
+   PASS  Tests\Unit\RedisSessionHandlerTest
+  ✓ read returns data from redis                                      0.02s  
+  ✓ read returns empty string if key missing                          0.01s  
+  ✓ write saves data to redis with TTL                                0.01s  
+  ✓ destroy deletes key from redis                                    0.01s  
+
+   FAIL  Tests\Unit\ResilienceMonitorTest
+  ⨯ monitor health returns array                                      0.02s  
+  ⨯ monitor checks disk space                                         0.01s  
+
+   PASS  Tests\Unit\Service\CacheServiceTest
+  ✓ get returns value from redis                                      0.01s  
+  ✓ get returns null on miss
+  ✓ set delegates to redis
+  ✓ remember returns cached value
+  ✓ invalidate soci calls delete pattern
+  ✓ remember soci list generates correct key
+
+   PASS  Tests\Unit\Service\QueueServiceTest
+  ✓ push inserts job                                                  0.01s  
+  ✓ pop returns null if no job
+  ✓ pop returns job and reserves it
+  ✓ complete deletes job
+
+   PASS  Tests\Unit\Service\RedisServiceTest
+  ✓ get deserializes value                                            0.01s  
+  ✓ get returns null on failure
+  ✓ set serializes value
+  ✓ set with ttl
+  ✓ delete delegates to client
+  ✓ remember returns cached value
+  ✓ remember computes and stores value
+  ✓ disabled service returns defaults
+
+   PASS  Tests\Unit\Service\ValidationServiceTest
+  ✓ valid codice fiscale                                              0.01s  
+  ✓ invalid codice fiscale length
+  ✓ invalid codice fiscale format
+  ✓ valid email
+  ✓ invalid email
+  ✓ valid pdf upload
+  ✓ valid image upload
+  ✓ invalid mime type
+  ✓ file too large
+
+   PASS  Tests\Unit\SessionInspectorTest
+  ✓ inspect returns session data structure                            0.02s  
+
+   PASS  Tests\Unit\SocioTest
+  ✓ socio can be instantiated                                         0.01s  
+  ✓ aggiorna anagrafica                                               0.01s  
+  ✓ verifica morosita                                                 0.01s  
+
+   PASS  Tests\Unit\SystemCheckTest
+  ✓ check returns system status                                       0.01s  
+
+   PASS  Tests\Feature\Controller\HealthControllerTest
+  ✓ check returns200 when healthy
+  ✓ check returns503 when unhealthy
+
+   FAIL  Tests\Feature\Controller\SettingsControllerTest
+  ⨯ view renders settings template                                    0.01s  
+
+   PASS  Tests\Feature\CorrelationIdTest
+  ✓ request id is logged in context                                   0.02s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ example                                                           0.01s  
+
+   FAIL  Tests\Feature\GDPRComplianceTest
+  ⨯ GDPR Compliance Tests → hardDelete removes all personal data per… 0.02s  
+  ⨯ GDPR Compliance Tests → exportGDPRData returns complete personal… 0.02s  
+  ⨯ GDPR Compliance Tests → exportGDPRData handles non-existent soci… 0.02s  
+  ✓ GDPR Compliance Tests → hardDelete creates audit log entry        0.03s  
+
+   PASS  Tests\Feature\GraphQLTest
+  ✓ graphql endpoint returns json                                     0.01s  
+
+   PASS  Tests\Feature\HomeControllerTest
+  ✓ home dashboard renders correctly                                  0.01s  
+
+   PASS  Tests\Feature\LoginControllerTest
+  ✓ login form renders                                                0.01s  
+  ✓ login verify success redirects                                    0.05s  
+
+   PASS  Tests\Feature\SocioControllerTest
+  ✓ socio list renders                                                0.01s  
+  ✓ socio create stores data                                          0.01s  
+
+   PASS  Tests\Feature\StatisticsControllerTest
+  ✓ statistics view renders                                           0.01s  
+
+   FAIL  Tests\Feature\TestPdfGenerationTest
+  ⨯ it generates physical pdf on socio creation with payment          0.01s  
+
+   FAIL  Tests\Feature\UserJourneyTest
+  ⨯ User Journey: Complete Lifecycle of a Socio via Modulo Anagrafic… 0.01s  
+
+   PASS  Tests\Integration\DatabaseSchemaTest
+  ✓ required tables exist                                             0.01s  
+  ✓ socio table schema                                                0.01s  
+  ✓ documenti table schema                                            0.01s  
+
+   FAIL  Tests\Integration\PersistenceTest
+  ⨯ can save and retrieve socio                                       0.01s  
+
+   FAIL  Tests\Integration\RegistrationServicePestTest
+  ⨯ registrazione fallisce se utente esiste gia                       0.01s  
+  ⨯ pdf generato solo se pagamento effettuato                         0.01s  
+  ⨯ pdf generato se pagamento presente                                0.01s  
+
+   FAIL  Tests\Integration\RegistrationServiceTest
+  ⨯ Integration: Registration Service Register New Member Flow        0.02s  
+
+   FAIL  Tests\Integration\RepositoryEdgeCasesTest
+  ⨯ repository handles special characters in search                   0.01s  
+  ⨯ repository handles unicode characters                             0.01s  
+
+   FAIL  Tests\Integration\SearchRobustnessTest
+  ⨯ search finds by first name only                                   0.01s  
+  ⨯ search finds by last name only                                    0.01s  
+  ⨯ search finds by combined first and last name                      0.01s  
+  ⨯ search finds by combined last and first name                      0.01s  
+  ⨯ search finds by partial codice fiscale                            0.01s  
+  ⨯ search finds by full codice fiscale                               0.01s  
+  ⨯ search finds by matricola                                         0.01s  
+  ⨯ search finds by email                                             0.01s  
+  ⨯ search finds by phone                                             0.01s  
+
+   PASS  Tests\Integration\SecurityWorkflowTest
+  ✓ workflow creazione utente e operazioni                            0.08s  
+  ✓ workflow verifica permessi negati                                 0.01s  
+  ✓ workflow export audit trail                                       0.03s  
+  ✓ workflow revoca permessi                                          0.02s  
+  ✓ workflow amministratore accesso totale                            0.01s  
+
+   PASS  Tests\Integration\TransactionResilienceTest
+  ✓ verifica rollback su errore durante il salvataggio dei documenti  0.02s  
+
+   PASS  Tests\Arch\ArchitectureTest
+  ✓ controllers                                                       0.62s  
+  ✓ debug                                                             1.50s  
+  ✓ models                                                            0.67s  
+
+   PASS  Tests\Security\AccessControlTest
+  ✓ operatore ha permessi base                                        0.01s  
+  ✓ operatore non ha permessi amministrativi
+  ✓ amministratore ha accesso completo
+  ✓ grant permesso a nuovo ruolo
+  ✓ grant non aggiunge duplicati
+
+   PASS  Tests\Security\AuditTrailTest
+  ✓ log evento                                                        0.01s  
+  ✓ esportazione json                                                 0.01s  
+  ✓ esportazione csv                                                  0.01s  
+  ✓ esportazione formato non supportato throws exception
+  ✓ ricerca azioni con filtri                                         0.01s  
+  ✓ genera report today                                               0.01s  
+  ✓ scrittura su database                                             0.01s  
+
+   PASS  Tests\Security\DependencyVulnerabilityTest
+  ✓ composer packages have no known vulnerabilities                   1.57s  
+  ✓ npm packages have no known vulnerabilities                        0.74s  
+  ✓ composer.lock file exists and is valid                            0.04s  
+  ✓ package-lock.json file exists and is valid                        0.01s  
+  ✓ no deprecated composer packages in production dependencies
+  ✓ critical security packages are installed
+  ✓ sensitive files are protected in .gitignore
+  ✓ defuse encryption library is installed for TOTP security
+
+   PASS  Tests\Security\GDPRAnonymizationTest
+  ✓ cf anonymization                                                  0.02s  
+  ✓ username anonymization                                            0.01s  
+
+   PASS  Tests\Security\MiddlewareTest
+  ✓ security headers are added                                        0.01s  
+
+   PASS  Tests\Security\ResilientSessionTest
+  ✓ SessionManager rigenera l'ID di sessione correttamente
+  ✓ verifica configurazione sicura dei cookie di sessione
+
+   PASS  Tests\Security\SecurityHeadersTest
+  ✓ SecurityHeadersMiddleware Tests → adds Content-Security-Policy header
+  ✓ SecurityHeadersMiddleware Tests → adds X-Frame-Options DENY header
+  ✓ SecurityHeadersMiddleware Tests → all security headers are present
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ResilienceMonitorTest > monitor health retur…  Error   
+  Call to a member function fetch() on bool
+
+  at src\Debug\ResilienceMonitor.php:59
+     55▕ 
+     56▕             foreach ($tables as $table) {
+     57▕                 try {
+     58▕                     $stmt = $this->pdo->query("CHECK TABLE `$table`");
+  ➜  59▕                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+     60▕                     if (($row['Msg_text'] ?? '') !== 'OK') {
+     61▕                         $allOk = false;
+     62▕                         $details[$table] = $row['Msg_text'] ?? 'Unknown Error';
+     63▕                     }
+
+  1   src\Debug\ResilienceMonitor.php:59
+  2   src\Debug\ResilienceMonitor.php:28
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ResilienceMonitorTest > monitor checks disk…   Error   
+  Call to a member function fetch() on bool
+
+  at src\Debug\ResilienceMonitor.php:59
+     55▕ 
+     56▕             foreach ($tables as $table) {
+     57▕                 try {
+     58▕                     $stmt = $this->pdo->query("CHECK TABLE `$table`");
+  ➜  59▕                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+     60▕                     if (($row['Msg_text'] ?? '') !== 'OK') {
+     61▕                         $allOk = false;
+     62▕                         $details[$table] = $row['Msg_text'] ?? 'Unknown Error';
+     63▕                     }
+
+  1   src\Debug\ResilienceMonitor.php:59
+  2   src\Debug\ResilienceMonitor.php:28
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Controller\SettingsControllerTest > view renders…   
+  Expectation failed for method name is "render" when invoked 1 time
+Parameter 0 for invocation Mustache\Engine::render('impostazioni', [...]) does not match expected value.
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'settings'
++'impostazioni'
+
+  at src\Controller\SettingsController.php:62
+     58▕         $user['email'] = "ajmeer03@gmail.com";
+     59▕ 
+     60▕         $user['email'] = "ajmeer03@gmail.com";
+     61▕ 
+  ➜  62▕         $html = $this->mustache->render('impostazioni', [ // Restored original template name
+     63▕             'title' => 'Impostazioni Profilo',
+     64▕             'user' => $user,
+     65▕             'user_initial' => strtoupper(substr($user['username'] ?? 'U', 0, 1)),
+     66▕             'success' => $request->getAttribute('flash_success'),
+
+  1   src\Controller\SettingsController.php:62
+  2   tests\Feature\Controller\SettingsControllerTest.php:79
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\GDPRComplianceTest > `GDPR Complia…  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   tests\Feature\GDPRComplianceTest.php:24
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\GDPRComplianceTest > `GDPR Complia…  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:408
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\GDPRComplianceTest > `GDPR Complia…  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:408
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\TestPdfGenerationTest > it generates physical pd…   
+  Failed asserting that 400 is identical to 302.
+
+  at tests\Feature\TestPdfGenerationTest.php:60
+     56▕ 
+     57▕     $response = new \Slim\Psr7\Response();
+     58▕     $result = $controller->store($request, $response);
+     59▕ 
+  ➜  60▕     expect($result->getStatusCode())->toBe(302);
+     61▕ 
+     62▕     $socio = $this->repo->findByCodiceFiscale('LNCGNN80A01H501Z');
+     63▕     expect($socio)->not->toBeNull();
+     64▕     expect($socio->DocumentiAssociati)->toHaveCount(1);
+
+  1   tests\Feature\TestPdfGenerationTest.php:60
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\UserJourneyTest > User Journey: Complete Lifecyc…   
+  Failed asserting that 400 is identical to 302.
+
+  at tests\Feature\UserJourneyTest.php:57
+     53▕     $response = (new ResponseFactory())->createResponse();
+     54▕ 
+     55▕     $response = $persistenceCtrl->store($request, $response);
+     56▕ 
+  ➜  57▕     expect($response->getStatusCode())->toBe(302);
+     58▕     expect($response->getHeaderLine('Location'))->toContain('/soci');
+     59▕ 
+     60▕     // 2. VERIFICA POPOLAMENTO DB
+     61▕     $socio = $repo->findByCodiceFiscale('RSSMRA80A01H501Z');
+
+  1   tests\Feature\UserJourneyTest.php:57
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\PersistenceTest > can save and…  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   tests\Integration\PersistenceTest.php:30
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\RegistrationServicePestTest >…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   src\Service\RegistrationService.php:72
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\RegistrationServicePestTest >…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   src\Service\RegistrationService.php:72
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\RegistrationServicePestTest >…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   src\Service\RegistrationService.php:72
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\RegistrationServiceTest > Inte…  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+     98▕      */
+     99▕     public function findByCodiceFiscale(string $cf): ?Socio
+    100▕     {
+    101▕         $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
+  ➜ 102▕         $stmt->execute([$cf]);
+    103▕         $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    104▕ 
+    105▕         if (!$data) {
+    106▕             return null;
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:102
+  2   src\Service\RegistrationService.php:72
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\RepositoryEdgeCasesTest > repo…  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\RepositoryEdgeCasesTest.php:28
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\RepositoryEdgeCasesTest > repo…  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\RepositoryEdgeCasesTest.php:58
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:37
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:47
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:53
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:59
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:65
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:71
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:77
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:83
+
+  ─────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Integration\SearchRobustnessTest > search…   PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 's.deleted_at' in 'where clause'
+
+  at src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+    307▕                    OR $concat LIKE ? 
+    308▕                    OR $concatRev LIKE ?)";
+    309▕ 
+    310▕         $stmt = $this->pdo->prepare($sql);
+  ➜ 311▕         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+    312▕         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    313▕ 
+    314▕         $soci = [];
+    315▕         foreach ($rows as $row) {
+
+  1   src\InfrastrutturaIT\Persistence\PDOSocioRepository.php:311
+  2   tests\Integration\SearchRobustnessTest.php:89
+
+
+  Tests:    24 failed, 122 passed (356 assertions)
+  Duration: 7.16s
+

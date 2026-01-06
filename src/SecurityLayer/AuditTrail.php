@@ -72,6 +72,21 @@ class AuditTrail
         }
     }
 
+    /**
+     * Alias per logEvento per compatibilità.
+     * 
+     * @param string $action
+     * @param string $resourceType (ignored/legacy)
+     * @param string|int|null $resourceId
+     * @param array $context (ignored/legacy)
+     */
+    public function log(string $action, string $resourceType, string|int|null $resourceId, array $context = []): void
+    {
+        // Adatta la vecchia firma (action, type, id, context) alla nuova (utente, action, id)
+        // Poiché ApiKeyMiddleware non ha l'oggetto UtenteSistema, passiamo null per user.
+        $this->logEvento(null, $action, (string) $resourceId);
+    }
+
     public function ricercaAzioni(array $filters = [], int $page = 1, int $perPage = 50): array
     {
         if (!$this->pdo) {

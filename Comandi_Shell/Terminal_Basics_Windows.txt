@@ -1,0 +1,30 @@
+
+# ==========================================
+# GUIDA COMANDI SISTEMA (WINDOWS CMD/POWERSHELL)
+# ==========================================
+
+# --- NAVIGAZIONE ---
+cd <cartella>                                 # Entra in una cartella
+cd ..                                         # Torna indietro di una cartella
+dir                                           # Lista i file nella cartella corrente (ls su PowerShell)
+tree /f                                       # Mostra albero delle cartelle e file
+
+# --- FILE & CARTELLE ---
+mkdir <nome>                                  # Crea una cartella
+copy <origine> <destinazione>                 # Copia file
+move <origine> <destinazione>                 # Sposta file
+del <file>                                    # Cancella file
+rmdir /s /q <cartella>                        # Cancella cartella e contenuto (Attenzione!)
+
+# --- RETE ---
+ipconfig                                      # Mostra indirizzo IP locale
+ping google.com                               # Verifica connessione internet
+netstat -an                                   # Mostra porte aperte (utile per vedere se porta 80 o 3306 è in uso)
+
+# --- PROCESSI ---
+tasklist                                      # Lista processi attivi
+taskkill /F /IM <nome.exe>                    # Termina forzatamente un processo (es. php.exe)
+
+# --- Variabili Ambiente ---
+echo %PATH%                                   # (CMD) Mostra variabile PATH
+$env:PATH                                     # (PowerShell) Mostra variabile PATH

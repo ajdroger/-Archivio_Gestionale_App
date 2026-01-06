@@ -1,0 +1,879 @@
+📦 SETTIMANA 1 - Codice Rimanente
+2. Database Pagination
+src/Helper/PaginationHelper.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\Helper;
+class PaginationHelper
+{
+    public static function paginate(
+        int $totalItems,
+        int $currentPage = 1,
+        int $perPage = 50
+    ): array {
+        $totalPages = (int) ceil($totalItems / $perPage);
+        $currentPage = max(1, min($currentPage, $totalPages));
+        $offset = ($currentPage - 1) * $perPage;
+        
+        return [
+            'total_items' => $totalItems,
+            'total_pages' => $totalPages,
+            'current_page' => $currentPage,
+            'per_page' => $perPage,
+            'offset' => $offset,
+            'has_previous' => $currentPage > 1,
+            'has_next' => $currentPage < $total Pages,
+            'previous_page' => $currentPage > 1 ? $currentPage - 1 : null,
+            'next_page' => $currentPage < $totalPages ? $currentPage + 1 : null,
+        ];
+    }
+}
+src/DTO/PaginationResponse.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\DTO;
+class PaginationResponse
+{
+    public function __construct(
+        public readonly array $data,
+        public readonly int $total,
+        public readonly int $page,
+        public readonly int $perPage,
+        public readonly int $totalPages,
+        public readonly bool $hasPrevious,
+        public readonly bool $hasNext
+    ) {}
+    
+    public function toArray(): array
+    {
+        return [
+            'data' => $this->data,
+            'pagination' => [
+                'total' => $this->total,
+                'page' => $this->page,
+                'per_page' => $this->perPage,
+                'total_pages' => $this->totalPages,
+                'has_previous' => $this->hasPrevious,
+                'has_next' => $this->hasNext
+            ]
+        ];
+    }
+}
+Update 
+SociApiController.php
+ - Aggiungi pagination
+php
+public function list(Request $request, Response $response): Response
+{
+    $page = (int) ($request->getQueryParams()['page'] ?? 1);
+    $perPage = (int) ($request->getQueryParams()['per_page'] ?? 50);
+    
+    // Count total
+    $total = $this->repo->count();
+    
+    // Get paginated data
+    $soci = $this->repo->findAllPaginated($page, $perPage);
+    
+    $pagination = PaginationHelper::paginate($total, $page, $perPage);
+    
+    $paginatedResponse = new PaginationResponse(
+        data: $soci,
+        total: $total,
+        page: $page,
+        perPage: $perPage,
+        totalPages: $pagination['total_pages'],
+        hasPrevious: $pagination['has_previous'],
+        hasNext: $pagination['has_next']
+    );
+    
+    $response->getBody()->write(json_encode($paginatedResponse->toArray()));
+    return $response->withHeader('Content-Type', 'application/json');
+}
+Update Repository - Aggiungi metodi pagination
+php
+// In PDOSocioRepository.php
+public function count(): int
+{
+    $stmt = $this->pdo->query("SELECT COUNT(*) FROM soci WHERE deleted_at IS NULL");
+    return (int) $stmt->fetchColumn();
+}
+public function findAllPaginated(int $page = 1, int $perPage = 50): array
+{
+    $offset = ($page - 1) * $perPage;
+    
+    $stmt = $this->pdo->prepare("
+        SELECT * FROM soci 
+        WHERE deleted_at IS NULL 
+        ORDER BY cognome, nome
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([$perPage, $offset]);
+    
+    $soci = [];
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $soci[] = $this->mapRowToSocio($row, false);
+    }
+    
+    return $soci;
+}
+3. Sentry Integration
+composer.json
+ - Aggiungi dependency
+json
+{
+    "require": {
+        "sentry/sentry": "^4.0"
+    }
+}
+public/index.php
+ - Bootstrap Sentry
+php
+// All'inizio del file, dopo require autoload
+\Sentry\init([
+    'dsn' => $_ENV['SENTRY_DSN'] ?? '',
+    'environment' => $_ENV['APP_ENV'] ?? 'production',
+    'release' => 'fratellanza-militare@2.3.0',
+    'traces_sample_rate' => 0.2, // 20% performance monitoring
+    'profiles_sample_rate' => 0.2,
+]);
+src/Middleware/SentryMiddleware.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\Middleware;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Sentry\State\Scope;
+use function Sentry\captureException;
+use function Sentry\configureScope;
+class SentryMiddleware implements MiddlewareInterface
+{
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
+        // Enrich Sentry context
+        configureScope(function (Scope $scope) use ($request): void {
+            $scope->setContext('request', [
+                'url' => (string) $request->getUri(),
+                'method' => $request->getMethod(),
+                'query_string' => $request->getUri()->getQuery(),
+                'ip' => $request->getAttribute('ip_address'),
+                'user_agent' => $request->getHeaderLine('User-Agent'),
+            ]);
+            
+            // User context if authenticated
+            if ($userId = $request->getAttribute('user_id')) {
+                $scope->setUser([
+                    'id' => $userId,
+                    'username' => $request->getAttribute('username'),
+                    'ip_address' => $request->getAttribute('ip_address'),
+                ]);
+            }
+            
+            // API request context
+            if ($request->getAttribute('is_api_request')) {
+                $scope->setTag('api_key_name', $request->getAttribute('api_key_name'));
+                $scope->setTag('request_type', 'api');
+            } else {
+                $scope->setTag('request_type', 'web');
+            }
+        });
+        
+        try {
+            $response = $handler->handle($request);
+            
+            // Capture slow requests
+            $startTime = $request->getAttribute('request_start_time');
+            if ($startTime) {
+                $duration = (microtime(true) - $startTime) * 1000;
+                if ($duration > 1000) { // >1 second
+                    \Sentry\captureMessage("Slow request: {$request->getUri()->getPath()} ({$duration}ms)", \Sentry\Severity::warning());
+                }
+            }
+            
+            return $response;
+        } catch (\Throwable $e) {
+            captureException($e);
+            throw $e; // Re-throw for normal error handling
+        }
+    }
+}
+.env.example - Aggiungi
+env
+SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
+APP_ENV=production
+📦 SETTIMANA 2-3 - Codice Completo
+4. Redis Session Store
+src/SecurityLayer/RedisSessionHandler.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\SecurityLayer;
+use Predis\Client as Redis;
+class RedisSessionHandler implements \SessionHandlerInterface
+{
+    private const SESSION_TTL = 3600; // 1 hour
+    private const KEY_PREFIX = 'session:';
+    
+    public function __construct(private Redis $redis) {}
+    
+    public function open(string $path, string $name): bool
+    {
+        return true;
+    }
+    
+    public function close(): bool
+    {
+        return true;
+    }
+    
+    public function read(string $id): string|false
+    {
+        $key = self::KEY_PREFIX . $id;
+        $data = $this->redis->get($key);
+        
+        return $data !== null ? $data : '';
+    }
+    
+    public function write(string $id, string $data): bool
+    {
+        $key = self::KEY_PREFIX . $id;
+        $this->redis->setex($key, self::SESSION_TTL, $data);
+        
+        return true;
+    }
+    
+    public function destroy(string $id): bool
+    {
+        $key = self::KEY_PREFIX . $id;
+        $this->redis->del($key);
+        
+        return true;
+    }
+    
+    public function gc(int $max_lifetime): int|false
+    {
+        // Redis handles expiration automatically with SETEX
+        return 0;
+    }
+}
+public/index.php
+ - Usa Redis session handler
+php
+// Dopo bootstrap DI container
+if ($_ENV['SESSION_DRIVER'] === 'redis' && $container->has(Predis\Client::class)) {
+    $redisHandler = new \FratellanzaMilitare\SecurityLayer\RedisSessionHandler(
+        $container->get(Predis\Client::class)
+    );
+    session_set_save_handler($redisHandler, true);
+}
+session_start();
+5. Query Builder
+src/InfrastrutturaIT/Persistence/QueryBuilder.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
+class QueryBuilder
+{
+    private array $select = ['*'];
+    private ?string $table = null;
+    private array $joins = [];
+    private array $where = [];
+    private array $bindings = [];
+    private ?int $limit = null;
+    private ?int $offset = null;
+    private array $orderBy = [];
+    private array $groupBy = [];
+    
+    public function select(array|string $columns): self
+    {
+        $this->select = is_array($columns) ? $columns : [$columns];
+        return $this;
+    }
+    
+    public function from(string $table): self
+    {
+        $this->table = $table;
+        return $this;
+    }
+    
+    public function join(string $table, string $condition, string $type = 'INNER'): self
+    {
+        $this->joins[] = "$type JOIN $table ON $condition";
+        return $this;
+    }
+    
+    public function leftJoin(string $table, string $condition): self
+    {
+        return $this->join($table, $condition, 'LEFT');
+    }
+    
+    public function where(string $column, string $operator, mixed $value): self
+    {
+        $this->where[] = "$column $operator ?";
+        $this->bindings[] = $value;
+        return $this;
+    }
+    
+    public function whereIn(string $column, array $values): self
+    {
+        $placeholders = implode(',', array_fill(0, count($values), '?'));
+        $this->where[] = "$column IN ($placeholders)";
+        $this->bindings = array_merge($this->bindings, $values);
+        return $this;
+    }
+    
+    public function whereNull(string $column): self
+    {
+        $this->where[] = "$column IS NULL";
+        return $this;
+    }
+    
+    public function whereNotNull(string $column): self
+    {
+        $this->where[] = "$column IS NOT NULL";
+        return $this;
+    }
+    
+    public function orderBy(string $column, string $direction = 'ASC'): self
+    {
+        $this->orderBy[] = "$column $direction";
+        return $this;
+    }
+    
+    public function groupBy(string|array $columns): self
+    {
+        $this->groupBy = is_array($columns) ? $columns : [$columns];
+        return $this;
+    }
+    
+    public function limit(int $limit): self
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+    
+    public function offset(int $offset): self
+    {
+        $this->offset = $offset;
+        return $this;
+    }
+    
+    public function pagination(int $page, int $perPage = 50): self
+    {
+        $this->limit = $perPage;
+        $this->offset = ($page - 1) * $perPage;
+        return $this;
+    }
+    
+    public function toSql(): string
+    {
+        if (!$this->table) {
+            throw new \RuntimeException("Table not specified");
+        }
+        
+        $sql = "SELECT " . implode(', ', $this->select);
+        $sql .= " FROM {$this->table}";
+        
+        if (!empty($this->joins)) {
+            $sql .= " " . implode(' ', $this->joins);
+    }
+        
+        if (!empty($this->where)) {
+            $sql .= " WHERE " . implode(' AND ', $this->where);
+        }
+        
+        if (!empty($this->groupBy)) {
+            $sql .= " GROUP BY " . implode(', ', $this->groupBy);
+        }
+        
+        if (!empty($this->orderBy)) {
+            $sql .= " ORDER BY " . implode(', ', $this->orderBy);
+        }
+        
+        if ($this->limit !== null) {
+            $sql .= " LIMIT {$this->limit}";
+        }
+        
+        if ($this->offset !== null) {
+            $sql .= " OFFSET {$this->offset}";
+        }
+        
+        return $sql;
+    }
+    
+    public function getBindings(): array
+    {
+        return $this->bindings;
+    }
+    
+    public function execute(\PDO $pdo): array
+    {
+        $stmt = $pdo->prepare($this->toSql());
+        $stmt->execute($this->getBindings());
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+}
+Uso nei Repository:
+
+php
+public function findByStatoPaginated(string $stato, int $page = 1, int $perPage = 50): array
+{
+    $qb = (new QueryBuilder())
+        ->select(['codice_fiscale', 'nome', 'cognome', 'email', 'stato_iscrizione'])
+        ->from('soci')
+        ->where('stato_iscrizione', '=', $stato)
+        ->whereNull('deleted_at')
+        ->orderBy('cognome')
+        ->orderBy('nome')
+        ->pagination($page, $perPage);
+    
+    return $qb->execute($this->pdo);
+}
+6. Backup Verification Service
+src/Service/BackupVerificationService.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\Service;
+use Psr\Log\LoggerInterface;
+use PDO;
+class BackupVerificationService
+{
+    public function __construct(
+        private LoggerInterface $logger,
+        private array $dbConfig
+    ) {}
+    
+    public function verifyBackup(string $backupPath): array
+    {
+        $results = [
+            'valid' => false,
+            'checks' => [],
+            'errors' => []
+        ];
+        
+        // 1. File existence check
+        if (!file_exists($backupPath)) {
+            $results['errors'][] = "Backup file not found: $backupPath";
+            return $results;
+        }
+        
+        $results['checks']['file_exists'] = true;
+        
+        // 2. File size check
+        $filesize = filesize($backupPath);
+        if ($filesize < 1000) { // Less than 1KB is suspicious
+            $results['errors'][] = "Backup file too small: {$filesize} bytes";
+            return $results;
+        }
+        
+        $results['checks']['file_size'] = $filesize;
+        
+        // 3. Gzip integrity check
+        exec("gzip -t " . escapeshellarg($backupPath) . " 2>&1", $output, $returnCode);
+        if ($returnCode !== 0) {
+            $results['errors'][] = "Gzip integrity check failed: " . implode("\n", $output);
+            return $results;
+        }
+        
+        $results['checks']['gzip_valid'] = true;
+        
+        // 4. Test restore to temporary database
+        $tempDb = 'test_restore_' . time();
+        
+        try {
+            $pdo = new PDO(
+                "mysql:host={$this->dbConfig['host']}",
+                $this->dbConfig['user'],
+                $this->dbConfig['password']
+            );
+            
+            // Create temp database
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$tempDb`");
+            $results['checks']['temp_db_created'] = true;
+            
+            // Restore backup
+            $command = sprintf(
+                "gunzip < %s | mysql -h %s -u %s -p%s %s 2>&1",
+                escapeshellarg($backupPath),
+                escapeshellarg($this->dbConfig['host']),
+                escapeshellarg($this->dbConfig['user']),
+                escapeshellarg($this->dbConfig['password']),
+                escapeshellarg($tempDb)
+            );
+            
+            exec($command, $output, $returnCode);
+            
+            if ($returnCode !== 0) {
+                $results['errors'][] = "Restore failed: " . implode("\n", $output);
+                $pdo->exec("DROP DATABASE IF EXISTS `$tempDb`");
+                return $results;
+            }
+            
+            $results['checks']['restore_successful'] = true;
+            
+            // 5. Verify table structure
+            $pdo->exec("USE `$tempDb`");
+            $stmt = $pdo->query("SHOW TABLES");
+            $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            
+            $expectedTables = ['soci', 'users', 'documenti', 'audit_log'];
+            $missingTables = array_diff($expectedTables, $tables);
+            
+            if (!empty($missingTables)) {
+                $results['errors'][] = "Missing tables: " . implode(', ', $missingTables);
+            } else {
+                $results['checks']['tables_valid'] = true;
+            }
+            
+            // 6. Verify data integrity
+            $stmt = $pdo->query("SELECT COUNT(*) FROM soci");
+            $socioCount = $stmt->fetchColumn();
+            
+            if ($socioCount > 0) {
+                $results['checks']['has_data'] = true;
+                $results['checks']['soci_count'] = $socioCount;
+            } else {
+                $results['errors'][] = "No data found in soci table";
+            }
+            
+            // 7. Cleanup
+            $pdo->exec("DROP DATABASE IF EXISTS `$tempDb`");
+            $results['checks']['cleanup_done'] = true;
+            
+            // Final verdict
+            $results['valid'] = empty($results['errors']);
+            
+        } catch (\PDOException $e) {
+            $results['errors'][] = "Database error: " . $e->getMessage();
+            
+            // Cleanup on error
+            try {
+                $pdo->exec("DROP DATABASE IF EXISTS `$tempDb`");
+            } catch (\PDOException $cleanupError) {
+                $this->logger->error("Cleanup failed: " . $cleanupError->getMessage());
+            }
+        }
+        
+        return $results;
+    }
+    
+    public function scheduleVerification(string $backupPath): void
+    {
+        // Run verification asynchronously (optional: use job queue)
+        $results = $this->verifyBackup($backupPath);
+        
+        if (!$results['valid']) {
+            $this->logger->critical("Backup verification failed", [
+                'backup' => $backupPath,
+                'errors' => $results['errors']
+            ]);
+            
+            // Send alert email/notification
+            // ... implementation depends on your notification system
+        } else {
+            $this->logger->info("Backup verified successfully", [
+                'backup' => $backupPath,
+                'checks' => $results['checks']
+            ]);
+        }
+    }
+}
+📦 SETTIMANA 4+ - Advanced Features
+7. GraphQL API
+composer.json
+json
+{
+    "require": {
+        "webonyx/graphql-php": "^15.0"
+    }
+}
+src/GraphQL/Types/SocioType.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\GraphQL\Types;
+use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
+class SocioType extends ObjectType
+{
+    public function __construct()
+    {
+        parent::__construct([
+            'name' => 'Socio',
+            'description' => 'Un socio della Fratellanza Militare',
+            'fields' => [
+                'codiceFiscale' => [
+                    'type' => Type::nonNull(Type::string()),
+                    'description' => 'Codice Fiscale (Primary Key)'
+                ],
+                'matricola' => [
+                    'type' => Type::string(),
+                    'description' => 'Numero matricola (YYYY/SEQ/XXXX)'
+                ],
+                'nome' => [
+                    'type' => Type::nonNull(Type::string())
+                ],
+                'cognome' => [
+                    'type' => Type::nonNull(Type::string())
+                ],
+                'email' => [
+                    'type' => Type::string()
+                ],
+                'telefono' => [
+                    'type' => Type::string()
+                ],
+                'statoIscrizione' => [
+                    'type' => Type::string(),
+                    'description' => 'ATTIVO, SOSPESO, CANCELLATO'
+                ],
+                'dataIscrizione' => [
+                    'type' => Type::string(),
+                    'resolve' => fn($socio) => $socio->getDataIscrizione()?->format('Y-m-d')
+                ],
+                'indirizzo' => [
+                    'type' => Type::string()
+                ],
+                'dataNascita' => [
+                    'type' => Type::string(),
+                    'resolve' => fn($socio) => $socio->getDatiPersonali()->dataNascita->format('Y-m-d')
+                ]
+            ]
+        ]);
+    }
+}
+src/GraphQL/Schema.php
+php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\GraphQL;
+use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Schema as GraphQLSchema;
+use FratellanzaMilitare\GraphQL\Types\SocioType;
+use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+class Schema
+{
+    public static function build(PDOSocioRepository $repo): GraphQLSchema
+    {
+        $socioType = new SocioType();
+        
+        $queryType = new ObjectType([
+            'name' => 'Query',
+            'fields' => [
+                'socio' => [
+                    'type' => $socioType,
+                    'description' => 'Recupera un singolo socio per CF',
+                    'args' => [
+                        'codiceFiscale' => Type::nonNull(Type::string())
+                    ],
+                    'resolve' => function($root, $args) use ($repo) {
+                        return $repo->findByCodiceFiscale($args['codiceFiscale']);
+                    }
+                ],
+                'soci' => [
+                    'type' => Type::listOf($socioType),
+                    'description' => 'Lista paginata di soci',
+                    'args' => [
+                        'page' => ['type' => Type::int(), 'defaultValue' => 1],
+                        'perPage' => ['type' => Type::int(), 'defaultValue' => 50],
+                        'stato' => ['type' => Type::string()]
+                    ],
+                    'resolve' => function($root, $args) use ($repo) {
+                        if (isset($args['stato'])) {
+                            return $repo->findByStatoPaginated(
+                                $args['stato'],
+                                $args['page'],
+                                $args['perPage']
+                            );
+                        }
+                        return $repo->findAllPaginated($args['page'], $args['perPage']);
+                    }
+                ]
+            ]
+        ]);
+        
+        $mutationType = new ObjectType([
+            'name' => 'Mutation',
+            'fields' => [
+                'createSocio' => [
+                    'type' => $socioType,
+                    'args' => [
+                        'codiceFiscale' => Type::nonNull(Type::string()),
+                        'nome' => Type::nonNull(Type::string()),
+                        'cognome' => Type::nonNull(Type::string()),
+                        'email' => Type::string(),
+                        // ... altri campi
+                    ],
+                    'resolve' => function($root, $args) use ($repo) {
+                        // Create Socio entity
+                        $socio = new \FratellanzaMilitare\GestioneSoci\Socio(/* ... */);
+                        $repo->save($socio);
+                        return $socio;
+                    }
+                ]
+            ]
+        ]);
+        
+        return new GraphQLSchema([
+            'query' => $queryType,
+            'mutation' => $mutationType
+        ]);
+    }
+}
+Controller /graphql
+php
+// src/Controller/GraphQLController.php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\Controller;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use GraphQL\GraphQL;
+use GraphQL\Error\DebugFlag;
+use FratellanzaMilitare\GraphQL\Schema;
+class GraphQLController
+{
+    public function __construct(
+        private \FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository $repo
+    ) {}
+    
+    public function handle(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $schema = Schema::build($this->repo);
+        
+        $body = json_decode((string) $request->getBody(), true);
+        $query = $body['query'] ?? null;
+        $variables = $body['variables'] ?? null;
+        
+        try {
+            $result = GraphQL::executeQuery($schema, $query, null, null, $variables)
+                ->toArray(DebugFlag::INCLUDE_DEBUG_MESSAGE);
+        } catch (\Throwable $e) {
+            $result = [
+                'errors' => [['message' => $e->getMessage()]]
+            ];
+        }
+        
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+}
+8 & 9. ProxySQL + Prometheus (configurazioni)
+docker/proxysql.cnf
+ini
+datadir="/var/lib/proxysql"
+admin_variables=
+{
+    admin_credentials="admin:admin"
+    mysql_ifaces="0.0.0.0:6032"
+}
+mysql_variables=
+{
+    threads=4
+    max_connections=2048
+    default_query_delay=0
+    default_query_timeout=36000000
+    poll_timeout=2000
+    interfaces="0.0.0.0:6033"
+    default_schema="information_schema"
+    stacksize=1048576
+    connect_timeout_server=3000
+    monitor_username="monitor"
+    monitor_password="monitor"
+    monitor_history=600000
+    monitor_connect_interval=60000
+    monitor_ping_interval=10000
+    ping_timeout_server=500
+}
+mysql_servers =
+(
+    { address="mysql", port=3306, hostgroup=0, max_connections=100 }
+)
+mysql_users =
+(
+    { username = "appuser", password = "password", default_hostgroup = 0, max_connections = 20, active = 1 }
+)
+mysql_query_rules =
+(
+    { rule_id=1, active=1, match_pattern="^SELECT.*FOR UPDATE", destination_hostgroup=0, apply=1 },
+    { rule_id=2, active=1, match_pattern="^SELECT", destination_hostgroup=0, cache_ttl=5000, apply=1 }
+)
+docker-compose.proxysql.yml
+yaml
+version: '3.8'
+services:
+  proxysql:
+    image: proxysql/proxysql:latest
+    ports:
+      - "6033:6033"  # MySQL protocol
+      - "6032:6032"  # Admin interface
+    volumes:
+      - ./docker/proxysql.cnf:/etc/proxysql.cnf
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+10. Soft Delete
+Migration
+php
+// db/migrations/20251228000002_add_soft_delete.php
+<?php
+use Phinx\Migration\AbstractMigration;
+class AddSoftDelete extends AbstractMigration
+{
+    public function change(): void
+    {
+        $tables = ['soci', 'documenti', 'users'];
+        
+        foreach ($tables as $table) {
+            $this->table($table)
+                 ->addColumn('deleted_at', 'datetime', ['null' => true])
+                 ->addIndex(['deleted_at'])
+                 ->update();
+        }
+    }
+}
+Trait
+php
+// src/InfrastrutturaIT/Persistence/SoftDeletable.php
+<?php
+declare(strict_types=1);
+namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
+trait SoftDeletable
+{
+    public function softDelete(string $id): void
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE " . $this->getTableName() . "
+            SET deleted_at = NOW()
+            WHERE " . $this->getPrimaryKey() . " = ?
+        ");
+        $stmt->execute([$id]);
+    }
+    
+    public function restore(string $id): void
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE " . $this->getTableName() . "
+            SET deleted_at = NULL
+            WHERE " . $this->getPrimaryKey() . " = ?
+        ");
+        $stmt->execute([$id]);
+    }
+    
+    public function findWithTrashed(string $id)
+    {
+        // Override per includere deleted
+    }
+    
+    abstract protected function getTableName(): string;
+    abstract protected function getPrimaryKey(): string;
+}

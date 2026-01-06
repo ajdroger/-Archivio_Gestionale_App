@@ -5,6 +5,18 @@ use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// Bootstrap Sentry
+if (class_exists('Sentry\SentrySdk')) {
+    \Sentry\init([
+        'dsn' => $_ENV['SENTRY_DSN'] ?? '',
+        'environment' => $_ENV['APP_ENV'] ?? 'production',
+        'release' => 'fratellanza-militare@2.3.0',
+        'traces_sample_rate' => 0.2, // 20% performance monitoring
+        'profiles_sample_rate' => 0.2,
+    ]);
+}
+
+
 // 1. Load Environment Variables
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -22,7 +34,8 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
 // 1.7 Force HTTPS in production (Use 307 to preserve POST data)
 if (($_ENV['APP_ENV'] ?? 'production') === 'production') {
     // Skip if on localhost to avoid issues with Ampps self-signed certs or simple HTTP dev
-    $isLocal = in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1', '::1']);
+    $host = explode(':', $_SERVER['HTTP_HOST'])[0];
+    $isLocal = in_array($host, ['localhost', '127.0.0.1', '::1']);
 
     if (!$isLocal && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on')) {
         header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], true, 307);

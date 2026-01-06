@@ -30,7 +30,9 @@ class AuthMiddleware implements MiddlewareInterface
                 'login_2fa_verify',
                 'logout',
                 'register',
-                'register_verify' // Add others if needed
+                'register_verify',
+                'graphql_api',
+                'graphql_endpoint' // Keep both just in case
             ];
 
             // Allow public routes

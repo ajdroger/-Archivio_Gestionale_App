@@ -4,7 +4,7 @@
 **Versione**: v1.3.1 MySQL Edition  
 **Status**: PRODUCTION-READY - Mission-Critical Certified  
 **Data Analisi**: 26 Dicembre 2025  
-**Analista**: Soobadur Mohammad Ajmeer
+**Autore**: Soobadur Mohammad Ajmeer ©
 
 ---
 
@@ -1075,7 +1075,7 @@ Il progetto **Fratellanza Militare Archivio** rappresenta un **esempio di eccell
 ### Repository
 **GitHub**: (URL da definire)  
 **Versione Attuale**: v1.3.1 MySQL Edition  
-**Licenza**: Proprietary - © 2025 Fratellanza Militare
+**Licenza**: Proprietary - Soobadur Mohammad Ajmeer ©
 
 ### Knowledge Base
 **Documentazione**: `/Documentazione/`  

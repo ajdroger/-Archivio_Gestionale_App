@@ -76,6 +76,20 @@ return function (App $app) {
         $group->get('/export/excel', StatsExport::class . ':exportExcel')->setName('statistics_excel')->add($exportLimit);
     })->add($statsRole);
 
+    // API Layer
+    $app->group('/api/v1', function ($group) {
+        $group->get('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':list');
+        $group->get('/soci/{cf}', \FratellanzaMilitare\Controller\SociApiController::class . ':get');
+        $group->post('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':create');
+    })->add(new \FratellanzaMilitare\Middleware\ApiKeyMiddleware(
+                $app->getContainer()->get(PDO::class),
+                $app->getContainer()->get(\FratellanzaMilitare\SecurityLayer\AuditTrail::class)
+            ));
+
+    // GraphQL API
+    $app->post('/api/graphql', \FratellanzaMilitare\Controller\GraphQLController::class . ':handle')->setName('graphql_api');
+    // ->add(...) // Disabled for testing connectivity
+
     // Admin & DevTools
     $app->group('', function ($group) {
         $group->get('/impostazioni', SettingsController::class . ':view')->setName('settings');

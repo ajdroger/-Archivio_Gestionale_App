@@ -4,6 +4,7 @@ use Psr\Log\LoggerInterface;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\JsonFormatter;
+use Predis\Client as RedisClient;
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
 use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use Psr\Container\ContainerInterface;
@@ -57,6 +58,26 @@ return [
         return $logger;
     },
 
+
+
+        // Redis Client
+    RedisClient::class => function () {
+        // Configurabile via ENV se necessario
+        $params = [
+            'scheme' => 'tcp',
+            'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+            'port' => $_ENV['REDIS_PORT'] ?? 6379,
+        ];
+
+        try {
+            return new RedisClient($params);
+        } catch (\Exception $e) {
+            // Se Redis fallisce, potremmo ritornare null o gestire l'errore
+            // Per ora ritorniamo null per permettere il fallback gracefully nel codice
+            return null;
+        }
+    },
+
     // Connessione al Database
     PDO::class => function () {
         return DatabaseConnection::getConnection();
@@ -86,5 +107,12 @@ return [
                 return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
             },
         ]);
+    },
+    // Audit System
+    \FratellanzaMilitare\SecurityLayer\AuditTrail::class => function (ContainerInterface $c) {
+        $instance = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
+        $instance->setLogger($c->get('audit_logger'));
+        $instance->setPdo($c->get(PDO::class));
+        return $instance;
     },
 ];

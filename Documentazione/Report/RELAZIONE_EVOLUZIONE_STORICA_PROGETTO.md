@@ -1,7 +1,7 @@
 # 📜 Relazione Storica: L'Evoluzione del Progetto (2025)
 **Progetto:** Digitalizzazione e Dematerializzazione Archivio Soci - Fratellanza Militare di Firenze  
 **Data di Emissione:** 21 Dicembre 2025  
-**Autore:** Soobadur Mohammad Ajmeer - Lead Developer & Architect  
+**Autore:** Soobadur Mohammad Ajmeer ©  
 
 ---
 
@@ -62,4 +62,4 @@ Il passaggio allo standard **Mission-Critical** rappresenta il culmine di un per
 
 ---
 *Relazione conclusa con successo.*  
-**Mo. Ajmeer Soobadur - 21/12/2025**
+**Autore:** Soobadur Mohammad Ajmeer © - 21/12/2025

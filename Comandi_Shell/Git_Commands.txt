@@ -1,0 +1,89 @@
+
+# ==========================================
+# GUIDA COMANDI GIT & GITHUB
+# ==========================================
+
+# --- CONFIGURAZIONE INIZIALE ---
+git config --global user.name "Tuo Nome"      # Imposta il nome utente per i commit
+git config --global user.email "tua@email.com" # Imposta l'email
+git config --global core.editor "code --wait"  # Imposta VS Code come editor predefinito
+
+# --- INIZIARE UN PROGETTO ---
+git init                                      # Inizializza un nuovo repository nella cartella corrente
+git clone <url_repository>                    # Scarica un progetto esistente da GitHub
+# Esempio: git clone https://github.com/utente/repo.git
+
+# --- FLUSSO DI LAVORO QUOTIDIANO ---
+git status                                    # 1. Controlla quali file sono stati modificati
+git add .                                     # 2. Aggiunge TUTTI i file modificati all'area di stage
+git add <nome_file>                           #    ...oppure aggiunge solo un file specifico
+git commit -m "Descrizione modifiche"         # 3. Salva le modifiche con un messaggio
+git push origin <nome_branch>                 # 4. Invia le modifiche al server (es. master o main)
+# Esempio: git push origin master
+
+# --- SCARICARE AGGIORNAMENTI ---
+git pull origin <nome_branch>                 # Scarica e unisce le modifiche dal server
+git fetch                                     # Scarica solo le info sulle modifiche senza unire
+
+# --- GESTIONE BRANCH (RAMIFICAZIONI) ---
+git branch                                    # Lista tutti i branch locali
+git branch <nuovo_branch>                     # Crea un nuovo branch
+git checkout <nuovo_branch>                   # Spostati su quel branch
+git checkout -b <nuovo_branch>                # Crea E spostati in un colpo solo
+git merge <altro_branch>                      # Unisci un altro branch in quello attuale
+
+# --- UNDO & RIPRISTINO (ATTENZIONE) ---
+git checkout -- <file>                        # Annulla le modifiche a un file (torna all'ultimo commit)
+git reset --hard HEAD                         # Annulla TUTTE le modifiche locali (pericoloso!)
+git log                                       # Vedi la cronologia dei commit
+
+# --- COMANDI SPECIFICI PER QUESTO PROGETTO ---
+# Deploy rapido su master
+git add .
+git commit -m "Aggiornamento progetto"
+git push origin master
+
+
+git status
+git remote -v
+git branch
+git push origin main
+git add .
+git commit -m "Final V2.0: Universal Migration Doctor & Restore Suite"
+git push origin master
+
+
+# Configurazione iniziale
+git config --global user.name "Tuo Nome"      # Imposta il nome utente globale
+git config --global user.email "tua@email.com" # Imposta l'email globale
+
+# Creazione e Clonazione
+git init                                      # Inizializza un nuovo repository locale
+git clone <url>                               # Clona un repository esistente da GitHub
+
+# Gestione delle modifiche
+git status                                    # Mostra lo stato dei file (modificati, in stage, etc.)
+git add <file>                                # Aggiunge un file specifico all'area di stage
+git add .                                     # Aggiunge tutti i file modificati all'area di stage
+git commit -m "messaggio"                     # Crea un commit con le modifiche in stage
+git diff                                      # Mostra le differenze nei file non ancora in stage
+
+# Sincronizzazione con il repository remoto
+git remote add origin <url>                   # Collega il repository locale a un server remoto
+git push origin <branch>                      # Invia i commit locali al repository remoto
+git pull                                      # Scarica e unisce le modifiche dal server remoto
+git fetch                                     # Scarica i dati dal server remoto senza unirli
+
+# Branching e Merging
+git branch                                    # Elenca tutti i branch locali
+git branch <nome-branch>                      # Crea un nuovo branch
+git checkout <nome-branch>                    # Passa al branch specificato
+git checkout -b <nome-branch>                 # Crea un nuovo branch e ci passa immediatamente
+git merge <nome-branch>                       # Unisce il branch specificato nel branch corrente
+git branch -d <nome-branch>                   # Elimina un branch locale
+
+# Cronologia e Ripristino
+git log                                       # Mostra la cronologia dei commit
+git reset --hard HEAD                         # Annulla tutte le modifiche locali non committate
+git revert <commit-id>                        # Crea un nuovo commit che annulla le modifiche di uno precedente
+git rm <file>                                 # Rimuove un file dal repository e dal disco

@@ -38,7 +38,7 @@ test('search finds by first name only', function () {
     expect($results)->not->toBeEmpty();
 
     // Check if our seeded user is in the results (there might be others like Mario Rossi)
-    $found = array_filter($results, fn ($s) => $s->CodiceFiscale === "BRNMRA80A01H501U");
+    $found = array_filter($results, fn($s) => $s->CodiceFiscale === "BRNMRA80A01H501U");
     expect($found)->not->toBeEmpty();
 });
 

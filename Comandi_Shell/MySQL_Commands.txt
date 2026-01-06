@@ -1,0 +1,28 @@
+
+# ==========================================
+# GUIDA COMANDI MYSQL / MARIADB
+# ==========================================
+
+# --- LOGIN ---
+mysql -u root -p                              # Login come root (chiederà password)
+
+# --- COMANDI INTERNI (dopo login) ---
+SHOW DATABASES;                               # Lista database
+USE fratellanza_db;                           # Seleziona il database del progetto
+SHOW TABLES;                                  # Lista tabelle
+DESCRIBE soci;                                # Mostra struttura tabella 'soci'
+
+# --- QUERY UTILI ---
+SELECT * FROM users;                          # Vedi tutti gli utenti
+SELECT COUNT(*) FROM soci;                    # Conta quanti soci ci sono
+SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT 5; # Ultimi 5 log
+
+# --- BACKUP & RESTORE (da terminale normale, non dentro mysql) ---
+mysqldump -u root -p fratellanza_db > backup.sql    # Esporta DB su file
+mysql -u root -p fratellanza_db < backup.sql        # Importa DB da file
+
+# --- UTENTI DATABASE ---
+# Creare nuovo utente DB:
+CREATE USER 'nuovo'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'nuovo'@'localhost';
+FLUSH PRIVILEGES;

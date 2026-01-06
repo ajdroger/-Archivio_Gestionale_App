@@ -19,6 +19,8 @@ use DateTime;
  */
 class PDOSocioRepository implements SocioRepository
 {
+    use SoftDeletable;
+
     private PDO $pdo;
     private PDODocumentoRepository $docRepo;
 
@@ -48,7 +50,7 @@ class PDOSocioRepository implements SocioRepository
                     ON DUPLICATE KEY UPDATE 
                     matricola=VALUES(matricola), nome=VALUES(nome), cognome=VALUES(cognome), 
                     data_nascita=VALUES(data_nascita), indirizzo=VALUES(indirizzo), email=VALUES(email), 
-                    telefono=VALUES(telefono), stato_iscrizione=VALUES(stato_iscrizione)";
+                    telefono=VALUES(telefono), stato_iscrizione=VALUES(stato_iscrizione), deleted_at = NULL";
 
             $stmt = $this->pdo->prepare($sql);
 
@@ -96,7 +98,7 @@ class PDOSocioRepository implements SocioRepository
      */
     public function findByCodiceFiscale(string $cf): ?Socio
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM soci WHERE codice_fiscale = ? AND deleted_at IS NULL");
         $stmt->execute([$cf]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -125,7 +127,8 @@ class PDOSocioRepository implements SocioRepository
                  AND d.anno_solare = ? 
                  AND d.stato = 'VALIDATO' 
                  LIMIT 1) as is_pagato
-                FROM soci s";
+                FROM soci s
+                WHERE s.deleted_at IS NULL";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$anno]);
@@ -139,12 +142,11 @@ class PDOSocioRepository implements SocioRepository
     }
 
     /**
-     * Elimina un socio e i suoi dati associati dal database.
+     * Elimina un socio (Soft Delete).
      */
     public function delete(string $cf): void
     {
-        $stmt = $this->pdo->prepare("DELETE FROM soci WHERE codice_fiscale = ?");
-        $stmt->execute([$cf]);
+        $this->softDelete($cf);
     }
 
     private function mapRowToSocio(array $row, bool $hydrateDocuments = true): Socio
@@ -193,17 +195,17 @@ class PDOSocioRepository implements SocioRepository
     {
         $annoCorrente = (int) date('Y');
 
-        // Total Soci
-        $total = $this->pdo->query("SELECT COUNT(*) FROM soci")->fetchColumn();
+        // Total Soci (active + suspended + cancelled, excluding deleted)
+        $total = $this->pdo->query("SELECT COUNT(*) FROM soci WHERE deleted_at IS NULL")->fetchColumn();
 
         // Active Soci
-        $stmtActive = $this->pdo->prepare("SELECT COUNT(*) FROM soci WHERE stato_iscrizione = ?");
+        $stmtActive = $this->pdo->prepare("SELECT COUNT(*) FROM soci WHERE stato_iscrizione = ? AND deleted_at IS NULL");
         $stmtActive->execute([StatoIscrizione::ATTIVO->name]);
         $attivi = $stmtActive->fetchColumn();
 
         // Paganti
         $sqlPaganti = "SELECT COUNT(*) FROM soci s 
-                       WHERE EXISTS (
+                       WHERE s.deleted_at IS NULL AND EXISTS (
                            SELECT 1 FROM documenti d 
                            WHERE d.socio_cf = s.codice_fiscale 
                            AND d.tipo_documento = 'MODULO_ISCRIZIONE' 
@@ -249,6 +251,7 @@ class PDOSocioRepository implements SocioRepository
                        SELECT $ageExpr as age
                        FROM soci
                        WHERE stato_iscrizione = 'ATTIVO'
+                       AND deleted_at IS NULL
                    ) as sub
                    GROUP BY range_label";
 
@@ -294,14 +297,15 @@ class PDOSocioRepository implements SocioRepository
                  AND d.stato = 'VALIDATO' 
                  LIMIT 1) as is_pagato
                 FROM soci s 
-                WHERE s.nome LIKE ? 
+                WHERE s.deleted_at IS NULL 
+                AND (s.nome LIKE ? 
                    OR s.cognome LIKE ? 
                    OR s.codice_fiscale LIKE ? 
                    OR s.matricola LIKE ? 
                    OR s.email LIKE ? 
                    OR s.telefono LIKE ? 
                    OR $concat LIKE ? 
-                   OR $concatRev LIKE ?";
+                   OR $concatRev LIKE ?)";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
@@ -325,7 +329,7 @@ class PDOSocioRepository implements SocioRepository
                  AND d.anno_solare = ? 
                  AND d.stato = 'VALIDATO' 
                  LIMIT 1) as is_pagato
-                FROM soci s WHERE 1=1";
+                FROM soci s WHERE deleted_at IS NULL";
 
         $params = [$anno];
 
@@ -458,5 +462,41 @@ class PDOSocioRepository implements SocioRepository
                 return null;
             }, array_filter($documents, fn($doc) => $doc->ConsensoGDPR !== null)),
         ];
+    }
+
+    public function count(): int
+    {
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM soci WHERE deleted_at IS NULL");
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function findAllPaginated(int $page = 1, int $perPage = 50): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $stmt = $this->pdo->prepare("
+            SELECT * FROM soci 
+            WHERE deleted_at IS NULL 
+            ORDER BY cognome, nome
+            LIMIT ? OFFSET ?
+        ");
+        $stmt->execute([$perPage, $offset]);
+
+        $soci = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $soci[] = $this->mapRowToSocio($row, false);
+        }
+
+        return $soci;
+    }
+
+    protected function getTableName(): string
+    {
+        return 'soci';
+    }
+
+    protected function getPrimaryKey(): string
+    {
+        return 'codice_fiscale';
     }
 }
