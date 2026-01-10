@@ -17,13 +17,17 @@ use Slim\Routing\RouteContext;
  * Si occupa di mostrare il form di login e verificare le credenziali primarie
  * (username e password). Se valide, prepara la sessione per il 2FA.
  */
+use FratellanzaMilitare\Service\InputValidator;
+
 class LoginFlowController
 {
     private Mustache_Engine $mustache;
+    private InputValidator $validator;
 
-    public function __construct(Mustache_Engine $mustache)
+    public function __construct(Mustache_Engine $mustache, InputValidator $validator)
     {
         $this->mustache = $mustache;
+        $this->validator = $validator;
     }
 
     /**
@@ -42,20 +46,22 @@ class LoginFlowController
         return $response;
     }
 
-    /**
-     * Verifica le credenziali dell'utente (Fase 1).
-     * 
-     * Controlla username e hash password nel database.
-     * Se corretti, imposta 'partial_auth' in sessione e determina il ruolo normalizzato.
-     * Reindirizza alla verifica 2FA.
-     * 
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     */
     public function verifyCredentials(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = $request->getParsedBody();
+
+        // Validazione Input Classica
+        $validationErrors = $this->validator->validate($data, [
+            'username' => \Respect\Validation\Validator::stringType()->length(3, 50)->notEmpty(),
+            'password' => \Respect\Validation\Validator::stringType()->notEmpty()
+        ]);
+
+        if (!empty($validationErrors)) {
+            $html = $this->mustache->render('login', ['error' => "Dati non validi: controlla i campi."]);
+            $response->getBody()->write($this->wrapLayout($html, "Login"));
+            return $response;
+        }
+
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
 
