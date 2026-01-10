@@ -36,7 +36,8 @@
         "predis/predis": "^2.2",
         "sentry/sentry": "^4.0",
         "webonyx/graphql-php": "^15.29",
-        "ezyang/htmlpurifier": "^4.19"
+        "ezyang/htmlpurifier": "^4.19",
+        "respect/validation": "^2.3"
     },
     "config": {
         "allow-plugins": {
