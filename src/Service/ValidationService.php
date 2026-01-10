@@ -89,12 +89,23 @@ class ValidationService
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $realMime = $finfo->file($filePath);
 
+
+
         // Gestione caso speciale per file Office (docx, xlsx) che sono tecnicamente ZIP
-        if ($realMime === 'application/zip') {
-            // In un'implementazione più rigorosa, si potrebbe ispezionare il contenuto dello zip
-            // per verificare che contenga la struttura XML di Office.
-            // Per ora accettiamo se l'estensione dichiarata è compatibile.
+        if ($realMime === 'application/zip' || $realMime === 'application/x-zip-compressed') {
             return true;
+        }
+
+        // FALLBACK: Se finfo ritorna octet-stream, verifichiamo manualmente i magic bytes per ZIP
+        if ($realMime === 'application/octet-stream') {
+            $handle = fopen($filePath, 'rb');
+            if ($handle) {
+                $header = fread($handle, 4);
+                fclose($handle);
+                if ($header === "\x50\x4B\x03\x04") { // PK..
+                    return true;
+                }
+            }
         }
 
         return in_array($realMime, $allowedMimes);

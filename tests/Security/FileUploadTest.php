@@ -29,8 +29,10 @@ test('ValidationService accetta file ZIP per compatibilità Office', function ()
 
     // Challenge 3: Un file ZIP (simulazione .docx)
     $zipFile = tempnam(sys_get_temp_dir(), 'test_zip');
-    $zipHeader = hex2bin('504B0304'); // PK header
-    file_put_contents($zipFile, $zipHeader);
+
+    // Create valid zip using base64 (since ZipArchive might be missing or finfo strict)
+    $zipContent = base64_decode('UEsDBBQAAAAIAAAAIQA8Wl0jCwAAAAwAAAAIAAAAdGVzdC50eHR0ZXN0IGNvbnRlbnRQSwECFAAUAAAACAAAACEAPFpdIwsAAAAMAAAACAAAAAAAAAABACAAAAAAAAAAdGVzdC50eHRQSwUGAAAAAAEAAQAzAAAANAAAAAAA');
+    file_put_contents($zipFile, $zipContent);
 
     expect($service->validateRealMimeType($zipFile))->toBeTrue(); // Accettato come application/zip
 
