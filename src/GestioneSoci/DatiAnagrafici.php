@@ -7,20 +7,21 @@ namespace FratellanzaMilitare\GestioneSoci;
 use DateTime;
 
 /**
- * Value Object
- */
-/**
  * Value Object che raggruppa le informazioni anagrafiche di base.
- * 
- * Include Nome, Cognome, Data Nascita (DateTime), Indirizzo, Email e Telefono.
- * Non ha identità propria, vive all'interno dell'entità Socio.
  */
 class DatiAnagrafici
 {
     public string $Nome;
     public string $Cognome;
     public DateTime $DataNascita;
+    public ?string $LuogoNascita = null; // NEW
+    public ?string $Sesso = null; // NEW (M/F)
+    public ?string $StatoCivile = null; // NEW
     public string $Indirizzo;
     public string $Email;
     public string $Telefono = '';
+
+    // Campi Civili Aggiuntivi
+    public ?string $TitoloStudio = null; // NEW
+    public ?string $Professione = null; // NEW
 }

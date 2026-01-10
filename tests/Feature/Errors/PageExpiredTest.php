@@ -5,10 +5,12 @@ test('error 419 displays custom template', function () {
     $request = (new \Slim\Psr7\Factory\ServerRequestFactory)->createServerRequest('POST', '/form');
     // Simuliamo lanciando un'eccezione generica con codice 419 o estendendo HttpException
     $exception = new class ($request) extends \Slim\Exception\HttpException {
-        protected $code = 419;
-        protected $message = 'Page Expired';
-        protected $title = 'Page Expired';
-        protected $description = 'Page Expired';
+        public function __construct($request)
+        {
+            parent::__construct($request, 'Page Expired', 419);
+            $this->title = 'Page Expired';
+            $this->description = 'Page Expired';
+        }
     };
 
     $handler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler(

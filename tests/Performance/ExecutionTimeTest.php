@@ -21,7 +21,7 @@ test('database search performance', function () {
     // Pass connection if repository requires it, assuming constructor allows it or uses singleton internal
     // Checking PersistenceTest, it uses `new PDOSocioRepository()` without args if it uses singleton internally
     // or checks Logic. Let's assume repo manages connection or allow injection.
-    $repo = new PDOSocioRepository();
+    $repo = new PDOSocioRepository($this->db);
 
     $start = microtime(true);
     $repo->findAll();

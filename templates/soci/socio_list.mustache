@@ -7,9 +7,23 @@
             </div>
             <div class="col-12 col-md pt-2 pt-md-0">
                 <div class="d-flex flex-wrap gap-3 justify-content-md-end align-items-center">
-                    <!-- Search handled by DataTables -->
-                    <!-- <form ... </form> -->
                     
+                    <!-- Server Side Search Form -->
+                    <form action="{{base_url}}/soci" method="GET" class="d-flex gap-2">
+                        <select name="tipo" class="form-select form-select-sm bg-dark text-white border-secondary fw-bold" style="width: 140px;">
+                            <option value="">- Tutti -</option>
+                            <option value="MILITARE">Militari</option>
+                            <option value="CIVILE">Civili</option>
+                        </select>
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="q" class="form-control bg-dark text-white border-secondary" placeholder="Cerca..." value="{{search_query}}">
+                            <button class="btn btn-outline-light border-secondary" type="submit"><i class="fa-solid fa-search"></i></button>
+                            {{#search_query}}
+                            <a href="{{base_url}}/soci" class="btn btn-outline-danger border-secondary" title="Reset"><i class="fa-solid fa-times"></i></a>
+                            {{/search_query}}
+                        </div>
+                    </form>
+
                     <a href="{{base_url}}/soci/nuovo" class="btn btn-primary px-4 shadow shadow-primary"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a>
                 </div>
             </div>
@@ -51,7 +65,7 @@
                                 <option value="OK">OK</option>
                             </select>
                         </th>
-                        <th class="borer-secondary"></th>
+                        <th class="border-secondary"></th>
                     </tr>
                 </thead>
                 <tbody class="border-top-0">
@@ -66,7 +80,6 @@
                                     <div class="fw-bold text-white fs-6">{{nome}} {{cognome}}</div>
                                     <div class="small text-secondary">Nascita: {{data_nascita}}</div>
                                 </div>
-                            </div>
                             </div>
                         </td>
                         <td class="font-monospace text-warning small">{{matricola}}</td>

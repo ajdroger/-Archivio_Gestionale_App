@@ -1,0 +1,33 @@
+/* Page Specific Styles for Socio Create Dossier */
+
+.letter-spacing-2 { 
+    letter-spacing: 2px; 
+}
+.text-xs { 
+    font-size: 0.75rem; 
+}
+.ls-1 { 
+    letter-spacing: 1px; 
+}
+
+/* Tabs Customization */
+.dossier-tabs .nav-link {
+    color: rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.dossier-tabs .nav-link:hover {
+    color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.05);
+}
+
+.dossier-tabs .nav-link.active {
+    color: #fff !important;
+    background: transparent !important;
+    border-bottom: 2px solid var(--bs-primary);
+}
+
+.tab-content {
+    min-height: 400px;
+}

@@ -7,7 +7,7 @@ use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
-    $this->repo = new PDOSocioRepository();
+    $this->repo = new PDOSocioRepository($this->db);
 
     // Create a seed socio
     $socio = new Socio();

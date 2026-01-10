@@ -1,90 +1,271 @@
 {{> layout_header }}
-<div class="row justify-content-center">
-    <div class="col-lg-11">
-        <div class="card border-0 shadow-lg" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
-            <div class="card-header bg-transparent py-4 border-bottom border-secondary">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-user-pen me-2 text-warning"></i>REVISIONE RECORD: <span class="text-info opacity-75">{{socio.nome}} {{socio.cognome}}</span></h4>
-                    <a href="{{base_url}}/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Annulla Modifiche</a>
+<!-- Page Specific CSS -->
+<link rel="stylesheet" href="{{base_url}}/css/pages/socio_edit.css">
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-11">
+            
+            <!-- Header Dossier -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="text-white fw-bold mb-1"><i class="fa-solid fa-pen-to-square text-warning me-2"></i>REVISIONE DOSSIER SOCIO</h4>
+                    <p class="text-secondary small mb-0 font-monospace text-uppercase opacity-75">MODIFICA ANAGRAFICA / AGGIORNAMENTO DATI / LEVEL-4 ACCESS</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{base_url}}/soci" class="btn btn-outline-light border-secondary hover-bg-light text-uppercase fw-bold text-xs ls-1 px-4"><i class="fa-solid fa-arrow-left me-2"></i>Archivio</a>
                 </div>
             </div>
-            
-            <div class="card-body p-4 p-md-5">
-                <form action="{{base_url}}/soci/{{socio.codice_fiscale}}/aggiorna" method="POST">
-                    <!-- CSRF Token -->
-                    <input type="hidden" name="csrf_name" value="{{csrf.name}}">
-                    <input type="hidden" name="csrf_value" value="{{csrf.value}}">
 
-                    <div class="row g-5 mb-5">
-                        <!-- Colonna 1: Identità -->
-                        <div class="col-md-6 border-end border-secondary border-opacity-25 px-md-4">
-                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-lock me-2"></i>PARAMETRI IMMODIFICABILI</h5>
-                            
-                            <div class="form-group mb-4">
-                                <label class="mc-label">CODICE FISCALE (CHIAVE PRIMARIA)</label>
-                                <div class="mc-code-box bg-dark bg-opacity-50 text-secondary border-secondary border-opacity-25">{{socio.codice_fiscale}}</div>
-                                <div class="form-text text-danger opacity-75 small mt-2"><i class="fa-solid fa-shield-halved me-1"></i>Questo campo è bloccato per integrità referenziale.</div>
-                            </div>
+            <form action="{{base_url}}/soci/{{socio.codice_fiscale}}/aggiorna" method="POST" id="dossierForm">
+                <!-- Data Security -->
+                <input type="hidden" name="csrf_name" value="{{csrf.name}}">
+                <input type="hidden" name="csrf_value" value="{{csrf.value}}">
 
-                            <h5 class="mb-4 text-primary tracking-wider small fw-bold mt-5"><i class="fa-solid fa-user-gear me-2"></i>DATI ANAGRAFICI EDITABILI</h5>
-                            
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="mc-label" for="nome">NOME</label>
-                                        <input type="text" id="nome" name="nome" class="mc-input text-white" value="{{socio.nome}}" required placeholder="Nome">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="mc-label" for="cognome">COGNOME</label>
-                                        <input type="text" id="cognome" name="cognome" class="mc-input text-white" value="{{socio.cognome}}" required placeholder="Cognome">
-                                    </div>
-                                </div>
+                <!-- Dossier Container -->
+                <div class="card bg-dark border-secondary shadow-lg overflow-hidden position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-gradient-warning mb-1"></div>
+                    
+                    <!-- Profile Type Selector -->
+                    <div class="px-4 pt-4 pb-2 border-bottom border-secondary bg-dark bg-opacity-50">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <label class="text-secondary text-xs fw-bold text-uppercase mb-1">Tipologia Profilo</label>
+                                <!-- Logic populated by JS based on existing data if needed, or defaults to Military -->
+                                <select id="tipo_profilo" name="tipo_profilo" class="form-select bg-dark border-secondary text-white fw-bold text-uppercase" data-value="{{#socio.grado}}MILITARE{{/socio.grado}}{{^socio.grado}}CIVILE{{/socio.grado}}">
+                                    <option value="MILITARE">&#xf0a3; Personale Militare</option>
+                                    <option value="CIVILE">&#xf007; Civile / Familiare</option>
+                                    <option value="SIMPATIZZANTE">&#xf1ae; Simpatizzante</option>
+                                </select>
                             </div>
-                            
-                            <div class="form-group mb-4">
-                                <label class="mc-label" for="data_nascita">DATA DI NASCITA</label>
-                                <input type="date" id="data_nascita" name="data_nascita" class="mc-input text-white" value="{{socio.data_nascita}}" placeholder="Data Nascita">
-                            </div>
-                        </div>
-
-                        <!-- Colonna 2: Contatti e Stato -->
-                        <div class="col-md-6 px-md-4">
-                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-tower-broadcast me-2"></i>AGGIORNAMENTO COORDINATE</h5>
-                            
-                            <div class="form-group mb-4">
-                                <label class="mc-label" for="indirizzo">INDIRIZZO RESIDENZA</label>
-                                <input type="text" id="indirizzo" name="indirizzo" class="mc-input text-white" value="{{socio.indirizzo}}" placeholder="Indirizzo">
-                            </div>
-
-                            <div class="form-group mb-4">
-                                <label class="mc-label" for="email">E-MAIL DI CONTATTO</label>
-                                <input type="email" id="email" name="email" class="mc-input text-white" value="{{socio.email}}" placeholder="nome@esempio.it">
-                            </div>
-
-                            <div class="form-group mb-4">
-                                <label class="mc-label" for="telefono">NUMERO TELEFONICO</label>
-                                <input type="tel" id="telefono" name="telefono" class="mc-input text-white" value="{{socio.telefono}}" placeholder="Telefono">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="mc-label" for="matricola">SERIALE MATRICOLA</label>
-                                <input type="text" id="matricola" name="matricola" class="mc-input text-info" value="{{socio.matricola}}" placeholder="12345">
+                            <div class="col-md-9">
+                                <p class="text-secondary opacity-50 small mb-0 mt-3 mt-md-0 ms-md-3">
+                                    <i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i>
+                                    <strong>Modalità Modifica:</strong> Passare da Militare a Civile rimuoverà i dati di servizio al salvataggio.
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-end gap-3 pt-3 border-top border-secondary pt-5">
-                        <a href="/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary">ANNULLA</a>
-                        <button type="submit" class="btn btn-warning btn-lg px-5 shadow-sm fw-bold"><i class="fa-solid fa-check-double me-2"></i>APPlica MODIFICHE</button>
+                    <!-- Tabs Navigation -->
+                    <div class="card-header bg-dark border-bottom border-secondary pt-0 px-0">
+                        <ul class="nav nav-tabs nav-justified dossier-tabs card-header-tabs m-0 border-0" id="dossierTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active rounded-0 py-3 text-uppercase fw-bold text-xs ls-1 border-end border-secondary" id="tab-anagrafica" data-bs-toggle="tab" data-bs-target="#panel-anagrafica" type="button" role="tab">
+                                    <i class="fa-solid fa-id-card me-2"></i>1. Dati Anagrafici
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-0 py-3 text-uppercase fw-bold text-xs ls-1 border-end border-secondary" id="tab-militare" data-bs-toggle="tab" data-bs-target="#panel-militare" type="button" role="tab">
+                                    <i class="fa-solid fa-person-military-rifle me-2"></i>2. Profilo Militare
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-0 py-3 text-uppercase fw-bold text-xs ls-1 border-end border-secondary" id="tab-sanitario" data-bs-toggle="tab" data-bs-target="#panel-sanitario" type="button" role="tab">
+                                    <i class="fa-solid fa-notes-medical me-2"></i>3. Sanitario & Sicurezza
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-0 py-3 text-uppercase fw-bold text-xs ls-1" id="tab-admin" data-bs-toggle="tab" data-bs-target="#panel-admin" type="button" role="tab">
+                                    <i class="fa-solid fa-file-signature me-2"></i>4. Amministrazione
+                                </button>
+                            </li>
+                        </ul>
                     </div>
-                </form>
-            </div>
+
+                    <!-- Tabs Content -->
+                    <div class="card-body p-4 p-lg-5 tab-content" id="dossierContent">
+                        
+                        <!-- PANEL 1: Anagrafica -->
+                        <div class="tab-pane fade show active" id="panel-anagrafica" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-primary">
+                                <i class="fa-solid fa-fingerprint me-2"></i>Identità Soggetto
+                            </h5>
+                            
+                            <div class="row g-4">
+                                <!-- First Row: Nome, Cognome, Sesso -->
+                                <div class="col-md-5">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Cognome</label>
+                                    <input type="text" name="cognome" id="cognome" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" required value="{{socio.cognome}}">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Nome</label>
+                                    <input type="text" name="nome" id="nome" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" required value="{{socio.nome}}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Sesso</label>
+                                    <select name="sesso" id="sesso" class="form-select bg-dark border-secondary text-white fw-bold" required data-value="{{socio.sesso}}">
+                                        <option value="M">M</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </div>
+
+                                <!-- Second Row: Nascita -->
+                                <div class="col-md-4">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Data di Nascita</label>
+                                    <input type="date" name="data_nascita" id="data_nascita" class="form-control bg-dark border-secondary text-white" required value="{{socio.data_nascita}}">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Luogo di Nascita (Comune o Stato Estero)</label>
+                                    <input type="text" name="luogo_nascita" id="luogo_nascita" class="form-control bg-dark border-secondary text-white text-uppercase" required value="{{socio.luogo_nascita}}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Stato Civile</label>
+                                    <select name="stato_civile" class="form-select bg-dark border-secondary text-white" data-value="{{socio.stato_civile}}">
+                                        <option value="">- SELEZIONA -</option>
+                                        <option value="CELIBE/NUBILE">CELIBE/NUBILE</option>
+                                        <option value="CONIUGATO/A">CONIUGATO/A</option>
+                                        <option value="DIVORZIATO/A">DIVORZIATO/A</option>
+                                        <option value="VEDOVO/A">VEDOVO/A</option>
+                                    </select>
+                                </div>
+
+                                <!-- Third Row: CF -->
+                                <div class="col-12">
+                                    <div class="p-3 border border-secondary border-opacity-50 rounded bg-transparent mt-2">
+                                        <label class="form-label text-info text-xs fw-bold text-uppercase d-flex justify-content-between">
+                                            <span><i class="fa-solid fa-barcode me-2"></i>Codice Fiscale</span>
+                                            <button type="button" id="btn-calc-cf" class="btn btn-sm btn-link text-info p-0 text-decoration-none fw-bold text-xs text-uppercase">
+                                                <i class="fa-solid fa-rotate-right me-1"></i>Ricalcola
+                                            </button>
+                                        </label>
+                                        <input type="text" name="codice_fiscale" id="codice_fiscale" class="form-control bg-dark border-secondary text-muted font-monospace fs-5 text-uppercase fw-bold letter-spacing-2 mc-locked-field" readonly value="{{socio.codice_fiscale}}">
+                                        <div class="form-text text-secondary text-xs opacity-50 mt-1">Identificativo primario (Read-Only)</div>
+                                    </div>
+                                </div>
+
+                                <!-- Fourth Row: Contatti -->
+                                <div class="col-12 mt-4">
+                                     <h6 class="text-secondary text-uppercase text-xs fw-bold mb-3 border-bottom border-secondary pb-1 w-50">Recapiti Attuali</h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Indirizzo Residenza</label>
+                                    <input type="text" name="indirizzo" class="form-control bg-dark border-secondary text-white" value="{{socio.indirizzo}}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Email</label>
+                                    <input type="email" name="email" class="form-control bg-dark border-secondary text-white" value="{{socio.email}}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Telefono</label>
+                                    <input type="tel" name="telefono" class="form-control bg-dark border-secondary text-white" value="{{socio.telefono}}">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Titolo di Studio</label>
+                                    <input type="text" name="titolo_studio" class="form-control bg-dark border-secondary text-white" value="{{socio.titolo_studio}}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Professione Attuale</label>
+                                    <input type="text" name="professione" class="form-control bg-dark border-secondary text-white" value="{{socio.professione}}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 2: Militare -->
+                        <div class="tab-pane fade" id="panel-militare" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-warning">
+                                <i class="fa-solid fa-medal me-2"></i>Stato di Servizio
+                            </h5>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Grado (Al Congedo o Attuale)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-warning"><i class="fa-solid fa-star"></i></span>
+                                        <input type="text" name="grado" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" value="{{socio.grado}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Corpo di Appartenenza</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-warning"><i class="fa-solid fa-shield-cat"></i></span>
+                                        <input type="text" name="corpo_appartenenza" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" value="{{socio.corpo_appartenenza}}">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Data Arruolamento</label>
+                                    <input type="date" name="data_arruolamento" class="form-control bg-dark border-secondary text-white" value="{{socio.data_arruolamento}}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Data Congedo</label>
+                                    <input type="date" name="data_congedo" class="form-control bg-dark border-secondary text-white" value="{{socio.data_congedo}}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 3: Sanitario -->
+                        <div class="tab-pane fade" id="panel-sanitario" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-danger">
+                                <i class="fa-solid fa-heart-pulse me-2"></i>Profilo Sanitario & Sicurezza
+                            </h5>
+
+                            <div class="row g-4">
+                                <div class="col-md-3">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Gruppo Sanguigno</label>
+                                    <select name="gruppo_sanguigno" class="form-select bg-dark border-secondary text-white fw-bold" data-value="{{socio.gruppo_sanguigno}}">
+                                        <option value="">- IGNOTO -</option>
+                                        <option value="0 Rh+">0 Rh+</option>
+                                        <option value="0 Rh-">0 Rh-</option>
+                                        <option value="A Rh+">A Rh+</option>
+                                        <option value="A Rh-">A Rh-</option>
+                                        <option value="B Rh+">B Rh+</option>
+                                        <option value="B Rh-">B Rh-</option>
+                                        <option value="AB Rh+">AB Rh+</option>
+                                        <option value="AB Rh-">AB Rh-</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Contatto di Emergenza (ICE)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-danger"><i class="fa-solid fa-phone-volume"></i></span>
+                                        <input type="text" name="contatto_emergenza" class="form-control bg-dark border-secondary text-white" value="{{socio.contatto_emergenza}}">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Note Mediche / Patologie / Allergie</label>
+                                    <textarea name="note_mediche" class="form-control bg-dark border-secondary text-white" rows="4">{{socio.note_mediche}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 4: Admin -->
+                        <div class="tab-pane fade" id="panel-admin" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-info">
+                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>Amministrazione
+                            </h5>
+                            
+                            <div class="row g-4 justify-content-center">
+                                <div class="col-md-6 text-center">
+                                    <div class="p-4 border border-secondary border-opacity-25 rounded bg-dark bg-opacity-50">
+                                        <label class="form-label text-info text-xs fw-bold text-uppercase mb-3">Matricola Assegnata</label>
+                                        <input type="text" name="matricola" class="form-control bg-dark border-secondary text-info fw-bold text-center fs-4 font-monospace mb-2" value="{{socio.matricola}}" placeholder="AUTO-GEN">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Footer Actions -->
+                    <div class="card-footer bg-dark border-top border-secondary p-4 d-flex justify-content-between align-items-center">
+                        <button type="button" class="btn btn-outline-danger btn-sm border-0 opacity-50"><i class="fa-solid fa-trash me-2"></i>Elimina Dossier</button>
+                        <div class="d-flex gap-3">
+                            <a href="{{base_url}}/soci" class="btn btn-outline-light px-4">Annulla</a>
+                            <button type="submit" class="btn btn-warning fw-bold text-uppercase ls-1 px-5 shadow-lg">
+                                <i class="fa-solid fa-save me-2"></i>Aggiorna Dossier
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
 
-<!-- Styles moved to style.css -->
-{{> layout_footer }}
+<!-- Page Specific JS -->
+<script src="{{base_url}}/js/pages/socio_edit.js"></script>
 
+{{> layout_footer }}

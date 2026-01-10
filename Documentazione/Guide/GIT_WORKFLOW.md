@@ -46,9 +46,9 @@ Essendo l'unico sviluppatore, non abbiamo bisogno di Pull Requests complesse, ma
     ```bash
     git checkout develop
     git merge --no-ff feature/nuova-funzionalita
-    git branch -d feature/nuova-funzionalita
+    # git branch -d feature/nuova-funzionalita  <-- NON ELIMINARE: I branch feature vengono mantenuti per storico
     ```
-    *(L'uso di `--no-ff` crea un nodo di commit esplicito per la feature, preservando la storia del raggruppamento delle modifiche)*
+    *(L'uso di `--no-ff` crea un nodo di commit esplicito per la feature. Il branch non viene eliminato per mantenere traccia del lavoro svolto)*
 
 ### B. Creare una Release (es. v1.2)
 1.  Quando `develop` è pronto: `git checkout -b release/v1.2 develop`

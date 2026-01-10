@@ -1,0 +1,44 @@
+/* Page Specific Styles for Socio Edit Dossier */
+
+.letter-spacing-2 {
+    letter-spacing: 2px;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.ls-1 {
+    letter-spacing: 1px;
+}
+
+/* Tabs Customization (Gold/Edit Theme variant) */
+.dossier-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dossier-tabs .nav-link:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dossier-tabs .nav-link.active {
+    color: #ffc107 !important;
+    /* Warning/Gold color for Edit Mode */
+    background: transparent !important;
+    border-bottom: 2px solid #ffc107;
+}
+
+.tab-content {
+    min-height: 400px;
+}
+
+/* Edit specific highlights */
+.mc-locked-field {
+    background-color: rgba(0, 0, 0, 0.3);
+    cursor: not-allowed;
+    opacity: 0.7;
+}

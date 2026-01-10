@@ -6,12 +6,7 @@ use FratellanzaMilitare\Enum\StatoIscrizione;
 
 /**
  * Entità principale del sistema: il Socio.
- * 
- * Rappresenta un iscritto all'associazione. È un Aggregate Root che contiene:
- * - Dati Anagrafici (Value Object)
- * - Stato Iscrizione
- * - Documenti Associati (Collezione)
- * - Identificativi (CF, Matricola)
+ * Aggregate Root esteso con profilo militare e sanitario.
  */
 class Socio
 {
@@ -23,48 +18,41 @@ class Socio
     /** @var Documento[] Elenco polimorfico dei documenti */
     public array $DocumentiAssociati = [];
 
-    // Ottimizzazione: permette di iniettare il valore se già calcolato via SQL per performance
+    // Ottimizzazione performance
     public ?bool $IsMorosoPrecalculated = null;
 
-    /**
-     * Aggiorna i dati anagrafici del socio.
-     */
+    // --- Profilo Militare ---
+    public ?string $Grado = null;
+    public ?string $CorpoAppartenenza = null;
+    public ?\DateTime $DataArruolamento = null;
+    public ?\DateTime $DataCongedo = null;
+
+    // --- Profilo Sanitario & Emergenze ---
+    public ?string $GruppoSanguigno = null;
+    public ?string $NoteMediche = null;
+    public ?string $ContattoEmergenza = null;
+
     public function aggiornaAnagrafica(DatiAnagrafici $nuoviDati): void
     {
         $this->DatiPersonali = $nuoviDati;
     }
 
-    /**
-     * Associa un nuovo documento al socio.
-     */
     public function aggiungiDocumento(Documento $doc): void
     {
         $this->DocumentiAssociati[] = $doc;
     }
 
-    /**
-     * Rimuove un documento dalla lista (by ID).
-     */
     public function rimuoviDocumento(string $idUnivoco): void
     {
         foreach ($this->DocumentiAssociati as $key => $doc) {
             if ($doc->IdUnivoco === $idUnivoco) {
                 unset($this->DocumentiAssociati[$key]);
-                // Re-index array to avoid gaps
                 $this->DocumentiAssociati = array_values($this->DocumentiAssociati);
                 break;
             }
         }
     }
 
-    /**
-     * Verifica se il socio è moroso per l'anno corrente.
-     * 
-     * Un socio è in regola se possiede un ModuloIscrizione valido per l'anno in corso.
-     * Se è stato precalcolato (es. da query SQL), usa il valore in cache.
-     * 
-     * @return bool True se moroso, False se in regola.
-     */
     public function verificaMorosita(): bool
     {
         if ($this->IsMorosoPrecalculated !== null) {
@@ -81,6 +69,6 @@ class Socio
             }
         }
 
-        return true; // Moroso se non trova iscrizione valida anno corrente
+        return true;
     }
 }

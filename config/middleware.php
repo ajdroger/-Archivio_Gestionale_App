@@ -15,7 +15,7 @@ return function (App $app) {
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {
         ini_set('session.cookie_httponly', 1);
-        ini_set('session.cookie_samesite', 'Lax'); // Lax avoids session loss on localhost redirects/ajax
+        ini_set('session.cookie_samesite', 'Strict'); // Mission-critical: high-level security compliant
         ini_set('session.cookie_path', '/');
         ini_set('session.gc_maxlifetime', 3600); // 1 ora di validità
 
@@ -55,6 +55,10 @@ return function (App $app) {
 
     // Authentication
     $app->add(new \FratellanzaMilitare\Middleware\AuthMiddleware());
+
+    // Input Sanitization (XSS Prevention) - Runs before Auth and Logic
+    $purifier = $container->get(HTMLPurifier::class);
+    $app->add(new \FratellanzaMilitare\Middleware\InputSanitizerMiddleware($purifier));
 
     // Rate Limiting (con Redis support)
     $redisService = $container->has(\FratellanzaMilitare\Service\RedisService::class)
