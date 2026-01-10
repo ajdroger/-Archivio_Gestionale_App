@@ -148,7 +148,7 @@ class RegistrationService
 
         // Send Email
         if (!empty($socio->DatiPersonali->Email)) {
-            $subject = "Ricevuta Iscrizione " . $year . " - Fratellanza Militare";
+            $subject = "Ricevuta Iscrizione " . $year . " - MCAG (Militare Civile Archivio Gestionale)";
             $body = "Gentile {$socio->DatiPersonali->Nome},<br><br>In allegato la ricevuta di iscrizione per l'anno $year.<br><br>Cordiali Saluti,<br>Segreteria.";
 
             $this->emailService->send(
