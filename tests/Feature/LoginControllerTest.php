@@ -11,7 +11,8 @@ test('login form renders', function () {
         ->method('render')
         ->willReturn('<form>Login</form>');
 
-    $controller = new LoginFlowController($mustache);
+    $validator = new \FratellanzaMilitare\Service\InputValidator();
+    $controller = new LoginFlowController($mustache, $validator);
 
     $request = (new ServerRequestFactory())->createServerRequest('GET', '/login');
     $response = (new ResponseFactory())->createResponse();
@@ -25,7 +26,8 @@ test('login verify success redirects', function () {
     /** @var \Tests\TestCase $this */
     $mustache = $this->createMock(Mustache_Engine::class);
 
-    $controller = new LoginFlowController($mustache);
+    $validator = new \FratellanzaMilitare\Service\InputValidator();
+    $controller = new LoginFlowController($mustache, $validator);
 
     $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('POST', '/login')
         ->withParsedBody(['username' => 'admin', 'password' => 'admin123']));
