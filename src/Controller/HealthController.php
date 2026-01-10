@@ -5,6 +5,7 @@ namespace FratellanzaMilitare\Controller;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use FratellanzaMilitare\Service\HealthCheckService;
+use OpenApi\Attributes as OA;
 
 /**
  * Health Check Controller - Enhanced with comprehensive checks
@@ -34,6 +35,29 @@ final class HealthController
      * @param Response $response
      * @return Response
      */
+    #[OA\Get(
+        path: "/health",
+        tags: ["System"],
+        summary: "System Health Check",
+        description: "Verifica lo stato di Database, FileSystem e Servizi Essenziali",
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Sistema operativo (Healthy)",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "status", type: "string", example: "healthy"),
+                        new OA\Property(property: "timestamp", type: "string", format: "date-time"),
+                        new OA\Property(property: "checks", type: "object")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 503,
+                description: "Sistema degradato o non disponibile (Unhealthy)"
+            )
+        ]
+    )]
     public function check(Request $request, Response $response): Response
     {
         $result = $this->healthCheckService->checkAll();

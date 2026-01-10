@@ -90,6 +90,11 @@ return function (App $app) {
     $app->post('/api/graphql', \FratellanzaMilitare\Controller\GraphQLController::class . ':handle')->setName('graphql_api');
     // ->add(...) // Disabled for testing connectivity
 
+
+    // API Documentation
+    $app->get('/api/docs', \FratellanzaMilitare\Controller\Docs\DocumentationController::class . ':ui')->setName('api_docs');
+    $app->get('/api/docs/json', \FratellanzaMilitare\Controller\Docs\DocumentationController::class . ':spec')->setName('api_docs_json');
+
     // Admin & DevTools
     $app->group('', function ($group) {
         $group->get('/impostazioni', SettingsController::class . ':view')->setName('settings');

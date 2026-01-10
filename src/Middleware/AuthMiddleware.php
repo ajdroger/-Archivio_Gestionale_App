@@ -32,7 +32,9 @@ class AuthMiddleware implements MiddlewareInterface
                 'register',
                 'register_verify',
                 'graphql_api',
-                'graphql_endpoint' // Keep both just in case
+                'graphql_endpoint', // Keep both just in case
+                'api_docs',
+                'api_docs_json'
             ];
 
             // Allow public routes
