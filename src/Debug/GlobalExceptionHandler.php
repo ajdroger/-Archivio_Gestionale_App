@@ -59,10 +59,16 @@ class GlobalExceptionHandler
                 $template = "errors/generic";
             }
 
+            // Secure Message Logic
+            $message = $exception->getMessage();
+            if (!$displayErrorDetails && $statusCode >= 500) {
+                $message = 'Si è verificato un errore interno. Contattare l\'amministratore o riprovare più tardi.';
+            }
+
             $viewData = [
                 'title' => 'Errore ' . $statusCode,
                 'code' => $statusCode,
-                'message' => $exception->getMessage(),
+                'message' => $message,
                 'debug_msg' => $displayErrorDetails ? $exception->getMessage() : null,
                 'trace' => $displayErrorDetails ? $exception->getTraceAsString() : null,
                 'year' => date('Y')
@@ -79,10 +85,18 @@ class GlobalExceptionHandler
         }
 
         // 2. Fallback to JSON
+        $message = 'Si è verificato un errore.';
+        if ($displayErrorDetails) {
+            $message = $exception->getMessage();
+        } elseif ($statusCode < 500) {
+            // Safe to show client errors (4xx)
+            $message = $exception->getMessage();
+        }
+
         $response->getBody()->write(json_encode([
             'error' => true,
             'code' => $statusCode,
-            'message' => 'Si è verificato un errore.',
+            'message' => $message,
             'debug_msg' => $displayErrorDetails ? $exception->getMessage() : null
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 

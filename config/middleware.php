@@ -67,7 +67,8 @@ return function (App $app) {
     $app->add(new \FratellanzaMilitare\Middleware\RateLimitMiddleware(100, 60, $redisService, $logger));
 
     // Error Middleware
-    $errorMiddleware = $app->addErrorMiddleware(true, true, true, $logger);
+    $displayErrorDetails = ($_ENV['APP_DEBUG'] ?? 'false') === 'true';
+    $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, true, true, $logger);
     $customErrorHandler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler($logger, $mustache);
     $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 

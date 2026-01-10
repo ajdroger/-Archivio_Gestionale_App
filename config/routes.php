@@ -77,14 +77,23 @@ return function (App $app) {
     })->add($statsRole);
 
     // API Layer
+    // Stricter Rate Limit for API: 60 req/min
+    $container = $app->getContainer();
+    $redis = $container->has(\FratellanzaMilitare\Service\RedisService::class) ? $container->get(\FratellanzaMilitare\Service\RedisService::class) : null;
+    $logger = $container->get(\Psr\Log\LoggerInterface::class);
+    $apiLimit = new RateLimitMiddleware(60, 60, $redis, $logger);
+
     $app->group('/api/v1', function ($group) {
         $group->get('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':list');
         $group->get('/soci/{cf}', \FratellanzaMilitare\Controller\SociApiController::class . ':get');
         $group->post('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':create');
-    })->add(new \FratellanzaMilitare\Middleware\ApiKeyMiddleware(
-                $app->getContainer()->get(PDO::class),
-                $app->getContainer()->get(\FratellanzaMilitare\SecurityLayer\AuditTrail::class)
-            ));
+    })
+        ->add(new \FratellanzaMilitare\Middleware\ApiKeyMiddleware(
+            $container->get(PDO::class),
+            $container->get(\FratellanzaMilitare\SecurityLayer\AuditTrail::class)
+        ))
+        ->add($apiLimit);
+    // ->add(new \FratellanzaMilitare\Middleware\JwtAuthMiddleware()); // TODO: Enable when Auth0 is ready
 
     // GraphQL API
     $app->post('/api/graphql', \FratellanzaMilitare\Controller\GraphQLController::class . ':handle')->setName('graphql_api');
