@@ -10,12 +10,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     /**
      * Dati delle statistiche iniettati dalla vista.
-     * @type {Object}
-     * @property {number} attivi - Numero di soci attivi.
-     * @property {number} morosi - Numero di soci morosi.
-     * @property {Array<number>} trend_iscritti - Array di numeri per il trend mensile.
      */
-    const stats = window.dashboardData || { attivi: 0, morosi: 0, trend_iscritti: [] };
+    const dataEl = document.getElementById('dashboard-data');
+    const stats = dataEl ? JSON.parse(dataEl.textContent) : { attivi: 0, morosi: 0, trend_iscritti: [] };
 
     // Configurazione Comune Chart.js
     if (typeof Chart !== 'undefined') {

@@ -1,0 +1,44 @@
+/**
+ * Statistics Page Styles
+ * Location: public/css/pages/statistics.css
+ */
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom DataTables Styling overrides for dark mode consistency */
+.statistics-table.table-dark {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.1);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #94a3b8 !important;
+    border: 1px solid #475569 !important;
+    background: transparent !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #0ea5e9 !important;
+    color: white !important;
+    border-color: #0ea5e9 !important;
+}
