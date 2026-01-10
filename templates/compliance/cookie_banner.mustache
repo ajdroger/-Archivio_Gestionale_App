@@ -12,16 +12,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    if (!localStorage.getItem('cookieConsented')) {
-        document.getElementById('cookie-banner').style.display = 'block';
-    }
-
-    document.getElementById('accept-cookies').addEventListener('click', function() {
-        localStorage.setItem('cookieConsented', 'true');
-        document.getElementById('cookie-banner').style.display = 'none';
-        // Qui si attiverebbero eventuali script di terze parti (se presenti)
-    });
-});
-</script>
+<script src="{{base_url}}/js/components/cookie_banner.js"></script>
