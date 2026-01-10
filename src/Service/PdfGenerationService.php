@@ -28,7 +28,7 @@ class PdfGenerationService
         $html .= "<p>Codice Fiscale: <strong>{$socio->CodiceFiscale}</strong></p>";
         $html .= "<p>Ha versato regolarmente la quota associativa di <strong>&euro; " . number_format($amount, 2, ',', '.') . "</strong>.</p>";
         $html .= "<p>Data: " . date('d/m/Y') . "</p>";
-        $html .= "<p style='margin-top: 50px; font-size: 0.8em; color: #666;'>Documento generato automaticamente dal sistema gestionale Fratellanza Militare.</p>";
+        $html .= "<p style='margin-top: 50px; font-size: 0.8em; color: #666;'>Documento generato automaticamente dal sistema gestionale MCAG (Militare Civile Archivio Gestionale).</p>";
 
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
