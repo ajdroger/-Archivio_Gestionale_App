@@ -8,9 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Routing\RouteContext;
 
-/**
- * Controller dedicato al flusso di autenticazione iniziale (Fase 1).
- */
+
 /**
  * Gestisce il flusso principale di autenticazione (Fase 1).
  * 

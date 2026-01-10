@@ -11,15 +11,15 @@ class NewRelicAgent
 {
     public function recordCustomEvent(string $eventType, array $attributes): void
     {
-        if (extension_loaded('newrelic')) {
-            // newrelic_record_custom_event($eventType, $attributes);
+        if (extension_loaded('newrelic') && function_exists('newrelic_record_custom_event')) {
+            newrelic_record_custom_event($eventType, $attributes);
         }
     }
 
     public function noticeError(\Throwable $t): void
     {
-        if (extension_loaded('newrelic')) {
-            // newrelic_notice_error($t->getMessage(), $t);
+        if (extension_loaded('newrelic') && function_exists('newrelic_notice_error')) {
+            newrelic_notice_error($t->getMessage(), $t);
         }
     }
 }

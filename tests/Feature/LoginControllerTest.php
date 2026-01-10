@@ -6,7 +6,7 @@ use Slim\Psr7\Factory\ServerRequestFactory;
 
 test('login form renders', function () {
     /** @var \Tests\TestCase $this */
-    $mustache = $this->createMock(Mustache_Engine::class);
+    $mustache = $this->createMock(\Mustache_Engine::class);
     $mustache->expects($this->once())
         ->method('render')
         ->willReturn('<form>Login</form>');
@@ -24,7 +24,7 @@ test('login form renders', function () {
 
 test('login verify success redirects', function () {
     /** @var \Tests\TestCase $this */
-    $mustache = $this->createMock(Mustache_Engine::class);
+    $mustache = $this->createMock(\Mustache_Engine::class);
 
     $validator = new \FratellanzaMilitare\Service\InputValidator();
     $controller = new LoginFlowController($mustache, $validator);

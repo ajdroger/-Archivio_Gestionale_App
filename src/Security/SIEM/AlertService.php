@@ -23,18 +23,20 @@ class AlertService
             return;
         }
 
-        // --- INTEGRAZIONE SIEM ---
-        /*
+        // --- INTEGRAZIONE SIEM (Simulazione / File Fallback) ---
         $payload = [
-            'severity' => $severity, // HIGH, CRITICAL, MEDIUM
+            'severity' => $severity,
             'timestamp' => date('c'),
             'message' => $message,
             'context' => $context,
-            'environment' => $_ENV['APP_ENV'] ?? 'unknown'
+            'environment' => $_ENV['APP_ENV'] ?? 'unknown',
+            'source_ip' => $_SERVER['REMOTE_ADDR'] ?? 'cli'
         ];
 
-        // Esempio: Inviare a webhook sicuro
-        // $client->post('https://siem-ingest.fratellanza.it/api/v1/alert', ['json' => $payload]);
-        */
+        // In produzione, questo invierebbe una HTTP Request a Splunk/ELK.
+        // Qui simuliamo scrivendo su un log dedicato alla sicurezza (audit).
+        $logEntry = json_encode($payload, JSON_UNESCAPED_SLASHES);
+        $siemLogFile = __DIR__ . '/../../../logs/siem_security.log';
+        file_put_contents($siemLogFile, $logEntry . PHP_EOL, FILE_APPEND);
     }
 }
