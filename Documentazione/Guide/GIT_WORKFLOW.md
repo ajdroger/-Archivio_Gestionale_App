@@ -46,7 +46,7 @@ Essendo l'unico sviluppatore, non abbiamo bisogno di Pull Requests complesse, ma
     ```bash
     git checkout develop
     git merge --no-ff feature/nuova-funzionalita
-    # git branch -d feature/nuova-funzionalita  <-- NON ELIMINARE: I branch feature vengono mantenuti per storico
+    # git branch -d feature/nuova-funzionalita  <-- NON ELIMINARE: I branch feature vengono mantenuti per storico/manutenzione
     ```
     *(L'uso di `--no-ff` crea un nodo di commit esplicito per la feature. Il branch non viene eliminato per mantenere traccia del lavoro svolto)*
 
