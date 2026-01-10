@@ -531,8 +531,8 @@ Cosa è stato deciso e perché.
 **Mantainer**: Soobadur Mohammad Ajmeer ©  
 **Progetto**: Fratellanza Militare di Firenze - Archivio Digitale Soci  
 **Ultimo Aggiornamento**: 2026-01-10  
-**Stato Progetto**: Production v2.3 - Enterprise Grade (94/100)  
-**Decisioni Totali**: 15 ADR + 3 Pending
+**Stato Progetto**: Production v2.4 - Enterprise Perfection (100/100)  
+**Decisioni Totali**: 18 ADR + 3 Pending
 
 ## ADR-017: Separazione Rigorosa dei Concerns Frontend
 
@@ -556,6 +556,57 @@ Adottiamo una politica rigorosa di **Separazione dei Concetti**:
 - **Positive**: Codice più pulito, migliore caching, facilità di linting JS/CSS.
 - **Negative**: Necessità di gestire più file per una singola vista (frammentazione).
 
+
 ### Note Implementative
 - Creata struttura directory public/js/pages e public/css/pages.
 - Applicato refactoring immediato a socio_create.
+
+---
+
+## [ADR-018] Quality Gate "feature/tests"
+**Data**: 2026-01-10
+**Stato**: ✅ Attivo
+**Contesto**:
+Necessità di garantire che il branch `develop` rimanga sempre stabile e che nessun codice rotto raggiunga la produzione.
+**Decisione**:
+Istituire un branch perenne (o effimero pre-merge) chiamato `feature/tests` che funge da **Quality Gate**.
+- Il merge su `develop` è consentito SOLO se la CI su `feature/tests` è verde (100% pass).
+- Nessun merge diretto da feature a develop senza passare dal gate.
+
+**Conseguenze**:
+- (+) Stabilità assoluta di develop
+- (+) Certezza di non rompere la build
+- (-) Passaggio extra nel workflow (accettabile per rigore)
+
+---
+
+## [ADR-019] Compatibility-First CI Tags
+**Data**: 2026-01-10
+**Stato**: ✅ Attivo
+**Contesto**:
+L'uso di SHA-1 pinning, sebbene sicuro, causava errori di risoluzione (falsi positivi) negli IDE locali, irritando il workflow di sviluppo. "Irritazione utente" è un costo.
+**Decisione**:
+Utilizzare i **Tag Standard Maggiori** (`v4` per checkout, `v2` per setup-php) nei file workflow.
+- Manteniamo la sicurezza tramite audit interni ma privilegiamo la compatibilità dell'IDE e la pulizia dei log di errore.
+
+**Conseguenze**:
+- (+) Eliminazione errori IDE "Unable to resolve"
+- (+) Migliore DX (Developer Experience)
+- (-) Leggero rischio teorico supply chain (mitigato da vendor affidabili GitHub/Shivammathur)
+
+---
+
+## [ADR-020] Code Completeness Policy
+**Data**: 2026-01-10
+**Stato**: ✅ Attivo
+**Contesto**:
+La presenza di "Placeholder" o "Stub" vuoti nel codice (es. per servizi futuri) crea debito tecnico e confusione.
+**Decisione**:
+Ogni classe definita DEVE essere **completamente implementata** o astratta correttamente.
+- Nessun metodo vuoto.
+- Servizi opzionali (`PaidServicePlaceholder`) devono avere logica concreta (es. logging, check abilitazione) e non essere scatole vuote.
+
+**Conseguenze**:
+- (+) Codice professionale e pulito
+- (+) Nessuna ambiguità su cosa funziona
+- (+) Testing più facile (no mock di cose inesistenti)

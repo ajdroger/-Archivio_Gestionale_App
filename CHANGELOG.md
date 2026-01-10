@@ -21,6 +21,29 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [2.4.0] - 2026-01-10 - Enterprise Perfection & Strict Workflow
+
+### Aggiunto
+- **Quality Gate**: Branch `feature/tests` obbligatorio per certificazione 100% green (167 test)
+- **PaidServicePlaceholder**: Implementazione completa logica servizi a pagamento (no stubs)
+- **InputSanitizer**: Logica completa di sanitizzazione HTMLPurifier nel middleware
+
+### Modificato
+- **Git Workflow**: Adozione modello "Sacred Main" con branch feature preservati
+- **CI/CD Configuration**: Standardizzazione tag Actions (`v4`, `v2`) per massima compatibilità IDE
+- **Release Protocol**: Processo di rilascio rigoroso (Merge -> Test -> Release -> Tag)
+
+### Risolto
+- **CI/CD Lints**: Rimozione falsi positivi su risoluzione actions Git
+- **Code Gaps**: Eliminati tutti i placeholder vuoti e TODO critici
+
+### Sicurezza
+- **Verification Gate**: Nessun codice raggiunge `develop` senza passare il gate `feature/tests`
+
+---
+
+---
+
 
 - **EventiController**: Controller dedicato per la logica degli eventi.
 - **EventiRepository**: Repository per l'accesso ai dati degli eventi.
@@ -300,5 +323,5 @@ dazione avanzata
 
 **Mantainer**: Soobadur Mohammad Ajmeer ©  
 **Progetto**: Fratellanza Militare di Firenze - Archivio Digitale Soci  
-**Versione Corrente**: 2.3.0 (2026-01-10)  
+**Versione Corrente**: 2.4.0 (2026-01-10)  
 **License**: Proprietary - All Rights Reserved
