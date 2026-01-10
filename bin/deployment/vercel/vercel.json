@@ -22,7 +22,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_NAME": "Fratellanza Militare Archivio"
+        "APP_NAME": "MCAG Archivio"
     },
     "functions": {
         "api/index.php": {

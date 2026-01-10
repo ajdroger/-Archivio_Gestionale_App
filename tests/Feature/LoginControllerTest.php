@@ -9,7 +9,7 @@ test('login form renders', function () {
     $mustache = $this->createMock(\Mustache_Engine::class);
     $mustache->expects($this->once())
         ->method('render')
-        ->willReturn('<form>Login</form>');
+        ->willReturn('<form>MCAG Login</form>');
 
     $validator = new \FratellanzaMilitare\Service\InputValidator();
     $controller = new LoginFlowController($mustache, $validator);

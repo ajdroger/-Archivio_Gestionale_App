@@ -5,7 +5,7 @@ test.describe('Visual Regression', () => {
         await page.goto('/');
 
         // Preliminary check
-        await expect(page).toHaveTitle(/Fratellanza Militare/);
+        await expect(page).toHaveTitle(/MCAG/);
 
         // Visual Snapshot (Placeholder - requires setup)
         // await expect(page).toHaveScreenshot('landing-page.png');

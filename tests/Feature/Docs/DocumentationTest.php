@@ -27,7 +27,7 @@ test('api docs json returns valid openapi spec', function () {
 
     expect($json)->not->toBeNull();
     expect($json['openapi'])->toContain('3.0.0');
-    expect($json['info']['title'])->toContain('Fratellanza Militare');
+    expect($json['info']['title'])->toContain('MCAG');
 
     // Check if paths are present
     expect($json['paths'])->toHaveKey('/api/v1/soci');
