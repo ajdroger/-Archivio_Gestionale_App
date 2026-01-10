@@ -28,7 +28,21 @@ class LoginFlowController
         $this->validator = $validator;
     }
 
-    // ... form method ...
+    /**
+     * Visualizza il form di login.
+     * 
+     * Renderizza il template 'login'.
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function form(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('login', []);
+        $response->getBody()->write($this->wrapLayout($html, "Login"));
+        return $response;
+    }
 
     public function verifyCredentials(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {

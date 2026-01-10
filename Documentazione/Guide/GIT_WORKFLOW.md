@@ -8,8 +8,9 @@ In seguito all'analisi del modello "A successful Git branching model" (Vincent D
 ### 1. Rami Principali
 Questi due rami esistono sempre:
 
-*   **`main`** (Produzione): Contiene **solo** codice production-ready. Ogni commit qui è una release stabile e testata.
-*   **`develop`** (Sviluppo): Il ramo principale di integrazione. Contiene le ultime funzionalità completate e pronte per la prossima release.
+*   **`main`** (STABLE / PRODUCTION): **Sacro**. Contiene SOLO codice certificato, testato e pronto per il cliente. Nessun commit diretto. Solo merge da Release/Hotfix.
+*   **`develop`** (NEXT / BETA): Il ramo di integrazione continuo. Qui arrivano le feature completate.
+*   **`feature/tests`** (QUALITY GATE): Branch perenne o creato ad hoc prima di ogni release. **OBBLIGATORIO**: La suite di test deve passare qui al 100% prima di qualsiasi merge verso Stable.
 
 ### 2. Rami di Supporto (Temporanei)
 Utilizzati per scopi specifici e poi rimossi dopo il merge.
@@ -57,9 +58,10 @@ Essendo l'unico sviluppatore, non abbiamo bisogno di Pull Requests complesse, ma
 4.  Terminare la release:
     ```bash
     # Merge su main
+    # Merge su main (STABLE)
     git checkout main
     git merge --no-ff release/v1.2
-    git tag -a v1.2 -m "Versione 1.2"
+    git tag -a v1.2 -m "Enterprise Stable Release 1.2"
 
     # Allinea develop
     git checkout develop
