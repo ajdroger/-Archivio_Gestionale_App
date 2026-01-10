@@ -260,155 +260,27 @@
     </div>
 </div>
 
-<!-- Scripts for Charts & DataTables -->
+<!-- External Assets -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="{{base_url}}/css/pages/statistics.css">
+
+<!-- Data Config for JS -->
+<div id="stats-data" 
+    data-attivi="{{#stats.attivi}}{{stats.attivi}}{{/stats.attivi}}{{^stats.attivi}}0{{/stats.attivi}}"
+    data-totale="{{#stats.totale}}{{stats.totale}}{{/stats.totale}}{{^stats.totale}}0{{/stats.totale}}"
+    data-paganti="{{#stats.paganti}}{{stats.paganti}}{{/stats.paganti}}{{^stats.paganti}}0{{/stats.paganti}}"
+    data-morosi="{{#stats.morosi}}{{stats.morosi}}{{/stats.morosi}}{{^stats.morosi}}0{{/stats.morosi}}"
+    class="d-none">
+</div>
+
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{base_url}}/js/pages/statistics.js"></script>
 
-<style>
-    @keyframes pulse {
-        0% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(0.95); }
-        100% { opacity: 1; transform: scale(1); }
-    }
-    .animate-pulse {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. init DataTables ---
-        const table = $('.statistics-table').DataTable({
-            "paging": true,
-            "pageLength": 10,
-            "lengthChange": false, 
-            "searching": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "language": {
-                "search": "",
-                "searchPlaceholder": "Cerca nella lista...",
-                "paginate": { "previous": "<", "next": ">" },
-                "info": "_START_-_END_ di _TOTAL_"
-            },
-            "dom": '<"d-flex justify-content-between mb-2"f>t<"d-flex justify-content-between mt-3"ip>',
-            "initComplete": function() {
-                $('.dataTables_filter input').addClass('form-control form-control-sm bg-dark text-white border-secondary');
-            }
-        });
-
-        // --- 2. init Charts ---
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.borderColor = '#334155';
-
-        const chartStatus = new Chart(document.getElementById('chartStatus'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Attivi', 'Altri'],
-                datasets: [{
-                    data: [
-                        {{#stats.attivi}}{{stats.attivi}}{{/stats.attivi}}{{^stats.attivi}}0{{/stats.attivi}}, 
-                        ({{#stats.totale}}{{stats.totale}}{{/stats.totale}}{{^stats.totale}}0{{/stats.totale}}) - ({{#stats.attivi}}{{stats.attivi}}{{/stats.attivi}}{{^stats.attivi}}0{{/stats.attivi}})
-                    ],
-                    backgroundColor: ['#0ea5e9', '#475569'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
-                cutout: '70%'
-            }
-        });
-
-        const chartFinancial = new Chart(document.getElementById('chartFinancial'), {
-            type: 'doughnut',
-            data: {
-                labels: ['In Regola', 'Morosi'],
-                datasets: [{
-                    data: [
-                        {{#stats.paganti}}{{stats.paganti}}{{/stats.paganti}}{{^stats.paganti}}0{{/stats.paganti}}, 
-                        {{#stats.morosi}}{{stats.morosi}}{{/stats.morosi}}{{^stats.morosi}}0{{/stats.morosi}}
-                    ],
-                    backgroundColor: ['#22c55e', '#ef4444'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
-                cutout: '70%'
-            }
-        });
-
-        // --- 3. Real-time Engine ---
-        function updateUI(data) {
-            // Update Headers
-            document.getElementById('data-ref').textContent = data.stats.data_riferimento;
-            
-            // Update KPI Cards
-            document.querySelector('.col-12 h3.text-white').textContent = data.stats.totale;
-            document.querySelector('.col-6:nth-child(2) h4').textContent = data.stats.perc_paganti + '%';
-            document.querySelector('.col-6:nth-child(3) h4').textContent = data.stats.perc_morosi + '%';
-
-            // Update Badges in Chart sections
-            document.querySelector('.badge.bg-info').textContent = 'ATTIVI: ' + data.stats.attivi;
-            document.querySelector('.badge.bg-secondary').textContent = 'TOTALE: ' + data.stats.totale;
-            document.querySelector('.badge.bg-success').textContent = 'IN REGOLA: ' + data.stats.paganti;
-            document.querySelector('.badge.bg-danger').textContent = 'MOROSI: ' + data.stats.morosi;
-
-            // Update Charts
-            chartStatus.data.datasets[0].data = [data.stats.attivi, data.stats.totale - data.stats.attivi];
-            chartStatus.update();
-
-            chartFinancial.data.datasets[0].data = [data.stats.paganti, data.stats.morosi];
-            chartFinancial.update();
-
-            // Update Monitoring
-            const dbStatus = data.monitoring.database.status ? 
-                '<span class="badge bg-success-subtle text-success border border-success border-opacity-25">OPERATIVO</span>' :
-                '<span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25">ERRORE</span>';
-            document.getElementById('mon-db').innerHTML = dbStatus;
-
-            const storageStatus = '<span class="badge bg-success-subtle text-success border border-success border-opacity-25">' + data.health.checks.storage.message + '</span>';
-            document.getElementById('mon-storage').innerHTML = storageStatus;
-            document.querySelector('#mon-storage + small').textContent = data.health.checks.storage.free_space + ' LIBERI';
-
-            const backupStatus = data.monitoring.backups.status ?
-                '<span class="badge bg-success-subtle text-success border border-success border-opacity-25">' + data.monitoring.backups.count + ' BACKUPS</span>' :
-                '<span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25">ALERT</span>';
-            document.getElementById('mon-backups').innerHTML = backupStatus;
-
-            document.getElementById('mon-uptime').innerHTML = '<span class="badge bg-dark text-white border border-secondary">' + data.health.uptime + '</span>';
-        }
-
-        async function fetchRealTime() {
-            try {
-                const indicator = document.getElementById('live-indicator');
-                indicator.classList.replace('text-success', 'text-warning');
-                
-                const response = await fetch('?action=api');
-                const data = await response.json();
-                
-                updateUI(data);
-                
-                indicator.classList.replace('text-warning', 'text-success');
-            } catch (error) {
-                console.error('Real-time update failed:', error);
-                document.getElementById('live-indicator').classList.replace('text-success', 'text-danger');
-            }
-        }
-
-        // Poll every 10 seconds
-        setInterval(fetchRealTime, 10000);
-    });
-</script>
+{{> layout_footer }}
 
 {{> layout_footer }}
 
