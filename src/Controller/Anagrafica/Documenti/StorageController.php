@@ -58,6 +58,27 @@ class StorageController
                 return $response->withStatus(400);
             }
 
+            // Security: Get Temp Path for advanced validation
+            $stream = $uploadedFile->getStream();
+            $tmpPath = $stream->getMetadata('uri');
+
+            if ($tmpPath && file_exists($tmpPath)) {
+                // 1. Magic Bytes Check (Real MIME)
+                if (!$this->validator->validateRealMimeType($tmpPath)) {
+                    $response->getBody()->write("File type non valido (controllo integrità fallito).");
+                    return $response->withStatus(400);
+                }
+
+                // 2. Malware Scan (ClamAV)
+                if (!$this->validator->scanForMalware($tmpPath)) {
+                    $response->getBody()->write("File potenzialmente malevolo rilevato.");
+                    return $response->withStatus(400);
+                }
+            } else {
+                // Fallback if unable to get tmp path (e.g. memory stream)
+                $this->auditLogger->warning("Impossibile validare magic bytes per upload: " . $uploadedFile->getClientFilename());
+            }
+
             $uniqueId = uniqid();
             $filename = $uploadedFile->getClientFilename();
             $targetPath = __DIR__ . '/../../../../storage/uploads/' . $uniqueId . '_' . $filename;

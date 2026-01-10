@@ -1,193 +1,284 @@
 {{> layout_header }}
-<div class="row justify-content-center">
-    <div class="col-lg-11">
-        <div class="card border-0 shadow-lg" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
-            <div class="card-header bg-transparent py-4 border-bottom border-secondary">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-user-plus me-2 text-primary"></i>INIZIALIZZAZIONE NUOVO RECORD SOCIO</h4>
-                    <a href="{{base_url}}/soci" class="btn btn-outline-secondary btn-sm border-secondary"><i class="fa-solid fa-arrow-left me-1"></i>Torna all'Archivio</a>
-                </div>
-            </div>
+<!-- Page Specific CSS -->
+<link rel="stylesheet" href="{{base_url}}/css/pages/socio_create.css">
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-11">
             
-            <div class="card-body p-4 p-md-5">
-                <p class="text-secondary mb-5 fs-6 opacity-75">Inserire i parametri vitali per la registrazione crittografata del nuovo membro nel sistema centrale.</p>
+            <!-- Header Dossier -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="text-white fw-bold mb-1"><i class="fa-solid fa-folder-plus text-success me-2"></i>CREAZIONE DOSSIER DIGITALE SOCIO</h4>
+                    <p class="text-secondary small mb-0 font-monospace text-uppercase opacity-75">NUOVA IMMATRICOLAZIONE / PROTOCOLLO 2026 / LEVEL-4 ACCESS</p>
+                </div>
+                <a href="{{base_url}}/soci" class="btn btn-outline-light border-secondary hover-bg-light text-uppercase fw-bold text-xs ls-1 px-4"><i class="fa-solid fa-arrow-left me-2"></i>Archivio</a>
+            </div>
 
-                <form action="/soci/salva" method="POST">
-                    <!-- CSRF Token -->
-                    <input type="hidden" name="csrf_name" value="{{csrf.name}}">
-                    <input type="hidden" name="csrf_value" value="{{csrf.value}}">
+            <form action="{{base_url}}/soci/salva" method="POST" id="dossierForm">
+                <!-- Data Security -->
+                <input type="hidden" name="csrf_name" value="{{csrf.name}}">
+                <input type="hidden" name="csrf_value" value="{{csrf.value}}">
 
-                    <div class="row g-5 mb-5">
-                        <!-- Colonna 1: Identità -->
-                        <div class="col-md-6 border-end border-secondary border-opacity-25 px-md-4">
-                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-id-badge me-2"></i>DATI IDENTIFICATIVI</h5>
-                            
-                            <!-- 1. Nome & Cognome -->
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="mc-label" for="nome">NOME</label>
-                                        <input type="text" id="nome" name="nome" class="mc-input text-white" required placeholder="Es: Mario">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="mc-label" for="cognome">COGNOME</label>
-                                        <input type="text" id="cognome" name="cognome" class="mc-input text-white" required placeholder="Es: Rossi">
-                                    </div>
-                                </div>
+                <!-- Dossier Container -->
+                <div class="card bg-dark border-secondary shadow-lg overflow-hidden position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-gradient-success"></div>
+                    
+                    <!-- Profile Type Selector -->
+                    <div class="px-4 pt-4 pb-2 border-bottom border-secondary bg-dark bg-opacity-50">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <label class="text-secondary text-xs fw-bold text-uppercase mb-1">Tipologia Profilo</label>
+                                <select id="tipo_profilo" name="tipo_profilo" class="form-select bg-dark border-secondary text-white fw-bold text-uppercase">
+                                    <option value="MILITARE" selected>&#xf0a3; Personale Militare</option>
+                                    <option value="CIVILE">&#xf007; Civile / Familiare</option>
+                                    <option value="SIMPATIZZANTE">&#xf1ae; Simpatizzante</option>
+                                </select>
                             </div>
+                            <div class="col-md-9">
+                                <p class="text-secondary opacity-50 small mb-0 mt-3 mt-md-0 ms-md-3">
+                                    <i class="fa-solid fa-circle-info me-1"></i>
+                                    Selezionando <strong>Civile</strong> o <strong>Simpatizzante</strong>, la sezione "Profilo Militare" verrà disabilitata automaticamente.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabs Navigation -->
+                    <div class="card-header bg-dark border-bottom border-secondary pt-0 px-0">
+                        <ul class="nav nav-tabs nav-justified dossier-tabs card-header-tabs m-0 border-0" id="dossierTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active rounded-0 py-3 text-uppercase fw-bold text-xs ls-1 border-end border-secondary" id="tab-anagrafica" data-bs-toggle="tab" data-bs-target="#panel-anagrafica" type="button" role="tab">
+                                    <i class="fa-solid fa-id-card me-2 text-primary"></i>1. Dati Anagrafici
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-0 py-3 text-uppercase fw-bold text-xs ls-1 border-end border-secondary" id="tab-militare" data-bs-toggle="tab" data-bs-target="#panel-militare" type="button" role="tab">
+                                    <i class="fa-solid fa-person-military-rifle me-2 text-warning"></i>2. Profilo Militare
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-0 py-3 text-uppercase fw-bold text-xs ls-1 border-end border-secondary" id="tab-sanitario" data-bs-toggle="tab" data-bs-target="#panel-sanitario" type="button" role="tab">
+                                    <i class="fa-solid fa-notes-medical me-2 text-danger"></i>3. Sanitario & Emergenze
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link rounded-0 py-3 text-uppercase fw-bold text-xs ls-1" id="tab-admin" data-bs-toggle="tab" data-bs-target="#panel-admin" type="button" role="tab">
+                                    <i class="fa-solid fa-file-signature me-2 text-info"></i>4. Amministrazione
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tabs Content -->
+                    <div class="card-body p-4 p-lg-5 tab-content" id="dossierContent">
+                        
+                        <!-- PANEL 1: Anagrafica -->
+                        <div class="tab-pane fade show active" id="panel-anagrafica" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-primary">
+                                <i class="fa-solid fa-fingerprint me-2"></i>Identità Soggetto
+                            </h5>
                             
-                            <!-- 2. Data, Sesso, Luogo -->
-                            <div class="row g-3 mb-4">
+                            <div class="row g-4">
+                                <!-- First Row: Nome, Cognome, Sesso -->
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label class="mc-label" for="data_nascita">DATA DI NASCITA</label>
-                                        <input type="date" id="data_nascita" name="data_nascita" class="mc-input text-white" required>
-                                    </div>
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Cognome</label>
+                                    <input type="text" name="cognome" id="cognome" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" required placeholder="ES. ROSSI">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Nome</label>
+                                    <input type="text" name="nome" id="nome" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" required placeholder="ES. MARIO">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Sesso</label>
+                                    <select name="sesso" id="sesso" class="form-select bg-dark border-secondary text-white fw-bold" required>
+                                        <option value="M">M</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </div>
+
+                                <!-- Second Row: Nascita -->
+                                <div class="col-md-4">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Data di Nascita</label>
+                                    <input type="date" name="data_nascita" id="data_nascita" class="form-control bg-dark border-secondary text-white" required>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Luogo di Nascita (Comune o Stato Estero)</label>
+                                    <input type="text" name="luogo_nascita" id="luogo_nascita" class="form-control bg-dark border-secondary text-white text-uppercase" required placeholder="ES. ROMA">
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label class="mc-label" for="sesso">SESSO</label>
-                                        <select id="sesso" name="sesso" class="mc-input text-white" required>
-                                            <option value="" disabled selected>-</option>
-                                            <option value="M">M</option>
-                                            <option value="F">F</option>
-                                        </select>
-                                    </div>
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Stato Civile</label>
+                                    <select name="stato_civile" class="form-select bg-dark border-secondary text-white">
+                                        <option value="">- SELEZIONA -</option>
+                                        <option value="CELIBE/NUBILE">CELIBE/NUBILE</option>
+                                        <option value="CONIUGATO/A">CONIUGATO/A</option>
+                                        <option value="DIVORZIATO/A">DIVORZIATO/A</option>
+                                        <option value="VEDOVO/A">VEDOVO/A</option>
+                                    </select>
                                 </div>
-                                <div class="col-md-4">
-                                     <div class="form-group">
-                                        <label class="mc-label" for="luogo_nascita">COMUNE (O STATO)</label>
-                                        <input type="text" id="luogo_nascita" name="luogo_nascita" class="mc-input text-white" placeholder="Es: Roma" required>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- 3. Codice Fiscale Calculator -->
-                            <div class="form-group mb-4">
-                                <label class="mc-label d-flex justify-content-between align-items-center" for="codice_fiscale">
-                                    CODICE FISCALE (ID UNICO)
-                                    <button type="button" id="btn-calc-cf" class="btn btn-xs btn-outline-info py-0 px-2" style="font-size: 0.7rem; border-radius: 4px;">
-                                        <i class="fa-solid fa-calculator me-1"></i>CALCOLA AUTOMATICO
-                                    </button>
-                                </label>
-                                <div class="input-group">
-                                    <input type="text" id="codice_fiscale" name="codice_fiscale" class="mc-input fs-5 font-monospace" required pattern="[A-Z0-9]{16}" placeholder="RSSMRA80A01H501Z" maxlength="16" style="text-transform:uppercase; color: var(--mc-accent); border-top-right-radius: 0; border-bottom-right-radius: 0;">
-                                    <span class="input-group-text bg-dark border-secondary border-opacity-25 text-success" style="border-left: 0;"><i class="fa-solid fa-check"></i></span>
+                                <!-- Third Row: CF Calculator -->
+                                <div class="col-12">
+                                    <div class="p-3 border border-secondary border-opacity-50 rounded bg-transparent mt-2">
+                                        <label class="form-label text-info text-xs fw-bold text-uppercase d-flex justify-content-between">
+                                            <span><i class="fa-solid fa-barcode me-2"></i>Codice Fiscale</span>
+                                            <button type="button" id="btn-calc-cf" class="btn btn-sm btn-link text-info p-0 text-decoration-none fw-bold text-xs text-uppercase">
+                                                <i class="fa-solid fa-calculator me-1"></i>Calcola Ora
+                                            </button>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-id-card"></i></span>
+                                            <input type="text" name="codice_fiscale" id="codice_fiscale" class="form-control bg-dark border-secondary text-white font-monospace fs-5 text-uppercase fw-bold letter-spacing-2" required maxlength="16" placeholder="XXXXXXXXXXXXXXXX">
+                                        </div>
+                                        <div class="form-text text-secondary text-xs opacity-50 mt-1">Il codice fiscale è l'identificativo primario e non modificabile del dossier.</div>
+                                    </div>
                                 </div>
-                                <div class="form-text text-secondary opacity-50 small mt-1">Calcola automaticamente se il socio non ha la tessera sanitaria.</div>
+
+                                <!-- Fourth Row: Contatti -->
+                                <div class="col-12 mt-4">
+                                     <h6 class="text-secondary text-uppercase text-xs fw-bold mb-3 border-bottom border-secondary pb-1 w-50">Recapiti Attuali</h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Indirizzo Residenza</label>
+                                    <input type="text" name="indirizzo" class="form-control bg-dark border-secondary text-white" placeholder="Via, Civico, CAP, Città">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Email</label>
+                                    <input type="email" name="email" class="form-control bg-dark border-secondary text-white" placeholder="email@dominio.it">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Telefono</label>
+                                    <input type="tel" name="telefono" class="form-control bg-dark border-secondary text-white" placeholder="+39 ...">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Titolo di Studio</label>
+                                    <input type="text" name="titolo_studio" class="form-control bg-dark border-secondary text-white" placeholder="Es. DIPLOMA, LAUREA...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Professione Attuale</label>
+                                    <input type="text" name="professione" class="form-control bg-dark border-secondary text-white" placeholder="Es. IMPIEGATO, MILITARE...">
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Colonna 2: Contatti e Stato -->
-                        <div class="col-md-6 px-md-4">
-                            <h5 class="mb-4 text-primary tracking-wider small fw-bold"><i class="fa-solid fa-satellite-dish me-2"></i>RETI DI CONTATTO</h5>
+                        <!-- PANEL 2: Militare -->
+                        <div class="tab-pane fade" id="panel-militare" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-warning">
+                                <i class="fa-solid fa-medal me-2"></i>Stato di Servizio
+                            </h5>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Grado (Al Congedo o Attuale)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-warning"><i class="fa-solid fa-star"></i></span>
+                                        <input type="text" name="grado" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" placeholder="Es. CAPORALE MAGGIORE">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Corpo di Appartenenza</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-warning"><i class="fa-solid fa-shield-cat"></i></span>
+                                        <input type="text" name="corpo_appartenenza" class="form-control bg-dark border-secondary text-white text-uppercase fw-bold" placeholder="Es. ALPINI, BERSAGLIERI...">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Data Arruolamento</label>
+                                    <input type="date" name="data_arruolamento" class="form-control bg-dark border-secondary text-white">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Data Congedo</label>
+                                    <input type="date" name="data_congedo" class="form-control bg-dark border-secondary text-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 3: Sanitario -->
+                        <div class="tab-pane fade" id="panel-sanitario" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-danger">
+                                <i class="fa-solid fa-heart-pulse me-2"></i>Profilo Sanitario & Sicurezza
+                            </h5>
+
+                            <div class="row g-4">
+                                <div class="col-md-3">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Gruppo Sanguigno</label>
+                                    <select name="gruppo_sanguigno" class="form-select bg-dark border-secondary text-white fw-bold">
+                                        <option value="">- IGNOTO -</option>
+                                        <option value="0 Rh+">0 Rh+</option>
+                                        <option value="0 Rh-">0 Rh-</option>
+                                        <option value="A Rh+">A Rh+</option>
+                                        <option value="A Rh-">A Rh-</option>
+                                        <option value="B Rh+">B Rh+</option>
+                                        <option value="B Rh-">B Rh-</option>
+                                        <option value="AB Rh+">AB Rh+</option>
+                                        <option value="AB Rh-">AB Rh-</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Contatto di Emergenza (ICE)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-danger"><i class="fa-solid fa-phone-volume"></i></span>
+                                        <input type="text" name="contatto_emergenza" class="form-control bg-dark border-secondary text-white" placeholder="Nome cognome e Telefono del parente prossimo">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label text-secondary text-xs fw-bold text-uppercase">Note Mediche / Patologie / Allergie</label>
+                                    <textarea name="note_mediche" class="form-control bg-dark border-secondary text-white" rows="4" placeholder="Inserire eventuali note rilevanti per il servizio..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 4: Admin -->
+                        <div class="tab-pane fade" id="panel-admin" role="tabpanel">
+                            <h5 class="text-white mb-4 pb-2 border-bottom border-secondary text-uppercase fw-bold ls-1 fs-6 text-info">
+                                <i class="fa-solid fa-file-invoice-dollar me-2"></i>Amministrazione
+                            </h5>
                             
-                            <div class="form-group mb-4">
-                                <label class="mc-label" for="indirizzo">LOCALIZZAZIONE / INDIRIZZO</label>
-                                <input type="text" id="indirizzo" name="indirizzo" class="mc-input text-white" placeholder="Es: Via Roma 1, 50123 Firenze">
-                            </div>
+                            <div class="row g-4 justify-content-center">
+                                <div class="col-md-6 text-center">
+                                    <div class="p-4 border border-secondary border-opacity-25 rounded bg-dark bg-opacity-50">
+                                        <label class="form-label text-info text-xs fw-bold text-uppercase mb-3">Matricola Assegnata</label>
+                                        <input type="text" name="matricola" class="form-control bg-dark border-secondary text-info fw-bold text-center fs-4 font-monospace mb-2" placeholder="AUTO-GEN">
+                                        <small class="text-secondary opacity-50">Lasciare vuoto per generazione automatica</small>
+                                    </div>
+                                </div>
 
-                            <div class="form-group mb-4">
-                                <label class="mc-label" for="email">CANALE E-MAIL</label>
-                                <input type="email" id="email" name="email" class="mc-input text-white" placeholder="nome@dominio.it">
-                            </div>
-
-                            <div class="form-group mb-4">
-                                <label class="mc-label" for="telefono">CONTATTO TEL / MOBILE</label>
-                                <input type="tel" id="telefono" name="telefono" class="mc-input text-white" placeholder="+39 333 1234567">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="mc-label" for="matricola">IDENTIFICATIVO MATRICOLA</label>
-                                <input type="text" id="matricola" name="matricola" class="mc-input text-info opacity-75" placeholder="AUTO-GEN">
-                                <div class="form-text text-secondary opacity-50 small">Il sistema assegnerà un ID sequenziale se lasciato vuoto.</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card bg-dark bg-opacity-25 border-primary border-opacity-10 mb-5 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="form-check form-switch d-flex align-items-center">
-                                <input class="form-check-input mc-switch" type="checkbox" name="pagamento_effettuato" value="1" id="pagamento_effettuato" role="switch">
-                                <label class="form-check-label ms-3 py-1" for="pagamento_effettuato">
-                                    <strong class="text-white fs-6">REGISTRAZIONE QUOTA ASSOCIATIVA 2025</strong><br>
-                                    <small class="text-secondary">Eseguire il pagamento contestuale per attivare immediatamente lo stato del socio.</small>
-                                </label>
+                                <div class="col-md-8 mt-5">
+                                    <div class="card bg-success bg-opacity-10 border-success border-opacity-25">
+                                        <div class="card-body p-4 d-flex align-items-center justify-content-between">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input fs-4" type="checkbox" name="pagamento_effettuato" value="1" id="pagamento_effettuato" checked>
+                                                <label class="form-check-label ms-3" for="pagamento_effettuato">
+                                                    <span class="d-block text-white fw-bold text-uppercase">Registrazione Quota 2026</span>
+                                                    <small class="text-success opacity-75">Attiva immediatamente lo stato di "Socio Effettivo"</small>
+                                                </label>
+                                            </div>
+                                            <i class="fa-solid fa-file-invoice fs-1 text-success opacity-25"></i>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex justify-content-end gap-3 pt-3">
-                        <a href="{{base_url}}/soci" class="btn btn-outline-secondary px-5 py-2 fw-bold border-secondary"><i class="fa-solid fa-arrow-left me-2"></i>Torna all'Archivio</a>
-                        <button type="submit" class="btn btn-primary btn-lg px-5 shadow-primary fw-bold"><i class="fa-solid fa-floppy-disk me-2"></i>COMMIT RECORD</button>
                     </div>
-                </form>
-            </div>
+                    
+                    <!-- Footer Actions -->
+                    <div class="card-footer bg-dark border-top border-secondary p-4 d-flex justify-content-between align-items-center">
+                        <small class="text-secondary opacity-50 font-monospace"><i class="fa-solid fa-lock me-1"></i>SECURE CONNECTION // AES-256</small>
+                        <button type="submit" class="btn btn-primary fw-bold text-uppercase ls-1 px-5 py-3 shadow-lg">
+                            <i class="fa-solid fa-save me-2"></i>Salva Dossier
+                        </button>
+                    </div>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
 
-<!-- Styles moved to style.css -->
-<script>
-    document.getElementById('btn-calc-cf').addEventListener('click', async function() {
-        const btn = this;
-        const originalText = btn.innerHTML;
-        
-        // Raccolta Dati
-        const payload = {
-            nome: document.getElementById('nome').value,
-            cognome: document.getElementById('cognome').value,
-            data_nascita: document.getElementById('data_nascita').value,
-            sesso: document.getElementById('sesso').value,
-            luogo: document.getElementById('luogo_nascita').value
-        };
+<!-- Page Specific JS -->
+<script src="{{base_url}}/js/pages/socio_create.js"></script>
 
-        // Validazione Client-Side
-        if(!payload.nome || !payload.cognome || !payload.data_nascita || !payload.sesso || !payload.luogo) {
-            alert('Per calcolare il Codice Fiscale, compila prima tutti i campi: Nome, Cognome, Data di Nascita, Sesso e Luogo.');
-            return;
-        }
-
-        // UI Loading
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i>CALCOLO...';
-
-        try {
-            const formData = new URLSearchParams();
-            Object.keys(payload).forEach(k => formData.append(k, payload[k]));
-            // Add CSRF
-            formData.append('csrf_name', document.querySelector('input[name="csrf_name"]').value);
-            formData.append('csrf_value', document.querySelector('input[name="csrf_value"]').value);
-
-            const response = await fetch('{{base_url}}/soci/calcola-cf', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.cf) {
-                const cfInput = document.getElementById('codice_fiscale');
-                cfInput.value = data.cf;
-                // Visual feedback
-                cfInput.style.backgroundColor = 'rgba(52, 211, 153, 0.2)'; // Green tint
-                setTimeout(() => cfInput.style.backgroundColor = '', 1000);
-            } else {
-                alert('Errore nel calcolo: ' + (data.error || 'Risposta sconosciuta dal server.'));
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Si è verificato un errore di rete durante il calcolo.');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
-    });
-
-    // Auto-search logic for Belfiore (Optional UX enhancement could go here later)
-</script>
 {{> layout_footer }}
-

@@ -115,4 +115,13 @@ return [
         $instance->setPdo($c->get(PDO::class));
         return $instance;
     },
+
+    // HTML Purifier
+    HTMLPurifier::class => function () {
+        $config = HTMLPurifier_Config::createDefault();
+        $config->set('Cache.SerializerPath', sys_get_temp_dir());
+        $config->set('HTML.Doctype', 'HTML 4.01 Transitional');
+        $config->set('Core.Encoding', 'UTF-8');
+        return new HTMLPurifier($config);
+    },
 ];

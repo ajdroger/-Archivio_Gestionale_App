@@ -17,7 +17,8 @@
         "pestphp/pest": "^3.8",
         "pestphp/pest-plugin-arch": "^3.1",
         "zircote/swagger-php": "^4.10",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "fakerphp/faker": "^1.24"
     },
     "require": {
         "slim/slim": "^4.15",
@@ -34,7 +35,8 @@
         "defuse/php-encryption": "^2.4",
         "predis/predis": "^2.2",
         "sentry/sentry": "^4.0",
-        "webonyx/graphql-php": "^15.29"
+        "webonyx/graphql-php": "^15.29",
+        "ezyang/htmlpurifier": "^4.19"
     },
     "config": {
         "allow-plugins": {

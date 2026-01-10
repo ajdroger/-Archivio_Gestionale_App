@@ -43,8 +43,9 @@ class ListController
     {
         $queryParams = $request->getQueryParams();
         $query = $queryParams['q'] ?? null;
+        $tipoProfilo = $queryParams['tipo'] ?? null;
 
-        $soci = $query ? $this->socioRepo->search($query) : $this->socioRepo->findAll();
+        $soci = ($query || $tipoProfilo) ? $this->socioRepo->search($query ?? '', $tipoProfilo) : $this->socioRepo->findAll();
 
         $viewData = [
             'soci' => array_map(function (Socio $socio) {

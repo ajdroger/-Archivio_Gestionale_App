@@ -16,12 +16,10 @@ use Psr\Log\LoggerInterface;
  * Servizio per la gestione della registrazione nuovi soci.
  * 
  * Orchestra il flusso di iscrizione:
- * 1. Validazione dati (CF, Email).
- * 2. Verifica duplicati.
- * 3. Creazione Entità Socio.
- * 4. Gestione pagamento quote.
- * 5. Generazione PDF ricevuta.
- * 6. Invio email conferma.
+ * 1. Validazione dati.
+ * 2. Mappatura completa Profilo Militare/Sanitario.
+ * 3. Persistenza.
+ * 4. Generazione PDF e notifiche.
  */
 class RegistrationService
 {
@@ -73,7 +71,7 @@ class RegistrationService
             throw new \Exception("Utente già registrato");
         }
 
-        // 4. Create Entity
+        // 4. Create Entity & Map Data
         $socio = new Socio();
         $socio->CodiceFiscale = $cf;
         $socio->Matricola = !empty($data['matricola']) ? $data['matricola'] : 'M' . rand(10000, 99999);
@@ -83,17 +81,33 @@ class RegistrationService
         $dati->Nome = strtoupper($data['nome']);
         $dati->Cognome = strtoupper($data['cognome']);
         $dati->DataNascita = !empty($data['data_nascita']) ? new \DateTime($data['data_nascita']) : new \DateTime('1900-01-01');
+        $dati->Sesso = $data['sesso'] ?? null;
+        $dati->LuogoNascita = $data['luogo_nascita'] ?? null;
+        $dati->StatoCivile = $data['stato_civile'] ?? null;
         $dati->Indirizzo = $data['indirizzo'] ?? '';
         $dati->Email = $data['email'] ?? '';
         $dati->Telefono = $data['telefono'] ?? '';
+        $dati->TitoloStudio = $data['titolo_studio'] ?? null;
+        $dati->Professione = $data['professione'] ?? null;
         $socio->DatiPersonali = $dati;
 
-        // 4. Handle Payment (Optional)
+        // Profilo Militare
+        $socio->Grado = !empty($data['grado']) ? $data['grado'] : null;
+        $socio->CorpoAppartenenza = !empty($data['corpo_appartenenza']) ? $data['corpo_appartenenza'] : null;
+        $socio->DataArruolamento = !empty($data['data_arruolamento']) ? new \DateTime($data['data_arruolamento']) : null;
+        $socio->DataCongedo = !empty($data['data_congedo']) ? new \DateTime($data['data_congedo']) : null;
+
+        // Profilo Sanitario / Emergenza
+        $socio->GruppoSanguigno = !empty($data['gruppo_sanguigno']) ? $data['gruppo_sanguigno'] : null;
+        $socio->NoteMediche = !empty($data['note_mediche']) ? $data['note_mediche'] : null;
+        $socio->ContattoEmergenza = !empty($data['contatto_emergenza']) ? $data['contatto_emergenza'] : null;
+
+        // 5. Handle Payment (Optional)
         if (isset($data['pagamento_effettuato']) && $data['pagamento_effettuato'] == '1') {
             $this->processPayment($socio);
         }
 
-        // 5. Persist
+        // 6. Persist
         $this->repo->save($socio);
         $this->logger->info("Nuovo socio registrato: {$cf}", ['matricola' => $socio->Matricola]);
 
@@ -102,13 +116,11 @@ class RegistrationService
 
     /**
      * Gestisce il processo di pagamento della quota associativa.
-     * 
-     * Crea un documento 'Copia Modulo Iscrizione', genera il PDF e invia notifica.
      */
     private function processPayment(Socio $socio): void
     {
-        $year = 2025; // Could be dynamic
-        $amount = 50.00;
+        $year = (int) date('Y');
+        $amount = 50.00; // Parametrizzabile in futuro
 
         $iscrizione = new ModuloIscrizione();
         $iscrizione->IdUnivoco = uniqid();

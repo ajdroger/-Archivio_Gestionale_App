@@ -6,7 +6,7 @@ use FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
-    $this->repo = new PDOSocioRepository();
+    $this->repo = new PDOSocioRepository($this->db);
 });
 
 afterEach(function () {
