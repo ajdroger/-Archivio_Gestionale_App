@@ -310,7 +310,10 @@
             data: {
                 labels: ['Attivi', 'Altri'],
                 datasets: [{
-                    data: [{{stats.attivi}}, {{stats.totale}} - {{stats.attivi}}],
+                    data: [
+                        {{#stats.attivi}}{{stats.attivi}}{{/stats.attivi}}{{^stats.attivi}}0{{/stats.attivi}}, 
+                        ({{#stats.totale}}{{stats.totale}}{{/stats.totale}}{{^stats.totale}}0{{/stats.totale}}) - ({{#stats.attivi}}{{stats.attivi}}{{/stats.attivi}}{{^stats.attivi}}0{{/stats.attivi}})
+                    ],
                     backgroundColor: ['#0ea5e9', '#475569'],
                     borderWidth: 0
                 }]
@@ -328,7 +331,10 @@
             data: {
                 labels: ['In Regola', 'Morosi'],
                 datasets: [{
-                    data: [{{stats.paganti}}, {{stats.morosi}}],
+                    data: [
+                        {{#stats.paganti}}{{stats.paganti}}{{/stats.paganti}}{{^stats.paganti}}0{{/stats.paganti}}, 
+                        {{#stats.morosi}}{{stats.morosi}}{{/stats.morosi}}{{^stats.morosi}}0{{/stats.morosi}}
+                    ],
                     backgroundColor: ['#22c55e', '#ef4444'],
                     borderWidth: 0
                 }]
