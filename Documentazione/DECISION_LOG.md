@@ -608,5 +608,29 @@ Ogni classe definita DEVE essere **completamente implementata** o astratta corre
 
 **Conseguenze**:
 - (+) Codice professionale e pulito
-- (+) Nessuna ambiguità su cosa funziona
-- (+) Testing più facile (no mock di cose inesistenti)
+---
+
+## [ADR-021] Secure Frontend Data Injection
+**Data**: 2026-01-10  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+L'iniezione di dati backend nel frontend tramite variabili globali JS inline (`window.data = {{json}}`) è una pratica insicura che viola le policy CSP (Content Security Policy) restrittive e aumenta il rischio XSS.
+
+**Decisione**:  
+Adottare il pattern **JSON Script Block**.
+I dati non vengono più assegnati a variabili eseguibili, ma inseriti in blocchi `<script>` inerti:
+```html
+<script type="application/json" id="data-dumper">
+    {{json_data}}
+</script>
+```
+Il file JS esterno legge e parsa questo blocco:
+```javascript
+const data = JSON.parse(document.getElementById('data-dumper').textContent);
+```
+
+**Conseguenze**:
+- (+) **Sicurezza**: Piena compatibilità con CSP `script-src 'self'`.
+- (+) **Separazione**: Totale disaccoppiamento tra Template e Logica JS.
+- (+) **Performance**: Parsing JSON nativo del browser.
+
