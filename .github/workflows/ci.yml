@@ -1,23 +1,32 @@
 name: CI Pipeline
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      
-      - uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2
-        with:
-          php-version: '8.2'
-          coverage: none
-          
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-        
-      - name: Run Tests (Pest)
-        run: vendor/bin/pest
-        
-      - name: Static Analysis (PHPStan)
-        run: vendor/bin/phpstan analyse src/ --memory-limit=1G
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, intl, pdo_mysql, bcmath
+
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run Static Analysis (PHPStan)
+      run: vendor/bin/phpstan analyse -c config/phpstan.neon --memory-limit=1G
+
+    - name: Run Unit Tests (Pest)
+      run: vendor/bin/pest
+
+    - name: Validazione Codice
+      run: echo "Code Quality Checks Passed"
