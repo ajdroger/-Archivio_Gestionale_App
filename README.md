@@ -1,8 +1,8 @@
-# 🎖️ Fratellanza Militare - Archivio Digitale Soci (v1.3.1 MySQL Edition)
+# 🎖️# MCAG - Militare Civile Archivio Gestionale (v2.4)
 
-> **Status: [PRODUCTION-READY]** - Sistema MySQL enterprise-grade con security hardening completo, test suite 100%, e scalabilità ottimizzata.
+> **Enterprise Perfection Release** - Sistema di gestione archivi mission-critical con sicurezza avanzata (2FA, RBAC), architettura modulare e performance ottimizzate.
 
-Sistema professionale di digitalizzazione e dematerializzazione dell'archivio soci della Fratellanza Militare di Firenze. Questa versione Enterprise Mission-Critical garantisce massima affidabilità, sicurezza e performance.
+**MCAG** (Militare Civile Archivio Gestionale) è una piattaforma enterprise-grade sviluppata per la gestione sicura e scalabile di archivi sensibili. Originariamente nota come "Fratellanza Militare - Archivio Digitale", la piattaforma è evoluta nella versione 2.4 per servire un bacino d'utenza più ampio con standard di sicurezza militari.
 
 ## 🚀 Caratteristiche Enterprise
 
