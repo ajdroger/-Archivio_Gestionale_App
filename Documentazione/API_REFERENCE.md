@@ -1,7 +1,8 @@
-# 📚 API REFERENCE - Fratellanza Militare Archivio
+# 📚 API REFERENCE - MCAG (Militare Civile Archivio Gestionale)
 
-**Version**: 2.0.1 Mission-Critical Enterprise (MySQL Edition)
+**Version**: 2.4.0 Enterprise Perfection (MySQL Edition)
 **Base Path**: `/` (Production Root)
+**Identity**: MCAG - Militare Civile Archivio Gestionale
 
 ---
 
