@@ -44,13 +44,23 @@ class PDOSocioRepository implements SocioRepository
             $this->pdo->beginTransaction();
         }
         try {
-            // MySQL Logic (Strict)
-            $sql = "INSERT INTO soci (codice_fiscale, matricola, nome, cognome, data_nascita, indirizzo, email, telefono, stato_iscrizione) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-                    ON DUPLICATE KEY UPDATE 
-                    matricola=VALUES(matricola), nome=VALUES(nome), cognome=VALUES(cognome), 
-                    data_nascita=VALUES(data_nascita), indirizzo=VALUES(indirizzo), email=VALUES(email), 
-                    telefono=VALUES(telefono), stato_iscrizione=VALUES(stato_iscrizione), deleted_at = NULL";
+            $sql = "INSERT INTO soci (
+                codice_fiscale, matricola, nome, cognome, data_nascita, 
+                sesso, luogo_nascita, stato_civile,
+                indirizzo, email, telefono, 
+                grado, corpo_appartenenza, data_arruolamento, data_congedo,
+                titolo_studio, professione,
+                gruppo_sanguigno, note_mediche, contatto_emergenza,
+                stato_iscrizione
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+            ON DUPLICATE KEY UPDATE 
+            matricola=VALUES(matricola), nome=VALUES(nome), cognome=VALUES(cognome), 
+            data_nascita=VALUES(data_nascita), sesso=VALUES(sesso), luogo_nascita=VALUES(luogo_nascita), stato_civile=VALUES(stato_civile),
+            indirizzo=VALUES(indirizzo), email=VALUES(email), telefono=VALUES(telefono), 
+            grado=VALUES(grado), corpo_appartenenza=VALUES(corpo_appartenenza), data_arruolamento=VALUES(data_arruolamento), data_congedo=VALUES(data_congedo),
+            titolo_studio=VALUES(titolo_studio), professione=VALUES(professione),
+            gruppo_sanguigno=VALUES(gruppo_sanguigno), note_mediche=VALUES(note_mediche), contatto_emergenza=VALUES(contatto_emergenza),
+            stato_iscrizione=VALUES(stato_iscrizione), deleted_at = NULL";
 
             $stmt = $this->pdo->prepare($sql);
 
@@ -60,9 +70,21 @@ class PDOSocioRepository implements SocioRepository
                 $socio->DatiPersonali->Nome,
                 $socio->DatiPersonali->Cognome,
                 $socio->DatiPersonali->DataNascita->format('Y-m-d'),
+                $socio->DatiPersonali->Sesso,
+                $socio->DatiPersonali->LuogoNascita,
+                $socio->DatiPersonali->StatoCivile,
                 $socio->DatiPersonali->Indirizzo,
                 $socio->DatiPersonali->Email,
                 $socio->DatiPersonali->Telefono,
+                $socio->Grado,
+                $socio->CorpoAppartenenza,
+                $socio->DataArruolamento?->format('Y-m-d'),
+                $socio->DataCongedo?->format('Y-m-d'),
+                $socio->DatiPersonali->TitoloStudio,
+                $socio->DatiPersonali->Professione,
+                $socio->GruppoSanguigno,
+                $socio->NoteMediche,
+                $socio->ContattoEmergenza,
                 $socio->Stato->name
             ]);
 
@@ -177,8 +199,23 @@ class PDOSocioRepository implements SocioRepository
         $dati->Indirizzo = $row['indirizzo'] ?? '';
         $dati->Email = $row['email'] ?? '';
         $dati->Telefono = $row['telefono'] ?? '';
+        $dati->Sesso = $row['sesso'] ?? null;
+        $dati->LuogoNascita = $row['luogo_nascita'] ?? null;
+        $dati->StatoCivile = $row['stato_civile'] ?? null;
+        $dati->TitoloStudio = $row['titolo_studio'] ?? null;
+        $dati->Professione = $row['professione'] ?? null;
 
         $socio->DatiPersonali = $dati;
+
+        // Mappatura Profilo Militare e Sanitario
+        $socio->Grado = $row['grado'] ?? null;
+        $socio->CorpoAppartenenza = $row['corpo_appartenenza'] ?? null;
+        $socio->DataArruolamento = !empty($row['data_arruolamento']) ? new DateTime($row['data_arruolamento']) : null;
+        $socio->DataCongedo = !empty($row['data_congedo']) ? new DateTime($row['data_congedo']) : null;
+
+        $socio->GruppoSanguigno = $row['gruppo_sanguigno'] ?? null;
+        $socio->NoteMediche = $row['note_mediche'] ?? null;
+        $socio->ContattoEmergenza = $row['contatto_emergenza'] ?? null;
 
         if (array_key_exists('is_pagato', $row)) {
             $socio->IsMorosoPrecalculated = !((bool) $row['is_pagato']);
@@ -280,7 +317,7 @@ class PDOSocioRepository implements SocioRepository
         ];
     }
 
-    public function search(string $query): array
+    public function search(string $query, ?string $tipoProfilo = null): array
     {
         $term = "%$query%";
         $anno = (int) date('Y');
@@ -307,8 +344,16 @@ class PDOSocioRepository implements SocioRepository
                    OR $concat LIKE ? 
                    OR $concatRev LIKE ?)";
 
+        $params = [$anno, $term, $term, $term, $term, $term, $term, $term, $term];
+
+        if ($tipoProfilo === 'MILITARE') {
+            $sql .= " AND (s.grado IS NOT NULL AND s.grado != '')";
+        } elseif ($tipoProfilo === 'CIVILE') {
+            $sql .= " AND (s.grado IS NULL OR s.grado = '')";
+        }
+
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$anno, $term, $term, $term, $term, $term, $term, $term, $term]);
+        $stmt->execute($params);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $soci = [];

@@ -5,16 +5,15 @@ namespace FratellanzaMilitare\Service;
 /**
  * Servizio per il calcolo del Codice Fiscale italiano.
  * 
- * Implementa l'algoritmo ufficiale (D.M. 12/03/1974):
- * - Estrazione cognome (3 lettere)
- * - Estrazione nome (3 lettere)
- * - Data di nascita e sesso (5 caratteri)
- * - Codice catastale comune (4 caratteri, lookup da file JSON)
- * - Carattere di controllo (CIN)
+ * Implementa l'algoritmo ufficiale (D.M. 12/03/1974).
+ * Include normalizzazione robusta per i nomi dei comuni (Belfiore lookup).
  */
 class FiscalCodeCalculator
 {
     private array $belfioreCodes;
+    // Mappa ottimizzata: Chiave Normalizzata (solo A-Z) -> Codice Belfiore
+    private array $normalizedBelfioreMap = [];
+
     private array $months = [
         '01' => 'A',
         '02' => 'B',
@@ -29,7 +28,8 @@ class FiscalCodeCalculator
         '11' => 'S',
         '12' => 'T'
     ];
-    // ... skipped generic arrays for brevity in commenting ...
+
+    // Valori per calcolo CIN (omessi per brevità, standard)
     private array $oddValues = [
         '0' => 1,
         '1' => 0,
@@ -68,6 +68,7 @@ class FiscalCodeCalculator
         'Y' => 24,
         'Z' => 23
     ];
+
     private array $evenValues = [
         '0' => 0,
         '1' => 1,
@@ -115,102 +116,135 @@ class FiscalCodeCalculator
         } else {
             $this->belfioreCodes = [];
         }
+
+        // Pre-calcolo mappa normalizzata per lookup veloce e robusto
+        foreach ($this->belfioreCodes as $place => $code) {
+            $normalizedKey = $this->stripToEssentials($place);
+            // Gestiamo collisioni potenziali (molto rare su nomi città)
+            // In caso di collisione, manteniamo il primo o loggiamo warning (qui semplifichiamo)
+            $this->normalizedBelfioreMap[$normalizedKey] = $code;
+        }
     }
 
-    /**
-     * Calcola il Codice Fiscale.
-     * 
-     * @param string $nome
-     * @param string $cognome
-     * @param string $dataNascita Formato YYYY-MM-DD
-     * @param string $sesso 'M' o 'F'
-     * @param string $luogo Nome del comune di nascita
-     * @return string Codice Fiscale calcolato (16 caratteri)
-     * @throws \InvalidArgumentException Se il comune non viene trovato
-     */
     public function calculate(string $nome, string $cognome, string $dataNascita, string $sesso, string $luogo): string
     {
         $nome = $this->normalizeString($nome);
         $cognome = $this->normalizeString($cognome);
-        $luogo = strtoupper(trim($luogo));
-        $sesso = strtoupper(trim($sesso));
 
-        $code = '';
-
-        // 1. Cognome (3 lettere)
-        $code .= $this->extractSurnameCode($cognome);
-
-        // 2. Nome (3 lettere)
+        // 1. Cognome
+        $code = $this->extractSurnameCode($cognome);
+        // 2. Nome
         $code .= $this->extractNameCode($nome);
 
-        // 3. Data di Nascita e Sesso (5 caratteri)
-        // Anno (2 chars), Mese (1 char), Giorno (2 chars + 40 se donna)
+        // 3. Data e Sesso
+        $sesso = strtoupper(trim($sesso));
+        if (!in_array($sesso, ['M', 'F'])) {
+            throw new \InvalidArgumentException("Sesso non valido: $sesso");
+        }
+
         try {
             $date = new \DateTime($dataNascita);
             $year = $date->format('y');
             $month = $this->months[$date->format('m')];
             $day = (int) $date->format('d');
-
-            if ($sesso === 'F') {
+            if ($sesso === 'F')
                 $day += 40;
-            }
-            $dayStr = str_pad((string) $day, 2, '0', STR_PAD_LEFT);
-
-            $code .= $year . $month . $dayStr;
-
+            $code .= $year . $month . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
         } catch (\Exception $e) {
-            return 'ERROR_DATE';
+            throw new \InvalidArgumentException("Data di nascita non valida: $dataNascita");
         }
 
-        // 4. Codice Catastale Comune (4 caratteri)
-        // STRICT CHECK: Evitiamo fuzzy match pericolosi (es. "RO" -> "ROMA") e fallback silenziosi a Z000 (Estero)
-        if (!isset($this->belfioreCodes[$luogo])) {
-            throw new \InvalidArgumentException("Comune non trovato nel database: $luogo");
-        }
-        $belfiore = $this->belfioreCodes[$luogo];
-        $code .= $belfiore;
+        // 4. Codice Catastale con Lookup Robusto
+        // Normalizziamo input allo stesso modo delle chiavi mappa (solo A-Z)
+        $luogoClean = $this->stripToEssentials($luogo);
 
-        // 5. Carattere di Controllo (CIN)
+        if (isset($this->normalizedBelfioreMap[$luogoClean])) {
+            $code .= $this->normalizedBelfioreMap[$luogoClean];
+        } else {
+            // Se fallisce, proviamo lookup diretto su array originale (case sensitive/insensitive) per sicurezza
+            // Ma stripToEssentials dovrebbe coprire tutto.
+
+            // Suggerimenti Debug
+            $suggestions = [];
+            foreach (array_keys($this->belfioreCodes) as $k) {
+                if (str_contains($this->stripToEssentials($k), substr($luogoClean, 0, 5))) {
+                    $suggestions[] = $k;
+                }
+                if (count($suggestions) > 3)
+                    break;
+            }
+            $hint = empty($suggestions) ? '' : " Forse intendevi: " . implode(", ", $suggestions);
+
+            throw new \InvalidArgumentException("Comune non trovato: '$luogo' (cercato come '$luogoClean').$hint");
+        }
+
+        // 5. CIN
         $code .= $this->calculateControlChar($code);
 
         return $code;
     }
 
     /**
-     * Normalizza la stringa rimuovendo accenti e caratteri non alfabetici.
+     * Riduce una stringa ai minimi termini: SOLO lettere A-Z.
+     * Rimuove spazi, accenti, apostrofi, numeri.
+     * Esempio: "Reggio nell'Emilia" -> "REGGIONELLEMILIA"
+     * Esempio: "Forlì" -> "FORLI"
      */
-    private function normalizeString(string $s): string
+    private function stripToEssentials(string $s): string
     {
-        return preg_replace('/[^A-Z]/', '', strtoupper(iconv('UTF-8', 'ASCII//TRANSLIT', $s)));
+        $s = strtoupper(trim($s));
+        // Transliterazione Accenti
+        $s = strtr($s, [
+            'À' => 'A',
+            'Á' => 'A',
+            'È' => 'E',
+            'É' => 'E',
+            'Ì' => 'I',
+            'Í' => 'I',
+            'Ò' => 'O',
+            'Ó' => 'O',
+            'Ù' => 'U',
+            'Ú' => 'U',
+            'à' => 'A',
+            'á' => 'A',
+            'è' => 'E',
+            'é' => 'E',
+            'ì' => 'I',
+            'í' => 'I',
+            'ò' => 'O',
+            'ó' => 'O',
+            'ù' => 'U',
+            'ú' => 'U'
+        ]);
+        if (function_exists('iconv')) {
+            $conv = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
+            if ($conv !== false)
+                $s = $conv;
+        }
+        // Rimuovi tutto tranne lettere A-Z
+        return preg_replace('/[^A-Z]/', '', $s);
     }
 
-    /**
-     * Calcola la parte del codice relativa al cognome (consonanti + vocali).
-     */
+    private function normalizeString(string $s): string
+    {
+        return $this->stripToEssentials($s);
+    }
+
     private function extractSurnameCode(string $s): string
     {
         $consonants = $this->getConsonants($s);
         $vowels = $this->getVowels($s);
-        $combined = $consonants . $vowels . 'XXX';
-        return substr($combined, 0, 3);
+        return substr($consonants . $vowels . 'XXX', 0, 3);
     }
 
-    /**
-     * Calcola la parte del codice relativa al nome.
-     * Logica specifica: se 4+ consonanti, prende 1a, 3a, 4a.
-     */
     private function extractNameCode(string $s): string
     {
         $consonants = $this->getConsonants($s);
-
         if (strlen($consonants) >= 4) {
-            // Per il nome, se ci sono 4 o più consonanti, prendiamo la 1a, 3a e 4a
             return $consonants[0] . $consonants[2] . $consonants[3];
         }
-
         $vowels = $this->getVowels($s);
-        $combined = $consonants . $vowels . 'XXX';
-        return substr($combined, 0, 3);
+        return substr($consonants . $vowels . 'XXX', 0, 3);
     }
 
     private function getConsonants(string $s): string
@@ -223,26 +257,16 @@ class FiscalCodeCalculator
         return preg_replace('/[^AEIOU]/', '', $s);
     }
 
-    /**
-     * Calcola il carattere di controllo (CIN) basato su posizioni pari/dispari.
-     */
     private function calculateControlChar(string $partialCode): string
     {
-        if (strlen($partialCode) !== 15) {
+        if (strlen($partialCode) !== 15)
             return 'X';
-        }
-
         $sum = 0;
         for ($i = 0; $i < 15; $i++) {
             $char = $partialCode[$i];
-            if (($i + 1) % 2 != 0) { // Dispari (1st, 3rd... in 1-based index) -> 0, 2... in 0-based
-                $sum += $this->oddValues[$char] ?? 0;
-            } else { // Pari
-                $sum += $this->evenValues[$char] ?? 0;
-            }
+            $val = (($i + 1) % 2 != 0) ? ($this->oddValues[$char] ?? 0) : ($this->evenValues[$char] ?? 0);
+            $sum += $val;
         }
-
-        $remainder = $sum % 26;
-        return chr(65 + $remainder); // 65 = 'A'
+        return chr(65 + ($sum % 26));
     }
 }

@@ -4,10 +4,12 @@ test('error 503 displays custom template', function () {
     $request = (new \Slim\Psr7\Factory\ServerRequestFactory)->createServerRequest('GET', '/maintenance');
     // Slim 4 standardly doesn't have a 503 exception class, so we simulate it
     $exception = new class ($request) extends \Slim\Exception\HttpException {
-        protected $code = 503;
-        protected $message = 'Service Unavailable';
-        protected $title = 'Service Unavailable';
-        protected $description = 'The server is currently unavailable (because it is overloaded or down for maintenance).';
+        public function __construct($request)
+        {
+            parent::__construct($request, 'Service Unavailable', 503);
+            $this->title = 'Service Unavailable';
+            $this->description = 'The server is currently unavailable (because it is overloaded or down for maintenance).';
+        }
     };
 
     $handler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler(

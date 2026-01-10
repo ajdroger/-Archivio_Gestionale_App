@@ -15,7 +15,7 @@ return function (App $app) {
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {
         ini_set('session.cookie_httponly', 1);
-        ini_set('session.cookie_samesite', 'Lax'); // Lax avoids session loss on localhost redirects/ajax
+        ini_set('session.cookie_samesite', 'Strict'); // Mission-critical: high-level security compliant
         ini_set('session.cookie_path', '/');
         ini_set('session.gc_maxlifetime', 3600); // 1 ora di validità
 
@@ -56,6 +56,10 @@ return function (App $app) {
     // Authentication
     $app->add(new \FratellanzaMilitare\Middleware\AuthMiddleware());
 
+    // Input Sanitization (XSS Prevention) - Runs before Auth and Logic
+    $purifier = $container->get(HTMLPurifier::class);
+    $app->add(new \FratellanzaMilitare\Middleware\InputSanitizerMiddleware($purifier));
+
     // Rate Limiting (con Redis support)
     $redisService = $container->has(\FratellanzaMilitare\Service\RedisService::class)
         ? $container->get(\FratellanzaMilitare\Service\RedisService::class)
@@ -63,7 +67,8 @@ return function (App $app) {
     $app->add(new \FratellanzaMilitare\Middleware\RateLimitMiddleware(100, 60, $redisService, $logger));
 
     // Error Middleware
-    $errorMiddleware = $app->addErrorMiddleware(true, true, true, $logger);
+    $displayErrorDetails = ($_ENV['APP_DEBUG'] ?? 'false') === 'true';
+    $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, true, true, $logger);
     $customErrorHandler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler($logger, $mustache);
     $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 

@@ -66,6 +66,10 @@ return function (App $app) {
     $app->get('/soci/{cf}/documenti/{id}/download', SocioStorage::class . ':download')->setName('socio_download_doc');
     $app->get('/soci/export/csv', SocioExport::class . ':exportCsv')->setName('socio_export')->add(new RateLimitMiddleware(30, 60));
 
+    // Compliance & Privacy
+    $app->get('/privacy-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':privacy')->setName('privacy_policy');
+    $app->get('/cookie-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':cookie')->setName('cookie_policy');
+
     // Intelligence (Stats & Reports)
     $statsRole = new RoleMiddleware(['presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
     $exportLimit = new RateLimitMiddleware(30, 60);
@@ -77,18 +81,32 @@ return function (App $app) {
     })->add($statsRole);
 
     // API Layer
+    // Stricter Rate Limit for API: 60 req/min
+    $container = $app->getContainer();
+    $redis = $container->has(\FratellanzaMilitare\Service\RedisService::class) ? $container->get(\FratellanzaMilitare\Service\RedisService::class) : null;
+    $logger = $container->get(\Psr\Log\LoggerInterface::class);
+    $apiLimit = new RateLimitMiddleware(60, 60, $redis, $logger);
+
     $app->group('/api/v1', function ($group) {
         $group->get('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':list');
         $group->get('/soci/{cf}', \FratellanzaMilitare\Controller\SociApiController::class . ':get');
         $group->post('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':create');
-    })->add(new \FratellanzaMilitare\Middleware\ApiKeyMiddleware(
-                $app->getContainer()->get(PDO::class),
-                $app->getContainer()->get(\FratellanzaMilitare\SecurityLayer\AuditTrail::class)
-            ));
+    })
+        ->add(new \FratellanzaMilitare\Middleware\ApiKeyMiddleware(
+            $container->get(PDO::class),
+            $container->get(\FratellanzaMilitare\SecurityLayer\AuditTrail::class)
+        ))
+        ->add($apiLimit);
+    // ->add(new \FratellanzaMilitare\Middleware\JwtAuthMiddleware()); // TODO: Enable when Auth0 is ready
 
     // GraphQL API
     $app->post('/api/graphql', \FratellanzaMilitare\Controller\GraphQLController::class . ':handle')->setName('graphql_api');
     // ->add(...) // Disabled for testing connectivity
+
+
+    // API Documentation
+    $app->get('/api/docs', \FratellanzaMilitare\Controller\Docs\DocumentationController::class . ':ui')->setName('api_docs');
+    $app->get('/api/docs/json', \FratellanzaMilitare\Controller\Docs\DocumentationController::class . ':spec')->setName('api_docs_json');
 
     // Admin & DevTools
     $app->group('', function ($group) {

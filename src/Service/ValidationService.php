@@ -69,4 +69,77 @@ class ValidationService
 
         return true;
     }
+
+    /**
+     * Valida il MIME type reale del file analizzando i Magic Bytes (primi bytes del file).
+     * Previene attacchi di spoofing dell'estensione (es. shell.php rinominata in shell.jpg).
+     */
+    public function validateRealMimeType(string $filePath): bool
+    {
+        $allowedMimes = [
+            'application/pdf',
+            'image/jpeg',
+            'image/png',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/zip' // Aggiunto per compatibilità Word/Office
+        ];
+
+        // Usa finfo per determinare il MIME type dal contenuto
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $realMime = $finfo->file($filePath);
+
+
+
+        // Gestione caso speciale per file Office (docx, xlsx) che sono tecnicamente ZIP
+        if ($realMime === 'application/zip' || $realMime === 'application/x-zip-compressed') {
+            return true;
+        }
+
+        // FALLBACK: Se finfo ritorna octet-stream, verifichiamo manualmente i magic bytes per ZIP
+        if ($realMime === 'application/octet-stream') {
+            $handle = fopen($filePath, 'rb');
+            if ($handle) {
+                $header = fread($handle, 4);
+                fclose($handle);
+                if ($header === "\x50\x4B\x03\x04") { // PK..
+                    return true;
+                }
+            }
+        }
+
+        return in_array($realMime, $allowedMimes);
+    }
+
+    /**
+     * Scansione Malware (Placeholder per integrazione AV).
+     * 
+     * In futuro integrerà ClamAV o servizi esterni (VirusTotal API).
+     */
+    public function scanForMalware(string $filePath): bool
+    {
+        /* 
+        // TODO: UNCOMMENT WHEN CLAMAV IS AVAILABLE
+        // Requires: sudo apt-get install clamav && composer require appwrite/clamav
+
+        try {
+            $clam = new \Appwrite\ClamAV\Network('127.0.0.1', 3310);
+            if (!$clam->ping()) {
+                // AV non disponibile, fail-open o fail-close in base a policy
+                error_log("ClamAV non raggiungibile");
+                return true; 
+            }
+
+            // Scan
+            $result = $clam->fileScan($filePath);
+            return $result === true; // true = clean
+
+        } catch (\Exception $e) {
+            error_log("ClamAV Error: " . $e->getMessage());
+            return true; // Fail-open per garantire servizio
+        }
+        */
+
+        return true; // Placeholder: sempre pulito
+    }
 }

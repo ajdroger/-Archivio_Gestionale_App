@@ -35,11 +35,27 @@ class DatabaseConnection
 
             $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ];
+
+            // SSL Configuration (Secure Connections)
+            if (!empty($_ENV['DB_SSL_CA'])) {
+                $options[PDO::MYSQL_ATTR_SSL_CA] = $_ENV['DB_SSL_CA'];
+            }
+            if (!empty($_ENV['DB_SSL_CERT'])) {
+                $options[PDO::MYSQL_ATTR_SSL_CERT] = $_ENV['DB_SSL_CERT'];
+            }
+            if (!empty($_ENV['DB_SSL_KEY'])) {
+                $options[PDO::MYSQL_ATTR_SSL_KEY] = $_ENV['DB_SSL_KEY'];
+            }
+            if (isset($_ENV['DB_SSL_VERIFY_SERVER_CERT']) && $_ENV['DB_SSL_VERIFY_SERVER_CERT'] === 'false') {
+                $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+            }
+
             try {
-                self::$connection = new PDO($dsn, $user, $pass);
-                self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                self::$connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-                // Ensure strict mode if needed, or other MySQL specific settings
+                self::$connection = new PDO($dsn, $user, $pass, $options);
             } catch (PDOException $e) {
                 throw new PDOException("Errore di connessione al Database (MySQL): " . $e->getMessage(), (int) $e->getCode(), $e);
             }

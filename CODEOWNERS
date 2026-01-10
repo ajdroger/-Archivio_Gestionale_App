@@ -1,0 +1,13 @@
+# This file defines code owners for the repository
+
+# Default owner
+* @aj-93
+
+# Security
+/src/Security/ @aj-93
+/config/ @aj-93
+/bin/security/ @aj-93
+
+# DevOps & CI
+/.github/ @aj-93
+/bin/maintenance/ @aj-93
