@@ -1,0 +1,27 @@
+<div id="cookie-banner" class="fixed-bottom bg-dark text-white p-3" style="display:none; z-index: 9999;">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <p class="mb-0">
+                Questo sito utilizza cookie tecnici essenziali.
+                <a href="/cookie-policy" class="text-info">Leggi la Cookie Policy</a>.
+            </p>
+        </div>
+        <div>
+            <button id="accept-cookies" class="btn btn-sm btn-primary">Accetta</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    if (!localStorage.getItem('cookieConsented')) {
+        document.getElementById('cookie-banner').style.display = 'block';
+    }
+
+    document.getElementById('accept-cookies').addEventListener('click', function() {
+        localStorage.setItem('cookieConsented', 'true');
+        document.getElementById('cookie-banner').style.display = 'none';
+        // Qui si attiverebbero eventuali script di terze parti (se presenti)
+    });
+});
+</script>

@@ -66,6 +66,10 @@ return function (App $app) {
     $app->get('/soci/{cf}/documenti/{id}/download', SocioStorage::class . ':download')->setName('socio_download_doc');
     $app->get('/soci/export/csv', SocioExport::class . ':exportCsv')->setName('socio_export')->add(new RateLimitMiddleware(30, 60));
 
+    // Compliance & Privacy
+    $app->get('/privacy-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':privacy')->setName('privacy_policy');
+    $app->get('/cookie-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':cookie')->setName('cookie_policy');
+
     // Intelligence (Stats & Reports)
     $statsRole = new RoleMiddleware(['presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
     $exportLimit = new RateLimitMiddleware(30, 60);
