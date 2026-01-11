@@ -44,6 +44,7 @@ Il **Militare Civile Archivio Gestionale (MCAG)** v4.0.0 Ultimate Edition rappre
 | **Deployment Time** | Immediato (Docker) | 2-4 settimane | **Plug & Play** |
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 🚀 LA STORIA DELL'EVOLUZIONE
 
@@ -71,6 +72,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 **Features Business** (8): Advanced Search, Statistics, Audit Logs, GraphQL API
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 💎 UNIQUE SELLING PROPOSITIONS (USP)
 
@@ -128,6 +130,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 **Code Quality Score: 95/100 (Top 5% industria PHP)**
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## ⚡ PERFORMANCE BENCHMARKS REAL-TIME
 
@@ -164,6 +167,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 **Lighthouse Score Stimato: 92-96/100**
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 🎯 ANALISI COMPETITIVA APPROFONDITA
 
@@ -195,6 +199,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 6. **🏆 Specializzazione Militare/Civile** - Nessun competitor focalizzato su questo settore
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 💰 PRICING STRATEGY COMPLETA
 
@@ -238,6 +243,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 - **Emergency Support 24/7**: €180/ora (SLA <2h response)
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 📈 TOTAL ADDRESSABLE MARKET (TAM) ITALIA
 
@@ -262,6 +268,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 **TAM EU Totale**: **€63.6M** (market saturation <5% realistic)
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 💡 ROI CLIENTE - CASO REALE
 
@@ -293,6 +300,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 - **MCAG Risparmio Immediato**: €30.000-€180.000 + 10-16 mesi time-to-market
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 🏗️ STACK TECNOLOGICO COMPLETO
 
@@ -333,6 +341,7 @@ Il sistema è il risultato di **34 feature branch** metodicamente sviluppate e m
 **Totale LOC**: 26.680 linee (12.500 production, 6.000 test, 8.500 docs)
 
 ---
+<div style="page-break-after: always;"></div>
 
 ## 📞 CONTATTI E DISPONIBILITÀ
 

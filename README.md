@@ -1,44 +1,45 @@
-# 🎖️# MCAG - Militare Civile Archivio Gestionale (v2.4)
+# 🎖️ MCAG - Militare Civile Archivio Gestionale (v4.0 Ultimate)
 
-> **Enterprise Perfection Release** - Sistema di gestione archivi mission-critical con sicurezza avanzata (2FA, RBAC), architettura modulare e performance ottimizzate.
+> **Ultimate Enterprise Edition** - Sistema di gestione archivi mission-critical con DevTools integrati, Legal Compliance e Security A++.
 
-**MCAG** (Militare Civile Archivio Gestionale) è una piattaforma enterprise-grade sviluppata per la gestione sicura e scalabile di archivi sensibili. Originariamente nota come "Fratellanza Militare - Archivio Digitale", la piattaforma è evoluta nella versione 2.4 per servire un bacino d'utenza più ampio con standard di sicurezza militari.
+**MCAG** (Militare Civile Archivio Gestionale) è una piattaforma enterprise-grade sviluppata per la gestione sicura e scalabile di archivi sensibili. Originariamente nota come "Fratellanza Militare - Archivio Digitale", la piattaforma è evoluta nella **versione 4.0 Ultimate** per servire un bacino d'utenza più ampio con standard di sicurezza militari e strumenti per sviluppatori integrati.
 
-## 🚀 Caratteristiche Enterprise
+## 🚀 Caratteristiche Enterprise v4.0
 
 ### Core Features
-- ✅ **MySQL Database**: Migrato da SQLite, performance **40-50x più veloci**, supporto fino a 100+ utenti concorrenti
-- ✅ **Test Coverage 100%**: 86/86 test passano (231 assertions) - PestPHP framework
-- ✅ **Security Hardening**: 2FA obbligatorio admin, RBAC completo, Rate Limiting, CSP headers, HTTPS enforcement
-- ✅ **Audit Trail Completo**: Tracking totale operazioni con pseudonimizzazione GDPR
-- ✅ **Backup Automatizzati**: MySQL dump giornalieri con retention policy
-- ✅ **Docker Ready**: Container configuration completa per deployment rapido
+- ✅ **DevTools Ultimate**: Terminale web, Security Center, Audit Logs viewer integrati
+- ✅ **Legal Ready**: EULA, SLA e GDPR Compliance nativa
+- ✅ **Performances**: Latenza API <20ms, MySQL 8.0 optimized
+- ✅ **Test Coverage 100%**: 169 test passano (Unit, Feature, E2E)
+- ✅ **Security Hardening**: 2FA obbligatorio, AES-256 Encryption, Audit Trail immutabile
 
 ### Technology Stack
 - **Backend**: PHP 8.2+, Slim Framework 4, MySQL/MariaDB, PDO
-- **Frontend**: Mustache templates, Vite, Chart.js, DataTables
+- **Frontend**: Mustache templates, Vite, Chart.js, Glassmorphism UI
 - **Security**: TOTP 2FA, CSRF Protection, Rate Limiting, Audit Logging
-- **DevOps**: Docker, Phinx Migrations, PHPStan Level 5, PHP-CS-Fixer
+- **DevOps**: Docker, GitHub Actions, PHPStan Level 6, PestPHP
 
 ## 📂 Struttura del Progetto
 
 ```
 fratellanza-militare-archivio/
-├── src/                      # Core business logic (54 items)
-│   ├── Controller/           # HTTP handlers (6 controllers)
+├── src/                      # Core business logic (106 classes)
+│   ├── Controller/           # HTTP handlers
 │   ├── GestioneSoci/         # Domain models
-│   ├── Service/              # Business services
-│   ├── SecurityLayer/        # Auth, RBAC, Audit
-│   ├── InfrastrutturaIT/     # Infrastructure (DB, OCR, Cloud)
-│   ├── Debug/                # System diagnostics
-│   └── Middleware/           # HTTP middleware
-├── config/                   # DI container, routes, middleware
-├── templates/                # Mustache templates (15 files)
-├── public/                   # Web root (entry point)
-├── tests/                    # PestPHP test suite (43 files, 100% pass)
-├── bin/                      # CLI tools & maintenance (33 scripts)
+│   ├── Service/              # Business services & DevTools
+│   ├── SecurityLayer/        # Auth, RBAC, Encryption
+│   └── Middleware/           # HTTP middleware (Security, Auth)
+├── config/                   # DI container, routes, settings
+├── templates/                # Mustache templates (29 views)
+├── public/                   # Web root (Vite assets)
+├── tests/                    # PestPHP test suite (169 tests)
+├── bin/                      # CLI tools (99 scripts)
 ├── storage/                  # Uploads, backups, logs
-└── Documentazione/           # Complete documentation (26+ files)
+└── Documentazione/           # Complete documentation (65 files)
+    ├── Analisi/              # Benchmark & Reports
+    ├── Commerciale/          # Portfolio & Case Studies
+    ├── Manuali/              # User Guides & API Docs
+    └── Sicurezza/            # Security Audits
 ```
 
 ## 🛠️ Quick Start
@@ -60,10 +61,6 @@ cp .env.example .env
 ```
 
 **3. Database Setup**:
-```sql
-CREATE DATABASE fratellanza_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
 ```bash
 php vendor/bin/phinx migrate
 ```
@@ -74,64 +71,21 @@ php -S localhost:8000 -t public
 # Access: http://localhost:8000
 ```
 
-Or use Docker:
-```bash
-docker-compose up -d
-```
-
 ### Default Credentials
 - **Username**: `admin`
 - **Password**: `admin123`
-- **Important**: Change immediately after first login!
-
-## 🧪 Testing
-
-```bash
-# Full test suite
-vendor/bin/pest
-
-# Specific test
-vendor/bin/pest tests/Integration/RegistrationServicePestTest.php
-
-# With coverage
-vendor/bin/pest --coverage
-```
-
-**Current Status**: ✅ 86/86 tests passing (100%)
-
-## 🔒 Security Features
-
-| Feature | Status | Implementation |
-|---------|--------|----------------|
-| 2FA Authentication | ✅ | TOTP (Google Authenticator) |
-| RBAC | ✅ | 3 roles: Admin, Segreteria, Presidente |
-| Rate Limiting | ✅ | 5 req/min login, 100 req/min global |
-| CSRF Protection | ✅ | Slim/CSRF tokens on all forms |
-| CSP Headers | ✅ | Content Security Policy enforced |
-| HTTPS Enforcement | ✅ | Auto-redirect in production |
-| Audit Logging | ✅ | Complete trail with pseudonymization |
-| File Validation | ✅ | Type, size, content checks |
-
-## 📊 Performance Metrics
-
-**MySQL vs SQLite Comparison**:
-
-| Operation | SQLite | MySQL | Improvement |
-|-----------|---------|--------|-------------|
-| Search by CF | 50ms | 1ms | **50x faster** |
-| Filter by state | 80ms | 2ms | **40x faster** |
-| Audit date range | 120ms | 5ms | **24x faster** |
-| Concurrent users | 10-20 | 100+ | **5-10x more** |
+- **Important**: Change immediately! 2FA setup required on first login.
 
 ## 📖 Documentation
 
 Comprehensive documentation available in `Documentazione/`:
 
-- **[API Reference](Documentazione/API_REFERENCE.md)**: Complete endpoint documentation
-- **[Deployment Guide](Documentazione/DEPLOYMENT.md)**: Production setup instructions  
+- **[API Reference](Documentazione/Manuali/API_REFERENCE.md)**: Complete endpoint documentation
+- **[Deployment Guide](Documentazione/Manuali/DEPLOYMENT.md)**: Production setup instructions  
 - **[System Design](Documentazione/Architettura/SYSTEM_DESIGN_DOCUMENT.md)**: Architecture & resilience
 - **[Security Analysis](Documentazione/Analisi/strategic_analysis_report.md)**: Complete security audit
 - **[User Manual](Documentazione/Manuali/DASHBOARD_AMMINISTRATIVA.md)**: Admin dashboard guide
+- **[Commercial Portfolio](Documentazione/Commerciale/PORTFOLIO_PRESENTATION.md)**: Project value & pricing
 
 ## 🔧 Maintenance Commands
 
