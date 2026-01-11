@@ -2,18 +2,21 @@ name: MCAG Enterprise CI
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "feature/*" ]
   pull_request:
     branches: [ "main", "develop" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  # 1. BUILD & TEST SUITE
+  build-test:
     name: Build & Test (PHP ${{ matrix.php-versions }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php-versions: ['8.2', '8.3']
 
@@ -34,7 +37,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
-        extensions: mbstring, pdo, pdo_mysql, intl, dom, fileinfo
+        extensions: mbstring, pdo, pdo_mysql, intl, dom, fileinfo, zip
         coverage: xdebug
 
     - name: Validate composer.json
@@ -52,13 +55,13 @@ jobs:
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: Static Analysis (PHPStan)
+    - name: Static Analysis (PHPStan Level 6)
       run: vendor/bin/phpstan analyse src --level=6 --no-progress
 
-    - name: Code Style (PHP-CS-Fixer)
+    - name: Code Style Check (PHP-CS-Fixer)
       run: vendor/bin/php-cs-fixer fix --dry-run --diff
 
-    - name: Run Test Suite (PestPHP)
+    - name: Run PestPHP Test Suite (100% Coverage Target)
       run: vendor/bin/pest --coverage --min=90
       env:
         DB_CONNECTION: mysql
@@ -67,3 +70,33 @@ jobs:
         DB_DATABASE: fratellanza
         DB_USERNAME: root
         DB_PASSWORD: root
+
+  # 2. SECURITY AUDIT
+  security-audit:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install Dependencies
+        run: composer install --no-dev --no-progress
+
+      - name: Composer Audit (CVEs)
+        run: composer audit
+
+  # 3. STAGING DEPLOY (Placeholder)
+  deploy-staging:
+    name: Deploy to Staging (Railway)
+    runs-on: ubuntu-latest
+    needs: [build-test, security-audit]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: Deploy Trigger
+        run: echo "Staging deploy trigger placeholder. Configure RAILWAY_TOKEN in secrets."

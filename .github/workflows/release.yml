@@ -1,4 +1,4 @@
-name: Commercial Release
+name: Commercial Release Build
 
 on:
   push:
@@ -7,13 +7,13 @@ on:
 
 jobs:
   release:
-    name: Build Commercial Release
+    name: Build & Publish Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup PHP
@@ -22,18 +22,36 @@ jobs:
           php-version: '8.2'
           extensions: zip
 
-      - name: Install Production Deps
+      - name: Install Production Dependencies
         run: composer install --no-dev --optimize-autoloader
 
-      - name: Archive Production Build
-        run: |
-          mkdir build
-          zip -r build/mcag-ultimate-${{ github.ref_name }}.zip . -x ".git/*" ".github/*" "tests/*" "phpstan.neon" "phpunit.xml" "node_modules/*"
+      - name: Prepare Artifact Directory
+        run: mkdir build
 
-      - name: Create Release
+      - name: Create Enterprise Package (ZIP)
+        run: |
+          zip -r build/mcag-enterprise-${{ github.ref_name }}.zip . \
+          -x ".git/*" \
+          -x ".github/*" \
+          -x "tests/*" \
+          -x "node_modules/*" \
+          -x "phpstan.neon" \
+          -x "phpunit.xml" \
+          -x ".env" \
+          -x "deploy.sh"
+
+      - name: Generate Changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/mcag-ultimate-${{ github.ref_name }}.zip
-          generate_release_notes: true
+          files: build/mcag-enterprise-${{ github.ref_name }}.zip
+          body: ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

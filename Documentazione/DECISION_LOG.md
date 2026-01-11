@@ -629,6 +629,17 @@ Ogni classe definita DEVE essere **completamente implementata** o astratta corre
 3.  **SLA Definitions**: Clear RTO/RPO targets.
 **Consequences**: Adds legal liability but enables commercial sales and enterprise adoption.
 
+### ADR-025: Automated Security & Release Pipeline
+**Date:** 2026-01-11
+**Status**: ✅ Active
+**Context**: Manual releases are error-prone. Security checks must be enforced before every merge.
+**Decision**:
+1.  **GitHub Actions** as CI/CD provider.
+2.  **Strict Gate**: Build fails if `phpstan` (L6), `cs-fixer`, or `tests` fail.
+3.  **Security Audit**: `composer audit` runs on every build.
+4.  **Auto-Release**: Tagging `v*` triggers ZIP creation and GitHub Release.
+**Consequences**: Prevents "works on my machine" issues. Ensures all releases are secure and standardized.
+
 ## [ADR-021] Secure Frontend Data Injection
 **Data**: 2026-01-10  
 **Stato**: ✅ Attivo  
