@@ -4,7 +4,10 @@ use Psr\Container\ContainerInterface;
 
 return [
     \FratellanzaMilitare\Controller\Auth\LoginFlowController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Auth\LoginFlowController($c->get(Mustache_Engine::class));
+        return new \FratellanzaMilitare\Controller\Auth\LoginFlowController(
+            $c->get(Mustache_Engine::class),
+            new \FratellanzaMilitare\Service\InputValidator()
+        );
     },
     \FratellanzaMilitare\Controller\Auth\TwoFactorController::class => function (ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Auth\TwoFactorController($c->get(Mustache_Engine::class));
