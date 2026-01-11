@@ -1,47 +1,58 @@
 ---
-description: Standard git workflow for feature development, testing, and merging.
+description: Enterprise Git Workflow enforcing develop-first approach, dedicated testing branches, and hotfix release paths.
 ---
 
-# Feature Development Workflow
+# Enterprise Development Workflow
 
-This workflow enforces the project's strict branching and testing strategy.
+**CRITICAL RULE**: All development starts from `develop`.
 
-## 1. Create Feature Branch
-Always start work on a new feature or fix in a dedicated branch.
+## 1. Feature Development
+Work starts on a dedicated feature branch created from `develop`.
 ```bash
-git checkout -b feature/name-of-task
+git checkout develop
+git checkout -b feature/NAME
 ```
 
-## 2. Implement Changes & Tests
-- Write the code for the feature or fix.
-- **CRITICAL**: Create or update relevant tests.
-- Ensure all tests pass on the feature branch.
-
-## 3. Dedicated Testing (Optional but Recommended)
-If the task is complex, verify specifically on a testing branch or run the full suite.
+## 2. Testing Phase
+Before merging to develop, changes must be validated on a dedicated test branch.
+1. Create/Checkout a test branch (e.g., `tests/integration`).
+2. Merge your feature into it.
+3. Run the full test suite.
 ```bash
-# Run all tests
+git checkout -b tests/NAME
+git merge feature/NAME
 vendor/bin/pest
 ```
 
-## 4. Merge to Main
-Once tests pass, merge the feature branch into `main`.
+## 3. Completion (Success Path)
+If tests pass and no conflicts exist:
+(User implication: Merge back to develop to persist history)
 ```bash
-git checkout main
-git merge feature/name-of-task
-git push origin main
+git checkout develop
+git merge feature/NAME
+git branch -d feature/NAME
 ```
 
-## 5. Merge to Stable
-After confirming stability on `main`, merge to `stable`.
+## 4. Conflict / Bug Handling (Hotfix Path)
+**IMPORTANTE**: If conflicts, errors, or bugs arise during testing/merge:
+1. Create a **Hotfix** branch.
+   ```bash
+   git checkout -b hotfix/DESCRIPTION
+   ```
+2. Fix the specific issue.
+3. Validate the fix.
+4. Merge strictly to **Main** and then **Stable**.
+   ```bash
+   git checkout main
+   git merge hotfix/DESCRIPTION
+   git checkout stable
+   git merge main
+   ```
+5. (Recommended) Backport fix to `develop` to keep environments synced.
+
+## 5. Final Release
+Stable code flows from `main` to `stable`.
 ```bash
 git checkout stable
 git merge main
-git push origin stable
-```
-
-## 6. Cleanup
-Delete the feature branch after successful merge.
-```bash
-git branch -d feature/name-of-task
 ```
