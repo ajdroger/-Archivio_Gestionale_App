@@ -2,23 +2,42 @@
 <html lang="it" data-bs-theme="dark">
 
 <head>
+    <!-- SEO & OpenGraph -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="MCAG System v4.0 - Il gestionale Enterprise per associazioni militari e civili. Sicurezza Mission-Critical, Compliance GDPR nativa e DevTools Ultimate.">
+    <meta name="keywords"
+        content="gestionale associazioni, software militare, archivio digitale, gdpr, sicurezza, mcag">
+    <meta property="og:title" content="MCAG System - Militare Civile Archivio Gestionale | Enterprise v4.0">
+    <meta property="og:description"
+        content="La soluzione definitiva per la gestione sicura degli archivi associativi. Platinum Grade Certified.">
+    <meta property="og:image" content="assets/og-preview.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mcag-system.it">
+
     <title>MCAG - Militare Civile Archivio Gestionale | Enterprise System</title>
+
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap 5.3 -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5.3 & AOS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
     <!-- Custom CSS -->
     <style>
         :root {
             --primary-rgb: 0, 195, 255;
             --success-rgb: 0, 255, 157;
-            --bg-dark: #0f1115;
-            --glass-bg: rgba(22, 27, 34, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-dark: #090a0c;
+            --glass-bg: rgba(22, 27, 34, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-blue: #00f3ff;
+            --neon-purple: #bd00ff;
         }
 
         body {
@@ -26,31 +45,42 @@
             background-color: var(--bg-dark);
             color: #e6edf3;
             background-image:
-                radial-gradient(circle at 15% 50%, rgba(0, 195, 255, 0.08) 0%, transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(0, 255, 157, 0.05) 0%, transparent 25%);
+                radial-gradient(circle at 10% 20%, rgba(0, 195, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(189, 0, 255, 0.04) 0%, transparent 40%);
+            overflow-x: hidden;
         }
 
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
+        .glass-card:hover {
+            transform: translateY(-5px);
+            background: rgba(22, 27, 34, 0.8);
+            border-color: rgba(0, 195, 255, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 195, 255, 0.1);
+        }
+
+        /* Hero & Typography */
         .hero-section {
-            padding: 100px 0;
-            text-align: center;
+            padding: 120px 0 80px;
         }
 
         .hero-title {
-            font-size: 3.5rem;
+            font-size: 4.5rem;
             font-weight: 800;
             background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            letter-spacing: -2px;
+            line-height: 1.1;
         }
 
         .hero-badge {
@@ -61,50 +91,23 @@
             border-radius: 50px;
             font-size: 0.9rem;
             font-weight: 600;
-            margin-bottom: 2rem;
             display: inline-block;
         }
 
-        .feature-icon {
-            width: 64px;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: #00c3ff;
-        }
-
-        .pricing-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-        }
-
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 195, 255, 0.15);
-            border-color: rgba(0, 195, 255, 0.3);
-        }
-
-        .pricing-card.premium {
-            border: 1px solid rgba(0, 195, 255, 0.4);
-            background: linear-gradient(180deg, rgba(0, 195, 255, 0.05) 0%, rgba(22, 27, 34, 0.9) 100%);
-        }
-
+        /* Interactive Elements */
         .btn-glow {
-            background: linear-gradient(135deg, #00c3ff 0%, #0077cc 100%);
+            background: linear-gradient(135deg, #00c3ff 0%, #0061ff 100%);
             color: white;
             border: none;
-            box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+            box-shadow: 0 0 25px rgba(0, 195, 255, 0.3);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-glow:hover {
-            box-shadow: 0 0 30px rgba(0, 195, 255, 0.5);
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 40px rgba(0, 195, 255, 0.6);
             color: white;
         }
 
@@ -116,37 +119,88 @@
 
         .check-list i {
             color: #00ff9d;
-            margin-right: 10px;
+            margin-right: 12px;
+        }
+
+        /* Cookie Banner */
+        #cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 500px;
+            z-index: 9999;
+            display: none;
+            /* JS will show it */
+        }
+
+        /* Premium Badges */
+        .pricing-card.premium {
+            border: 1px solid rgba(0, 195, 255, 0.4);
+            background: linear-gradient(180deg, rgba(0, 195, 255, 0.05) 0%, rgba(22, 27, 34, 0.9) 100%);
         }
     </style>
 </head>
 
-<body>
+<body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-offset="100">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top pt-4">
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark fixed-top py-3"
+        style="background: rgba(9, 10, 12, 0.8); backdrop-filter: blur(10px);">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">MCAG <span class="text-info">System</span></a>
-            <div class="d-flex gap-3">
-                <a href="login.php" class="btn btn-outline-light btn-sm">Accedi</a>
-                <a href="#contact" class="btn btn-primary btn-sm">Richiedi Demo</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+                <i class="fas fa-shield-alt text-info"></i> MCAG <span class="text-white-50">System</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-3">
+                    <li class="nav-item"><a class="nav-link" href="#features">Funzionalità</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pricing">Licenze</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm px-4 rounded-pill" data-bs-toggle="modal"
+                            data-bs-target="#loginModal">Accedi</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-primary btn-sm px-4 rounded-pill btn-glow" data-bs-toggle="modal"
+                            data-bs-target="#demoModal">Richiedi Demo</button>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <span class="hero-badge"><i class="fas fa-check-circle me-2"></i>v4.0 DevTools Ultimate Edition</span>
-            <h1 class="hero-title">Gestione Archivi Associativi<br>Next-Generation</h1>
-            <p class="lead text-secondary mb-5 mx-auto" style="max-width: 700px;">
-                Il sistema enterprise-grade per associazioni militari e civili.
-                Sicurezza Mission-Critical, Compliance GDPR nativa e Performance Real-Time.
+    <section class="hero-section text-center">
+        <div class="container" data-aos="fade-up">
+            <span class="hero-badge mb-4">
+                <i class="fas fa-check-circle me-2"></i>v4.0 DevTools Ultimate Edition
+            </span>
+            <h1 class="hero-title">Gestione Archivi<br>Mission Critical</h1>
+            <p class="lead text-secondary mb-5 mx-auto" style="max-width: 800px; font-size: 1.25rem;">
+                Il sistema gestionale definitivo per Associazioni Militari, Ordini Professionali e Pubblica
+                Amministrazione.
+                Sicurezza **Platinum Grade**, Compliance **GDPR** nativa e Performance in tempo reale.
             </p>
             <div class="d-flex justify-content-center gap-3">
-                <a href="#features" class="btn btn-glow btn-lg px-5 py-3 rounded-pill fw-bold">Scopri di più</a>
+                <button class="btn btn-glow btn-lg px-5 py-3 rounded-pill fw-bold" data-bs-toggle="modal"
+                    data-bs-target="#demoModal">Inizia Ora</button>
                 <a href="Documentazione/Analisi/REPORT_COMMERCIALE_BENCHMARK_2026.md"
-                    class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">Vedi Report</a>
+                    class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill"> <i
+                        class="fas fa-file-contract me-2"></i> Vedi Benchmark</a>
+            </div>
+
+            <div class="mt-5 pt-4">
+                <p class="text-secondary small text-uppercase ls-2 mb-3">Trusted Technology Stack</p>
+                <div class="d-flex justify-content-center gap-4 opacity-50">
+                    <i class="fab fa-php fa-2x"></i>
+                    <i class="fab fa-docker fa-2x"></i>
+                    <i class="fab fa-bootstrap fa-2x"></i>
+                    <i class="fab fa-linux fa-2x"></i>
+                    <i class="fas fa-database fa-2x"></i>
+                </div>
             </div>
         </div>
     </section>
@@ -155,28 +209,28 @@
     <section id="features" class="py-5">
         <div class="container">
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="glass-card p-4 h-100">
-                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                        <h4>Sicurezza Enterprise</h4>
-                        <p class="text-secondary">2FA/TOTP obbligatorio, Audit Trail immutabile, Whitelist IP e
-                            Protezione Brute-Force integrata.</p>
+                        <div class="text-info fs-1 mb-3"><i class="fas fa-shield-virus"></i></div>
+                        <h4>Sicurezza Militare</h4>
+                        <p class="text-secondary">Autenticazione 2FA/TOTP obbligatoria, Crittografia AES-256 a riposo,
+                            Audit Trail immutabile. Conforme ISO 27001 ready.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="glass-card p-4 h-100">
-                        <div class="feature-icon"><i class="fas fa-terminal"></i></div>
-                        <h4>DevTools Ultimate</h4>
-                        <p class="text-secondary">Terminale Web PowerShell/Bash, Security Center real-time e Log
-                            Inspector direttamente nel browser.</p>
+                        <div class="text-info fs-1 mb-3"><i class="fas fa-terminal"></i></div>
+                        <h4>DevTools v4.0</h4>
+                        <p class="text-secondary">Terminale Web PowerShell/Bash, Security Center real-time, Log
+                            Inspector e Debugging avanzato direttamente dalla dashboard.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="glass-card p-4 h-100">
-                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="text-info fs-1 mb-3"><i class="fas fa-tachometer-alt"></i></div>
                         <h4>Performance Pure</h4>
-                        <p class="text-secondary">Architettura MySQL ottimizzata (40x faster), Frontend reattivo e API
-                            GraphQL per integrazioni.</p>
+                        <p class="text-secondary">Architettura ottimizzata per carichi elevati. Risposte API < 20ms,
+                                rendering frontend immediato, leggero e scalabile.</p>
                     </div>
                 </div>
             </div>
@@ -185,8 +239,8 @@
 
     <!-- Metrics -->
     <section class="py-5">
-        <div class="container">
-            <div class="glass-card p-5 text-center">
+        <div class="container" data-aos="zoom-in">
+            <div class="glass-card p-5 text-center bg-gradient-to-r from-gray-900 to-black">
                 <div class="row">
                     <div class="col-md-3">
                         <h2 class="display-4 fw-bold text-info">100%</h2>
@@ -210,70 +264,231 @@
         </div>
     </section>
 
-    <!-- Pricing -->
-    <section class="py-5">
-        <div class="container">
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-5 bg-opacity-10 bg-black">
+        <div class="container" data-aos="fade-up">
             <div class="text-center mb-5">
-                <h2 class="fw-bold">Piani Flessibili</h2>
-                <p class="text-secondary">Scegli la soluzione adatta alla tua organizzazione</p>
+                <h2 class="display-5 fw-bold">Piani Licenza</h2>
+                <p class="text-secondary">Scegli la flessibilità del SaaS o il controllo totale dell'On-Premise.</p>
             </div>
             <div class="row justify-content-center g-4">
                 <!-- SaaS -->
                 <div class="col-lg-4 col-md-6">
                     <div class="glass-card pricing-card p-4">
                         <div class="text-center mb-4">
-                            <span class="badge bg-secondary mb-2">Cloud Hosted</span>
-                            <h3>SaaS Business</h3>
+                            <span class="badge bg-secondary mb-2">Cloud Hosted SaaS</span>
+                            <h3>Business Cloud</h3>
                             <div class="display-5 fw-bold my-3">€4.500<span class="fs-6 text-secondary">/anno</span>
                             </div>
-                            <p class="text-secondary">L'ideale per iniziare senza infrastruttura.</p>
+                            <p class="text-secondary">Ideale per iniziare senza infrastruttura.</p>
                         </div>
-                        <ul class="list-unstyled check-list">
-                            <li><i class="fas fa-check"></i> Fino a 2.000 membri</li>
-                            <li><i class="fas fa-check"></i> Hosting & Manutenzione Inc.</li>
-                            <li><i class="fas fa-check"></i> Supporto Email</li>
-                            <li><i class="fas fa-check"></i> Backup Giornalieri</li>
+                        <ul class="list-unstyled check-list text-secondary">
+                            <li><i class="fas fa-check text-success me-2"></i> 2.000 Membri</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Hosting & Manutenzione Inc.</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Supporto Email</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Backup Giornalieri</li>
                         </ul>
-                        <a href="#" class="btn btn-outline-light w-100 mt-4 rounded-pill">Inizia Ora</a>
+                        <button class="btn btn-outline-light w-100 mt-4 rounded-pill" data-bs-toggle="modal"
+                            data-bs-target="#demoModal" data-bs-plan="SaaS">Richiedi SaaS</button>
                     </div>
                 </div>
 
                 <!-- Enterprise -->
                 <div class="col-lg-4 col-md-6">
-                    <div class="glass-card pricing-card premium p-4 position-relative">
+                    <div class="glass-card pricing-card premium p-4 position-relative border-info">
                         <div class="position-absolute top-0 start-50 translate-middle">
                             <span class="badge bg-info px-3 py-2 rounded-pill shadow-lg">Bestseller</span>
                         </div>
                         <div class="text-center mb-4">
-                            <span class="badge bg-primary bg-opacity-25 text-primary mb-2">On-Premise</span>
-                            <h3>Licenza Professional</h3>
+                            <span class="badge bg-primary bg-opacity-25 text-primary mb-2">On-Premise Lifetime</span>
+                            <h3>Enterprise License</h3>
                             <div class="display-5 fw-bold my-3">€25.000<span class="fs-6 text-secondary">/una
                                     tantum</span></div>
-                            <p class="text-secondary">Proprietà completa e codice sorgente.</p>
+                            <p class="text-secondary">Proprietà completa e controllo totale.</p>
                         </div>
-                        <ul class="list-unstyled check-list">
-                            <li><i class="fas fa-check"></i> **Codice Sorgente Incluso**</li>
-                            <li><i class="fas fa-check"></i> Installazione On-Premise</li>
-                            <li><i class="fas fa-check"></i> Utenti Illimitati</li>
-                            <li><i class="fas fa-check"></i> 12 Mesi Supporto Priority</li>
-                            <li><i class="fas fa-check"></i> White-Label Ready</li>
+                        <ul class="list-unstyled check-list text-secondary">
+                            <li><i class="fas fa-check text-success me-2"></i> <strong>Codice Sorgente Incluso</strong>
+                            </li>
+                            <li><i class="fas fa-check text-success me-2"></i> Installazione Illimitata</li>
+                            <li><i class="fas fa-check text-success me-2"></i> 12 Mesi Supporto Priority</li>
+                            <li><i class="fas fa-check text-success me-2"></i> White-Label Ready</li>
                         </ul>
-                        <a href="#" class="btn btn-glow w-100 mt-4 rounded-pill">Contatta Vendite</a>
+                        <button class="btn btn-glow w-100 mt-4 rounded-pill" data-bs-toggle="modal"
+                            data-bs-target="#demoModal" data-bs-plan="Enterprise">Contatta Sales</button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- FAQ Section -->
+    <section id="faq" class="py-5">
+        <div class="container" style="max-width: 800px;" data-aos="fade-up">
+            <h2 class="text-center mb-5 fw-bold">Domande Frequenti</h2>
+            <div class="accordion accordion-flush" id="faqAccordion">
+                <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-transparent text-light shadow-none" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq1">
+                            Il software è conforme al GDPR?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-secondary">
+                            Assolutamente sì. Il sistema include crittografia nativa, gestione diritto all'oblio, log di
+                            accesso immutabili e forniamo un DPA precompilato (Art. 28 GDPR).
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-transparent text-light shadow-none" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq2">
+                            Posso installarlo sui miei server? (On-Premise)
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-secondary">
+                            Sì! La licenza Enterprise (€25k) include l'accesso al codice sorgente e la libertà di
+                            installazione su qualsiasi infrastruttura (On-Premise, VPS, Cloud privato) senza costi
+                            ricorrenti di licenza.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item bg-transparent border-bottom border-secondary border-opacity-25">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed bg-transparent text-light shadow-none" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq3">
+                            Che supporto offrite?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-secondary">
+                            Offriamo supporto Priority via Email e Telefono con SLA garantiti (< 4h risposta per
+                                Enterprise). I piani di manutenzione annuale includono aggiornamenti di sicurezza e
+                                feature. </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
     <!-- Footer -->
     <footer class="py-5 border-top border-secondary border-opacity-25 mt-5">
-        <div class="container text-center text-secondary">
-            <p>&copy; 2026 MCAG System. Tutti i diritti riservati.</p>
-            <p class="small">Sviluppato con Passione & Rigore.</p>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h5 class="fw-bold mb-3">MCAG System</h5>
+                    <p class="text-secondary">Tecnologia al servizio delle istituzioni.</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold mb-3">Legale</h5>
+                    <ul class="list-unstyled text-secondary">
+                        <li><a href="Documentazione/Legal/EULA.md" class="text-decoration-none text-secondary">EULA</a>
+                        </li>
+                        <li><a href="Documentazione/Legal/SLA_MAINTENANCE.md"
+                                class="text-decoration-none text-secondary">SLA</a></li>
+                        <li><a href="#" class="text-decoration-none text-secondary" data-bs-toggle="modal"
+                                data-bs-target="#privacyModal">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold mb-3">Contatti</h5>
+                    <ul class="list-unstyled text-secondary">
+                        <li><i class="fas fa-envelope me-2"></i> sales@mcag-system.it</li>
+                        <li><i class="fas fa-phone me-2"></i> +39 02 12345678</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center pt-4 border-top border-secondary border-opacity-10">
+                <p class="small text-secondary">&copy; 2026 MCAG System. Developed by AJ Coding. P.IVA 12345678901</p>
+            </div>
         </div>
     </footer>
 
+    <!-- Demo Modal -->
+    <div class="modal fade" id="demoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border border-secondary text-light">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title">Richiedi Accesso Demo / Preventivo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary">Nome Organizzazione</label>
+                            <input type="text" class="form-control bg-black text-light border-secondary"
+                                placeholder="Es. Associazione Nazionale...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary">Email</label>
+                            <input type="email" class="form-control bg-black text-light border-secondary"
+                                placeholder="nome@ente.it">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-secondary">Interesse</label>
+                            <select class="form-select bg-black text-light border-secondary">
+                                <option>Licenza Enterprise (On-Premise)</option>
+                                <option>SaaS Cloud</option>
+                                <option>Demo Tecnica</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-glow">Invia Richiesta</button>
+                        <p class="small text-secondary mt-3 mb-0 text-center">Inviando, accetti la nostra Privacy
+                            Policy.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal Placeholder -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content bg-dark border border-secondary text-light">
+                <div class="modal-body p-4 text-center">
+                    <h5 class="mb-3">Accesso Area Clienti</h5>
+                    <p class="small text-secondary">Inserisci le tue credenziali per accedere alla dashboard.</p>
+                    <a href="public/index.php" class="btn btn-outline-light w-100 mb-2">Login Demo</a>
+                    <button class="btn btn-primary w-100">Login Clienti</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div id="cookie-banner" class="glass-card p-4">
+        <div class="d-flex align-items-center gap-3">
+            <i class="fas fa-cookie-bite text-warning fs-2"></i>
+            <div>
+                <h6 class="fw-bold mb-1">Rispetto della Privacy</h6>
+                <p class="small text-secondary mb-0">Utilizziamo solo cookie tecnici essenziali per il funzionamento
+                    sicuro (Sessioni, CSRF). Nessun tracciamento marketing o profilazione.</p>
+            </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-sm btn-primary w-100"
+                onclick="document.getElementById('cookie-banner').style.display='none'">Accetta Necessari</button>
+            <button class="btn btn-sm btn-outline-light w-100"
+                onclick="document.getElementById('cookie-banner').style.display='none'">Chiudi</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        // Simple Cookie Logic
+        setTimeout(() => {
+            if (!localStorage.getItem('cookieAccepted')) {
+                document.getElementById('cookie-banner').style.display = 'block';
+            }
+        }, 1500);
+    </script>
 </body>
 
 </html>
