@@ -610,6 +610,15 @@ Ogni classe definita DEVE essere **completamente implementata** o astratta corre
 - (+) Codice professionale e pulito
 ---
 
+### ADR-022: DevTools "Additive Only" Upgrade Strategy
+**Date:** 2026-01-11 00:30
+**Context:** Previous attempt to modularize DevTools caused a regression (blank dashboard). User requires rigorous stability.
+**Decision:** Adopt a strict "Additive Only" strategy for v4.0.
+- **Do NOT** refactor existing code into partials yet.
+- **Add** new features as new Tabs within the monolith file.
+- **Preserve** all legacy IDs and logic.
+**Consequences:** File size of `devtools.mustache` will increase, but stability is guaranteed. Refactoring can happen *inside* the tabs later, one by one.
+
 ## [ADR-021] Secure Frontend Data Injection
 **Data**: 2026-01-10  
 **Stato**: ✅ Attivo  
