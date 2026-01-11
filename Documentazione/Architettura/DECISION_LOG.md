@@ -534,6 +534,38 @@ Cosa è stato deciso e perché.
 **Stato Progetto**: Production v2.4 - Enterprise Perfection (100/100)  
 **Decisioni Totali**: 18 ADR + 3 Pending
 
+---
+
+## [ADR-015] ACID Transactions Strategy
+**Data**: 2025-12-21 (Retroactive)
+**Stato**: ✅ Attivo
+**Contesto**:
+La gestione dei dati soci e documenti richiede integrità assoluta. Perdite di dati o stati inconsistenti durante salvataggi parziali sono inaccettabili in un contesto "Mission-Critical".
+**Decisione**:
+Utilizzare **PDO Transactions** atomiche (`beginTransaction`, `commit`, `rollBack`) per tutte le operazioni di scrittura che coinvolgono più entità (es. Creazione Socio + Upload Documento).
+**Rationale**:
+- Garantisce atomicità "Tutto o Niente".
+- Previene record orfani.
+**Conseguenze**:
+- (+) Zero Data Loss garantito.
+- (+) Integrità referenziale enforced.
+
+---
+
+## [ADR-016] Request Correlation & Tracing
+**Data**: 2025-12-21 (Retroactive)
+**Stato**: ✅ Attivo
+**Contesto**:
+Difficoltà nel tracciare il flusso di una richiesta specifica attraverso middleware, controller e database nei log di produzione.
+**Decisione**:
+Implementare un **Request ID** univoco (`X-Request-ID`) generato all'ingresso (Middleware) e propagato in tutti i log (Monolog processor).
+**Conseguenze**:
+- (+) Debugging immediato tramite grep del Request ID.
+- (+) Tracciabilità end-to-end.
+- (+) Supporto per distributed tracing futuro.
+
+---
+
 ## ADR-017: Separazione Rigorosa dei Concerns Frontend
 
 ### Stato

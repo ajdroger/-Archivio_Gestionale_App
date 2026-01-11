@@ -57,7 +57,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Risolto conflitto footer doppio nella pagina statistiche (v3.1 regression).
 - Ripristinata stabilità operativa dopo il revert della v2.5.
 
-## [2.4.4] - 2026-01-110 - Enterprise Perfection & Strict Workflow
+## [2.4.4] - 2026-01-10 - Enterprise Perfection & Strict Workflow
 
 ### Aggiunto
 - **Quality Gate**: Branch `feature/tests` obbligatorio per certificazione 100% green (167 test)
@@ -168,6 +168,20 @@ dazione avanzata
 - **2FA Obbligatorio**: TOTP con Google Authenticator
 - **Audit Trail GDPR**: Logging completo con pseudonimizzazione IP
 - **DevTools Dashboard**: Toolkit amministrativo completo
+
+---
+
+## [2.0.1] - 2025-12-27 - Mission-Critical Enterprise
+### Aggiunto
+- **MySQL Native Support**: Migrazione definitiva da SQLite a MySQL 8.0/MariaDB.
+- **Request Correlation**: Ogni richiesta HTTP ha un ID univoco tracciato nei log.
+- **Environment Isolation**: Gestione sicura tramite `.env`.
+- **Session Hardening**: SameSite=Strict, HttpOnly, Secure.
+- **Audit Log Immutabile**: Tabella dedicata per tracciare modifiche dati sensibili.
+
+### Risolto
+- **Critical Fix**: Connessione DB negli script CLI.
+- **Security Check**: Permission denied su cartella logs (Linux).
 
 ---
 

@@ -1,0 +1,109 @@
+:root {
+    --primary-rgb: 0, 195, 255;
+    --success-rgb: 0, 255, 157;
+    --bg-dark: #090a0c;
+    --glass-bg: rgba(22, 27, 34, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --neon-blue: #00f3ff;
+    --neon-purple: #bd00ff;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: #e6edf3;
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(0, 195, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(189, 0, 255, 0.04) 0%, transparent 40%);
+    overflow-x: hidden;
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    background: rgba(22, 27, 34, 0.8);
+    border-color: rgba(0, 195, 255, 0.2);
+    box-shadow: 0 15px 40px rgba(0, 195, 255, 0.1);
+}
+
+/* Hero & Typography */
+.hero-section {
+    padding: 120px 0 80px;
+}
+
+.hero-title {
+    font-size: 4.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+    letter-spacing: -2px;
+    line-height: 1.1;
+}
+
+.hero-badge {
+    background: rgba(0, 195, 255, 0.1);
+    color: #00c3ff;
+    border: 1px solid rgba(0, 195, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Interactive Elements */
+.btn-glow {
+    background: linear-gradient(135deg, #00c3ff 0%, #0061ff 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 0 25px rgba(0, 195, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-glow:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0 40px rgba(0, 195, 255, 0.6);
+    color: white;
+}
+
+.check-list li {
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+}
+
+.check-list i {
+    color: #00ff9d;
+    margin-right: 12px;
+}
+
+/* Cookie Banner */
+#cookie-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    max-width: 500px;
+    z-index: 9999;
+    display: none;
+}
+
+/* Premium Badges */
+.pricing-card.premium {
+    border: 1px solid rgba(0, 195, 255, 0.4);
+    background: linear-gradient(180deg, rgba(0, 195, 255, 0.05) 0%, rgba(22, 27, 34, 0.9) 100%);
+}
