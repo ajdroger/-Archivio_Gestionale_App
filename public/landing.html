@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCAG - Militare Civile Archivio Gestionale | Enterprise System</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-rgb: 0, 195, 255;
+            --success-rgb: 0, 255, 157;
+            --bg-dark: #0f1115;
+            --glass-bg: rgba(22, 27, 34, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e6edf3;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(0, 195, 255, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 255, 157, 0.05) 0%, transparent 25%);
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-section {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge {
+            background: rgba(0, 195, 255, 0.1);
+            color: #00c3ff;
+            border: 1px solid rgba(0, 195, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #00c3ff;
+        }
+
+        .pricing-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 195, 255, 0.15);
+            border-color: rgba(0, 195, 255, 0.3);
+        }
+
+        .pricing-card.premium {
+            border: 1px solid rgba(0, 195, 255, 0.4);
+            background: linear-gradient(180deg, rgba(0, 195, 255, 0.05) 0%, rgba(22, 27, 34, 0.9) 100%);
+        }
+
+        .btn-glow {
+            background: linear-gradient(135deg, #00c3ff 0%, #0077cc 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(0, 195, 255, 0.5);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .check-list li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .check-list i {
+            color: #00ff9d;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent fixed-top pt-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">MCAG <span class="text-info">System</span></a>
+            <div class="d-flex gap-3">
+                <a href="login.php" class="btn btn-outline-light btn-sm">Accedi</a>
+                <a href="#contact" class="btn btn-primary btn-sm">Richiedi Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <span class="hero-badge"><i class="fas fa-check-circle me-2"></i>v4.0 DevTools Ultimate Edition</span>
+            <h1 class="hero-title">Gestione Archivi Associativi<br>Next-Generation</h1>
+            <p class="lead text-secondary mb-5 mx-auto" style="max-width: 700px;">
+                Il sistema enterprise-grade per associazioni militari e civili.
+                Sicurezza Mission-Critical, Compliance GDPR nativa e Performance Real-Time.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="#features" class="btn btn-glow btn-lg px-5 py-3 rounded-pill fw-bold">Scopri di più</a>
+                <a href="Documentazione/Analisi/REPORT_COMMERCIALE_BENCHMARK_2026.md"
+                    class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">Vedi Report</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="glass-card p-4 h-100">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h4>Sicurezza Enterprise</h4>
+                        <p class="text-secondary">2FA/TOTP obbligatorio, Audit Trail immutabile, Whitelist IP e
+                            Protezione Brute-Force integrata.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card p-4 h-100">
+                        <div class="feature-icon"><i class="fas fa-terminal"></i></div>
+                        <h4>DevTools Ultimate</h4>
+                        <p class="text-secondary">Terminale Web PowerShell/Bash, Security Center real-time e Log
+                            Inspector direttamente nel browser.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass-card p-4 h-100">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <h4>Performance Pure</h4>
+                        <p class="text-secondary">Architettura MySQL ottimizzata (40x faster), Frontend reattivo e API
+                            GraphQL per integrazioni.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics -->
+    <section class="py-5">
+        <div class="container">
+            <div class="glass-card p-5 text-center">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h2 class="display-4 fw-bold text-info">100%</h2>
+                        <p class="text-secondary text-uppercase small ls-1">Test Coverage</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h2 class="display-4 fw-bold text-info">A++</h2>
+                        <p class="text-secondary text-uppercase small ls-1">Security Grade</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h2 class="display-4 fw-bold text-info">
+                            <20ms< /h2>
+                                <p class="text-secondary text-uppercase small ls-1">Latency</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h2 class="display-4 fw-bold text-info">Platinum</h2>
+                        <p class="text-secondary text-uppercase small ls-1">Certified</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Piani Flessibili</h2>
+                <p class="text-secondary">Scegli la soluzione adatta alla tua organizzazione</p>
+            </div>
+            <div class="row justify-content-center g-4">
+                <!-- SaaS -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card pricing-card p-4">
+                        <div class="text-center mb-4">
+                            <span class="badge bg-secondary mb-2">Cloud Hosted</span>
+                            <h3>SaaS Business</h3>
+                            <div class="display-5 fw-bold my-3">€4.500<span class="fs-6 text-secondary">/anno</span>
+                            </div>
+                            <p class="text-secondary">L'ideale per iniziare senza infrastruttura.</p>
+                        </div>
+                        <ul class="list-unstyled check-list">
+                            <li><i class="fas fa-check"></i> Fino a 2.000 membri</li>
+                            <li><i class="fas fa-check"></i> Hosting & Manutenzione Inc.</li>
+                            <li><i class="fas fa-check"></i> Supporto Email</li>
+                            <li><i class="fas fa-check"></i> Backup Giornalieri</li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-light w-100 mt-4 rounded-pill">Inizia Ora</a>
+                    </div>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="glass-card pricing-card premium p-4 position-relative">
+                        <div class="position-absolute top-0 start-50 translate-middle">
+                            <span class="badge bg-info px-3 py-2 rounded-pill shadow-lg">Bestseller</span>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="badge bg-primary bg-opacity-25 text-primary mb-2">On-Premise</span>
+                            <h3>Licenza Professional</h3>
+                            <div class="display-5 fw-bold my-3">€25.000<span class="fs-6 text-secondary">/una
+                                    tantum</span></div>
+                            <p class="text-secondary">Proprietà completa e codice sorgente.</p>
+                        </div>
+                        <ul class="list-unstyled check-list">
+                            <li><i class="fas fa-check"></i> **Codice Sorgente Incluso**</li>
+                            <li><i class="fas fa-check"></i> Installazione On-Premise</li>
+                            <li><i class="fas fa-check"></i> Utenti Illimitati</li>
+                            <li><i class="fas fa-check"></i> 12 Mesi Supporto Priority</li>
+                            <li><i class="fas fa-check"></i> White-Label Ready</li>
+                        </ul>
+                        <a href="#" class="btn btn-glow w-100 mt-4 rounded-pill">Contatta Vendite</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 border-top border-secondary border-opacity-25 mt-5">
+        <div class="container text-center text-secondary">
+            <p>&copy; 2026 MCAG System. Tutti i diritti riservati.</p>
+            <p class="small">Sviluppato con Passione & Rigore.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

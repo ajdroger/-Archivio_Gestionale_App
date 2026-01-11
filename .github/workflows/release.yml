@@ -1,0 +1,39 @@
+name: Commercial Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Build Commercial Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: zip
+
+      - name: Install Production Deps
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Archive Production Build
+        run: |
+          mkdir build
+          zip -r build/mcag-ultimate-${{ github.ref_name }}.zip . -x ".git/*" ".github/*" "tests/*" "phpstan.neon" "phpunit.xml" "node_modules/*"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/mcag-ultimate-${{ github.ref_name }}.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
