@@ -5,39 +5,216 @@
   max-width: 80%;
   max-height: 250px;
 }
+
 .circular-chart .circle-bg {
   fill: none;
   stroke: #444;
   stroke-width: 3.8;
   opacity: 0.3;
 }
+
 .circular-chart .circle {
   fill: none;
   stroke-width: 2.8;
   stroke-linecap: round;
   animation: progress 1s ease-out forwards;
 }
-.circular-chart.red .circle { stroke: #ef4444; }
-.circular-chart.green .circle { stroke: #10b981; }
 
-@keyframes progress { 0% { stroke-dasharray: 0 100; } }
+.circular-chart.red .circle {
+  stroke: #ef4444;
+}
+
+.circular-chart.green .circle {
+  stroke: #10b981;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
 
 /* Pulsating Badge */
 .pulsate {
-    animation: pulse-animation 2s infinite;
+  animation: pulse-animation 2s infinite;
 }
+
 @keyframes pulse-animation {
-    0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.5); }
-    100% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  0% {
+    box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.5);
+  }
+
+  100% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
 }
+
 .pulsing-dot-danger {
-    animation: pulse-red 2s infinite;
+  animation: pulse-red 2s infinite;
 }
+
 @keyframes pulse-red {
-    0% { box-shadow: 0 0 0 0px rgba(255, 0, 0, 0.7); }
-    70% { box-shadow: 0 0 0 6px rgba(255, 0, 0, 0); }
-    100% { box-shadow: 0 0 0 0px rgba(255, 0, 0, 0); }
+  0% {
+    box-shadow: 0 0 0 0px rgba(255, 0, 0, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 0, 0, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0px rgba(255, 0, 0, 0);
+  }
 }
 
 /* Utility */
-.uppercase-tracking { text-transform: uppercase; letter-spacing: 1px; }
+.uppercase-tracking {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- DEVTOOLS V4.0 PREMIUM ASSETS --- */
+
+/* Glassmorphism System */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar & Navigation */
+.sidebar-link {
+  color: rgba(255, 255, 255, 0.6) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+  color: #fff !important;
+  border-left: 3px solid #3b82f6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Terminal Emulator */
+.terminal-window {
+  background-color: #0c0c0c;
+  border: 1px solid #333;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.terminal-header {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#term-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Advanced Animations */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
+}
+
+.pulsing-dot-danger {
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0px rgba(220, 38, 38, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0px rgba(220, 38, 38, 0);
+  }
+}
+
+/* Glow Effects */
+.shadow-success-glow {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.shadow-danger-glow {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+}
+
+.shadow-warning-glow {
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
+}
+
+.shadow-info-glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+
+.shadow-primary-glow {
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+}
+
+/* Typography */
+.code-font {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.tracking-widest {
+  letter-spacing: 0.15em;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
