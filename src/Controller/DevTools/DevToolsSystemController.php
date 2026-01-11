@@ -427,4 +427,49 @@ class DevToolsSystemController
         $suffixes = array('', 'KB', 'MB', 'GB', 'TB');
         return round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
     }
+
+    /**
+     * Esegue comandi shell sicuri per il Terminal Emulator.
+     * 
+     * @param string $cmd Il comando inviato dall'interfaccia
+     * @return string Output del comando o errore
+     */
+    public function executeShellCommand(string $cmd): string
+    {
+        $cmd = trim($cmd);
+
+        // whitelist di comandi consentiti
+        $allowed = ['ls', 'pwd', 'whoami', 'date', 'uptime', 'git', 'tail', 'php -v', 'composer', 'dir'];
+
+        $isAllowed = false;
+        foreach ($allowed as $a) {
+            if (str_starts_with($cmd, $a)) {
+                $isAllowed = true;
+                break;
+            }
+        }
+
+        if (!$isAllowed) {
+            return "Error: Command '{$cmd}' is restricted in this environment for security reasons.";
+        }
+
+        // Prevenzione Injection banale
+        if (str_contains($cmd, '&&') || str_contains($cmd, ';') || str_contains($cmd, '|')) {
+            return "Error: Chained commands are not allowed.";
+        }
+
+        $baseDir = realpath(__DIR__ . '/../../../');
+        $cwd = getcwd();
+        chdir($baseDir); // Esegui context root
+
+        try {
+            // Esecuzione
+            $output = shell_exec($cmd . " 2>&1");
+            return $output ?? "";
+        } catch (\Throwable $e) {
+            return "Execution Error: " . $e->getMessage();
+        } finally {
+            chdir($cwd); // Restore
+        }
+    }
 }

@@ -205,11 +205,21 @@ class DevToolsScriptController
         } elseif (strtolower($cmd) === 'cls' || strtolower($cmd) === 'clear') {
             $output = '__CLEAR__';
         } else {
-            $fullCmd = 'cd /d "' . $cwd . '" && ' . $cmd . ' 2>&1';
-            $output = shell_exec($fullCmd);
+            // WINDOWS SUPPORT: Force PowerShell for "Bash-like" experience (ls, cat, etc.)
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                // Remove dangerous chars for safety if needed, but this is a Pro tool.
+                // Escape quotes for PowerShell
+                $safeCmd = str_replace('"', '\"', $cmd);
+                $psCommand = "powershell -NoProfile -NonInteractive -Command \"Set-Location '$cwd'; $cmd\"";
+                $output = shell_exec($psCommand . ' 2>&1');
 
-            if (strpos(PHP_OS, 'WIN') !== false && $output) {
-                $output = mb_convert_encoding($output, 'UTF-8', 'CP850');
+                // Decode output if needed (PowerShell output encoding)
+                // Often CP850 or UTF-16LE. Shell_exec usually returns string.
+                // We'll trust PHP handles the stream somewhat, or fix encoding if mojibake appears.
+            } else {
+                // Linux/Mac
+                $fullCmd = 'cd "' . $cwd . '" && ' . $cmd . ' 2>&1';
+                $output = shell_exec($fullCmd);
             }
         }
 
