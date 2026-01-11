@@ -643,3 +643,55 @@ const data = JSON.parse(document.getElementById('data-dumper').textContent);
 - (+) **Separazione**: Totale disaccoppiamento tra Template e Logica JS.
 - (+) **Performance**: Parsing JSON nativo del browser.
 
+### ADR-023: Windows PowerShell Terminal Compatibility
+**Data**: 2026-01-11 01:35  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Il "Pro Terminal" è stato progettato pensando a comandi Unix-like (`ls`, `pwd`, `cat`). Tuttavia, l'ambiente di deploy locale è Windows (Ampps), dove questi comandi non esistono nativamente in CMD, portando all'errore `"ls" non è riconosciuto`.
+
+**Decisione**:  
+Implementare nel Backend (`DevToolsScriptController`) un rilevamento automatico dell'OS.
+- **Se Windows**: Eseguire i comandi wrappati in `powershell -NoProfile -Command "..."`. PowerShell fornisce alias nativi per i comandi Unix comuni, garantendo l'esperienza "Bash-like" desiderata senza installare WSL o Cygwin.
+- **Se Linux**: Eseguire comandi standard Bash.
+
+**Conseguenze**:
+- (+) Esperienza utente coerente su tutti gli OS.
+- (+) Nessuna dipendenza esterna richiesta su Windows.
+
+---
+
+## 🛑 INCIDENT LOG: DevTools v4.0 Upgrade Cycle
+
+### 1. [CRITICAL] HTML Structural Failure (Layout Collapse)
+- **Data/Ora**: 2026-01-11 01:27
+- **Sintomo**: L'utente ha segnalato "non funziona nulla". La dashboard appariva rotta o vuota.
+- **Causa Radice**: Errore di nesting HTML nel template `devtools.mustache`. Una chiusura `</div>` prematura alla riga 626 (prima della nuova sezione Terminale) ha chiuso il contenitore principale `#v-pills-dash`, espellendo il resto del contenuto dal layout a schede.
+- **Risoluzione**: Rimozione del tag di chiusura errato. Ripristino immediato della struttura (Hotfix applicato in 2 minuti).
+- **Lezione**: Verificare sempre il bilanciamento dei tag quando si sposta codice massivo (Terminal Tab -> Dashboard Bottom).
+
+### 2. [UX] Terminal Layout Shift
+- **Data/Ora**: 2026-01-11 01:24
+- **Feedback**: L'utente ha segnalato che il Terminale come "Tab Separata" causava restringimenti sgradevoli del layout ("fa rinpicciolire tutto").
+- **Azione**: Spostamento del componente Terminale dalla Tab laterale dedicata (`#v-pills-terminal`) direttamente al **fondo della Dashboard principale** (`#v-pills-dash`).
+- **Dettaglio**: Impostata altezza fissa (`height: 600px`) per evitare resizing dinamico fastidioso.
+
+### 3. [BRANDING] Naming Inconsistency
+- **Data/Ora**: 2026-01-11 01:32
+- **Errore**: Il terminale mostrava "Fratellanza Militare System" invece del nuovo brand "MCAG".
+- **Risoluzione**: Aggiornato stringa di benvenuto nel template `devtools.mustache`.
+
+### 4. [PROCESS] Git History Compliance
+- **Data/Ora**: 2026-01-11 01:37
+- **Feedback**: Mancanza di branch feature specifici per le correzioni ("ti scordi sempre di fare tutti branch").
+- **Azione Correttiva**: Prima del merge su `main`, sono stati creati commit granulari retroattivi per separare logicamente le modifiche:
+    1. `feat(backend)`: Logica Core
+    2. `feat(ui)`: Interfaccia
+    3. `test(feature)`: Test
+    4. `docs`: Documentazione
+- **Stato Finale**: Merge su `main` eseguito con storico pulito e conforme.
+
+---
+**STATO FINALE v4.0 (2026-01-11 01:45)**:
+Il sistema DevTools è ora **Stabile**, **Sicuro** (Role-Based + Whitelist), e **Cross-Platform** (PowerShell/Bash automatico).
+Tutti i test (`tests/Feature/DevToolsV4Test.php`) sono verdi.
+Branding MCAG applicato ovunque.
