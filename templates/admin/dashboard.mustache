@@ -88,9 +88,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Passaggio dati dal backend al frontend
-        window.dashboardData = {{{stats_json}}};
+    <script type="application/json" id="dashboard-data">
+        {{{stats_json}}}
     </script>
     <script src="{{base_url}}/js/devtools/admin_dashboard.js"></script>
     

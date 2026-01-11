@@ -21,7 +21,25 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
-## [2.4.0] - 2026-01-10 - Enterprise Perfection & Strict Workflow
+## [4.0.0] - 2026-01-11 "**Ultimate Upgrade**"
+### Aggiunto
+- **DevTools Ultimate v4.0**: Aggiornamento massivo della dashboard per sviluppatori con focus su stabilità e features "Mission-Critical".
+    - **Pro Terminal**: Nuova sezione integrata *in-page* (bottom dashboard) per evitare shift del layout, con altezza fissa e supporto completo (Web Shell).
+    - **Security Center**: Nuova gestione utenti avanzata con calcolo "Security Score" in tempo reale, gestione 2FA, badge di ruolo e azioni rapide (Reset, Delete, Rotate 2FA).
+    - **Audit Logs**: Visualizzazione avanzata dei log con filtri per IP, Utente e Componente.
+    - **Design Premium**: Integrazione completa del design system "Glassmorphism" con animazioni CSS, effetti glow e tipografia monospaziata ad alto contrasto.
+- **Backend API**: Nuovi endpoint sicuri per la gestione del terminale (`/devtools/terminal`) e della sicurezza (`/devtools/security/*`).
+- **Feature Tests**: Suite di test completa (`tests/Feature/DevToolsV4Test.php`) per garantire la stabilità delle nuove funzioni.
+
+### Modificato
+- **DevTools Dashboard**: Refactoring "Additive-Only" del template `devtools.mustache` per mantenere la compatibilità v3.1 aggiungendo tab modulari.
+- **CSS Framework**: Estensione di `devtools.css` con classi di utilità per il terminale e layout flessibili.
+
+### Risolto
+- Risolto conflitto footer doppio nella pagina statistiche (v3.1 regression).
+- Ripristinata stabilità operativa dopo il revert della v2.5.
+
+## [2.4.4] - 2026-01-110 - Enterprise Perfection & Strict Workflow
 
 ### Aggiunto
 - **Quality Gate**: Branch `feature/tests` obbligatorio per certificazione 100% green (167 test)

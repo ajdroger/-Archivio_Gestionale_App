@@ -331,7 +331,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* --- DRAGGABLE TERMINAL LOGIC --- */
+
+/* --- DRAGGABLE TERMINAL LOGIC v4.0 (Enhanced) --- */
 document.addEventListener('DOMContentLoaded', () => {
     const elmnt = document.getElementById("terminal-drawer");
     const header = document.getElementById("terminal-drag-handle");
@@ -376,23 +377,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cmd = termInput.value.trim();
                 if (!cmd) return;
 
+                // Client-side Commands
+                if (cmd === 'clear' || cmd === 'cls') {
+                    termContent.innerHTML = '<div class="mb-2"><span class="text-success">Terminal v4.0 Ready.</span></div>';
+                    termInput.value = '';
+                    return;
+                }
+                if (cmd === 'help') {
+                    termContent.innerHTML += `
+                    <div class="mb-2 text-muted small">
+                        <div class="text-light fw-bold">AVAILABLE COMMANDS:</div>
+                        <div>- <span class="text-warning">clear / cls</span>: Pulisci schermo</div>
+                        <div>- <span class="text-warning">artisan [cmd]</span>: Esegui comandi Artisan</div>
+                        <div>- <span class="text-warning">tail -f</span>: Leggi ultimi log</div>
+                        <div>- <span class="text-warning">whoami</span>: Info utente corrente</div>
+                    </div>`;
+                    termContent.scrollTop = termContent.scrollHeight;
+                    termInput.value = '';
+                    return;
+                }
+
                 // Echo command
-                termContent.innerHTML += `<div class="text-white opacity-75 border-top border-secondary border-opacity-10 mt-1 pt-1"><span class="text-success me-2">PS ></span>${cmd}</div>`;
-                termContent.scrollTop = termContent.scrollHeight;
+                termContent.innerHTML += `<div class="text-white opacity-75 border-top border-secondary border-opacity-10 mt-1 pt-1"><span class="text-success me-2">➜</span>${cmd}</div>`;
                 termInput.value = '';
 
-                // Execute
+                // Execute on Server
                 api('/devtools/terminal', { cmd: cmd })
                     .then(data => {
-                        if (data.output === '__CLEAR__') {
-                            termContent.innerHTML = '';
-                        } else {
-                            termContent.innerHTML += `<div class="text-info opacity-75 mb-2" style="white-space: pre-wrap;">${data.output}</div>`;
-                        }
+                        const output = data.output ? data.output : '<span class="text-muted fst-italic">(No output)</span>';
+                        termContent.innerHTML += `<div class="text-info opacity-75 mb-2 code-font" style="white-space: pre-wrap;">${output}</div>`;
                         termContent.scrollTop = termContent.scrollHeight;
                     })
                     .catch(e => {
-                        termContent.innerHTML += `<div class="text-danger">Error: ${e}</div>`;
+                        termContent.innerHTML += `<div class="text-danger">Error: ${e.message}</div>`;
                     });
             }
         });
@@ -637,13 +654,18 @@ window.startHeartbeat = () => {
     poll(); // Start
 };
 
+
+/**
+ * GESTIONE UTENTI (SECURITY TAB) - v4.0 ENHANCED
+ */
+
 window.loadUsers = () => {
     const grid = document.getElementById('user-grid-container');
-    if (!grid) return;
+    if (!grid) return; // Fail silent se il tab non è attivo
 
     // Stato Loading
     if (grid.childElementCount === 0 || grid.innerText.includes('Inizializzazione')) {
-        grid.innerHTML = '<div class="col-12 text-center p-5 text-muted"><i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aggiornamento lista...</div>';
+        grid.innerHTML = '<div class="col-12 text-center p-5 text-muted"><i class="fa-solid fa-circle-notch fa-spin me-2"></i>Aggiornamento lista monitorata...</div>';
     }
 
     api('/devtools/security/list').then(d => {
@@ -658,8 +680,7 @@ window.loadUsers = () => {
         const admins = d.users.filter(u => ['admin', 'amministratore'].includes(u.role.toLowerCase())).length;
         const usersWith2FA = d.users.filter(u => u.has_2fa).length;
 
-        // Security Score (Example Logic)
-        // Base 50 + (50 * % users with 2FA)
+        // Security Score Algorithm
         const score = Math.round(50 + (50 * (usersWith2FA / total)));
 
         // Update Stats UI
@@ -673,12 +694,12 @@ window.loadUsers = () => {
 
         if (elScoreText) elScoreText.innerText = score + '%';
 
-        // --- SYNC DASHBOARD BADGE (REFINED) ---
+        // --- DASHBOARD SYNC ---
         const elDashScoreText = document.getElementById('dash-security-score-text');
         const elDashBadge = document.getElementById('dash-security-badge');
         if (elDashScoreText) elDashScoreText.innerText = score + '%';
 
-        // Color update based on score
+        // Color Logic
         let color = '#ef4444'; // Red
         let badgeClass = 'bg-danger';
         let shadowClass = 'shadow-danger-glow';
@@ -698,6 +719,7 @@ window.loadUsers = () => {
 
         if (elDashBadge) {
             elDashBadge.className = `badge ${badgeClass} bg-opacity-20 border border-opacity-25 px-3 py-2 rounded-pill uppercase-tracking ${shadowClass}`;
+            elDashBadge.innerHTML = `<i class="fa-solid fa-shield-halved me-2"></i>SECURITY: ${score}%`;
         }
 
         // Render Cards
@@ -708,67 +730,48 @@ window.loadUsers = () => {
             let cardBorder = 'border-secondary';
             let avatarGradient = 'from-gray-700 to-black';
 
+            // Role Badge Logic
             if (['admin', 'amministratore'].includes(normalizedRole)) {
                 roleBadge = '<span class="badge bg-danger text-white border border-danger border-opacity-50 shadow-danger-glow mb-1">SYSTEM ADMIN</span>';
-                roleDesc = '<span class="d-block text-danger small opacity-75" style="font-size: 0.65rem; letter-spacing: 0.5px;">ROOT / FULL SYSTEM CONTROL</span>';
+                roleDesc = '<span class="d-block text-danger small opacity-75" style="font-size: 0.65rem;">ROOT CONTROL</span>';
                 cardBorder = 'border-danger';
                 avatarGradient = 'from-red-900 to-black';
             } else if (normalizedRole === 'segreteria') {
                 roleBadge = '<span class="badge bg-primary text-white border border-primary border-opacity-50 shadow-primary-glow mb-1">SEGRETERIA</span>';
-                roleDesc = '<span class="d-block text-primary small opacity-75" style="font-size: 0.65rem; letter-spacing: 0.5px;">OPERATIONAL / ARCHIVE MANAGER</span>';
+                roleDesc = '<span class="d-block text-primary small opacity-75" style="font-size: 0.65rem;">MANAGER</span>';
                 cardBorder = 'border-primary';
                 avatarGradient = 'from-blue-900 to-black';
-            } else if (normalizedRole === 'comando') {
-                roleBadge = '<span class="badge bg-warning text-black border border-warning border-opacity-50 shadow-warning-glow mb-1">COMANDO</span>';
-                roleDesc = '<span class="d-block text-warning small opacity-75" style="font-size: 0.65rem; letter-spacing: 0.5px;">STRATEGIC / REPORTING ACCESS</span>';
-                cardBorder = 'border-warning';
-                avatarGradient = 'from-yellow-900 to-black';
-            } else if (normalizedRole === 'sviluppo') {
-                roleBadge = '<span class="badge bg-info text-black border border-info border-opacity-50 shadow-info-glow mb-1">TECHNICAL SUPPORT</span>';
-                roleDesc = '<span class="d-block text-info small opacity-75" style="font-size: 0.65rem; letter-spacing: 0.5px;">DEBUG / MAINTENANCE TOOLS</span>';
-                cardBorder = 'border-info';
-                avatarGradient = 'from-cyan-900 to-black';
-            } else if (normalizedRole === 'auditor') {
-                roleBadge = '<span class="badge bg-light text-black border border-secondary mb-1">AUDITOR</span>';
-                roleDesc = '<span class="d-block text-muted small opacity-75" style="font-size: 0.65rem;">COMPLIANCE / LOG INSPECTOR</span>';
-                cardBorder = 'border-secondary';
-                avatarGradient = 'from-gray-600 to-black';
             } else {
                 roleBadge = `<span class="badge bg-dark text-muted mb-1 border border-secondary border-opacity-25">${u.role.toUpperCase()}</span>`;
-                roleDesc = '<span class="d-block text-muted small opacity-75" style="font-size: 0.65rem;">RESTRICTED ACCESS</span>';
+                roleDesc = '<span class="d-block text-muted small opacity-75" style="font-size: 0.65rem;">USER</span>';
             }
 
             const mfaStatus = u.has_2fa
                 ? `<div class="bg-success bg-opacity-10 border border-success border-opacity-25 rounded p-2 mb-2 w-100">
-                     <div class="text-success small fw-bold"><i class="fa-solid fa-shield-halved me-1"></i>PROTETTO (2FA)</div>
-                     <small class="text-muted d-block" style="font-size: 0.65rem;">Token Time-based attivo</small>
+                     <div class="text-success small fw-bold"><i class="fa-solid fa-shield-halved me-1"></i>SECURED</div>
                    </div>`
                 : `<div class="bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded p-2 mb-2 w-100">
-                     <div class="text-warning small fw-bold"><i class="fa-solid fa-triangle-exclamation me-1"></i>NON PROTETTO</div>
-                     <small class="text-muted d-block" style="font-size: 0.65rem;">Account a rischio (Pwd Only)</small>
+                     <div class="text-warning small fw-bold"><i class="fa-solid fa-triangle-exclamation me-1"></i>RISK</div>
                    </div>`;
 
             const initials = u.username.substring(0, 2).toUpperCase();
 
+            // Card HTML
             const card = `
             <div class="col-md-6 col-lg-4 col-xl-3">
-                <div class="card glass-panel h-100 ${cardBorder} border-opacity-25 hover-card shadow-lg transition-transform hover-lift">
+                <div class="card glass-panel h-100 ${cardBorder} border-opacity-25 hover-card shadow-lg hover-lift">
                     <div class="card-body p-4 d-flex flex-column align-items-center text-center">
-                        <div class="position-absolute top-0 end-0 p-3">
+                         <div class="position-absolute top-0 end-0 p-3">
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-link text-muted hover-text-white p-0" data-bs-toggle="dropdown">
-                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-secondary">
-                                    <li><button class="dropdown-item text-warning" onclick="rotate2FA('${u.id}')"><i class="fa-solid fa-arrows-rotate me-2"></i>Ruota 2FA</button></li>
-                                    <li><button class="dropdown-item text-warning" onclick="resetUser('${u.id}')"><i class="fa-solid fa-key me-2"></i>Reset Password</button></li>
-                                    <li><hr class="dropdown-divider border-secondary opacity-25"></li>
-                                    <li><button class="dropdown-item text-danger" onclick="deleteUser('${u.id}')"><i class="fa-solid fa-trash me-2"></i>Elimina</button></li>
+                                <button class="btn btn-sm btn-link text-muted hover-text-white p-0" data-bs-toggle="dropdown"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-dark shadow-lg">
+                                    <li><button class="dropdown-item text-warning" onclick="rotate2FA('${u.id}')">Ruota 2FA</button></li>
+                                    <li><button class="dropdown-item text-danger" onclick="deleteUser('${u.id}')">Elimina</button></li>
                                 </ul>
                             </div>
                         </div>
                         
-                        <div class="avatar-circle-lg mb-3 bg-gradient-to-br ${avatarGradient} border border-secondary border-opacity-50 d-flex align-items-center justify-content-center text-white fw-bold shadow-inner" 
+                        <div class="avatar-circle-lg mb-3 bg-gradient-to-br ${avatarGradient} border border-secondary border-opacity-50 d-flex align-items-center justify-content-center text-white fw-bold" 
                              style="width: 72px; height: 72px; font-size: 1.8rem;">
                              ${initials}
                         </div>
@@ -776,19 +779,8 @@ window.loadUsers = () => {
                         <h5 class="text-white fw-bold mb-0">${u.username}</h5>
                         <div class="small text-muted mb-3 font-monospace" style="font-size: 0.7rem;">ID: ${u.id}</div>
                         
-                        <div class="mb-3 w-100">
-                            ${roleBadge}
-                            ${roleDesc}
-                        </div>
-                        
+                        <div class="mb-3 w-100">${roleBadge} ${roleDesc}</div>
                         ${mfaStatus}
-
-                        <div class="mt-auto w-100 pt-2 border-top border-secondary border-opacity-10 text-start">
-                             <small class="text-secondary" style="font-size: 0.65rem;">
-                                <i class="fa-solid fa-calendar-check me-1"></i>REGISTRATO IL:<br>
-                                <span class="text-light ms-3 font-monospace">${u.created_at || 'N/A'}</span>
-                             </small>
-                        </div>
                     </div>
                 </div>
             </div>`;
@@ -796,7 +788,7 @@ window.loadUsers = () => {
             grid.innerHTML += card;
         });
 
-        log('Security Center: Dati e Metriche aggiornati.', 'success');
+        log('Security Center updated.', 'success');
     });
 };
 

@@ -85,13 +85,6 @@ class DevToolsDashboardController
         return $response;
     }
 
-    /**
-     * Endpoint AJAX per filtrare i log di audit.
-     * 
-     * @param Request $request
-     * @param Response $response
-     * @return Response JSON
-     */
     public function auditAjax(Request $request, Response $response): Response
     {
         $auditResult = $this->auditController->getLogs($request);

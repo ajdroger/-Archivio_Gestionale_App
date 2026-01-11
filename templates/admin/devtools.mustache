@@ -116,6 +116,8 @@
             <button class="nav-link sidebar-link text-start" id="v-pills-editor-tab" data-bs-toggle="pill" data-bs-target="#v-pills-editor" type="button" role="tab">
                 <i class="fa-solid fa-code w-30px me-3 text-center"></i>Code Reactor
             </button>
+            
+
         </div>
 
         <!-- Profilo Utente (Bottom) -->
@@ -621,7 +623,74 @@
                         </div>
                     </div>
                 </div>
+
+            
+            <!-- PRO TERMINAL (Bottom of Dashboard) -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card terminal-window border-0 shadow-2xl" style="height: 600px;">
+                        <div class="card-header terminal-header py-2 px-3 d-flex justify-content-between align-items-center">
+                             <div class="d-flex align-items-center gap-2">
+                                 <div class="rounded-circle bg-danger" style="width: 12px; height: 12px;"></div>
+                                 <div class="rounded-circle bg-warning" style="width: 12px; height: 12px;"></div>
+                                 <div class="rounded-circle bg-success" style="width: 12px; height: 12px;"></div>
+                                 <span class="ms-3 text-secondary font-monospace small"><i class="fa-solid fa-server me-2"></i>root@fratellanza-system:~</span>
+                             </div>
+                             <div class="text-xs text-muted font-monospace">BASH v5.0 (Emulated)</div>
+                        </div>
+                        <div class="card-body bg-black p-0 position-relative d-flex flex-column">
+                            <!-- Terminal Output Area -->
+                            <div id="full-terminal-output" class="flex-grow-1 overflow-auto p-3 font-monospace custom-scrollbar" style="color: #e5e5e5; font-size: 0.9rem; line-height: 1.5;">
+                                <div class="text-muted mb-3">
+                                    MCAG - Militare Civile Archivio Gestionale System [Version 4.0.0]<br>
+                                    (c) 2026 DevTeam. All rights reserved.<br>
+                                    <br>
+                                    Type 'help' for available commands.
+                                </div>
+                            </div>
+                            
+                            <!-- Input Area -->
+                            <div class="p-2 bg-dark border-top border-secondary border-opacity-25 d-flex align-items-center">
+                                <span class="text-success fw-bold me-2 ps-2">➜</span>
+                                <input type="text" id="full-term-input" class="form-control bg-transparent border-0 text-white font-monospace shadow-none" placeholder="Enter command..." autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Link Full Terminal Logic -->
+            <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const fInput = document.getElementById('full-term-input');
+                const fOutput = document.getElementById('full-terminal-output');
+                
+                if(fInput && fOutput) {
+                    fInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            const cmd = fInput.value.trim();
+                            if (!cmd) return;
+                            
+                            fOutput.innerHTML += `<div class="text-white mt-1"><span class="text-success me-2">➜</span>${cmd}</div>`;
+                            fInput.value = '';
+                            fOutput.scrollTop = fOutput.scrollHeight;
+
+                            api('/devtools/terminal', { cmd: cmd })
+                            .then(data => {
+                                const out = data.output ? data.output : '<span class="text-muted fst-italic">(No output)</span>';
+                                fOutput.innerHTML += `<div class="text-info opacity-75 mb-2 code-font" style="white-space: pre-wrap;">${out}</div>`;
+                                fOutput.scrollTop = fOutput.scrollHeight;
+                            })
+                            .catch(err => {
+                                fOutput.innerHTML += `<div class="text-danger">Error: ${err.message}</div>`;
+                            });
+                        }
+                    });
+                }
+            });
+            </script>
+
+        </div>
 
             <!-- 
                 ************* TAB 2: SECURITY CENTER (PREMIUM) ************* 
@@ -1078,6 +1147,8 @@
 
 
         </div> <!-- Fine Tab Content -->
+        
+
 
     </div> <!-- Fine Main Content Area -->
 
