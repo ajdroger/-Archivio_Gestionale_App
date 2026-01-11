@@ -97,11 +97,20 @@ Se tutto è verde (Test Passed):
 git checkout develop
 git merge feature/nome-task
 ```
-2. Cancella i branch temporanei.
-```bash
-git branch -d feature/nome-task
-git branch -d tests/verifica-nome-task
+git checkout develop
+git merge feature/nome-task
 ```
+
+2. **CHIUDERE IL BRANCH** (Archiviazione)
+Dopo il merge, il branch rimane esistente ma "chiuso" (non attivo).
+Per chiuderlo basta spostarsi su `develop` (fatto sopra).
+
+3. **RIAPRIRE IL BRANCH**
+Se in futuro devi rimettere mano a quel codice specifico:
+```bash
+git checkout feature/nome-task
+```
+*Non cancellare mai i branch feature.*
 
 ### E. Hotfix (Solo Emergenze)
 Se c'è un bug critico in produzione (`stable`):

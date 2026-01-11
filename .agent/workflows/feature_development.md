@@ -28,9 +28,16 @@ vendor/bin/pest
 If tests pass and no conflicts exist:
 (User implication: Merge back to develop to persist history)
 ```bash
-git checkout develop
-git merge feature/NAME
-git branch -d feature/NAME
+31: git checkout develop
+32: git merge feature/NAME
+33: 
+34: # 3a. CLOSE BRANCH (Do not delete)
+35: # The branch is now "closed" (inactive). You move back to develop.
+36: # History is preserved.
+37: 
+38: # 3b. REOPEN BRANCH
+39: # If you need to resume work on this feature later:
+40: # git checkout feature/NAME
 ```
 
 ## 4. Conflict / Bug Handling (Hotfix Path)
