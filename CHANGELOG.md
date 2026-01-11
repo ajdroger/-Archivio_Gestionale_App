@@ -25,6 +25,9 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 ### Aggiunto
 - **DevTools Ultimate v4.0**: Aggiornamento massivo della dashboard.
 - **Landing Page Refactor**: Ristrutturazione completa della pagina di atterraggio in `public/landing/` con separazione rigorosa di CSS/JS e assets modulari (ADR-027).
+- **Demo System**: Implementato sistema di invito e generazione utenti demo.
+- **RESTRICTION**: Implementata `Modalità Demo` restrittiva con accesso limitato (No Settings, No DevTools).
+- **Policy Enforcement**: Aggiunta ADR-028 per la separazione rigorosa dei linguaggi.**ADR-028 Strict Polyglot Separation** (Separazione totale linguaggi e commenti obbligatori).
 - [Dettagli DevTools v4...]
 
 ## [2.5.0] - 2026-01-11 "**Historical Rigor**"

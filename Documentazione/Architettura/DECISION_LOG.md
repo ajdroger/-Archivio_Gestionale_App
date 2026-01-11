@@ -763,3 +763,21 @@ La cancellazione dei branch dopo il merge, sebbene pulita, distrugge il contesto
 - (+) **Auditabilità Totale**: Possibile ricostruire intera storia di sviluppo.
 - (+) **Non-Repudiation**: Chi ha fatto cosa e quando (inclusi i test) è scolpito nella pietra.
 - (-) **Dimensioni Repo**: Aumento numero references (gestibile con `git gc` se necessario).
+
+## [ADR-028] Strict Polyglot Separation & Clean Code
+**Data**: 2026-01-11
+**Stato**: ✅ Attivo
+**Contesto**:
+La manutenzione a lungo termine di un progetto Enterprise richiede leggibilità assoluta. Mischiare linguaggi (es. CSS/JS inline in HTML o PHP) degrada la manutenibilità, impedisce il caching efficace e viola il principio di responsabilità singola.
+**Decisione**:
+1.  **Separazione Linguaggi**: È VIETATO mischiare linguaggi nello stesso file.
+    - HTML/Mustache: Solo struttura (Niente `<style>` o `<script>` inline, salvo casi triviali).
+    - CSS/SCSS: File separati in `public/css` o `resources/css`.
+    - JS: File separati in `public/js`.
+    - PHP: Logica separata dalla presentazione.
+2.  **Clean Code & Commenti**: Ogni funzione, classe o blocco logico complesso DEVE essere commentato spiegando il "Perché" (Intent) e non solo il "Cosa".
+3.  **File dedicati**: JSON, SQL, Shell script devono vivere nei loro file dedicati con estensione corretta.
+**Conseguenze**:
+- (+) **Manutenibilità Estrema**: Codebase navigabile e chiara.
+- (+) **Performance**: Caching ottimizzato per asset statici.
+- (-) **Verbosity**: Richiede la creazione di più file anche per piccole funzionalità.

@@ -328,6 +328,39 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
     }
+
+    // Demo Invitation Tool
+    const btnSendDemo = document.getElementById('btn-send-demo');
+    if (btnSendDemo) {
+        btnSendDemo.onclick = () => {
+            const email = document.getElementById('demo-email').value;
+            const name = document.getElementById('demo-name').value;
+
+            if (!email) return log('Inserisci almeno un indirizzo email.', 'error');
+
+            log(`>>> Sending Demo Invite to ${email}...`, 'info');
+
+            // Visual Feedback
+            const originalText = btnSendDemo.innerHTML;
+            btnSendDemo.disabled = true;
+            btnSendDemo.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+
+            api('/devtools/demo-invite', { email: email, client_name: name }).then(d => {
+                if (d.success) {
+                    log(d.message, 'success');
+                    document.getElementById('demo-email').value = '';
+                    document.getElementById('demo-name').value = '';
+                } else {
+                    log(d.message || 'Errore invio.', 'error');
+                }
+            }).catch(e => {
+                log('Errore API: ' + e.message, 'error');
+            }).finally(() => {
+                btnSendDemo.disabled = false;
+                btnSendDemo.innerHTML = originalText;
+            });
+        };
+    }
 });
 
 
@@ -951,6 +984,22 @@ window.loadAuditLogs = (page = 1) => {
     });
 };
 
+window.quickDemo = () => {
+    const email = prompt('Inserisci l\'email del cliente per inviare una demo rapida:');
+    if (!email) return;
+
+    const name = prompt('Inserisci il nome del cliente (opzionale):') || 'Cliente';
+
+    if (confirm(`Confermi l'invio della demo a ${email}?`)) {
+        api('/devtools/demo-invite', { email, client_name: name })
+            .then(res => {
+                if (res.success) log(res.message, 'success');
+                else log(res.message, 'error');
+            })
+            .catch(err => log('Errore invio: ' + err.message, 'error'));
+    }
+};
+
 // Bind Audit Filter Form
 document.addEventListener('DOMContentLoaded', () => {
     const auditForm = document.querySelector('#v-pills-audit form');
@@ -959,5 +1008,39 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             loadAuditLogs(1);
         };
+    }
+});
+
+// --- PRO TERMINAL LOGIC (Bottom Dashboard) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const fInput = document.getElementById('full-term-input');
+    const fOutput = document.getElementById('full-terminal-output');
+
+    if (fInput && fOutput) {
+        fInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = fInput.value.trim();
+                if (!cmd) return;
+
+                fOutput.innerHTML += `<div class="text-white mt-1"><span class="text-success me-2">➜</span>${cmd}</div>`;
+                fInput.value = '';
+                fOutput.scrollTop = fOutput.scrollHeight;
+
+                api('/devtools/terminal', { cmd: cmd })
+                    .then(data => {
+                        const out = data.output ? data.output : '<span class="text-muted fst-italic">(No output)</span>';
+                        fOutput.innerHTML += `<div class="text-info opacity-75 mb-2 code-font" style="white-space: pre-wrap;">${out}</div>`;
+                        fOutput.scrollTop = fOutput.scrollHeight;
+                    })
+                    .catch(err => {
+                        fOutput.innerHTML += `<div class="text-danger">Error: ${err.message}</div>`;
+                    });
+            }
+        });
+    }
+
+    // Initialize Security Center
+    if (typeof loadUsers === 'function') {
+        loadUsers();
     }
 });

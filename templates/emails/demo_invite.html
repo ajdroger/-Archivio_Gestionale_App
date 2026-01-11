@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Invito Demo MCAG System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            padding: 30px;
+            text-align: center;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2563eb;
+        }
+
+        .footer {
+            background-color: #0f172a;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #334155;
+        }
+
+        h1 {
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MCAG System v4.0</h1>
+            <p style="margin:0; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-size: 12px;">
+                Militare Civile Archivio Gestionale</p>
+        </div>
+        <div class="content">
+            <p>Gentile <strong>{{client_name}}</strong>,</p>
+            <p>Siamo lieti di invitarla a provare in anteprima <strong>MCAG System v4.0 Ultimate Edition</strong>.</p>
+            <p>La soluzione definitiva per la gestione sicura degli archivi, progettata per garantire <span
+                    class="highlight">compliance GDPR completa</span> e prestazioni Mission-Critical.</p>
+
+            <div
+                style="background-color: #334155; padding: 15px; border-radius: 4px; margin: 20px 0; border: 1px solid #475569;">
+                <p
+                    style="margin: 0; font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; margin-bottom: 5px;">
+                    Le tue Credenziali Personali:</p>
+                <p style="margin: 5px 0;">Username: <strong
+                        style="color: #60a5fa; font-family: monospace; font-size: 16px;">{{username}}</strong></p>
+                <p style="margin: 0;">Password: <strong
+                        style="color: #60a5fa; font-family: monospace; font-size: 16px;">{{password}}</strong></p>
+            </div>
+
+            <p>Le credenziali sono attive per 24 ore.</p>
+
+            <center>
+                <a href="{{login_link}}" class="btn">Accedi al Sistema</a>
+            </center>
+
+            <p style="margin-top: 30px; font-size: 14px; color: #cbd5e1;">
+                Se il bottone non funziona, copia questo link:<br>
+                <a href="{{login_link}}" style="color: #60a5fa;">{{login_link}}</a>
+            </p>
+        </div>
+        <div class="footer">
+            &copy; {{year}} MCAG System. Tutti i diritti riservati.<br>
+            Questa è una comunicazione automatica dal sistema di sviluppo.
+        </div>
+    </div>
+</body>
+
+</html>

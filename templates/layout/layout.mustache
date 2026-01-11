@@ -20,6 +20,11 @@
     <link href="/css/style.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column h-100">
+    {{#is_demo_mode}}
+    <div class="bg-warning text-black text-center py-1 fw-bold border-bottom border-warning small tracking-widest">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i>MODALITÀ DEMO ATTIVA - ACCESSO LIMITATO
+    </div>
+    {{/is_demo_mode}}
     <nav class="navbar navbar-expand-lg navbar-dark navbar-mc sticky-top mb-0">
         <div class="container">
             <a class="navbar-brand" href="{{base_url}}/">
@@ -41,6 +46,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{base_url}}/statistiche"><i class="fa-solid fa-chart-pie me-1"></i>Report Center</a>
                     </li>
+                    {{^is_demo_mode}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{base_url}}/impostazioni"><i class="fa-solid fa-cog me-1"></i>Impostazioni</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{base_url}}/devtools"><i class="fa-solid fa-terminal me-1"></i>DevTools</a>
+                    </li>
+                    {{/is_demo_mode}}
                 </ul>
                 
                 <div class="ms-auto d-flex align-items-center">

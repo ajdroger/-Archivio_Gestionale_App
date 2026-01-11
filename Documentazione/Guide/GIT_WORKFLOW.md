@@ -98,3 +98,21 @@ Per avviare questo modello nel progetto attuale:
 1.  Consideriamo l'attuale branch **`main`** come la produzione stabile.
 2.  Verrà creato immediatamente il branch **`develop`** a partire da main.
 3.  Tutto il nuovo sviluppo avverrà su branch `feature` che partiranno da `develop`.
+
+---
+
+## 📜 Coding Standards & Definition of Done
+
+Per garantire "Historical Rigor" e manutenibilità Enterprise, ogni commit DEVE rispettare **ADR-028**:
+
+1.  **Separazione Netta**:
+    *   ⛔ **MAI** Inline CSS (`<style>`) o Inline JS (`<script>`) in file PHP/HTML.
+    *   ⛔ **MAI** Logica PHP complessa dentro le View.
+    *   ✅ Usa file `.css`, `.js`, `.json` separati.
+2.  **Commenti & Chiarezza**:
+    *   Il codice deve essere auto-esplicativo.
+    *   Aggiungere DocBlock a Classi e Metodi.
+    *   Commentare logiche complesse ("Why", not "What").
+3.  **Commit Message**:
+    *   Formato: `type(scope): subject` (es. `feat(auth): implement 2fa strict check`).
+

@@ -118,14 +118,17 @@ class TwoFactorController
 
     private function wrapLayout($content, $title)
     {
+        $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        $baseUrl = $scriptDir === '/' ? '' : $scriptDir;
+
         return <<<html
 <!DOCTYPE html>
 <html lang="it">
 <head><meta charset="UTF-8"><title>$title</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/premium.css">
-<style>body { background: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }</style>
-</head><body><div style="width:100%; max-width:500px; padding:20px;">$content</div></body></html>
+<link rel="stylesheet" href="$baseUrl/css/premium.css">
+<link rel="stylesheet" href="$baseUrl/css/auth-standalone.css">
+</head><body><div class="login-wrapper">$content</div></body></html>
 html;
     }
 }

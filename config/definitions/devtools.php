@@ -33,7 +33,8 @@ return [
         return new \FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController(
             $c->get(Mustache_Engine::class),
             $c->get(\FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class),
-            $c->get(\FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class)
+            $c->get(\FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class),
+            $c->get(\FratellanzaMilitare\Service\Demo\DemoInvitationService::class)
         );
     },
 

@@ -35,6 +35,9 @@ return function (App $app) {
     $app->post('/login/2fa', TwoFactorController::class . ':verify')->setName('login_2fa_verify')->add($loginLimit);
     $app->get('/logout', LogoutController::class . ':logout')->setName('logout');
 
+    // Demo Mode
+    $app->get('/auth/start-demo', \FratellanzaMilitare\Controller\Auth\DemoModeController::class . ':startDemo')->setName('demo_launch');
+
     // Main
     $app->get('/', HomeController::class . ':dashboard')->setName('dashboard');
 
@@ -128,6 +131,7 @@ return function (App $app) {
         $group->get('/devtools/export/audit/pdf', DevToolsDatabaseController::class . ':exportAuditPdf')->setName('devtools_audit_pdf');
         $group->get('/devtools/export/audit/excel', DevToolsDatabaseController::class . ':exportAuditExcel')->setName('devtools_audit_excel');
         $group->post('/devtools/audit/list', DevToolsDashboardController::class . ':auditAjax')->setName('devtools_audit_list');
+        $group->post('/devtools/demo-invite', DevToolsDashboardController::class . ':handleDemoInvite')->setName('devtools_demo_invite'); // [NEW] Demo Invite Action
         $group->post('/devtools/alive', DevToolsDashboardController::class . ':heartbeat')->setName('devtools_alive');
     })->add(new AdminMiddleware());
 

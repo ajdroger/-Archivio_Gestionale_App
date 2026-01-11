@@ -87,4 +87,13 @@ return [
             $c->get(LoggerInterface::class)
         );
     },
+
+    \FratellanzaMilitare\Service\Demo\DemoInvitationService::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\Demo\DemoInvitationService(
+            $c->get(\FratellanzaMilitare\Service\EmailServiceInterface::class),
+            $c->get(LoggerInterface::class),
+            $_ENV['APP_URL'] ?? 'http://localhost/fratellanza-militare-archivio/public',
+            $c->get(PDO::class)
+        );
+    },
 ];

@@ -43,7 +43,9 @@ class HomeController
             'content' => 'Benvenuto nel sistema di digitalizzazione archivio.',
             'stats' => $stats,
             'stats_json' => json_encode($stats),
+            'stats_json' => json_encode($stats),
             'is_admin' => ($_SESSION['user_role'] ?? '') === 'admin',
+            'is_demo_mode' => $_SESSION['is_demo_mode'] ?? false,
             'username' => $_SESSION['username'] ?? 'Utente',
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
             'base_url' => (function () {

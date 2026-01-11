@@ -35,6 +35,11 @@ class SettingsController
      */
     public function view(Request $request, Response $response): Response
     {
+        if ($_SESSION['is_demo_mode'] ?? false) {
+            $response->getBody()->write("Accesso alle Impostazioni disabilitato in modalità Demo.");
+            return $response->withStatus(403);
+        }
+
         $routeParser = RouteContext::fromRequest($request)->getRouteParser();
         $loginUrl = $routeParser->urlFor('login');
         $logoutUrl = $routeParser->urlFor('logout');

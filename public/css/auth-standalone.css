@@ -1,0 +1,15 @@
+/* Fratellanza Militare - Independent Auth Pages Style (ADR-028) */
+body {
+    background: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.login-wrapper {
+    width: 100%;
+    max-width: 500px;
+}

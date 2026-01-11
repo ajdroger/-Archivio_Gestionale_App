@@ -26,12 +26,18 @@ class DevToolsDashboardController
     private Mustache_Engine $mustache;
     private DevToolsSystemController $systemController;
     private DevToolsAuditController $auditController;
+    private \FratellanzaMilitare\Service\Demo\DemoInvitationService $demoService;
 
-    public function __construct(Mustache_Engine $mustache, DevToolsSystemController $systemController, DevToolsAuditController $auditController)
-    {
+    public function __construct(
+        Mustache_Engine $mustache,
+        DevToolsSystemController $systemController,
+        DevToolsAuditController $auditController,
+        \FratellanzaMilitare\Service\Demo\DemoInvitationService $demoService
+    ) {
         $this->mustache = $mustache;
         $this->systemController = $systemController;
         $this->auditController = $auditController;
+        $this->demoService = $demoService;
     }
 
     /**
@@ -46,6 +52,11 @@ class DevToolsDashboardController
      */
     public function dashboard(Request $request, Response $response): Response
     {
+        if ($_SESSION['is_demo_mode'] ?? false) {
+            $response->getBody()->write("Accesso a DevTools/Mission Control disabilitato in modalità Demo.");
+            return $response->withStatus(403);
+        }
+
         // Delegated Logic
         $systemInfo = $this->systemController->getSystemInfo();
         $health = $this->systemController->getHealth();
@@ -78,7 +89,11 @@ class DevToolsDashboardController
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
                 return $scriptDir === '/' ? '' : $scriptDir;
-            })()
+            })(),
+            'csrf' => [
+                'name' => $request->getAttribute('csrf_name'),
+                'value' => $request->getAttribute('csrf_value')
+            ]
         ]);
 
         $response->getBody()->write($html);
@@ -157,5 +172,30 @@ class DevToolsDashboardController
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+    /**
+     * Gestisce l'invio dell'invito Demo.
+     */
+    public function handleDemoInvite(Request $request, Response $response): Response
+    {
+        $data = $request->getParsedBody();
+        $email = $data['email'] ?? '';
+        $clientName = $data['client_name'] ?? 'Cliente';
+
+        if (empty($email)) {
+            $response->getBody()->write(json_encode(['success' => false, 'message' => 'Email obbligatoria.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $success = $this->demoService->sendInvite($email, $clientName);
+
+        if ($success) {
+            $msg = "Invito inviato correttamente a $email.";
+        } else {
+            $msg = "Errore durante l'invio. Controlla i log.";
+        }
+
+        $response->getBody()->write(json_encode(['success' => $success, 'message' => $msg]));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }
