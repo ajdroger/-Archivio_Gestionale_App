@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use FratellanzaMilitare\Service\FiscalCodeCalculator;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class FiscalCodeBelfioreTest extends TestCase
 {
@@ -15,10 +16,7 @@ class FiscalCodeBelfioreTest extends TestCase
         $this->calculator = new FiscalCodeCalculator();
     }
 
-    /**
-     * @test
-     * @group fiscal-code
-     */
+    #[Test]
     public function it_calculates_fiscal_code_for_complex_cities()
     {
         // Forlì -> D704 (Test accenti)
@@ -34,10 +32,7 @@ class FiscalCodeBelfioreTest extends TestCase
         $this->assertStringContainsString('H223', $cf);
     }
 
-    /**
-     * @test
-     * @group fiscal-code
-     */
+    #[Test]
     public function it_calculates_fiscal_code_for_foreign_countries()
     {
         // Francia -> Z110
@@ -49,10 +44,7 @@ class FiscalCodeBelfioreTest extends TestCase
         $this->assertStringContainsString('Z404', $cf);
     }
 
-    /**
-     * @test
-     * @group fiscal-code
-     */
+    #[Test]
     public function it_is_case_insensitive_for_places()
     {
         $cf1 = $this->calculator->calculate('Mario', 'Rossi', '1980-01-01', 'M', 'Milano');

@@ -12,22 +12,26 @@ use Slim\Psr7\Factory\ServerRequestFactory;
 
 test('v4.0 terminal endpoint executes commands via ScriptController', function () {
     $controller = new DevToolsScriptController();
+    // Use valid CWD (Project Root) where composer.json is present
+    $cwd = getcwd();
+
     $request = (new ServerRequestFactory())->createServerRequest('POST', '/devtools/terminal')
-        ->withParsedBody(['cmd' => 'echo "V4.0 Online"']);
+        ->withParsedBody(['cmd' => 'ls']); // Works on WinMain (via PowerShell alias) and Linux
     $response = (new ResponseFactory())->createResponse();
 
     // Mock Session
-    session_save_path(sys_get_temp_dir());
     if (session_status() === PHP_SESSION_NONE)
         session_start();
-    $_SESSION['term_cwd'] = sys_get_temp_dir();
+    $_SESSION['term_cwd'] = $cwd;
 
     $result = $controller->terminal($request, $response);
     $body = json_decode((string) $result->getBody(), true);
 
     expect($result->getStatusCode())->toBe(200);
     expect($body)->toHaveKey('output');
-    expect($body['output'])->toContain('V4.0 Online');
+
+    // Expect finding a known file
+    expect($body['output'])->toContain('composer.json');
 });
 
 test('v4.0 dashboard renders with new tabs', function () {
