@@ -37,6 +37,9 @@ return [
         );
     },
     \FratellanzaMilitare\Controller\Anagrafica\Servizi\SocioExportController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Anagrafica\Servizi\SocioExportController($c->get(PDOSocioRepository::class));
+        return new \FratellanzaMilitare\Controller\Anagrafica\Servizi\SocioExportController(
+            $c->get(PDOSocioRepository::class),
+            $c->get(Mustache_Engine::class)
+        );
     },
 ];

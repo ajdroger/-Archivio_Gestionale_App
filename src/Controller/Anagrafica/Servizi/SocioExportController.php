@@ -17,10 +17,12 @@ use Psr\Http\Message\ServerRequestInterface;
 class SocioExportController
 {
     private PDOSocioRepository $socioRepo;
+    private \Mustache_Engine $mustache;
 
-    public function __construct(PDOSocioRepository $socioRepo)
+    public function __construct(PDOSocioRepository $socioRepo, \Mustache_Engine $mustache)
     {
         $this->socioRepo = $socioRepo;
+        $this->mustache = $mustache;
     }
 
     /**
@@ -35,6 +37,17 @@ class SocioExportController
      */
     public function exportCsv(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+        if ($_SESSION['is_demo_mode'] ?? false) {
+            $html = $this->mustache->render('errors/403_demo', [
+                'base_url' => (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    return $scriptDir === '/' ? '' : $scriptDir;
+                })()
+            ]);
+            $response->getBody()->write($html);
+            return $response->withStatus(403);
+        }
+
         $soci = $this->socioRepo->findAll();
         $stream = fopen('php://memory', 'w+');
         fputcsv($stream, ['Nome', 'Cognome', 'CF', 'Data Nascita', 'Email', 'Telefono', 'Matricola', 'Stato', 'Moroso']);

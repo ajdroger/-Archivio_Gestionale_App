@@ -4,6 +4,7 @@ namespace FratellanzaMilitare\Controller\Auth;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use OpenApi\Attributes as OA;
 
 /**
  * Gestisce l'avvio della Modalità Demo Restrittiva.
@@ -19,6 +20,15 @@ class DemoModeController
      * @param Response $response
      * @return Response
      */
+    #[OA\Get(
+        path: '/auth/start-demo',
+        summary: 'Avvia la modalità Demo',
+        description: 'Avvia una sessione ospite limitata senza password per testare l\'applicazione.',
+        tags: ['Auth'],
+        responses: [
+            new OA\Response(response: 302, description: 'Redirect alla Dashboard')
+        ]
+    )]
     public function startDemo(Request $request, Response $response): Response
     {
         // 1. Distruggi sessione esistente (se presente)

@@ -53,7 +53,13 @@ class DevToolsDashboardController
     public function dashboard(Request $request, Response $response): Response
     {
         if ($_SESSION['is_demo_mode'] ?? false) {
-            $response->getBody()->write("Accesso a DevTools/Mission Control disabilitato in modalità Demo.");
+            $html = $this->mustache->render('errors/403_demo', [
+                'base_url' => (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    return $scriptDir === '/' ? '' : $scriptDir;
+                })()
+            ]);
+            $response->getBody()->write($html);
             return $response->withStatus(403);
         }
 

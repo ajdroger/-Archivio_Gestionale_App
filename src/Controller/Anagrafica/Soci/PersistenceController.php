@@ -72,6 +72,17 @@ class PersistenceController
      */
     public function store(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
+        if ($_SESSION['is_demo_mode'] ?? false) {
+            $html = $this->mustache->render('errors/403_demo', [
+                'base_url' => (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    return $scriptDir === '/' ? '' : $scriptDir;
+                })()
+            ]);
+            $response->getBody()->write($html);
+            return $response->withStatus(403);
+        }
+
         $data = $request->getParsedBody();
         try {
             $this->registrationService->registerNewMember($data);
@@ -132,6 +143,17 @@ class PersistenceController
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        if ($_SESSION['is_demo_mode'] ?? false) {
+            $html = $this->mustache->render('errors/403_demo', [
+                'base_url' => (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    return $scriptDir === '/' ? '' : $scriptDir;
+                })()
+            ]);
+            $response->getBody()->write($html);
+            return $response->withStatus(403);
+        }
+
         $socio = $this->socioRepo->findByCodiceFiscale($args['cf']);
         if (!$socio)
             return $response->withStatus(404);
@@ -165,6 +187,17 @@ class PersistenceController
      */
     public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        if ($_SESSION['is_demo_mode'] ?? false) {
+            $html = $this->mustache->render('errors/403_demo', [
+                'base_url' => (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    return $scriptDir === '/' ? '' : $scriptDir;
+                })()
+            ]);
+            $response->getBody()->write($html);
+            return $response->withStatus(403);
+        }
+
         $this->socioRepo->delete($args['cf']);
         $this->auditLogger->info("Socio eliminato: {$args['cf']}");
         $routeParser = RouteContext::fromRequest($request)->getRouteParser();
