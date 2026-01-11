@@ -1,0 +1,76 @@
+flowchart TD
+    %% Configurazione Stili
+    classDef actor fill:#000,stroke:#fff,stroke-width:2px,color:#fff
+    classDef secure fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef logic fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef db fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef audit fill:#fff3e0,stroke:#ef6c00,stroke-width:2px,stroke-dasharray: 5 5
+
+    %% Nodi
+    Start([🚀 INIZIO: Operatore])
+    End([✅ FINE: Conferma])
+
+    %% FASE 1: Accesso Sicuro
+    subgraph SECURITY_GATE [1. Security Gate]
+        Login[Login Username/Password]
+        Check2FA{2FA Attiva?}
+        TokenReq[Richiesta Codice TOTP]
+        VerifyToken{Codice Valido?}
+        Session[Generazione Sessione Redis]
+    end
+
+    %% FASE 2: Input & Validazione
+    subgraph APP_LOGIC [2. Application Logic]
+        InputData[Inserimento Dati Socio]
+        Validate[Validazione Dati & CF]
+        Encrypt[🔒 Crittografia AES-256 PII]
+        TransStart[Inizio Transazione ACID]
+    end
+
+    %% FASE 3: Persistenza
+    subgraph INFRA [3. Infrastructure]
+        SaveDB[(MySQL Insert)]
+        UploadDoc[[Upload File Sicuro]]
+        CheckCommit{Tutto OK?}
+        Rollback[❌ Rollback Totale]
+        Commit[✅ Commit Transazione]
+    end
+
+    %% FASE 4: Audit
+    subgraph LOGGING [4. Compliance]
+        AuditLog[📝 Scrittura Audit Trail]
+        Notify[Notifica Dashboard]
+    end
+
+    %% Relazioni
+    Start --> Login
+    Login --> Check2FA
+    Check2FA -- SI --> TokenReq
+    TokenReq --> VerifyToken
+    VerifyToken -- NO --> Login
+    VerifyToken -- SI --> Session
+    
+    Session --> InputData
+    InputData --> Validate
+    Validate --> Encrypt
+    Encrypt --> TransStart
+    
+    TransStart --> SaveDB
+    SaveDB --> UploadDoc
+    UploadDoc --> CheckCommit
+    
+    CheckCommit -- ERRORE --> Rollback
+    Rollback --> End
+    
+    CheckCommit -- SUCCESS --> Commit
+    Commit --> AuditLog
+    AuditLog --> Notify
+    Notify --> End
+
+    %% Applicazione Stili (Separata per sicurezza)
+    class Start actor
+    class End actor
+    class Login,TokenReq,VerifyToken secure
+    class InputData,Validate,Encrypt logic
+    class SaveDB,UploadDoc,Commit,Rollback db
+    class AuditLog,Notify audit

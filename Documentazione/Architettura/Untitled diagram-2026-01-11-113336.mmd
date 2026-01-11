@@ -1,0 +1,59 @@
+gitGraph
+    %% CONFIGURAZIONE
+    %% Questo grafico mostra l'evoluzione professionale del codice
+    
+    %% FASE 1: PROTOTIPO
+    commit id: "Initial Commit"
+    commit id: "Basic CRUD" tag: "v1.0.0" type: HIGHLIGHT
+    
+    %% FASE 2: SVILUPPO STRUTTURATO
+    branch develop
+    checkout develop
+    commit id: "Setup MVC"
+    
+    %% v1.3.1 MISSION CRITICAL
+    branch feature/acid
+    checkout feature/acid
+    commit id: "Impl. PDO"
+    commit id: "Add Transactions" type: HIGHLIGHT
+    checkout develop
+    merge feature/acid id: "Merge ACID"
+    checkout main
+    merge develop id: "Release 1.3.1" tag: "v1.3.1" type: HIGHLIGHT
+    
+    %% v2.0.0 ENTERPRISE FIRST
+    checkout develop
+    branch feature/security
+    checkout feature/security
+    commit id: "Add 2FA"
+    commit id: "Add RBAC"
+    commit id: "Encryption"
+    checkout develop
+    merge feature/security id: "Sec. Complete"
+    checkout main
+    merge develop id: "Release 2.0.0" tag: "v2.0.0" type: HIGHLIGHT
+    
+    %% v2.4.0 PERFECTION
+    checkout develop
+    branch feature/quality
+    checkout feature/quality
+    commit id: "Add Tests (169)" type: HIGHLIGHT
+    commit id: "PHPStan L6"
+    checkout develop
+    merge feature/quality
+    checkout main
+    merge develop id: "Release 2.4.0" tag: "v2.4.0"
+    
+    %% v4.0.0 ULTIMATE EDITION
+    checkout develop
+    branch feature/ultimate
+    checkout feature/ultimate
+    commit id: "Web Terminal"
+    commit id: "Legal Kit"
+    commit id: "CI/CD Pipes"
+    checkout develop
+    merge feature/ultimate id: "DevTools Ready"
+    
+    %% GOLD MASTER
+    checkout main
+    merge develop id: "GOLD MASTER" tag: "v4.0.0" type: HIGHLIGHT

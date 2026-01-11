@@ -1,0 +1,150 @@
+classDiagram
+    direction TB
+
+    %% ==========================================
+    %% 1. DEFINIZIONE STILI (Colori per Area)
+    %% ==========================================
+    %% Blu = Presentation Layer
+    classDef pres fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,font-weight:bold;
+    %% Verde = Application / Service Layer
+    classDef app fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    %% Arancione = Domain Layer (Entità)
+    classDef dom fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+    %% Viola = Infrastructure (Docker/DB)
+    classDef infra fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,stroke-dasharray: 5 5;
+    %% Grigio Scuro = DevTools (Admin)
+    classDef tool fill:#37474f,stroke:#000,stroke-width:3px,color:#fff;
+
+    %% ==========================================
+    %% 2. DEFINIZIONE CLASSI
+    %% ==========================================
+
+    %% --- Presentation Layer ---
+    class WebController {
+        +handleRequest()
+        +renderView()
+    }
+    class GraphQL_Resolver {
+        +Query(Soci, Docs)
+        +Mutation(Create)
+    }
+    class Rest_API {
+        +GET /api/soci
+        +POST /api/soci
+    }
+
+    %% --- DevTools Ultimate ---
+    class WebTerminal {
+        +exec(cmd)
+        +getOutput()
+    }
+    class DB_Manager {
+        +runMigration()
+        +inspectSchema()
+    }
+    class SecurityHub {
+        +rotate2FA()
+        +viewAuditLogs()
+    }
+
+    %% --- Application Services ---
+    class SocioService {
+        +createSocio(DTO)
+        +exportCSV()
+    }
+    class SecurityService {
+        +validate2FA(token)
+        +encryptData(str)
+    }
+    class AuditService {
+        +logAction(User, Event)
+    }
+
+    %% --- Domain Entities ---
+    class Socio {
+        +UUID Id
+        +String CF_Encrypted
+        +DatiAnagrafici Info
+    }
+    class Documento {
+        +UUID Id
+        +String Path
+        +String HashSHA256
+    }
+    class UserAdmin {
+        +Int Id
+        +String TotpSecret
+        +Role Enum
+    }
+
+    %% --- Infrastructure ---
+    class MySQL_Cluster {
+        +Port 3306
+        +ACID Transactions
+    }
+    class ProxySQL {
+        +QueryRouting
+        +Caching
+    }
+    class Redis_Cache {
+        +Key/Value Store
+        +Session Management
+    }
+    class Sentry_Monitor {
+        +TrackError()
+        +Performance()
+    }
+
+    %% ==========================================
+    %% 3. RELAZIONI
+    %% ==========================================
+    
+    %% Presentation usa Application
+    WebController --> SocioService
+    GraphQL_Resolver --> SocioService
+    Rest_API --> SocioService
+
+    %% Application usa Domain e Infra
+    SocioService --> Socio
+    SocioService --> MySQL_Cluster
+    SecurityService --> Redis_Cache
+    AuditService --> MySQL_Cluster
+
+    %% Domain Relationships
+    Socio *-- Documento
+    
+    %% DevTools Accesso Diretto (Admin)
+    WebController ..> WebTerminal
+    WebTerminal --> MySQL_Cluster
+    SecurityHub --> UserAdmin
+
+    %% Monitoring Trasversale
+    WebController ..> Sentry_Monitor
+    MySQL_Cluster ..> Sentry_Monitor
+
+    %% Infrastructure Routing
+    ProxySQL --> MySQL_Cluster
+
+    %% ==========================================
+    %% 4. APPLICAZIONE STILI
+    %% ==========================================
+    class WebController pres
+    class GraphQL_Resolver pres
+    class Rest_API pres
+    
+    class WebTerminal tool
+    class DB_Manager tool
+    class SecurityHub tool
+
+    class SocioService app
+    class SecurityService app
+    class AuditService app
+
+    class Socio dom
+    class Documento dom
+    class UserAdmin dom
+
+    class MySQL_Cluster infra
+    class ProxySQL infra
+    class Redis_Cache infra
+    class Sentry_Monitor infra

@@ -1,0 +1,543 @@
+classDiagram
+    direction TB
+    
+    %% === DEFINIZIONE STILI PER CATEGORIE ===
+    classDef controller fill:#e3f2fd,stroke:#1565c0,stroke-width:3px,font-weight:bold
+    classDef domain fill:#fff3e0,stroke:#e65100,stroke-width:3px,font-weight:bold
+    classDef security fill:#ffebee,stroke:#b71c1c,stroke-width:3px,font-weight:bold
+    classDef infra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,stroke-dasharray: 5 5
+    classDef service fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef api fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+    
+    %% =====================================================
+    %% LAYER 1: APPLICATION KERNEL & ROUTING
+    %% =====================================================
+    class SlimApp {
+        <<Slim Framework 4.15>>
+        +Container $container
+        +RouteCollector $router
+        -MiddlewareDispatcher $middleware
+        ---
+        +run() Response
+        +add(Middleware) void
+        +map(method, path, handler) Route
+        +handle(Request) Response
+    }
+
+    %% =====================================================
+    %% LAYER 2: MIDDLEWARE CHAIN (SECURITY PIPELINE)
+    %% =====================================================
+    class SecurityHeadersMiddleware {
+        <<Middleware PSR-15>>
+        +CSP_POLICY : string
+        +HSTS_MAX_AGE : int
+        ---
+        +process(req, handler) Response
+        -addSecurityHeaders(resp) Response
+    }
+
+    class CsrfMiddleware {
+        <<Slim CSRF Guard>>
+        +tokenName : string
+        +tokenValue : string
+        ---
+        +process(req, handler) Response
+        +generateToken() string
+        +validateToken(req) bool
+    }
+
+    class AuthMiddleware {
+        <<Session Guard>>
+        +SESSION_KEY : string
+        ---
+        +process(req, handler) Response
+        +checkAuthentication(req) bool
+        +redirectToLogin() Response
+    }
+
+    class RateLimitMiddleware {
+        <<Traffic Control>>
+        +limits : Map~string,int~
+        -storage : FilePersistence
+        ---
+        +process(req, handler) Response
+        +checkLimit(ip, endpoint) bool
+        +incrementCounter(key) void
+    }
+
+    class ApiKeyMiddleware {
+        <<API Authentication>>
+        -ApiKeyManager $manager
+        ---
+        +process(req, handler) Response
+        +extractApiKey(req) string
+        +validateKey(key) bool
+    }
+
+    class SentryMiddleware {
+        <<Error Tracking>>
+        +SENTRY_DSN : string
+        -hub : Hub
+        ---
+        +process(req, handler) Response
+        +captureException(e) void
+        +addBreadcrumb(msg) void
+    }
+
+    %% =====================================================
+    %% LAYER 3: CONTROLLERS (HTTP HANDLERS)
+    %% =====================================================
+    class AuthController {
+        -TotpProvider $totp
+        -SessionManager $session
+        -AuditTrail $audit
+        ---
+        +showLogin() Response
+        +login(req) Response
+        +verify2FA(req) Response
+        +logout(req) Response
+        +setup2FA(req) Response
+    }
+
+    class SocioController {
+        -ISocioRepository $repo
+        -IDocumentoRepository $docRepo
+        -RegistrationService $regService
+        -ValidationService $validator
+        ---
+        +index(req) Response
+        +show(cf) Response
+        +create(req) Response
+        +update(cf, req) Response
+        +delete(cf) Response
+        +search(query) Response
+        +uploadDoc(cf, file) Response
+    }
+
+    class StatisticsController {
+        -ISocioRepository $repo
+        -CacheService $cache
+        ---
+        +dashboard(req) Response
+        +export(format) Response
+        -getStats() array
+        -getCachedStats() array
+    }
+
+    class DevToolsController {
+        -DatabaseConnection $db
+        -LogAnalyzer $logs
+        -SystemCheck $check
+        ---
+        +index() Response
+        +runScript(script) Response
+        +dbQuery(sql) Response
+        +viewLogs(filter) Response
+        +healthCheck() Response
+    }
+
+    class GraphQLController {
+        -Schema $schema
+        -ExecutionContext $context
+        ---
+        +handle(req) Response
+        +executeQuery(query, vars) array
+        +handleMutation(mut, vars) array
+    }
+
+    class SettingsController {
+        -UserRepository $userRepo
+        ---
+        +index() Response
+        +changePassword(req) Response
+        +update2FA(req) Response
+    }
+
+    %% =====================================================
+    %% LAYER 4: BUSINESS SERVICES
+    %% =====================================================
+    class RegistrationService {
+        -ISocioRepository $socioRepo
+        -IDocumentoRepository $docRepo 
+        -PdfGenerator $pdf
+        -EmailService $email
+        ---
+        +registerSocio(data) Socio
+        +generateMembership(socio) PDF
+        +sendWelcomeEmail(socio) void
+        -validateFiscalCode(cf) bool
+    }
+
+    class ValidationService {
+        +FISCAL_CODE_REGEX : string
+        ---
+        +validateSocioData(data) array
+        +validateEmail(email) bool
+        +validateFiscalCode(cf) bool
+        +sanitizeInput(input) string
+    }
+
+    class CacheService {
+        -RedisClient $redis
+        +DEFAULT_TTL : int
+        ---
+        +get(key) mixed
+        +set(key, val, ttl) bool
+        +delete(key) bool
+        +flush() bool
+        +remember(key, callback, ttl) mixed
+    }
+
+    class ApiKeyManager {
+        -PDO $db
+        +KEY_LENGTH : int
+        ---
+        +generate(userId) string
+        +validate(key) bool
+        +revoke(key) void
+        +rotate(oldKey) string
+        -hashKey(plain) string
+    }
+
+    %% =====================================================
+    %% LAYER 5: DOMAIN MODELS (BUSINESS LOGIC)
+    %% =====================================================
+    class Socio {
+        +CodiceFiscale : string
+        +DatiPersonali : DatiAnagrafici
+        +DatiIscrizione : ModuloIscrizione
+        +DocumentiAssociati : Documento[]
+        +Consensi : ConsensoGDPR
+        +deleted_at : DateTime
+        ---
+        +isMoroso(anno) bool
+        +aggiornaDati(nuovi) void
+        +aggiungiDocumento(doc) void
+        +restore() void
+    }
+
+    class DatiAnagrafici {
+        <<Value Object>>
+        +Nome : string
+        +Cognome : string
+        +DataNascita : DateTime
+        +LuogoNascita : string
+        +Sesso : string
+        ---
+        +getNomeCompleto() string
+        +calcolaEta() int
+    }
+
+    class ModuloIscrizione {
+        <<Value Object>>
+        +Matricola : string
+        +AnnoSolare : int
+        +QuotaVersata : float
+        +MetodoPagamento : string
+        +DataIscrizione : DateTime
+        +StatoIscrizione : Enum
+        ---
+        +isPagato() bool
+    }
+
+    class Documento {
+        +IdUnivoco : UUID
+        +SocioCF : string
+        +TipoDocumento : string
+        +NomeFile : string
+        +PercorsoFile : string
+        +HashFile : string
+        +DataCaricamento : DateTime
+        +deleted_at : DateTime
+        ---
+        +verificaIntegrita() bool
+        +getUrl() string
+    }
+
+    class ConsensoGDPR {
+        <<Value Object>>
+        +TrattamentoDati : bool
+        +CessioneTerzi : bool
+        +Marketing : bool
+        +DataFirma : DateTime
+        ---
+        +isValid() bool
+    }
+
+    %% =====================================================
+    %% LAYER 6: INFRASTRUCTURE & PERSISTENCE
+    %% =====================================================
+    class ISocioRepository {
+        <<Interface>>
+        +findAll(filters) Socio[]
+        +findByCodiceFiscale(cf) Socio
+        +save(socio) void
+        +delete(cf) void
+        +search(query) Socio[]
+        +restore(cf) void
+    }
+
+    class PDOSocioRepository {
+        -PDO $pdo
+        -QueryBuilder $qb
+        +TABLE : string
+        ---
+        +findAll(filters) Socio[]
+        +findByCodiceFiscale(cf) Socio
+        +save(socio) void
+        +delete(cf) void
+        +search(query) Socio[]
+        -hydrate(row) Socio
+    }
+
+    class QueryBuilder {
+        -table : string
+        -wheres : array
+        -bindings : array
+        ---
+        +select(cols) self
+        +from(table) self
+        +where(col, op, val) self
+        +orderBy(col) self
+        +limit(n) self
+        +get() array
+        +toSql() string
+    }
+
+    class DatabaseConnection {
+        <<Singleton>>
+        -instance : PDO
+        +DSN : string
+        +OPTIONS : array
+        ---
+        +getInstance() PDO
+        +beginTransaction() void
+        +commit() void
+        +rollback() void
+    }
+
+    class RedisSessionHandler {
+        <<SessionHandlerInterface>>
+        -RedisClient $redis
+        +PREFIX : string
+        ---
+        +open(path, name) bool
+        +read(id) string
+        +write(id, data) bool
+        +destroy(id) bool
+        +gc(maxlife) int
+    }
+
+    class BackupService {
+        -PDO $db
+        +BACKUP_DIR : string
+        ---
+        +createBackup() string
+        +verifyBackup(file) bool
+        +restoreBackup(file) bool
+        +rotateOldBackups(days) void
+    }
+
+    class AuditTrail {
+        <<Singleton>>
+        -PDO $db
+        ---
+        +logEvento(user, action, res) void
+        +getHistory(filters) array
+        +exportAudit(format) File
+        -pseudonymize(data) string
+    }
+
+    %% =====================================================
+    %% LAYER 7: SECURITY COMPONENTS
+    %% =====================================================
+    class SessionManager {
+        +SESSION_NAME : string
+        +TIMEOUT : int
+        ---
+        +start() void
+        +regenerate() void
+        +destroy() void
+        +set(key, val) void
+        +get(key) mixed
+        +hardening() void
+    }
+
+    class TotpProvider {
+        <<2FA Service>>
+        -TOTP $lib
+        +WINDOW : int
+        ---
+        +generateSecret() string
+        +getQrCodeUrl(user, sec) string
+        +verifyCode(secret, code) bool
+    }
+
+    class RoleGuard {
+        <<RBAC>>
+        +ROLES : array
+        ---
+        +can(user, permission) bool
+        +hasRole(user, role) bool
+        +checkAccess(user, resource) bool
+    }
+
+    class PasswordHasher {
+        <<Static Utility>>
+        +ALGORITHM : int
+        ---
+        +hash(plain) string
+        +verify(plain, hash) bool
+        +needsRehash(hash) bool
+    }
+
+    %% =====================================================
+    %% LAYER 8: EXTERNAL INTEGRATIONS
+    %% =====================================================
+    class SentryClient {
+        <<Error Tracking>>
+        +DSN : string
+        ---
+        +captureException(e) string
+        +captureMessage(msg) void
+        +setContext(ctx) void
+        +addBreadcrumb(bc) void
+    }
+
+    class ProxySQLPool {
+        <<Connection Pooling>>
+        +HOST : string
+        +PORT : int
+        ---
+        +getConnection() PDO
+        +routeQuery(sql) string
+        +getStats() array
+    }
+
+    class PrometheusExporter {
+        <<Metrics>>
+        -MetricsRegistry $registry
+        ---
+        +increment(metric) void
+        +gauge(metric, val) void
+        +histogram(metric, val) void
+        +export() string
+    }
+
+    %% =====================================================
+    %% RELAZIONI TRA COMPONENTI
+    %% =====================================================
+    
+    %% Request Flow
+    SlimApp --> SecurityHeadersMiddleware : "1. Headers"
+    SecurityHeadersMiddleware --> CsrfMiddleware : "2. CSRF"
+    CsrfMiddleware --> AuthMiddleware : "3. Auth"
+    AuthMiddleware --> RateLimitMiddleware : "4. Rate"
+    RateLimitMiddleware --> ApiKeyMiddleware : "5. API Key (se /api/*)"
+    ApiKeyMiddleware --> SentryMiddleware : "6. Sentry"
+    
+    %% Routing to Controllers
+    SentryMiddleware --> AuthController : "7a. /login"
+    SentryMiddleware --> SocioController : "7b. /soci"
+    SentryMiddleware --> StatisticsController : "7c. /statistics"
+    SentryMiddleware --> DevToolsController : "7d. /devtools"
+    SentryMiddleware --> GraphQLController : "7e. /api/graphql"
+    SentryMiddleware --> SettingsController : "7f. /settings"
+    
+    %% Controller Dependencies
+    AuthController --> SessionManager : "usa"
+    AuthController --> TotpProvider : "2FA"
+    AuthController --> PasswordHasher : "hash"
+    AuthController --> AuditTrail : "log"
+    
+    SocioController --> ISocioRepository : "data"
+    SocioController --> RegistrationService : "register"
+    SocioController --> ValidationService : "validate"
+    SocioController --> AuditTrail : "log"
+    
+    StatisticsController --> ISocioRepository : "query"
+    StatisticsController --> CacheService : "cache"
+    
+    DevToolsController --> DatabaseConnection : "admin"
+    DevToolsController --> BackupService : "backup"
+    
+    GraphQLController --> ISocioRepository : "resolve"
+    
+    %% Service Dependencies
+    RegistrationService --> ISocioRepository : "save"
+    RegistrationService --> ValidationService : "validate"
+    
+    CacheService ..> RedisSessionHandler : "usa stesso Redis"
+    ApiKeyMiddleware --> ApiKeyManager : "validate"
+    
+    %% Repository Implementation
+    ISocioRepository <|.. PDOSocioRepository : "implements"
+    PDOSocioRepository --> QueryBuilder : "usa"
+    PDOSocioRepository --> DatabaseConnection : "PDO"
+    PDOSocioRepository --> Socio : "returns"
+    
+    %% Domain Relationships
+    Socio *-- DatiAnagrafici : "contiene"
+    Socio *-- ModuloIscrizione : "contiene"
+    Socio *-- ConsensoGDPR : "contiene"
+    Socio "1" --> "*" Documento : "possiede"
+    
+    %% Security Chain
+    SessionManager --> RedisSessionHandler : "storage"
+    RoleGuard --> SessionManager : "user data"
+    AuthMiddleware --> RoleGuard : "check"
+    
+    %% Infrastructure Services
+    BackupService --> DatabaseConnection : "dump"
+    AuditTrail --> DatabaseConnection : "insert"
+    
+    %% External Integrations
+    SentryMiddleware --> SentryClient : "forward"
+    DatabaseConnection ..> ProxySQLPool : "optional"
+    SlimApp --> PrometheusExporter : "metrics"
+    
+    %% =====================================================
+    %% APPLICAZIONE STILI
+    %% =====================================================
+    class SlimApp controller
+    
+    class SecurityHeadersMiddleware security
+    class CsrfMiddleware security
+    class AuthMiddleware security
+    class RateLimitMiddleware security
+    class ApiKeyMiddleware security
+    class SentryMiddleware security
+    class SessionManager security
+    class TotpProvider security
+    class RoleGuard security
+    class PasswordHasher security
+    
+    class AuthController controller
+    class SocioController controller
+    class StatisticsController controller
+    class DevToolsController controller
+    class GraphQLController controller
+    class SettingsController controller
+    
+    class RegistrationService service
+    class ValidationService service
+    class CacheService service
+    class ApiKeyManager service
+    
+    class Socio domain
+    class DatiAnagrafici domain
+    class ModuloIscrizione domain
+    class Documento domain
+    class ConsensoGDPR domain
+    
+    class ISocioRepository infra
+    class PDOSocioRepository infra
+    class QueryBuilder infra
+    class DatabaseConnection infra
+    class RedisSessionHandler infra
+    class BackupService infra
+    class AuditTrail infra
+    
+    class SentryClient api
+    class ProxySQLPool api
+    class PrometheusExporter api

@@ -1,0 +1,154 @@
+flowchart TD
+    %% =====================================================
+    %% DEFINIZIONE STILI VISIVI (Enterprise Theme)
+    %% =====================================================
+    classDef actor fill:#263238,stroke:#000,stroke-width:2px,color:#fff
+    classDef request fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,stroke-dasharray: 5 5
+    classDef security fill:#ffebee,stroke:#b71c1c,stroke-width:2px,font-weight:bold
+    classDef controller fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,font-weight:bold
+    classDef service fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef infra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef error fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#d32f2f
+    classDef success fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#2e7d32
+
+    %% =====================================================
+    %% ATTORI E INPUT
+    %% =====================================================
+    Start([🚀 CLIENT: Richiesta HTTP POST /soci/create])
+    EndSuccess([✅ RESPONSE 201: Socio Creato + PDF])
+    EndError([❌ RESPONSE 4xx/5xx: Error Page JSON])
+
+    %% =====================================================
+    %% LAYER 1: ENTRY POINT & KERNEL
+    %% =====================================================
+    subgraph KERNEL [1. Application Kernel Slim 4]
+        Index[public/index.php]
+        Boot[Boot Container DI & Env]
+        RouteMatch{Route Found?}
+    end
+
+    %% =====================================================
+    %% LAYER 2: SECURITY PIPELINE (Middleware Chain)
+    %% =====================================================
+    subgraph SECURITY_PIPE [2. Security Middleware Pipeline]
+        MW_Headers[SecurityHeadersMiddleware]
+        MW_Rate{RateLimit Check Redis}
+        MW_Csrf{CSRF Token Valid?}
+        MW_Auth{Session Valid?}
+        MW_2FA{2FA Verified?}
+        MW_Role{RBAC: Has Permission?}
+    end
+
+    %% =====================================================
+    %% LAYER 3: CONTROLLER LOGIC
+    %% =====================================================
+    subgraph CONTROLLER [3. Presentation Layer]
+        Ctrl_Init[SocioController::create]
+        Input_Sanitize[Input Sanitization]
+        Req_Validate{ValidationService Pass?}
+    end
+
+    %% =====================================================
+    %% LAYER 4: BUSINESS SERVICE & DOMAIN
+    %% =====================================================
+    subgraph DOMAIN_LOGIC [4. Business Logic Layer]
+        Serv_Reg[RegistrationService::register]
+        Domain_Model[Factory: Create Socio Entity]
+        Calc_CF[Calcolo Codice Fiscale]
+        Check_Dup{Duplicate Check?}
+    end
+
+    %% =====================================================
+    %% LAYER 5: INFRASTRUCTURE & PERSISTENCE
+    %% =====================================================
+    subgraph INFRA_LAYER [5. Infrastructure & ACID]
+        DB_Start[PDO: Begin Transaction]
+        Repo_Save[PDOSocioRepository::save]
+        ProxySQL[(ProxySQL Pool)]
+        MySQL[(MySQL 8 Cluster)]
+        
+        Doc_Gen[PDF Generator Service]
+        Doc_Upload[Secure File Storage]
+        
+        Audit_Log[AuditTrail: Log Event]
+        Redis_Clear[CacheService: Flush Keys]
+        
+        DB_Commit[PDO: Commit]
+        DB_Rollback[PDO: Rollback]
+        Sentry[Sentry: Capture Exception]
+    end
+
+    %% =====================================================
+    %% RELAZIONI DEL FLUSSO
+    %% =====================================================
+
+    %% 1. Ingress
+    Start --> Index
+    Index --> Boot
+    Boot --> RouteMatch
+    RouteMatch -- NO (404) --> EndError
+    RouteMatch -- YES --> MW_Headers
+
+    %% 2. Security Chain
+    MW_Headers --> MW_Rate
+    MW_Rate -- LIMIT EXCEEDED (429) --> EndError
+    MW_Rate -- OK --> MW_Csrf
+    
+    MW_Csrf -- INVALID (403) --> EndError
+    MW_Csrf -- OK --> MW_Auth
+    
+    MW_Auth -- GUEST (401) --> EndError
+    MW_Auth -- AUTHENTICATED --> MW_2FA
+    
+    MW_2FA -- PENDING --> EndError
+    MW_2FA -- VERIFIED --> MW_Role
+    
+    MW_Role -- FORBIDDEN (403) --> EndError
+    MW_Role -- GRANTED --> Ctrl_Init
+
+    %% 3. Controller Processing
+    Ctrl_Init --> Input_Sanitize
+    Input_Sanitize --> Req_Validate
+    Req_Validate -- FAIL (422) --> EndError
+    Req_Validate -- VALID --> Serv_Reg
+
+    %% 4. Business Logic
+    Serv_Reg --> Domain_Model
+    Domain_Model --> Calc_CF
+    Calc_CF --> Check_Dup
+    Check_Dup -- EXISTS (409) --> EndError
+    Check_Dup -- UNIQUE --> DB_Start
+
+    %% 5. Persistence Transaction
+    DB_Start --> Repo_Save
+    Repo_Save --> ProxySQL
+    ProxySQL --> MySQL
+    
+    MySQL -- ERROR --> DB_Rollback
+    MySQL -- SUCCESS --> Doc_Gen
+    
+    Doc_Gen --> Doc_Upload
+    Doc_Upload -- FAIL --> DB_Rollback
+    Doc_Upload -- SUCCESS --> Audit_Log
+    
+    Audit_Log --> Redis_Clear
+    Redis_Clear --> DB_Commit
+
+    %% 6. Error Handling
+    DB_Rollback --> Sentry
+    Sentry --> EndError
+
+    %% 7. Success
+    DB_Commit --> EndSuccess
+
+    %% =====================================================
+    %% APPLICAZIONE STILI
+    %% =====================================================
+    class Start actor
+    class Index,Boot,RouteMatch request
+    class MW_Headers,MW_Rate,MW_Csrf,MW_Auth,MW_2FA,MW_Role security
+    class Ctrl_Init,Input_Sanitize,Req_Validate controller
+    class Serv_Reg,Domain_Model,Calc_CF,Check_Dup service
+    class DB_Start,Repo_Save,ProxySQL,MySQL,Doc_Gen,Doc_Upload,Audit_Log,Redis_Clear,DB_Commit,DB_Rollback,Sentry infra
+    class EndError error
+    class EndSuccess success
