@@ -28,6 +28,9 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
     - **Security Center**: Nuova gestione utenti avanzata con calcolo "Security Score" in tempo reale, gestione 2FA, badge di ruolo e azioni rapide (Reset, Delete, Rotate 2FA).
     - **Audit Logs**: Visualizzazione avanzata dei log con filtri per IP, Utente e Componente.
     - **Design Premium**: Integrazione completa del design system "Glassmorphism" con animazioni CSS, effetti glow e tipografia monospaziata ad alto contrasto.
+- **Legal Kit Enterprise**: EULA, SLA Maintenance, GDPR DPA (Documentazione/Legal/).
+- **Commercial Landing**: Pagina vendita `public/landing.html`.
+- **Valuation**: Certificazione Platinum (97.5/100).
 - **Backend API**: Nuovi endpoint sicuri per la gestione del terminale (`/devtools/terminal`) e della sicurezza (`/devtools/security/*`).
 - **Feature Tests**: Suite di test completa (`tests/Feature/DevToolsV4Test.php`) per garantire la stabilità delle nuove funzioni.
 

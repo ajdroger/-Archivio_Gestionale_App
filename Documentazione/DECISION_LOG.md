@@ -619,6 +619,16 @@ Ogni classe definita DEVE essere **completamente implementata** o astratta corre
 - **Preserve** all legacy IDs and logic.
 **Consequences:** File size of `devtools.mustache` will increase, but stability is guaranteed. Refactoring can happen *inside* the tabs later, one by one.
 
+### ADR-024: Legal Framework & Commercialization
+**Date:** 2026-01-11
+**Status**: ✅ Active
+**Context**: To transform MCAG into a commercial product, strict legal boundaries are required.
+**Decision**:
+1.  **Multi-Tier Licensing**: Standard, Pro, Enterprise.
+2.  **Strict EULA**: No redistribution, perpetual license but revocable on breach.
+3.  **SLA Definitions**: Clear RTO/RPO targets.
+**Consequences**: Adds legal liability but enables commercial sales and enterprise adoption.
+
 ## [ADR-021] Secure Frontend Data Injection
 **Data**: 2026-01-10  
 **Stato**: ✅ Attivo  
