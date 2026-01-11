@@ -101,6 +101,10 @@ git checkout develop
 git merge feature/nome-task
 ```
 
+git checkout develop
+git merge feature/nome-task
+```
+
 2. **CHIUDERE IL BRANCH** (Archiviazione)
 Dopo il merge, il branch rimane esistente ma "chiuso" (non attivo).
 Per chiuderlo basta spostarsi su `develop` (fatto sopra).
@@ -111,6 +115,15 @@ Se in futuro devi rimettere mano a quel codice specifico:
 git checkout feature/nome-task
 ```
 *Non cancellare mai i branch feature.*
+
+### D. Fase di Test (CRUCIALE e STORICA)
+Anche i branch di test (`tests/*`) **NON DEVONO ESSERE CANCELLATI**.
+Servono a dimostrare che i test sono stati eseguiti in quel momento specifico.
+
+### E. Aggiornamento Log (OBBLIGATORIO)
+Prima di chiudere ogni lavoro, aggiornare:
+- `CHANGELOG.md`: Cosa è cambiato?
+- `Documentazione/Architettura/DECISION_LOG.md`: Perché abbiamo fatto queste scelte?
 
 ### E. Hotfix (Solo Emergenze)
 Se c'è un bug critico in produzione (`stable`):

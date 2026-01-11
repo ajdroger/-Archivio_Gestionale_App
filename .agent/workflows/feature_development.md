@@ -22,7 +22,13 @@ Before merging to develop, changes must be validated on a dedicated test branch.
 git checkout -b tests/NAME
 git merge feature/NAME
 vendor/bin/pest
+git checkout -b tests/NAME
+git merge feature/NAME
+vendor/bin/pest
 ```
+**CRITICAL**: `tests/*` branches must **NOT** be deleted. Keep them for audit history.
+
+**CRITICAL**: `tests/*` branches must **NOT** be deleted. Keep them for audit history.
 
 ## 3. Completion (Success Path)
 If tests pass and no conflicts exist:
