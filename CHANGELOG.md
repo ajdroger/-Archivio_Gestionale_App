@@ -24,6 +24,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 ## [4.0.0] - 2026-01-11 "**Ultimate Upgrade**"
 ### Aggiunto
 - **DevTools Ultimate v4.0**: Aggiornamento massivo della dashboard.
+- **Landing Page Refactor**: Ristrutturazione completa della pagina di atterraggio in `public/landing/` con separazione rigorosa di CSS/JS e assets modulari (ADR-027).
 - [Dettagli DevTools v4...]
 
 ## [2.5.0] - 2026-01-11 "**Historical Rigor**"
