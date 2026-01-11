@@ -10,6 +10,13 @@ use FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController;
  * Verifies that sensitive areas are blocked when in Demo Mode.
  */
 
+afterEach(function () {
+    unset($_SESSION['is_demo_mode']);
+    unset($_SESSION['user_role']);
+    unset($_SESSION['user_id']);
+    unset($_SESSION['username']);
+});
+
 test('settings page returns 403 in demo mode', function () {
     // 1. Setup Environment
     if (session_status() === PHP_SESSION_NONE)
