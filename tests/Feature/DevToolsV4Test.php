@@ -39,6 +39,7 @@ test('v4.0 dashboard renders with new tabs', function () {
     $mustache = $this->createMock(\Mustache_Engine::class);
     $system = $this->createMock(\FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class);
     $audit = $this->createMock(\FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class);
+    $demoService = $this->createMock(\FratellanzaMilitare\Service\Demo\DemoInvitationService::class);
 
     // Setup Mock Returns to avoid null pointers
     $system->method('getSystemInfo')->willReturn(['php_version' => '8.2']);
@@ -58,7 +59,7 @@ test('v4.0 dashboard renders with new tabs', function () {
         }))
         ->willReturn('<html>DevTools Dashboard</html>');
 
-    $controller = new DevToolsDashboardController($mustache, $system, $audit);
+    $controller = new DevToolsDashboardController($mustache, $system, $audit, $demoService);
     $request = (new ServerRequestFactory())->createServerRequest('GET', '/devtools');
     $response = (new ResponseFactory())->createResponse();
 
