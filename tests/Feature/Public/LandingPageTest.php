@@ -3,49 +3,43 @@
 namespace Tests\Feature\Public;
 
 use Tests\TestCase;
-use Slim\Psr7\Factory\ServerRequestFactory;
 
 class LandingPageTest extends TestCase
 {
+    private string $htmlContent;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Load the static HTML file directly since it's not served by Slim
+        $path = __DIR__ . '/../../../public/landing/index.html';
+        if (!file_exists($path)) {
+            $this->fail("Landing page file not found at: $path");
+        }
+        $this->htmlContent = file_get_contents($path);
+    }
+
     public function test_landing_page_loads_correctly()
     {
-        $request = (new ServerRequestFactory())->createServerRequest('GET', '/');
-        $response = $this->app->handle($request);
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $body = (string) $response->getBody();
-
-        $this->assertStringContainsString('Gestione Archivi', $body);
-        $this->assertStringContainsString('Mission Critical', $body);
-        $this->assertStringContainsString('Inizia Demo Gratuita', $body);
+        $this->assertStringContainsString('Gestione Archivi', $this->htmlContent);
+        $this->assertStringContainsString('Mission Critical', $this->htmlContent);
+        $this->assertStringContainsString('Inizia Demo Gratuita', $this->htmlContent);
     }
 
     public function test_navbar_contains_demo_request_button()
     {
-        $request = (new ServerRequestFactory())->createServerRequest('GET', '/');
-        $response = $this->app->handle($request);
-        $body = (string) $response->getBody();
-
-        $this->assertStringContainsString('Richiedi Accesso', $body);
-        $this->assertStringContainsString('data-bs-target="#demoModal"', $body);
+        $this->assertStringContainsString('Richiedi Accesso', $this->htmlContent);
+        $this->assertStringContainsString('data-bs-target="#demoModal"', $this->htmlContent);
     }
 
     public function test_benchmark_pdf_link_exists()
     {
-        $request = (new ServerRequestFactory())->createServerRequest('GET', '/');
-        $response = $this->app->handle($request);
-        $body = (string) $response->getBody();
-
-        $this->assertStringContainsString('MCAG_Benchmark_2026.pdf', $body);
+        $this->assertStringContainsString('MCAG_Benchmark_2026.pdf', $this->htmlContent);
     }
 
     public function test_legal_links_are_present()
     {
-        $request = (new ServerRequestFactory())->createServerRequest('GET', '/');
-        $response = $this->app->handle($request);
-        $body = (string) $response->getBody();
-
-        $this->assertStringContainsString('legal/PRIVACY_POLICY.md', $body);
-        $this->assertStringContainsString('legal/EULA.md', $body);
+        $this->assertStringContainsString('legal/PRIVACY_POLICY.md', $this->htmlContent);
+        $this->assertStringContainsString('legal/EULA.md', $this->htmlContent);
     }
 }

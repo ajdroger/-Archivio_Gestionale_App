@@ -34,7 +34,9 @@ class AuthMiddleware implements MiddlewareInterface
                 'graphql_api',
                 'graphql_endpoint', // Keep both just in case
                 'api_docs',
-                'api_docs_json'
+                'api_docs_json',
+                'demo_launch',
+                'demo_request_submit'
             ];
 
             // Allow public routes

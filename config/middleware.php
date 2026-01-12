@@ -12,6 +12,9 @@ return function (App $app) {
     // 0. Request ID (Correlation ID) - Primo della lista per tracciabilità totale
     $app->add(new \FratellanzaMilitare\Middleware\RequestIdMiddleware());
 
+    // 0b. Body Parsing (JSON fields)
+    $app->addBodyParsingMiddleware();
+
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {
         ini_set('session.cookie_httponly', 1);
@@ -48,7 +51,15 @@ return function (App $app) {
         ], JSON_UNESCAPED_UNICODE));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
     });
-    $app->add($guard);
+    // Filter CSRF for Public APIs
+    $app->add(function (Request $request, RequestHandler $handler) use ($guard) {
+        $path = $request->getUri()->getPath();
+        // Skip CSRF for public API endpoints (e.g. Landing Page Form)
+        if (str_starts_with($path, '/api/public/')) {
+            return $handler->handle($request);
+        }
+        return $guard->process($request, $handler);
+    });
 
     // Security Headers
     $app->add(new \FratellanzaMilitare\Middleware\SecurityHeadersMiddleware());
