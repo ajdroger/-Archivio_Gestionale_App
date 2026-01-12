@@ -22,11 +22,15 @@ use FratellanzaMilitare\Controller\DevTools\DevToolsFileSystemController;
 use FratellanzaMilitare\Controller\DevTools\DevToolsDatabaseController;
 use FratellanzaMilitare\Controller\DevTools\DevToolsSecurityController;
 use FratellanzaMilitare\Controller\DevTools\DevToolsScriptController;
+use FratellanzaMilitare\Controller\AI\AssistantController;
 use FratellanzaMilitare\Middleware\AdminMiddleware;
 use FratellanzaMilitare\Middleware\RateLimitMiddleware;
 use FratellanzaMilitare\Middleware\RoleMiddleware;
 
 return function (App $app) {
+    // Error Handling
+    $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+
     // Auth Routes
     $loginLimit = new RateLimitMiddleware(5, 60);
     $app->get('/login', LoginFlowController::class . ':form')->setName('login')->add($loginLimit);
@@ -79,6 +83,12 @@ return function (App $app) {
     // Intelligence (Stats & Reports)
     $statsRole = new RoleMiddleware(['presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
     $exportLimit = new RateLimitMiddleware(30, 60);
+
+    // AI Assistant (Placed here to access $statsRole)
+    $app->group('/ai', function ($group) {
+        $group->get('/assistant', AssistantController::class . ':chatWindow')->setName('ai_assistant_window');
+        $group->post('/assistant/message', AssistantController::class . ':message')->setName('ai_assistant_message');
+    })->add($statsRole);
 
     $app->group('/statistiche', function ($group) use ($exportLimit) {
         $group->get('', StatsDashboard::class . ':view')->setName('statistics');

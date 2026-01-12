@@ -51,8 +51,4 @@ return [
     \FratellanzaMilitare\Controller\DevTools\DevToolsSecurityController::class => function () {
         return new \FratellanzaMilitare\Controller\DevTools\DevToolsSecurityController();
     },
-
-    \FratellanzaMilitare\Controller\DevTools\DevToolsScriptController::class => function () {
-        return new \FratellanzaMilitare\Controller\DevTools\DevToolsScriptController();
-    },
 ];

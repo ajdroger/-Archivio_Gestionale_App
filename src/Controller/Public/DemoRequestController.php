@@ -109,7 +109,10 @@ class DemoRequestController
                 'X-Mailer: PHP/' . phpversion();
 
             // Suppress errors to strictly avoid breaking the JSON response if mail server is unconfigured locally
-            @mail($to, $subject, $message, $headers);
+            // Skip sending mail specifically in testing environment to avoid noisy warnings
+            if (($_ENV['APP_ENV'] ?? 'local') !== 'testing') {
+                @mail($to, $subject, $message, $headers);
+            }
 
             $response->getBody()->write(json_encode(['success' => true, 'message' => 'Richiesta ricevuta. La contatteremo a breve.']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);

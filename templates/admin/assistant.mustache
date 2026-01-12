@@ -1,0 +1,38 @@
+<!-- AI Assistant Interface (HTMX) -->
+<div class="card bg-black border border-secondary shadow-lg h-100">
+    <div class="card-header bg-dark border-bottom border-secondary d-flex justify-content-between align-items-center">
+        <div>
+            <span class="fs-5 fw-bold text-white"><i class="fa-solid fa-brain text-info me-2"></i>Archivio Parlante</span>
+            <small class="d-block text-muted" style="font-size: 0.75rem;">AI RAG Engine {{#is_available}}<span class="text-success">● Online</span>{{/is_available}}{{^is_available}}<span class="text-danger">● Offline</span>{{/is_available}}</small>
+        </div>
+        <div>
+            <button onclick="document.getElementById('ai-chat-response').innerHTML = ''" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-eraser"></i></button>
+        </div>
+    </div>
+    
+    <div class="card-body bg-black" style="height: 400px; overflow-y: auto;" id="ai-chat-box">
+        <!-- Chat History -->
+        <div id="ai-chat-response" class="d-flex flex-column justify-content-end min-h-100">
+            <div class="d-flex justify-content-start mb-2">
+                <div class="bg-dark text-light p-2 rounded-3 border border-secondary" style="max-width: 80%">
+                    <i class="fa-solid fa-robot text-warning me-2"></i> Ciao! Sono l'Archivio Parlante. Domandami informazioni sui soci.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-footer bg-dark border-top border-secondary">
+        <form hx-post="{{base_url}}/ai/assistant/message" 
+              hx-target="#ai-chat-response" 
+              hx-swap="beforeend scroll:bottom"
+              hx-on::after-request="this.reset()">
+              
+            <div class="input-group">
+                <input type="text" name="message" class="form-control bg-black text-white border-secondary" placeholder="Chiedi qualcosa..." aria-label="Messaggio" required autocomplete="off">
+                <button class="btn btn-info text-white" type="submit">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

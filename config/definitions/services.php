@@ -108,6 +108,34 @@ return [
             new \FratellanzaMilitare\Event\Listeners\LogSocioCreationListener($c->get(LoggerInterface::class))
         );
 
+        // 2. AI Indexing (RAG)
+        $bus->subscribe(
+            \FratellanzaMilitare\Event\Events\SocioCreatedEvent::class,
+            $c->get(\FratellanzaMilitare\Event\Listeners\IndexSocioListener::class)
+        );
+
         return $bus;
+    },
+
+    // ===== AI SERVICES (v5.0 Phase 3) =====
+    \FratellanzaMilitare\AI\Providers\OllamaProvider::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\AI\Providers\OllamaProvider(
+            $c->get(LoggerInterface::class)
+        );
+    },
+
+    \FratellanzaMilitare\AI\RAG\SimpleVectorStore::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\AI\RAG\SimpleVectorStore(
+            $c->get(LoggerInterface::class),
+            __DIR__ . '/../../storage/ai/index.json'
+        );
+    },
+
+    \FratellanzaMilitare\Event\Listeners\IndexSocioListener::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Event\Listeners\IndexSocioListener(
+            $c->get(LoggerInterface::class),
+            $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class),
+            $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class)
+        );
     },
 ];
