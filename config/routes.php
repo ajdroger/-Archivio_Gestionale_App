@@ -36,7 +36,7 @@ return function (App $app) {
     $app->get('/logout', LogoutController::class . ':logout')->setName('logout');
 
     // Demo Mode
-    $app->get('/auth/start-demo', \FratellanzaMilitare\Controller\Auth\DemoModeController::class . ':startDemo')->setName('demo_launch');
+    $app->map(['GET', 'POST'], '/auth/start-demo', \FratellanzaMilitare\Controller\Auth\DemoModeController::class . ':startDemo')->setName('demo_launch');
 
     // Demo Request Public API
     $app->post('/api/public/demo-request', \FratellanzaMilitare\Controller\Public\DemoRequestController::class . ':submit')->setName('demo_request_submit');

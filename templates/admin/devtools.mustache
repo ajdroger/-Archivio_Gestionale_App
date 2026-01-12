@@ -73,7 +73,7 @@
             </div>
             <div>
                 <span class="fs-5 fw-bold text-white tracking-widest">MISSION CONTROL</span><br>
-                <small class="text-white opacity-75 code-font" style="font-size: 0.85rem;">SYSTEM V2.0</small>
+                <small class="text-white opacity-75 code-font" style="font-size: 0.85rem;">SYSTEM V4.04</small>
             </div>
         </div>
         
@@ -141,7 +141,7 @@
         <!-- Top Bar Appiccicosa (Sticky) -->
         <header class="py-3 px-4 border-bottom border-secondary d-flex justify-content-between align-items-center" style="background-color: #0a0a0a;">
             <div class="d-flex align-items-center">
-                <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO v2.2</h4>
+                <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO v4.04</h4>
             </div>
             <div class="d-flex gap-3">
                  <!-- Pulsante Toggle Terminale -->
@@ -1042,7 +1042,7 @@
                             </div>
                             <!-- Prova Demo (Launch) -->
                             <div class="col-md-4 col-lg-3">
-                                <a href="{{base_url}}/auth/start-demo" class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start text-decoration-none">
+                                <button hx-post="{{base_url}}/auth/start-demo" hx-target="body" hx-push-url="true" class="btn btn-dark w-100 p-3 bordery-secondary hover-card text-start text-decoration-none">
                                     <div class="d-flex align-items-center">
                                         <div class="bg-success bg-opacity-20 p-2 rounded me-3 text-success"><i class="fa-solid fa-play"></i></div>
                                         <div>
@@ -1050,7 +1050,7 @@
                                             <small class="text-muted" style="font-size: 0.7rem;">Prova Software</small>
                                         </div>
                                     </div>
-                                </a>
+                                </button>
                             </div>
                         </div>
                         </div>
