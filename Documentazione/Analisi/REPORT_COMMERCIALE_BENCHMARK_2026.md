@@ -20,11 +20,11 @@ Il sistema **MCAG** rappresenta una soluzione enterprise-grade pronta per commer
 
 | Milestone | Data | Valore Stimato | Ore Cumulative | Incremento |
 |-----------|------|----------------|----------------|------------|
-| **v1.0.0** - Prototipo Iniziale | Dic 2024 | €8.000 | 120h | Baseline |
-| **v1.3.1** - Mission-Critical | Dic 2025 | €35.000 | 500h | +€27k (+338%) |
-| **v2.0.0** - Enterprise First | Dic 2025 | €69.900 | 1.200h | +€35k (+100%) |
-| **v2.4.0** - Enterprise Perfection | Gen 2026 | €99.900 | 1.620h | +€30k (+43%) |
-| **v4.0.0** - Ultimate Edition | Gen 2026 | **€120.000** | **1.940h** | **+€20k (+20%)** |
+| **v1.0.0** - Prototipo Iniziale | Dicembre 2024 | €8.000 | 120h | Baseline |
+| **v1.3.1** - Mission-Critical | Maggio 2025 | €35.000 | 500h | +€27k (+338%) |
+| **v2.0.0** - Enterprise First | Agosto 2025 | €69.900 | 1.200h | +€35k (+100%) |
+| **v2.4.0** - Enterprise Perfection | Ottobre 2026 | €99.900 | 1.620h | +€30k (+43%) |
+| **v4.0.0** - Ultimate Edition | Gennaio 2026 | **€120.000** | **1.940h** | **+€20k (+20%)** |
 
 **Crescita Totale**: Da €8.000 (prototipo) a **€120.000** (enterprise) = **+€112.000** (+1.400%) in 13 mesi.
 

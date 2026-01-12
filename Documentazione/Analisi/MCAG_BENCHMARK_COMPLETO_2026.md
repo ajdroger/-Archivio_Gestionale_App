@@ -165,7 +165,7 @@ Il progetto ha seguito un'evoluzione **metodica e professionale** attraverso rel
 
 ---
 
-#### v2.0.0 - Enterprise First Release (2025-12-25)
+#### v2.0.0 - Enterprise First Release (Agosto 2025)
 **Focus**: Production-Ready Foundation
 
 **Implementazioni Chiave**:

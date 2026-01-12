@@ -52,11 +52,11 @@ Il **Militare Civile Archivio Gestionale (MCAG)** v4.0.0 Ultimate Edition rappre
 
 | Versione | Data | Valore | Features Killer | Ore Dev | Crescita |
 |----------|------|--------|-----------------|---------|----------|
-| **v1.0.0** Prototipo | Gen 2024 | €8.000 | CRUD base PHP | 120h | Baseline |
-| **v1.3.1** Mission-Critical | Dic 2024 | €35.000 | ACID Transactions, PDO | 500h | +338% |
-| **v2.0.0** Enterprise First | Dic 2025 | €69.900 | Clean Arch, 2FA, RBAC | 1.200h | +100% |
-| **v2.4.0** Enterprise Perfection | Gen 2026 | €99.900 | 167 Test, Quality Gate | 1.620h | +43% |
-| **v4.0.0 Ultimate** 🏆 | Gen 2026 | **€120.000** | DevTools v4, Legal Kit, CI/CD | **1.940h** | **+20%** |
+| **v1.0.0** Prototipo | Dicembre 2024 | €8.000 | Core System, CRUD | 120h | Baseline |
+| **v1.3.1** Mission-Critical | Maggio 2025 | €35.000 | Resilience, Logs | 500h | +338% |
+| **v2.0.0** Enterprise First | Agosto 2025 | €69.900 | Clean Arch, 2FA, RBAC | 1.200h | +100% |
+| **v2.4.0** Enterprise Perfection | Ottobre 2026 | €99.900 | Benchmark, 100% Tests | 1.620h | +43% |
+| **v4.0.0** Ultimate Edition | Gennaio 2026 | €120.000 | DevTools v4, Legal Kit | 1.940h | +20% |
 
 **Crescita Totale**: €8.000 → **€120.000** = **+€112.000** (+1.400%) in 13 mesi
 

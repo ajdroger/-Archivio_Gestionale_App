@@ -107,7 +107,7 @@ Transazioni ACID, 2FA Admin. Valore: €35.000. Ore: 500h.
 </div>
 
 <div class="timeline-box">
-<strong>FASE 3: Enterprise First (v2.0 - Dic 25)</strong><br>
+<strong>FASE 3: Enterprise First (v2.0 - Ago 25)</strong><br>
 Clean Architecture, GraphQL. Valore: €69.900. Ore: 1.200h.
 </div>
 

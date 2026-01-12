@@ -541,7 +541,7 @@ Documentazione/
 
 | Versione | Data | Valutazione | Features Chiave | Ore Sviluppo |
 |----------|------|-------------|-----------------|---------------|
-| v2.4.0 Enterprise Perfection | 10 Gen 2026 | **€99.900** | 167 test, Quality Gate, OpenAPI, Sentry | 1.620h |
+| v2.4.0 Enterprise Perfection | Ottobre 2026 | **€99.900** | 167 test, Quality Gate, OpenAPI, Sentry | 1.620h |
 | v4.0.0 Ultimate Edition | 11 Gen 2026 | **€120.000** | +DevTools v4.0, +Legal Kit, +Landing, +CI/CD | +320h (1.940h totali) |
 
 **Incremento Valore**: +€20.000 (+20%) giustificato da:

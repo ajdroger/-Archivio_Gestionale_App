@@ -51,7 +51,7 @@ Adozione della **Clean Architecture** e **SOLID Principles**.
 * Coverage del 100% sulle funzionalità critiche.
 * Pipeline CI/CD per garantire che nessun codice rotto entri in produzione.
 
-*Risultato*: Grado "Enterprise First". Valore €69.900.
+*Risultato*: Grado "Enterprise First". Valore €69.900 (Agosto 2025).
 
 ---
 
