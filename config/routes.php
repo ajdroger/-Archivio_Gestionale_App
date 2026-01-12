@@ -38,6 +38,9 @@ return function (App $app) {
     // Demo Mode
     $app->get('/auth/start-demo', \FratellanzaMilitare\Controller\Auth\DemoModeController::class . ':startDemo')->setName('demo_launch');
 
+    // Demo Request Public API
+    $app->post('/api/public/demo-request', \FratellanzaMilitare\Controller\Public\DemoRequestController::class . ':submit')->setName('demo_request_submit');
+
     // Main
     $app->get('/', HomeController::class . ':dashboard')->setName('dashboard');
 

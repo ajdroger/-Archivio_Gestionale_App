@@ -780,38 +780,140 @@
         </div>
     </footer>
 
-    <!-- Demo Modal -->
+    <!-- Request Access Modal (Comprehensive) -->
     <div class="modal fade" id="demoModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark border border-secondary text-light">
-                <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title">Richiedi Accesso Demo / Preventivo</h5>
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content glass-card border border-info text-light position-relative overflow-hidden">
+                <!-- Decorative BG -->
+                <div class="position-absolute top-0 end-0 bg-info opacity-10 rounded-circle"
+                    style="width: 300px; height: 300px; filter: blur(80px); transform: translate(30%, -30%);"></div>
+
+                <div class="modal-header border-bottom border-secondary border-opacity-25 p-4">
+                    <div>
+                        <h5 class="modal-title fw-bold display-6 fs-3">Richiedi Accesso <span
+                                class="text-info">Enterprise</span></h5>
+                        <p class="text-secondary mb-0 small">Compila il modulo per ricevere un preventivo personalizzato
+                            o attivare una demo completa.</p>
+                    </div>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label class="form-label text-secondary">Nome Organizzazione</label>
-                            <input type="text" class="form-control bg-black text-light border-secondary"
-                                placeholder="Es. Associazione Nazionale...">
+
+                <div class="modal-body p-4">
+                    <form id="demoRequestForm" class="row g-3 needs-validation" novalidate>
+                        <!-- Section 1: Contatto -->
+                        <div class="col-12">
+                            <h6 class="text-info text-uppercase small ls-1 fw-bold mb-0">Riferimenti Contatto</h6>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label text-secondary">Email</label>
-                            <input type="email" class="form-control bg-black text-light border-secondary"
-                                placeholder="nome@ente.it">
+
+                        <div class="col-md-6">
+                            <label class="form-label text-light small">Nome e Cognome *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary text-secondary"><i
+                                        class="fas fa-user"></i></span>
+                                <input type="text" name="nome" class="form-control bg-black text-light border-secondary"
+                                    required placeholder="Mario Rossi">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label text-secondary">Interesse</label>
-                            <select class="form-select bg-black text-light border-secondary">
-                                <option>Licenza Enterprise (On-Premise)</option>
-                                <option>SaaS Cloud</option>
-                                <option>Demo Tecnica</option>
+                        <div class="col-md-6">
+                            <label class="form-label text-light small">Ruolo / Grado</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary text-secondary"><i
+                                        class="fas fa-id-badge"></i></span>
+                                <input type="text" name="ruolo"
+                                    class="form-control bg-black text-light border-secondary"
+                                    placeholder="Es. Presidente, Segretario">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-light small">Email Istituzionale *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary text-secondary"><i
+                                        class="fas fa-envelope"></i></span>
+                                <input type="email" name="email"
+                                    class="form-control bg-black text-light border-secondary" required
+                                    placeholder="nome@ente.it">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-light small">Telefono</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary text-secondary"><i
+                                        class="fas fa-phone"></i></span>
+                                <input type="tel" name="telefono"
+                                    class="form-control bg-black text-light border-secondary" placeholder="+39 ...">
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Organizzazione -->
+                        <div class="col-12 mt-4">
+                            <h6 class="text-info text-uppercase small ls-1 fw-bold mb-0">Dettagli Organizzazione</h6>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label text-light small">Nome Organizzazione / Ente *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary text-secondary"><i
+                                        class="fas fa-building"></i></span>
+                                <input type="text" name="organizzazione"
+                                    class="form-control bg-black text-light border-secondary" required
+                                    placeholder="Es. Associazione Nazionale...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-light small">Numero Soci Stimato</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary text-secondary"><i
+                                        class="fas fa-users"></i></span>
+                                <input type="number" name="numero_soci"
+                                    class="form-control bg-black text-light border-secondary" placeholder="Es. 5000">
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Interesse -->
+                        <div class="col-12 mt-4">
+                            <h6 class="text-info text-uppercase small ls-1 fw-bold mb-0">Preferenze Sistema</h6>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-light small">Tipo di Soluzione *</label>
+                            <select name="tipo_licenza" class="form-select bg-black text-light border-secondary"
+                                required>
+                                <option value="" selected disabled>Seleziona un'opzione...</option>
+                                <option value="enterprise_onpremise">Licenza Enterprise (On-Premise / Server Dedicato)
+                                </option>
+                                <option value="saas_cloud">SaaS Cloud Managed (Chiavi in mano)</option>
+                                <option value="technical_demo">Richiesta Demo Tecnica Guidata</option>
+                                <option value="other">Altro / Informazioni Generali</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 btn-glow">Invia Richiesta</button>
-                        <p class="small text-secondary mt-3 mb-0 text-center">Inviando, accetti la nostra Privacy
-                            Policy.</p>
+
+                        <div class="col-12">
+                            <label class="form-label text-light small">Messaggio o Esigenze Specifiche</label>
+                            <textarea name="messaggio" class="form-control bg-black text-light border-secondary"
+                                rows="3" placeholder="Descrivi brevemente le tue necessità..."></textarea>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <div class="form-check">
+                                <input class="form-check-input bg-black border-secondary" type="checkbox"
+                                    name="privacy_consent" id="privacyCheck" required>
+                                <label class="form-check-label text-secondary small" for="privacyCheck">
+                                    Dichiaro di aver letto la <a href="#" class="text-info text-decoration-none">Privacy
+                                        Policy</a> e acconsento al trattamento dei dati per la gestione della richiesta.
+                                </label>
+                                <div class="invalid-feedback">Devi accettare la privacy policy per procedere.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill btn-glow fw-bold">
+                                    <i class="fas fa-paper-plane me-2"></i>Invia Richiesta Ufficiale
+                                </button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -863,6 +965,64 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Custom JS -->
+    <!-- Form Handling Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const demoForm = document.getElementById('demoRequestForm');
+            if (demoForm) {
+                demoForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    if (!demoForm.checkValidity()) {
+                        e.stopPropagation();
+                        demoForm.classList.add('was-validated');
+                        return;
+                    }
+
+                    const submitBtn = demoForm.querySelector('button[type="submit"]');
+                    const originalBtnContent = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Invio in corso...';
+
+                    const formData = new FormData(demoForm);
+                    const data = Object.fromEntries(formData.entries());
+                    // Handle checkbox boolean
+                    data.privacy_consent = demoForm.querySelector('[name="privacy_consent"]').checked;
+
+                    fetch('../api/public/demo-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Success State
+                                demoForm.innerHTML = `
+                                <div class="text-center py-5">
+                                    <div class="mb-4 text-success display-1"><i class="fas fa-check-circle"></i></div>
+                                    <h3 class="fw-bold text-white mb-3">Richiesta Inviata!</h3>
+                                    <p class="text-secondary mb-4">Grazie per il tuo interesse. Il nostro team commerciale ha ricevuto la tua richiesta e ti contatterà all'indirizzo email fornito entro 24 ore lavorative.</p>
+                                    <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Chiudi</button>
+                                </div>
+                            `;
+                            } else {
+                                throw new Error(data.message || 'Errore sconosciuto');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Si è verificato un errore durante l\'invio: ' + error.message);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnContent;
+                        });
+                });
+            }
+        });
+    </script>
     <script src="js/app.js"></script>
 </body>
 
