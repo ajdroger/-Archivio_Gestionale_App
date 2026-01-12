@@ -781,3 +781,24 @@ La manutenzione a lungo termine di un progetto Enterprise richiede leggibilità 
 - (+) **Manutenibilità Estrema**: Codebase navigabile e chiara.
 - (+) **Performance**: Caching ottimizzato per asset statici.
 - (-) **Verbosity**: Richiede la creazione di più file anche per piccole funzionalità.
+
+## [ADR-029] Sales Readiness & Distribution Strategy
+**Data**: 2026-01-12
+**Stato**: ✅ Attivo
+**Contesto**:
+Con il completamento della v4.0 Enterprise, il progetto passa dalla fase di "Sviluppo Puro" alla fase "Commerciale". È necessario predisporre gli asset per la vendita e la distribuzione ai clienti.
+**Decisione**:
+1.  **Funnel di Acquisizione**:
+    - **Landing Page**: Ristrutturata (`public/landing/`) con design "Premium Glass" per attrarre clienti Enterprise.
+    - **Demo Mode**: Accesso "Frictionless" (senza password) ma limitato (Read-Only su dati sensibili) per mostrare le potenzialità senza rischi.
+2.  **Packaging del Prodotto**:
+    - Creazione cartella `Installazione_MCAG/` contenente gli snapshot storici e attuali (v1, v2, v3, v4) pronti per l'invio via email/link.
+3.  **Tier Pricing**:
+    - v2.0 Standard (Entry Level)
+    - v3.0 Enterprise (Feature Complete)
+    - v4.0 Ultimate (DevTools + Source Code)
+
+**Conseguenze**:
+- (+) **Rapidità di Risposta**: Pacchetti pronti per l'invio immediato ai lead.
+- (+) **Conversione**: Il flusso Landing -> Demo -> Acquisto è fluido.
+- (+) **Valore**: La presenza di versioni storiche dimostra maturità e longevità del progetto.

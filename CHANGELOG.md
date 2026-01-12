@@ -21,14 +21,30 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
-## [4.0.0] - 2026-01-11 "**Ultimate Upgrade**"
+## [4.0.0] - 2026-01-11/12 "**Ultimate Upgrade & Sales Ready**"
 ### Aggiunto
-- **DevTools Ultimate v4.0**: Aggiornamento massivo della dashboard.
-- **Landing Page Refactor**: Ristrutturazione completa della pagina di atterraggio in `public/landing/` con separazione rigorosa di CSS/JS e assets modulari (ADR-027).
-- **Demo System**: Implementato sistema di invito e generazione utenti demo.
-- **RESTRICTION**: Implementata `Modalità Demo` restrittiva con accesso limitato (No Settings, No DevTools).
-- **Policy Enforcement**: Aggiunta ADR-028 per la separazione rigorosa dei linguaggi.**ADR-028 Strict Polyglot Separation** (Separazione totale linguaggi e commenti obbligatori).
-- [Dettagli DevTools v4...]
+- **DevTools Ultimate v4.0**: Dashboard amministrativa completa (Terminal, Security, Audit).
+    - **Pro Terminal**: Console Web (Bash/PowerShell) integrata.
+    - **Security Center**: Gestione utenti, 2FA Ops, Security Score in tempo reale.
+    - **Audit Inspector**: Visualizzatore log avanzato.
+- **Demo Ecosystem**:
+    - **Restricted Mode**: Sistema di sessione limitata (403 su aree sensibili) per utenti demo.
+    - **Invitation System**: Generatore inviti via email con credenziali temporanee.
+    - **Public Route**: `/auth/start-demo` per accesso rapido.
+- **Sales Frontend**:
+    - **Landing Page Refactor**: Nuova UI "Glassmorphism" in `public/landing/`.
+    - **Login Modal**: Accesso unificato Clienti/Demo con design premium.
+- **Distribution**:
+    - **Archives**: Generati pacchetti installazione `Installazione_MCAG/` (v1, v2, v3, v4).
+
+### Sicurezza
+- **Deep Restrictions**: Blocco server-side operazioni di scrittura (Store, Update, Delete, Export) in modalità Demo.
+- **Polyglot Separation**: Applicazione rigorosa ADR-028 (No inline JS/CSS).
+- **Error Handling**: Nuova pagina `403_demo.mustache` user-friendly.
+
+### Policy & Workflow
+- **Git Retention**: Adozione ADR-026 (Conservazione totale branch).
+- **Quality Gate**: Branch `feature/tests` per validazione obbligatoria prima del merge.
 
 ## [2.5.0] - 2026-01-11 "**Historical Rigor**"
 ### Aggiunto
