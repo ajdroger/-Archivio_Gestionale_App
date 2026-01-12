@@ -96,4 +96,18 @@ return [
             $c->get(PDO::class)
         );
     },
+
+    // ===== EVENT BUS ARCHITECTURE (v5.0) =====
+    \FratellanzaMilitare\Event\EventBusInterface::class => function (ContainerInterface $c) {
+        $bus = new \FratellanzaMilitare\Event\EventBus($c->get(LoggerInterface::class));
+
+        // Register Listeners
+        // 1. Log Socio Creation
+        $bus->subscribe(
+            \FratellanzaMilitare\Event\Events\SocioCreatedEvent::class,
+            new \FratellanzaMilitare\Event\Listeners\LogSocioCreationListener($c->get(LoggerInterface::class))
+        );
+
+        return $bus;
+    },
 ];
