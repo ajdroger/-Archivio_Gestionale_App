@@ -14,7 +14,7 @@ Il sistema **MCAG** rappresenta una soluzione enterprise-grade pronta per commer
 
 ### Sviluppo Completo: Soobadur Mohammad Ajmeer
 
-**Tutto il sistema è stato sviluppato interamente da solo da Soobadur Mohammad Ajmeer**, attraverso un percorso di evoluzione continua dal prototipo iniziale fino alla versione enterprise finale. L'investimento totale ammonta a **1.940 ore di sviluppo professionale** (gennaio 2024 - Gennaio 2026).
+**Tutto il sistema è stato sviluppato interamente da solo da Soobadur Mohammad Ajmeer**, attraverso un percorso di evoluzione continua dal prototipo iniziale fino alla versione enterprise finale. L'approccio "One-Man Army" ha garantito coerenza architetturale assoluta e zero debito tecnico.
 
 ### Evoluzione Valore: Da Prototipo a Platinum Enterprise
 
