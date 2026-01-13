@@ -92,7 +92,7 @@ return [
         return new \MCAG\Service\Demo\DemoInvitationService(
             $c->get(\MCAG\Service\EmailServiceInterface::class),
             $c->get(LoggerInterface::class),
-            $_ENV['APP_URL'] ?? 'http://localhost/fratellanza-militare-archivio/public',
+            $_ENV['APP_URL'] ?? 'http://localhost/MCAG_Militare-Civile-Archivio-Gestionale/public',
             $c->get(PDO::class)
         );
     },

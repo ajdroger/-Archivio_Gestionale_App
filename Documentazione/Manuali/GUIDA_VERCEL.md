@@ -1,7 +1,7 @@
 # Guida: Pubblicazione su Vercel
 
 ## 📋 Panoramica
-Questa guida ti aiuterà a pubblicare il progetto **fratellanza-militare-archivio** su Vercel utilizzando funzioni serverless PHP.
+Questa guida ti aiuterà a pubblicare il progetto **MCAG_Militare-Civile-Archivio-Gestionale** su Vercel utilizzando funzioni serverless PHP.
 
 ## ⚠️ Considerazioni Importanti
 
@@ -53,8 +53,8 @@ DATABASE_URL=postgresql://postgres:password@host:5432/postgres
 ```bash
 # 1. Crea account su turso.tech
 # 2. Installa CLI: npm install -g @turso/cli
-# 3. Crea database: turso db create fratellanza-militare
-# 4. Ottieni URL: turso db show fratellanza-militare
+# 3. Crea database: turso db create mcag-archivio
+# 4. Ottieni URL: turso db show mcag-archivio
 TURSO_DATABASE_URL=libsql://your-database.turso.io
 TURSO_AUTH_TOKEN=your-auth-token
 ```
@@ -145,7 +145,7 @@ composer require aws/aws-sdk-php
 
 2. **Importa Progetto**
    - Click **"Add New..."** → **"Project"**
-   - Seleziona il repository `fratellanza-militare-archivio`
+   - Seleziona il repository `MCAG_Militare-Civile-Archivio-Gestionale`
    - Click **"Import"**
 
 3. **Configura Progetto**
@@ -195,7 +195,7 @@ composer require aws/aws-sdk-php
 5. **Deploy**
    - Click **"Deploy"**
    - Attendi il completamento del build
-   - Visita l'URL fornito (es. `https://fratellanza-militare-archivio.vercel.app`)
+   - Visita l'URL fornito (es. `https://MCAG_Militare-Civile-Archivio-Gestionale.vercel.app`)
 
 ### Metodo 2: Via Vercel CLI
 
@@ -207,12 +207,12 @@ npm install -g vercel
 vercel login
 
 # Deploy dalla directory del progetto
-cd 'c:\Program Files\Ampps\www\fratellanza-militare-archivio'
+cd 'c:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale'
 vercel
 
 # Segui le istruzioni interattive:
 # - Link to existing project? N
-# - Project name: fratellanza-militare-archivio
+# - Project name: MCAG_Militare-Civile-Archivio-Gestionale
 # - Override settings? N
 
 # Deploy in produzione

@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Middleware\InputSanitizerMiddleware;
+use MCAG\Middleware\InputSanitizerMiddleware;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Factory\ResponseFactory;
 

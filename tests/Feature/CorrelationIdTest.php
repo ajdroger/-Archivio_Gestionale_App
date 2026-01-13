@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Middleware\RequestIdMiddleware;
+use MCAG\Middleware\RequestIdMiddleware;
 use Psr\Log\LoggerInterface;
 use Monolog\Logger;
 use Monolog\Handler\TestHandler;

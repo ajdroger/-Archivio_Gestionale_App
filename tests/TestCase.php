@@ -4,10 +4,10 @@ namespace Tests;
 
 use PDO;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use FratellanzaMilitare\SecurityLayer\AccessControlList;
-use FratellanzaMilitare\SecurityLayer\Amministratore;
-use FratellanzaMilitare\SecurityLayer\Operatore;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\SecurityLayer\AccessControlList;
+use MCAG\SecurityLayer\Amministratore;
+use MCAG\SecurityLayer\Operatore;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -42,11 +42,11 @@ abstract class TestCase extends BaseTestCase
         if ($this->db === null) {
             // Use in-memory SQLite or test DB if configured, otherwise use real connection (careful!)
             // For now, assuming environment setup in Pest.php handles DB_DATABASE
-            $this->db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+            $this->db = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
         }
 
         // Setup AuditTrail
-        $audit = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
+        $audit = \MCAG\SecurityLayer\AuditTrail::getInstance();
         $audit->setPdo($this->db);
 
         // CREATE APP

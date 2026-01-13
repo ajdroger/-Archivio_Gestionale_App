@@ -22,7 +22,7 @@
 ## 📂 Struttura del Progetto
 
 ```
-fratellanza-militare-archivio/
+MCAG_Militare-Civile-Archivio-Gestionale/
 ├── src/                      # Core business logic (106 classes)
 │   ├── Controller/           # HTTP handlers
 │   ├── GestioneSoci/         # Domain models
@@ -48,8 +48,8 @@ fratellanza-militare-archivio/
 
 **1. Clone & Dependencies**:
 ```bash
-git clone https://github.com/yourusername/fratellanza-militare-archivio.git
-cd fratellanza-militare-archivio
+git clone https://github.com/yourusername/MCAG_Militare-Civile-Archivio-Gestionale.git
+cd MCAG_Militare-Civile-Archivio-Gestionale
 composer install
 npm install && npm run build
 ```

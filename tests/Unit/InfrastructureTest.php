@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\InfrastrutturaIT\GoogleDriveAdapter;
-use FratellanzaMilitare\InfrastrutturaIT\OCREngine;
+use MCAG\InfrastrutturaIT\GoogleDriveAdapter;
+use MCAG\InfrastrutturaIT\OCREngine;
 
 test('google drive adapter uploads and downloads', function () {
     // Deprecated

@@ -15,7 +15,7 @@ class DemoInvitationService
     public function __construct(
         EmailServiceInterface $emailService,
         LoggerInterface $logger,
-        string $baseUrl = 'http://localhost/fratellanza-militare-archivio/public',
+        string $baseUrl = 'http://localhost/MCAG_Militare-Civile-Archivio-Gestionale/public',
         ?\PDO $pdo = null
     ) {
         $this->emailService = $emailService;

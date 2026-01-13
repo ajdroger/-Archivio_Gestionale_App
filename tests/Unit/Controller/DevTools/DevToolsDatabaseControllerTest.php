@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Controller\DevTools;
 
-use FratellanzaMilitare\Controller\DevTools\DevToolsDatabaseController;
+use MCAG\Controller\DevTools\DevToolsDatabaseController;
 use Mustache_Engine;
 use PDO;
 use PDOStatement;

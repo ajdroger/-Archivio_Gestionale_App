@@ -12,8 +12,8 @@ Questa guida ti permette di avere un'istanza funzionante di **Mission Control v2
 ### 1. Preparazione Cartella
 ```powershell
 cd "c:\Program Files\Ampps\www"
-git clone https://github.com/ajdroger/-Archivio_Gestionale_App.git fratellanza-militare-archivio
-cd fratellanza-militare-archivio
+git clone https://github.com/ajdroger/-Archivio_Gestionale_App.git MCAG_Militare-Civile-Archivio-Gestionale
+cd MCAG_Militare-Civile-Archivio-Gestionale
 ```
 
 ### 2. Installazione Dipendenze
@@ -28,7 +28,7 @@ Copia il file di esempio dalla cartella config:
 copy config\.env.example .env
 ```
 Apri `.env` e configura:
-- `DB_DATABASE=fratellanza`
+- `DB_DATABASE=mcag_db`
 - `DB_USERNAME=root` (o utente locale)
 - `DB_PASSWORD=mysql` (o password locale)
 
@@ -36,7 +36,7 @@ Apri `.env` e configura:
 Importa lo schema database iniziale (se non hai migrazioni Phinx attive):
 ```powershell
 # Esempio via CLI MySQL
-mysql -u root -p fratellanza < db/schema.sql
+mysql -u root -p mcag_db < db/schema.sql
 ```
 *Oppure usa phpMyAdmin per importare `db/schema.sql`.*
 

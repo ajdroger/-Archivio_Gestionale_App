@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\QueryBuilder;
+use MCAG\InfrastrutturaIT\Persistence\QueryBuilder;
 
 test('select basic query', function () {
     $qb = new QueryBuilder();

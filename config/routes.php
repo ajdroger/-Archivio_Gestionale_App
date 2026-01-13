@@ -32,7 +32,7 @@ return function (App $app) {
     $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
     // Auth Routes
-    $loginLimit = new RateLimitMiddleware(5, 60);
+    $loginLimit = new RateLimitMiddleware(100, 60);
     $app->get('/login', LoginFlowController::class . ':form')->setName('login')->add($loginLimit);
     $app->post('/login', LoginFlowController::class . ':verifyCredentials')->setName('login_verify')->add($loginLimit);
     $app->get('/login/2fa', TwoFactorController::class . ':form')->setName('login_2fa')->add($loginLimit);

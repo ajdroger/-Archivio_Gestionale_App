@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Service;
 
-use FratellanzaMilitare\Service\CacheService;
-use FratellanzaMilitare\Service\RedisService;
+use MCAG\Service\CacheService;
+use MCAG\Service\RedisService;
 use PHPUnit\Framework\TestCase;
 
 class CacheServiceTest extends TestCase

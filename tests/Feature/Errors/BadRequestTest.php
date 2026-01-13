@@ -7,7 +7,7 @@ test('error 400 displays custom template', function () {
     $exception = new \Slim\Exception\HttpBadRequestException($request);
 
     // Invochiamo il GlobalExceptionHandler direttamente o tramite un mock di route
-    $handler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler(
+    $handler = new \MCAG\Debug\GlobalExceptionHandler(
         $this->app->getContainer()->get(\Psr\Log\LoggerInterface::class),
         $this->app->getContainer()->get(\Mustache_Engine::class)
     );

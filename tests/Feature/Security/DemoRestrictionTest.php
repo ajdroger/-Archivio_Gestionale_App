@@ -2,8 +2,8 @@
 
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
-use FratellanzaMilitare\Controller\SettingsController;
-use FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController;
+use MCAG\Controller\SettingsController;
+use MCAG\Controller\DevTools\DevToolsDashboardController;
 
 /**
  * SECURITY TEST: Demo Mode Restrictions
@@ -49,9 +49,9 @@ test('devtools dashboard returns 403 in demo mode', function () {
     $mustache = $this->createMock(\Mustache_Engine::class);
     $mustache->method('render')->willReturn('<h1>Access Denied</h1>');
 
-    $system = $this->createMock(\FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class);
-    $audit = $this->createMock(\FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class);
-    $demo = $this->createMock(\FratellanzaMilitare\Service\Demo\DemoInvitationService::class);
+    $system = $this->createMock(\MCAG\Controller\DevTools\DevToolsSystemController::class);
+    $audit = $this->createMock(\MCAG\Controller\DevTools\DevToolsAuditController::class);
+    $demo = $this->createMock(\MCAG\Service\Demo\DemoInvitationService::class);
 
     $controller = new DevToolsDashboardController($mustache, $system, $audit, $demo);
 

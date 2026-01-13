@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Controller;
 
-use FratellanzaMilitare\Controller\SettingsController;
+use MCAG\Controller\SettingsController;
 use Mustache_Engine;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

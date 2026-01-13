@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Service\BackupService;
+use MCAG\Service\BackupService;
 use Psr\Log\NullLogger;
 
 test('BackupService esegue la copia del database', function () {

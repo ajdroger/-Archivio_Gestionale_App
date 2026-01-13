@@ -3,7 +3,7 @@
 # COMANDI MANUTENZIONE PROGETTO (Custom)
 # ==========================================
 # Questi comandi sono specifici per "Fratellanza Militare Archivio"
-# Eseguire dalla root del progetto: C:\Program Files\Ampps\www\fratellanza-militare-archivio
+# Eseguire dalla root del progetto: C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale
 
 # --- HEALTH CHECK & DIAGNOSTICA ---
 php bin/tools/health_check.php                # Controllo completo salute sistema (DB, Permessi, PHP)

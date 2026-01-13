@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\GestioneSoci\ModuloIscrizione;
+use MCAG\GestioneSoci\ModuloIscrizione;
 
 test('verifica integrita documento', function () {
     $doc = new ModuloIscrizione();

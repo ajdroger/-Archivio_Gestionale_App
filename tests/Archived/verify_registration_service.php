@@ -1,10 +1,10 @@
 <?php
 
-use FratellanzaMilitare\Service\RegistrationService;
-use FratellanzaMilitare\Service\ValidationService;
-use FratellanzaMilitare\Service\PdfGenerationService;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\Service\RegistrationService;
+use MCAG\Service\ValidationService;
+use MCAG\Service\PdfGenerationService;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 use Monolog\Logger;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -25,7 +25,7 @@ $regService = new RegistrationService(
     $socioRepo,
     $validator,
     $pdfService,
-    new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/test_emails.txt'),
+    new \MCAG\Service\FileEmailService(__DIR__ . '/../../logs/test_emails.txt'),
     $logger
 );
 

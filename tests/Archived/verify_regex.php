@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use FratellanzaMilitare\Service\ValidationService;
+use MCAG\Service\ValidationService;
 
 $val = new ValidationService();
 

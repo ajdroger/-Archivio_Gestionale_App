@@ -34,8 +34,8 @@ class DemoRequestTest extends TestCase
         ];
 
         // Mock Email Service (Should NOT be called here, but good practice to safegaurd)
-        $mockEmail = $this->createMock(\FratellanzaMilitare\Service\EmailServiceInterface::class);
-        $this->app->getContainer()->set(\FratellanzaMilitare\Service\EmailServiceInterface::class, $mockEmail);
+        $mockEmail = $this->createMock(\MCAG\Service\EmailServiceInterface::class);
+        $this->app->getContainer()->set(\MCAG\Service\EmailServiceInterface::class, $mockEmail);
 
         $request = (new ServerRequestFactory())->createServerRequest('POST', '/api/public/demo-request');
         $request = $request->withHeader('Content-Type', 'application/json');
@@ -63,13 +63,13 @@ class DemoRequestTest extends TestCase
         ];
 
         // MOCK Email Service to prevent mail() calls and verify interaction
-        $mockEmail = $this->createMock(\FratellanzaMilitare\Service\EmailServiceInterface::class);
+        $mockEmail = $this->createMock(\MCAG\Service\EmailServiceInterface::class);
         $mockEmail->expects($this->once())
             ->method('send')
             ->willReturn(true);
 
         // Override container definition
-        $this->app->getContainer()->set(\FratellanzaMilitare\Service\EmailServiceInterface::class, $mockEmail);
+        $this->app->getContainer()->set(\MCAG\Service\EmailServiceInterface::class, $mockEmail);
 
 
         $request = (new ServerRequestFactory())->createServerRequest('POST', '/api/public/demo-request');

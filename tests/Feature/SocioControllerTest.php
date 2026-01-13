@@ -1,11 +1,11 @@
 <?php
 
-use FratellanzaMilitare\Controller\Anagrafica\Soci\ListController;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\Enum\StatoIscrizione;
+use MCAG\Controller\Anagrafica\Soci\ListController;
+use MCAG\Controller\Anagrafica\Soci\PersistenceController;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\Enum\StatoIscrizione;
 use Psr\Log\LoggerInterface;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
@@ -50,9 +50,9 @@ test('socio create stores data', function () {
     $mustache = $this->createMock(Mustache_Engine::class);
     $repo = $this->createMock(PDOSocioRepository::class);
     $logger = $this->createMock(LoggerInterface::class);
-    $validator = new \FratellanzaMilitare\Service\ValidationService();
+    $validator = new \MCAG\Service\ValidationService();
 
-    $registrationService = $this->createMock(\FratellanzaMilitare\Service\RegistrationService::class);
+    $registrationService = $this->createMock(\MCAG\Service\RegistrationService::class);
     $registrationService->expects($this->once())
         ->method('registerNewMember')
         ->willReturnCallback(function ($data) {

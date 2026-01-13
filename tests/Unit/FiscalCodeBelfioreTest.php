@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use FratellanzaMilitare\Service\FiscalCodeCalculator;
+use MCAG\Service\FiscalCodeCalculator;
 use Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 

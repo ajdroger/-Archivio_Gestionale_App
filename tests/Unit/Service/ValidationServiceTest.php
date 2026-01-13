@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Service;
 
-use FratellanzaMilitare\Service\ValidationService;
+use MCAG\Service\ValidationService;
 use PHPUnit\Framework\TestCase;
 
 class ValidationServiceTest extends TestCase

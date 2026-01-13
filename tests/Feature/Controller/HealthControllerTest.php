@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Controller;
 
-use FratellanzaMilitare\Controller\HealthController;
-use FratellanzaMilitare\Service\HealthCheckService;
+use MCAG\Controller\HealthController;
+use MCAG\Service\HealthCheckService;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

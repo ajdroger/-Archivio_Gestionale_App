@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Debug\LogAnalyzer;
+use MCAG\Debug\LogAnalyzer;
 
 test('analyze returns summary', function () {
     // We can't easily mock file system reads here without vfsStream, 

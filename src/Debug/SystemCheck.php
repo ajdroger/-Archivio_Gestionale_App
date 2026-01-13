@@ -126,9 +126,21 @@ class SystemCheck
 
     private function checkRecentBackups(): array
     {
-        $backupDir = __DIR__ . '/../../storage/backups';
-        // Now looking for .sql files (standard dumb)
-        $backups = glob($backupDir . '/*.sql');
+        $backupDirs = [
+            __DIR__ . '/../../storage/backups',
+            __DIR__ . '/../../backups/safety_snapshots'
+        ];
+
+        $backups = [];
+        foreach ($backupDirs as $dir) {
+            if (is_dir($dir)) {
+                // Find all .sql files
+                $found = glob($dir . '/*.sql');
+                if ($found) {
+                    $backups = array_merge($backups, $found);
+                }
+            }
+        }
 
         if (empty($backups)) {
             return [

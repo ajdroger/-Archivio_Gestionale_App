@@ -1,7 +1,7 @@
 # Guida: Pubblicazione su Railway
 
 ## 📋 Panoramica
-Questa guida ti aiuterà a pubblicare il progetto **fratellanza-militare-archivio** su Railway, una piattaforma moderna per deployment di applicazioni che **supporta pienamente PHP con SQLite**.
+Questa guida ti aiuterà a pubblicare il progetto **MCAG_Militare-Civile-Archivio-Gestionale** su Railway, una piattaforma moderna per deployment di applicazioni che **supporta pienamente PHP con SQLite**.
 
 ## ✅ Perché Railway è Ideale per Questo Progetto
 
@@ -59,7 +59,7 @@ Script di startup che:
 1. Vai su [railway.app/new](https://railway.app/new)
 2. Fai login con GitHub
 3. Click **"Deploy from GitHub repo"**
-4. Seleziona `fratellanza-militare-archivio`
+4. Seleziona `MCAG_Militare-Civile-Archivio-Gestionale`
 5. Click **"Deploy Now"**
 
 #### Passo 2: Configura Variabili d'Ambiente
@@ -119,7 +119,7 @@ npm install -g @railway/cli
 railway login
 
 # Link al progetto (dalla directory del progetto)
-cd 'c:\Program Files\Ampps\www\fratellanza-militare-archivio'
+cd 'c:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale'
 railway link
 
 # Aggiungi variabili d'ambiente

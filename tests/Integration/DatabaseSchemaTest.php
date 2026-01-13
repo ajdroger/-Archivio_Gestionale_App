@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */

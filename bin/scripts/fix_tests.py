@@ -15,7 +15,7 @@ files = [
     'tests/Unit/OperatoreTest.php'
 ]
 
-base_dir = r'c:/Program Files/Ampps/www/fratellanza-militare-archivio'
+base_dir = r'c:/Program Files/Ampps/www/MCAG_Militare-Civile-Archivio-Gestionale'
 
 for file_path in files:
     full_path = os.path.join(base_dir, file_path)

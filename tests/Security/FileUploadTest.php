@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Service\ValidationService;
+use MCAG\Service\ValidationService;
 
 test('ValidationService individua spoofing estensione', function () {
     $service = new ValidationService();

@@ -4,7 +4,7 @@ test('error 500 displays custom template', function () {
     // Un'eccezione generica (RuntimeException) viene trattata come 500 dal GlobalExceptionHandler
     $exception = new \RuntimeException('Qualcosa è andato storto!');
 
-    $handler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler(
+    $handler = new \MCAG\Debug\GlobalExceptionHandler(
         $this->app->getContainer()->get(\Psr\Log\LoggerInterface::class),
         $this->app->getContainer()->get(\Mustache_Engine::class)
     );

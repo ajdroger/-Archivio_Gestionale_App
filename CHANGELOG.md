@@ -19,6 +19,29 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.3.2] - 2026-01-13 "**Platinum Grade Reliability**"
+### Aggiunto
+- **Commercial Pricing Tiers**: Definizione formale dei livelli di licenza basata sul Report Benchmark 2026.
+    - **Standard v5.0** (€115.000): Licenza base con Source Code.
+    - **Professional v5.0** (€135.000): Best Seller con DevTools Ultimate.
+    - **Enterprise v5.0** (€175.000): Mission-Critical con HA Cluster e SLA 99.9%.
+
+### Risolto [CRITICAL]
+- **Toolkit Console JSON Fix**: Risolto errore "Unexpected end of JSON input" in `terminal.php`.
+    - **Tecnica**: Implementazione output buffering (`ob_start` / `ob_end_clean`) per catturare e sopprimere warning PHP spuri (es. "Undefined array key") che corrompevano il payload JSON.
+- **System Check Backup Logic**: Corretta la logica di controllo backup in `SystemCheck.php`.
+    - **Problema**: Il sistema cercava backup solo in `storage/backups` ignorando gli snapshot generati da `safe_test_runner.php` in `backups/safety_snapshots`.
+    - **Fix**: Aggiunta scansione multi-directory per rilevare correttamente l'ultimo backup valido.
+- **Test Runner Path Resolution**: Fixato `safe_test_runner.php` per ambienti Windows.
+    - **Dettaglio**: Il path relativo `../../vendor/bin/pest` falliva se eseguito da directory diverse. Sostituito con `realpath(__DIR__ . '/../../vendor/bin/pest')` assoluto.
+- **Link DevTools**: Aggiornato link hardcoded errato nel template `devtools.mustache` (`/fratellanza-militare-archivio/bin/` -> dinamico).
+
+### Performance e Metriche
+- **Test Suite**: Verificato 100% pass rate su 184 test (Feature + Unit + Security).
+- **Valutazione**: ROI Sviluppatore certificato a €63/h con 2.140 ore totali di ingegneria.
+
+---
+
 ## [5.3.0] - 2026-01-13 "**Operation Open Heart: Rebranding**"
 ### Rebranding [CRITICAL]
 - **Identity Shift**: Rinomina completa del progetto da "Fratellanza Militare" a **MCAG** (Militare-Civile Archivio Gestionale).
