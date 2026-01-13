@@ -18,10 +18,10 @@ class PolicyController
     public function privacy(Request $request, Response $response): Response
     {
         $policyContent = '
-            <div class="card shadow-sm border-0">
+            <div class="card bg-dark text-white border-secondary shadow-lg">
                 <div class="card-body p-5">
                     <h1 class="mb-4 text-primary"><i class="fa-solid fa-user-shield me-2"></i>Privacy Policy</h1>
-                    <p class="lead text-muted">Informativa ai sensi degli art. 13-14 del Regolamento UE 2016/679 (GDPR).</p>
+                    <p class="lead text-white-50">Informativa ai sensi degli art. 13-14 del Regolamento UE 2016/679 (GDPR).</p>
                     <hr class="my-4">
                     
                     <h4>1. Titolare del Trattamento</h4>
@@ -63,18 +63,18 @@ class PolicyController
     public function cookie(Request $request, Response $response): Response
     {
         $cookieContent = '
-            <div class="card shadow-sm border-0">
+            <div class="card bg-dark text-white border-secondary shadow-lg">
                 <div class="card-body p-5">
                     <h1 class="mb-4 text-info"><i class="fa-solid fa-cookie-bite me-2"></i>Cookie Policy</h1>
-                    <p class="lead text-muted">Informativa estesa sull\'utilizzo dei Cookie e tecnologie similari.</p>
+                    <p class="lead text-white-50">Informativa estesa sull\'utilizzo dei Cookie e tecnologie similari.</p>
                     <hr class="my-4">
                     
                     <h4>1. Cosa sono i Cookie?</h4>
                     <p>I cookie sono piccoli file di testo che i siti visitati inviano al terminale dell\'utente, dove vengono memorizzati, per poi essere ritrasmessi agli stessi siti alla visita successiva.</p>
                     
                     <h4>2. Tipologie di Cookie utilizzate</h4>
-                    <table class="table table-bordered mt-3">
-                        <thead class="table-light">
+                    <table class="table table-bordered table-dark mt-3 border-secondary">
+                        <thead class="table-secondary text-dark">
                             <tr>
                                 <th>Tipologia</th>
                                 <th>Descrizione</th>
