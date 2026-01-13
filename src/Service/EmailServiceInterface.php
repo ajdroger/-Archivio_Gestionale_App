@@ -18,5 +18,5 @@ interface EmailServiceInterface
      * @param array $attachments Elenco percorsi allegati
      * @return bool Esito invio
      */
-    public function send(string $to, string $subject, string $body, array $attachments = []): bool;
+    public function send(string $to, string $subject, string $body, array $attachments = [], array $headers = []): bool;
 }

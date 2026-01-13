@@ -24,7 +24,7 @@ afterEach(function () {
 test('registrazione fallisce se utente esiste gia', function () {
     /** @var \Tests\TestCase $this */
     $repo = new PDOSocioRepository($this->db);
-    $service = new RegistrationService($repo, new ValidationService(), new PdfGenerationService(), new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
+    $service = new RegistrationService($repo, new ValidationService(), new PdfGenerationService(), new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../var/logs/tests/test_pest_emails.txt'), new NullLogger());
 
     $data = [
         'nome' => 'Mario',
