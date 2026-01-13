@@ -80,7 +80,7 @@ php -S localhost:8000 -t public
 
 Comprehensive documentation available in `Documentazione/`:
 
-- **[API Reference](Documentazione/Manuali/API_REFERENCE.md)**: Complete endpoint documentation
+- **[API Reference](Documentazione/Sviluppo/2026-01-13_API_REFERENCE.md)**: Complete endpoint documentation
 - **[Deployment Guide](Documentazione/Manuali/DEPLOYMENT.md)**: Production setup instructions  
 - **[System Design](Documentazione/Architettura/SYSTEM_DESIGN_DOCUMENT.md)**: Architecture & resilience
 - **[Security Analysis](Documentazione/Analisi/strategic_analysis_report.md)**: Complete security audit
