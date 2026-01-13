@@ -593,7 +593,7 @@ Utilizzare **PDO Transactions** atomiche (`beginTransaction`, `commit`, `rollBac
 
 ---
 
-## [ADR-021] Request Correlation & Tracing
+## [ADR-016] Request Correlation & Tracing
 **Data**: 2025-12-21 (Retroactive)
 **Stato**: ✅ Attivo
 **Contesto**:
@@ -876,7 +876,7 @@ La manutenzione a lungo termine di un progetto Enterprise richiede leggibilità 
 **Stato**: ✅ Attivo
 **Contesto**:
 Durante il debugging del sistema RAG v5.2, è emerso che l'AI faticava a recuperare informazioni specifiche contenute in documenti lunghi e strutturati (come il `DECISION_LOG.md` o i Report). L'analisi ha rivelato che il `DocumentChunkerService` originale frammentava il testo basandosi esclusivamente sulla lunghezza (500 char) e sui segni di punteggiatura.
-Questo approccio "cieco" separava spesso il titolo di una sezione dal suo contenuto, rendendo l'embedding del contenuto orfano del suo contesto chiave. Di conseguenza, una ricerca per "Redis" trovava il titolo ma non la spiegazione, o viceversa, abbassando il *similarity score*.
+Questo approccio "cieco" separava spesso il titolo di una sezione (es. `## [ADR-016] No Redis`) dal suo contenuto, rendendo l'embedding del contenuto orfano del suo contesto chiave. Di conseguenza, una ricerca per "Redis" trovava il titolo ma non la spiegazione, o viceversa, abbassando il *similarity score*.
 
 **Decisione**:
 Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa dei documenti Markdown.

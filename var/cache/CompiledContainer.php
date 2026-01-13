@@ -18,42 +18,46 @@ class CompiledContainer extends DI\CompiledContainer{
   'FratellanzaMilitare\\AI\\Providers\\OllamaProvider' => 'get12',
   'FratellanzaMilitare\\AI\\RAG\\SimpleVectorStore' => 'get13',
   'FratellanzaMilitare\\Service\\DocumentParser\\PdfParserService' => 'get14',
-  'FratellanzaMilitare\\AI\\RAG\\DocumentChunkerService' => 'get15',
-  'FratellanzaMilitare\\Service\\AI\\DocumentIngestionService' => 'get16',
-  'FratellanzaMilitare\\Controller\\AI\\AssistantController' => 'get17',
-  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\ListController' => 'get18',
-  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\DetailController' => 'get19',
-  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\PersistenceController' => 'get20',
-  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\ActionController' => 'get21',
-  'FratellanzaMilitare\\Controller\\Anagrafica\\Documenti\\StorageController' => 'get22',
-  'FratellanzaMilitare\\Controller\\Anagrafica\\Servizi\\SocioExportController' => 'get23',
-  'FratellanzaMilitare\\Controller\\Auth\\LoginFlowController' => 'get24',
-  'FratellanzaMilitare\\Controller\\Auth\\TwoFactorController' => 'get25',
-  'FratellanzaMilitare\\Controller\\Auth\\LogoutController' => 'get26',
-  'FratellanzaMilitare\\Service\\RedisService' => 'get27',
-  'FratellanzaMilitare\\Service\\CacheService' => 'get28',
-  'FratellanzaMilitare\\Service\\QueueService' => 'get29',
-  'FratellanzaMilitare\\Service\\BackupVerificationService' => 'get30',
-  'FratellanzaMilitare\\Service\\HealthCheckService' => 'get31',
-  'FratellanzaMilitare\\Service\\JsonLogFormatter' => 'get32',
-  'FratellanzaMilitare\\Service\\ValidationService' => 'get33',
-  'FratellanzaMilitare\\Service\\BackupService' => 'get34',
-  'FratellanzaMilitare\\Debug\\ResilienceMonitor' => 'get35',
-  'FratellanzaMilitare\\Service\\EmailServiceInterface' => 'get36',
-  'FratellanzaMilitare\\Service\\PdfGenerationService' => 'get37',
-  'FratellanzaMilitare\\Service\\RegistrationService' => 'get38',
-  'FratellanzaMilitare\\Service\\Demo\\DemoInvitationService' => 'get39',
-  'FratellanzaMilitare\\Event\\EventBusInterface' => 'get40',
-  'FratellanzaMilitare\\Event\\Listeners\\IndexSocioListener' => 'get41',
-  'Psr\\Log\\LoggerInterface' => 'get42',
-  'audit_logger' => 'get43',
-  'Predis\\Client' => 'get44',
-  'PDO' => 'get45',
-  'FratellanzaMilitare\\InfrastrutturaIT\\Persistence\\PDOSocioRepository' => 'get46',
-  'FratellanzaMilitare\\GestioneSoci\\SocioRepository' => 'get47',
-  'Mustache_Engine' => 'get48',
-  'FratellanzaMilitare\\SecurityLayer\\AuditTrail' => 'get49',
-  'HTMLPurifier' => 'get50',
+  'FratellanzaMilitare\\Service\\DocumentParser\\WordParserService' => 'get15',
+  'FratellanzaMilitare\\Service\\DocumentParser\\ExcelParserService' => 'get16',
+  'FratellanzaMilitare\\Service\\DocumentParser\\CodeParserService' => 'get17',
+  'FratellanzaMilitare\\Service\\DocumentParser\\DocumentParserFactory' => 'get18',
+  'FratellanzaMilitare\\AI\\RAG\\DocumentChunkerService' => 'get19',
+  'FratellanzaMilitare\\Service\\AI\\DocumentIngestionService' => 'get20',
+  'FratellanzaMilitare\\Controller\\AI\\AssistantController' => 'get21',
+  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\ListController' => 'get22',
+  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\DetailController' => 'get23',
+  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\PersistenceController' => 'get24',
+  'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\ActionController' => 'get25',
+  'FratellanzaMilitare\\Controller\\Anagrafica\\Documenti\\StorageController' => 'get26',
+  'FratellanzaMilitare\\Controller\\Anagrafica\\Servizi\\SocioExportController' => 'get27',
+  'FratellanzaMilitare\\Controller\\Auth\\LoginFlowController' => 'get28',
+  'FratellanzaMilitare\\Controller\\Auth\\TwoFactorController' => 'get29',
+  'FratellanzaMilitare\\Controller\\Auth\\LogoutController' => 'get30',
+  'FratellanzaMilitare\\Service\\RedisService' => 'get31',
+  'FratellanzaMilitare\\Service\\CacheService' => 'get32',
+  'FratellanzaMilitare\\Service\\QueueService' => 'get33',
+  'FratellanzaMilitare\\Service\\BackupVerificationService' => 'get34',
+  'FratellanzaMilitare\\Service\\HealthCheckService' => 'get35',
+  'FratellanzaMilitare\\Service\\JsonLogFormatter' => 'get36',
+  'FratellanzaMilitare\\Service\\ValidationService' => 'get37',
+  'FratellanzaMilitare\\Service\\BackupService' => 'get38',
+  'FratellanzaMilitare\\Debug\\ResilienceMonitor' => 'get39',
+  'FratellanzaMilitare\\Service\\EmailServiceInterface' => 'get40',
+  'FratellanzaMilitare\\Service\\PdfGenerationService' => 'get41',
+  'FratellanzaMilitare\\Service\\RegistrationService' => 'get42',
+  'FratellanzaMilitare\\Service\\Demo\\DemoInvitationService' => 'get43',
+  'FratellanzaMilitare\\Event\\EventBusInterface' => 'get44',
+  'FratellanzaMilitare\\Event\\Listeners\\IndexSocioListener' => 'get45',
+  'Psr\\Log\\LoggerInterface' => 'get46',
+  'audit_logger' => 'get47',
+  'Predis\\Client' => 'get48',
+  'PDO' => 'get49',
+  'FratellanzaMilitare\\InfrastrutturaIT\\Persistence\\PDOSocioRepository' => 'get50',
+  'FratellanzaMilitare\\GestioneSoci\\SocioRepository' => 'get51',
+  'Mustache_Engine' => 'get52',
+  'FratellanzaMilitare\\SecurityLayer\\AuditTrail' => 'get53',
+  'HTMLPurifier' => 'get54',
 );
 
     protected function get1()
@@ -192,15 +196,43 @@ class CompiledContainer extends DI\CompiledContainer{
     protected function get15()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
-        return new \FratellanzaMilitare\AI\RAG\DocumentChunkerService();
-    }, 'FratellanzaMilitare\\AI\\RAG\\DocumentChunkerService');
+        return new \FratellanzaMilitare\Service\DocumentParser\WordParserService();
+    }, 'FratellanzaMilitare\\Service\\DocumentParser\\WordParserService');
     }
 
     protected function get16()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\DocumentParser\ExcelParserService();
+    }, 'FratellanzaMilitare\\Service\\DocumentParser\\ExcelParserService');
+    }
+
+    protected function get17()
+    {
+        return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\DocumentParser\CodeParserService();
+    }, 'FratellanzaMilitare\\Service\\DocumentParser\\CodeParserService');
+    }
+
+    protected function get18()
+    {
+        return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory($c);
+    }, 'FratellanzaMilitare\\Service\\DocumentParser\\DocumentParserFactory');
+    }
+
+    protected function get19()
+    {
+        return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
+        return new \FratellanzaMilitare\AI\RAG\DocumentChunkerService();
+    }, 'FratellanzaMilitare\\AI\\RAG\\DocumentChunkerService');
+    }
+
+    protected function get20()
+    {
+        return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\AI\DocumentIngestionService(
-            $c->get(\FratellanzaMilitare\Service\DocumentParser\PdfParserService::class),
+            $c->get(\FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory::class),
             $c->get(\FratellanzaMilitare\AI\RAG\DocumentChunkerService::class),
             $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class),
             $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class)
@@ -208,7 +240,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\AI\\DocumentIngestionService');
     }
 
-    protected function get17()
+    protected function get21()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\AI\AssistantController(
@@ -216,12 +248,13 @@ class CompiledContainer extends DI\CompiledContainer{
             $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class),
             $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class),
             $c->get(\Psr\Log\LoggerInterface::class),
-            $c->get(\FratellanzaMilitare\Queue\QueueInterface::class)
+            $c->get(\FratellanzaMilitare\Queue\QueueInterface::class),
+            $c->get(\FratellanzaMilitare\GestioneSoci\SocioRepository::class)
         );
     }, 'FratellanzaMilitare\\Controller\\AI\\AssistantController');
     }
 
-    protected function get18()
+    protected function get22()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Anagrafica\Soci\ListController(
@@ -231,7 +264,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\ListController');
     }
 
-    protected function get19()
+    protected function get23()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Anagrafica\Soci\DetailController(
@@ -242,7 +275,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\DetailController');
     }
 
-    protected function get20()
+    protected function get24()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController(
@@ -255,14 +288,14 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\PersistenceController');
     }
 
-    protected function get21()
+    protected function get25()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Anagrafica\Soci\ActionController($c->get('audit_logger'));
     }, 'FratellanzaMilitare\\Controller\\Anagrafica\\Soci\\ActionController');
     }
 
-    protected function get22()
+    protected function get26()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Anagrafica\Documenti\StorageController(
@@ -273,7 +306,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Controller\\Anagrafica\\Documenti\\StorageController');
     }
 
-    protected function get23()
+    protected function get27()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Anagrafica\Servizi\SocioExportController(
@@ -283,7 +316,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Controller\\Anagrafica\\Servizi\\SocioExportController');
     }
 
-    protected function get24()
+    protected function get28()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Auth\LoginFlowController(
@@ -293,28 +326,28 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Controller\\Auth\\LoginFlowController');
     }
 
-    protected function get25()
+    protected function get29()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Controller\Auth\TwoFactorController($c->get(\Mustache_Engine::class));
     }, 'FratellanzaMilitare\\Controller\\Auth\\TwoFactorController');
     }
 
-    protected function get26()
+    protected function get30()
     {
         return $this->resolveFactory(static function () {
         return new \FratellanzaMilitare\Controller\Auth\LogoutController();
     }, 'FratellanzaMilitare\\Controller\\Auth\\LogoutController');
     }
 
-    protected function get27()
+    protected function get31()
     {
         return $this->resolveFactory(static function () {
         return new \FratellanzaMilitare\Service\RedisService();
     }, 'FratellanzaMilitare\\Service\\RedisService');
     }
 
-    protected function get28()
+    protected function get32()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\CacheService(
@@ -323,7 +356,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\CacheService');
     }
 
-    protected function get29()
+    protected function get33()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\QueueService(
@@ -332,7 +365,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\QueueService');
     }
 
-    protected function get30()
+    protected function get34()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\BackupVerificationService(
@@ -342,7 +375,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\BackupVerificationService');
     }
 
-    protected function get31()
+    protected function get35()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\HealthCheckService(
@@ -354,21 +387,21 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\HealthCheckService');
     }
 
-    protected function get32()
+    protected function get36()
     {
         return $this->resolveFactory(static function () {
         return new \FratellanzaMilitare\Service\JsonLogFormatter('FratellanzaMilitare');
     }, 'FratellanzaMilitare\\Service\\JsonLogFormatter');
     }
 
-    protected function get33()
+    protected function get37()
     {
         return $this->resolveFactory(static function () {
         return new \FratellanzaMilitare\Service\ValidationService();
     }, 'FratellanzaMilitare\\Service\\ValidationService');
     }
 
-    protected function get34()
+    protected function get38()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\BackupService(
@@ -380,7 +413,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\BackupService');
     }
 
-    protected function get35()
+    protected function get39()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Debug\ResilienceMonitor(
@@ -391,7 +424,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Debug\\ResilienceMonitor');
     }
 
-    protected function get36()
+    protected function get40()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         $config = [
@@ -404,14 +437,14 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\EmailServiceInterface');
     }
 
-    protected function get37()
+    protected function get41()
     {
         return $this->resolveFactory(static function () {
         return new \FratellanzaMilitare\Service\PdfGenerationService();
     }, 'FratellanzaMilitare\\Service\\PdfGenerationService');
     }
 
-    protected function get38()
+    protected function get42()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\RegistrationService(
@@ -424,7 +457,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\RegistrationService');
     }
 
-    protected function get39()
+    protected function get43()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\Demo\DemoInvitationService(
@@ -436,7 +469,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Service\\Demo\\DemoInvitationService');
     }
 
-    protected function get40()
+    protected function get44()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         $bus = new \FratellanzaMilitare\Event\EventBus($c->get(\Psr\Log\LoggerInterface::class));
@@ -458,7 +491,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Event\\EventBusInterface');
     }
 
-    protected function get41()
+    protected function get45()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         return new \FratellanzaMilitare\Event\Listeners\IndexSocioListener(
@@ -469,7 +502,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\Event\\Listeners\\IndexSocioListener');
     }
 
-    protected function get42()
+    protected function get46()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         $logger = new \Monolog\Logger('system');
@@ -488,7 +521,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'Psr\\Log\\LoggerInterface');
     }
 
-    protected function get43()
+    protected function get47()
     {
         return $this->resolveFactory(static function () {
         $logger = new \Monolog\Logger('audit');
@@ -521,7 +554,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'audit_logger');
     }
 
-    protected function get44()
+    protected function get48()
     {
         return $this->resolveFactory(static function () {
         // Configurabile via ENV se necessario
@@ -541,26 +574,26 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'Predis\\Client');
     }
 
-    protected function get45()
+    protected function get49()
     {
         return $this->resolveFactory(static function () {
         return \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
     }, 'PDO');
     }
 
-    protected function get46()
+    protected function get50()
     {
         return $this->resolveFactory(static function (\PDO $pdo) {
         return new \FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository($pdo);
     }, 'FratellanzaMilitare\\InfrastrutturaIT\\Persistence\\PDOSocioRepository');
     }
 
-    protected function get47()
+    protected function get51()
     {
         return $this->delegateContainer->get('FratellanzaMilitare\\InfrastrutturaIT\\Persistence\\PDOSocioRepository');
     }
 
-    protected function get48()
+    protected function get52()
     {
         return $this->resolveFactory(static function () {
         $templatePaths = [
@@ -569,6 +602,7 @@ class CompiledContainer extends DI\CompiledContainer{
             'C:\\Program Files\\Ampps\\www\\fratellanza-militare-archivio\\config\\definitions' . '/../../templates/soci',
             'C:\\Program Files\\Ampps\\www\\fratellanza-militare-archivio\\config\\definitions' . '/../../templates/admin',
             'C:\\Program Files\\Ampps\\www\\fratellanza-militare-archivio\\config\\definitions' . '/../../templates/layout',
+            'C:\\Program Files\\Ampps\\www\\fratellanza-militare-archivio\\config\\definitions' . '/../../templates/partials',
             'C:\\Program Files\\Ampps\\www\\fratellanza-militare-archivio\\config\\definitions' . '/../../templates/errors',
         ];
 
@@ -582,7 +616,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'Mustache_Engine');
     }
 
-    protected function get49()
+    protected function get53()
     {
         return $this->resolveFactory(static function (\Psr\Container\ContainerInterface $c) {
         $instance = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
@@ -592,7 +626,7 @@ class CompiledContainer extends DI\CompiledContainer{
     }, 'FratellanzaMilitare\\SecurityLayer\\AuditTrail');
     }
 
-    protected function get50()
+    protected function get54()
     {
         return $this->resolveFactory(static function () {
         $config = \HTMLPurifier_Config::createDefault();
