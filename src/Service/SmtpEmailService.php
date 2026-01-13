@@ -43,7 +43,7 @@ class SmtpEmailService implements EmailServiceInterface
             $mail->Port = $this->config['port'];
 
             // Recipients
-            $mail->setFrom($this->config['username'], 'MCAG Archivio');
+            $mail->setFrom($this->config['username'], 'MCAG_Militare-Civile-Archivio-Gestionale');
             $mail->addAddress($to);
 
             // Attachments
