@@ -51,7 +51,10 @@ class PolicyController
         $html = $this->engine->render('layout/layout', [
             'content' => $policyContent,
             'title' => 'Privacy Policy - MCAG',
-            'base_url' => '' // Ensure base_url is handled by wrapper or view logic usually
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })()
         ]);
         $response->getBody()->write($html);
         return $response;

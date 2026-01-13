@@ -47,7 +47,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Compliance**: Aggiornamento terminologia UI per allineamento a standard legali/audit.
 
 ### Fixed
-- **Fix Critico**: Risolto errore `Unexpected token '<'` su caricamento JS (htmx, alpine, cookie_banner) in ambienti subdirectory (Ampps), iniettando correttamente `base_url` in tutti i controller (`ListController`, `DetailController`, `StatsDashboardController`).
+- **Fix Critico**: Risolto errore `Unexpected token '<'` su caricamento JS (htmx, alpine, cookie_banner) in ambienti subdirectory (Ampps), iniettando correttamente `base_url` in tutti i controller (`ListController`, `DetailController`, `StatsDashboardController`, `PolicyController::privacy`).
 - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
     - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
 - **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).
