@@ -66,7 +66,7 @@ class DevToolsScriptController
             chdir($oldCwd);
 
             // LOGGING: Save execution result to dedicated folder instead of root
-            $logDir = $baseDir . '/logs/debug';
+            $logDir = $baseDir . '/var/logs/debug';
             if (!is_dir($logDir)) {
                 mkdir($logDir, 0777, true);
             }
@@ -148,7 +148,7 @@ class DevToolsScriptController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $analyzer = new LogAnalyzer(__DIR__ . '/../../../logs/app.log');
+        $analyzer = new LogAnalyzer(__DIR__ . '/../../../var/logs/app.log');
         $logs = $analyzer->getLogsByRequestId($requestId);
 
         $response->getBody()->write(json_encode(['logs' => $logs]));
