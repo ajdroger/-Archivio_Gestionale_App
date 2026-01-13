@@ -43,7 +43,7 @@ class PolicyController
                     </ul>
                     
                     <h4>4. Diritti dell\'Interessato</h4>
-                    <p>Gli interessati possono esercitare i diritti di accesso, rettifica, cancellazione e opposizione contattando il DPO all\'indirizzo: <a href="mailto:privacy@mcag.system">privacy@mcag.system</a>.</p>
+                    <p>Gli interessati possono esercitare i diritti di accesso, rettifica, cancellazione e opposizione contattando il DPO all\'indirizzo: <a href="mailto:privacy@mcag.it">privacy@mcag.it</a>.</p>
                 </div>
             </div>
         ';
