@@ -26,7 +26,7 @@ class DemoInvitationService
 
     public function sendInvite(string $recipientEmail, string $clientName): bool
     {
-        $subject = "Accesso Demo: MCAG System v4.0 Ultimate";
+        $subject = "Accesso Demo: MCAG_Militare-Civile-Archivio-Gestionale v5.3";
         $demoLink = $this->baseUrl . '/landing/index.html'; // Direct link to landing
         $loginLink = $this->baseUrl . '/login';
 

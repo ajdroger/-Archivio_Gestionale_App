@@ -21,6 +21,34 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+
+## [5.3.0] - 2026-01-13 "**Rebranding Open Heart**" (GOLD MASTER)
+### Modificato [BREAKING CHANGE]
+- **Global Rebranding**: Sostituzione massiva di tutte le occorrenze "Fratellanza Militare" con "**MCAG**" (Militare-Civile Archivio Gestionale).
+- **Namespace Migration**: Refactoring completo `FratellanzaMilitare\*` -> `MCAG\*`. Incluso file `legacy_aliases.php` per retrocompatibilità temporanea.
+- **Database Identity**: Migrazione database `fratellanza_db` -> `mcag_db`.
+- **Assets**: Aggiornamento loghi, favicon e og:image.
+
+### Aggiunto
+- **Commercial Landing 2026**: Pagina di vendita aggiornata con nuovo pricing model (Standard/Professional/Enterprise).
+- **Report 2026**: Inclusione automatica del report di benchmark e pricing ufficiale.
+- **Email Rebranding**: Aggiornamento template email (inviti demo, auth) con nuova identità e versioning.
+- **History Graph**: Creato `GIT_GRAPH_ANALYSIS.md` per tracciare l'evoluzione del progetto.
+
+### Risolto
+- **Toolkit Console (Windows)**: Risolto bug critico nell'interprete comandi del terminale web (`terminal.php`).
+    - Aggiunto supporto nativo PowerShell (`powershell -NoProfile`) per comandi Unix-like su Windows.
+    - Introdotto output buffering (`ob_start`) per prevenire corruzione JSON da warning PHP.
+    - Fix encoding CP850 -> UTF-8 per caratteri accentati in console.
+
+### Compliance & Legal [NEW]
+- **Cookie Policy**: Implementazione banner informativo (`cookie_banner.mustache`) e pagine dedicate (`PolicyController`) conformi GDPR.
+    - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
+    - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
+- **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).
+
+---
+
 ## [5.2.1] - 2026-01-13 "**Omni-Reader Precision**"
 ### Aggiunto
 - **Knowledge Base Expansion**: Inclusione automatica del `REPORT_COMMERCIALE_BENCHMARK_2026.md` nello script di ingestione (`bin/ingest_docs.php`). Precedentemente, l'AI ignorava questo file cruciale, rispondendo "Non ho trovato informazioni" a domande sui benchmark.
@@ -451,5 +479,5 @@ dazione avanzata
 
 **Mantainer**: Soobadur Mohammad Ajmeer ©  
 **Progetto**: Fratellanza Militare di Firenze - Archivio Digitale Soci  
-**Versione Corrente**: 2.4.0 (2026-01-10)  
+**Versione Corrente**: 5.3.0 (2026-01-13)  
 **License**: Proprietary - All Rights Reserved
