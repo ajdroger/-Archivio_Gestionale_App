@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use PDO;
 use Exception;
@@ -227,3 +227,5 @@ class BackupVerificationService
         return round($bytes, 2) . ' ' . $units[$i];
     }
 }
+
+

@@ -1,9 +1,9 @@
 <?php
 
-namespace FratellanzaMilitare\Event\Listeners;
+namespace MCAG\Event\Listeners;
 
-use FratellanzaMilitare\Event\ListenerInterface;
-use FratellanzaMilitare\Event\Events\SocioCreatedEvent;
+use MCAG\Event\ListenerInterface;
+use MCAG\Event\Events\SocioCreatedEvent;
 use Psr\Log\LoggerInterface;
 
 class LogSocioCreationListener implements ListenerInterface
@@ -31,3 +31,5 @@ class LogSocioCreationListener implements ListenerInterface
         ]);
     }
 }
+
+

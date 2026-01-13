@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
-use FratellanzaMilitare\Enum\StatoIscrizione;
+use MCAG\Enum\StatoIscrizione;
 
 /**
  * Entità principale del sistema: il Socio.
@@ -63,7 +63,7 @@ class Socio
 
         foreach ($this->DocumentiAssociati as $doc) {
             if ($doc instanceof ModuloIscrizione) {
-                if ($doc->AnnoSolare === $annoCorrente && $doc->Stato === \FratellanzaMilitare\Enum\StatoDocumento::VALIDATO) {
+                if ($doc->AnnoSolare === $annoCorrente && $doc->Stato === \MCAG\Enum\StatoDocumento::VALIDATO) {
                     return false; // Pagato e validato
                 }
             }
@@ -72,3 +72,5 @@ class Socio
         return true;
     }
 }
+
+

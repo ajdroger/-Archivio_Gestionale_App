@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\SecurityLayer\TotpEncryptionService;
+use MCAG\SecurityLayer\TotpEncryptionService;
 
 echo "Generating new TOTP Encryption Key...\n";
 
@@ -34,3 +34,4 @@ try {
     echo "Error: " . $e->getMessage() . "\n";
     exit(1);
 }
+

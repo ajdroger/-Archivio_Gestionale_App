@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Jobs;
+namespace MCAG\Jobs;
 
 /**
  * Job Interface
@@ -36,3 +36,5 @@ interface JobInterface
      */
     public function getRetryDelay(): int;
 }
+
+

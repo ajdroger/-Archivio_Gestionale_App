@@ -6,7 +6,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 use DI\ContainerBuilder;
-use FratellanzaMilitare\Controller\AI\AssistantController;
+use MCAG\Controller\AI\AssistantController;
 
 echo "--- Final Diagnostic Start ---\n";
 
@@ -30,13 +30,13 @@ try {
 
 // 3. Test Dependencies inside
 try {
-    $llm = $container->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class);
+    $llm = $container->get(\MCAG\AI\Providers\OllamaProvider::class);
     echo "✅ OllamaProvider resolved.\n";
 
-    $store = $container->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class);
+    $store = $container->get(\MCAG\AI\RAG\SimpleVectorStore::class);
     echo "✅ SimpleVectorStore resolved.\n";
 
-    $queue = $container->get(\FratellanzaMilitare\Queue\QueueInterface::class);
+    $queue = $container->get(\MCAG\Queue\QueueInterface::class);
     echo "✅ QueueInterface resolved.\n";
 } catch (\Throwable $e) {
     echo "❌ Dependency Check Failed: " . $e->getMessage() . "\n";
@@ -44,3 +44,4 @@ try {
 }
 
 echo "--- All Checks Passed ---\n";
+

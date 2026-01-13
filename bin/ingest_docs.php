@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-use FratellanzaMilitare\Service\AI\DocumentIngestionService;
+use MCAG\Service\AI\DocumentIngestionService;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 
@@ -54,3 +54,4 @@ try {
     echo "❌ Error: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString();
 }
+

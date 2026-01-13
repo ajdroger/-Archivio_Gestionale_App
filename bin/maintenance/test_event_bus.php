@@ -8,8 +8,8 @@
 require __DIR__ . '/../../vendor/autoload.php';
 
 use DI\ContainerBuilder;
-use FratellanzaMilitare\Event\EventBusInterface;
-use FratellanzaMilitare\Event\Events\SocioCreatedEvent;
+use MCAG\Event\EventBusInterface;
+use MCAG\Event\Events\SocioCreatedEvent;
 use Psr\Log\LoggerInterface;
 
 // 1. Bootstrap Container
@@ -88,3 +88,4 @@ try {
     echo $e->getTraceAsString();
     exit(1);
 }
+

@@ -5,16 +5,16 @@ require __DIR__ . '/../../vendor/autoload.php';
 // Registra la gestione globale degli errori
 $logger = new \Monolog\Logger('generate_docs');
 $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../../logs/app.log', \Monolog\Logger::DEBUG));
-\FratellanzaMilitare\Debug\GlobalExceptionHandler::registerGlobalHandlers($logger);
+\MCAG\Debug\GlobalExceptionHandler::registerGlobalHandlers($logger);
 
-use FratellanzaMilitare\GestioneSoci\Socio; // Forza l'autoloading per sicurezza
+use MCAG\GestioneSoci\Socio; // Forza l'autoloading per sicurezza
 
 $srcDir = __DIR__ . '/../../src';
 $outputFile = __DIR__ . '/../../Documentazione/API_REFERENCE.md';
 $docContent = "# Riferimento Tecnico API\n\nGenerato automaticamente via `bin/generate_docs.php` il " . date('d/m/Y H:i:s') . "\n\n";
 
 // Mappa il prefisso logico del Namespace al percorso fisico
-$psr4Prefix = 'FratellanzaMilitare\\';
+$psr4Prefix = 'MCAG\\';
 $srcDirPath = realpath($srcDir);
 
 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($srcDirPath));
@@ -92,5 +92,6 @@ file_put_contents($logFile, $logEntry, FILE_APPEND);
 
 echo "Documentazione generata in: {$outputFile}\n";
 echo "Log aggiornato in: {$logFile}\n";
+
 
 

@@ -51,7 +51,7 @@ foreach ((require __DIR__ . '/../config/container.php') as $definitions) {
 $container = $containerBuilder->build();
 
 // Initialize AuditTrail Bridge for Singleton compatibility
-$auditTrail = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
+$auditTrail = \MCAG\SecurityLayer\AuditTrail::getInstance();
 $auditTrail->setLogger($container->get('audit_logger'));
 $auditTrail->setPdo($container->get(PDO::class));
 
@@ -78,3 +78,4 @@ $routes($app);
 
 // 6. Run
 $app->run();
+

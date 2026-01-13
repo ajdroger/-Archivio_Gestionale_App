@@ -19,7 +19,32 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.3.0] - 2026-01-13 "**Operation Open Heart: Rebranding**"
+### Rebranding [CRITICAL]
+- **Identity Shift**: Rinomina completa del progetto da "Fratellanza Militare" a **MCAG** (Militare-Civile Archivio Gestionale).
+- **Physical Rename**: Cartella root rinominata a `MCAG_Militare-Civile-Archivio-Gestionale`.
+- **Database Rename**: Migrazione fisica da `fratellanza_db` a `mcag_db` con export/import dei dati esistenti.
+
+### Chirurgia Namespace
+- **Namespace Migration**: Refactoring massivo (`Regex`) di tutti i namespace PHP (`namespace FratellanzaMilitare\` -> `namespace MCAG\`) e degli import (`use`).
+- **Composer Update**: Mappatura PSR-4 aggiornata (`"MCAG\\": "src/"`) e dump dell'autoload.
+- **Legacy Safety Net**: Creato `legacy_aliases.php` per mappare le vecchie classi `FratellanzaMilitare\*` sulle nuove `MCAG\*`, garantendo retrocompatibilità per script esterni o cache non pulite.
+
+### Interfaccia Utente (Tessuti Molli)
+- **UI Strings**: Sostituzione globale stringhe visibili ("Fratellanza Militare" -> "MCAG").
+- **2FA Assets**: Aggiornata etichetta QR Code in `TwoFactorController` per mostrare "MCAG (username)" invece del vecchio brand.
+- **Console Logs**: Aggiornato `main.js` ("MCAG - App Loaded").
+- **Styles**: Aggiornati commenti header in `app.scss`.
+
+### Database
+- **Content Migration**: Phinx migration `20260113132359_rebrand_to_mcag` per aggiornare i valori nella tabella `settings` ("Fratellanza Militare Firenze" -> "MCAG...", ecc).
+- **Configuration**: Aggiornato `.env` con nuovo `APP_NAME`, `APP_URL` e `DB_DATABASE`.
+
+### Verifica
+- **Test Suite**: Tutti i 169+ test passano sotto il nuovo namespace.
+
 ---
+
 
 ## [5.2.1] - 2026-01-13 "**Omni-Reader Precision**"
 ### Aggiunto

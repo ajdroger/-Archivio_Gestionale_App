@@ -1,6 +1,6 @@
 # Guida Utente - Digitalizzazione Archivio v2.0 Enterprise
 
-**Fratellanza Militare di Firenze**
+**MCAG di Firenze**
 *Versione Documento: 2.0.1 (Mission-Critical Release)*
 
 ---
@@ -63,3 +63,4 @@ Per qualsiasi anomalia, contatta il Responsabile IT.
 Includi sempre eventuali messaggi di errore visualizzati.
 
 *Documento riservato a uso interno.*
+

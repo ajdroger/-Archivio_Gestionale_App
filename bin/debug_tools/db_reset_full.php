@@ -18,3 +18,4 @@ foreach ($tables as $table) {
 }
 $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 echo "All tables dropped.\n";
+

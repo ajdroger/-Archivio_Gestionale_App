@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 class SystemCheck
 {
@@ -46,7 +46,7 @@ class SystemCheck
     private function checkDatabase(): array
     {
         try {
-            $pdo = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+            $pdo = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
             $driver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
             // Basic query to test connection
@@ -155,7 +155,7 @@ class SystemCheck
     private function checkIntegrity(): array
     {
         try {
-            $pdo = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+            $pdo = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
             $driver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
             // MySQL: CHECK TABLE is an option but excessive for "integrity" of the whole DB.
@@ -217,3 +217,5 @@ class SystemCheck
         echo sprintf("%-10s %s\n", $status, $message);
     }
 }
+
+

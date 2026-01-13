@@ -1,5 +1,5 @@
 # Rapporto di Audit Meticoloso del Sistema (v1.3.1)
-**Progetto:** Digitalizzazione Archivio Soci - Fratellanza Militare di Firenze  
+**Progetto:** Digitalizzazione Archivio Soci - MCAG di Firenze  
 **Stato Audit:** [CERTIFICATO MISSION-CRITICAL]  
 **Data:** 21 Dicembre 2025  
 
@@ -42,3 +42,4 @@ Il sistema è certificato per l'uso in produzione ad alta criticità. La manuten
 
 ---
 *Audit concluso con successo - Soobadur Mohammad Ajmeer*
+

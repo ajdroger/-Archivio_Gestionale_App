@@ -1,11 +1,11 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\AI;
+namespace MCAG\Controller\AI;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use FratellanzaMilitare\AI\Providers\OllamaProvider;
-use FratellanzaMilitare\AI\RAG\SimpleVectorStore;
+use MCAG\AI\Providers\OllamaProvider;
+use MCAG\AI\RAG\SimpleVectorStore;
 use Psr\Log\LoggerInterface;
 
 class AssistantController
@@ -22,8 +22,8 @@ class AssistantController
         OllamaProvider $llm,
         SimpleVectorStore $vectorStore,
         LoggerInterface $logger,
-        \FratellanzaMilitare\Queue\QueueInterface $queue,
-        \FratellanzaMilitare\GestioneSoci\SocioRepository $socioRepo
+        \MCAG\Queue\QueueInterface $queue,
+        \MCAG\GestioneSoci\SocioRepository $socioRepo
     ) {
         $this->view = $view;
         $this->llm = $llm;
@@ -201,7 +201,7 @@ class AssistantController
 
         // Push to Queue (Async)
         try {
-            $job = new \FratellanzaMilitare\Queue\Job\DocumentIngestionJob($targetPath, $filename);
+            $job = new \MCAG\Queue\Job\DocumentIngestionJob($targetPath, $filename);
             $this->queue->push($job);
 
             $html = '<div class="d-flex justify-content-start mb-2">
@@ -218,3 +218,5 @@ class AssistantController
         return $response;
     }
 }
+
+

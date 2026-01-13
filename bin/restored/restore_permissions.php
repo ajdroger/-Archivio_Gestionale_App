@@ -51,3 +51,4 @@ if ($errors === 0) {
 } else {
     echo "\n[ATTENZIONE] Ci sono stati $errors errori di permesso.\n";
 }
+

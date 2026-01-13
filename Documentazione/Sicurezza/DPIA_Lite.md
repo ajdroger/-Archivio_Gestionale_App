@@ -1,11 +1,11 @@
 # DPIA - Valutazione d'Impatto sulla Protezione dei Dati (Lite)
 
-**Progetto**: Fratellanza Militare - Archivio Digitale Soci
+**Progetto**: MCAG - Archivio Digitale Soci
 **Data**: Gennaio 2026
 **Stato**: BOZZA PRELIMINARE
 
 ## 1. Descrizione del Trattamento
-L'applicazione gestisce un archivio digitale dei soci dell'associazione "Fratellanza Militare".
+L'applicazione gestisce un archivio digitale dei soci dell'associazione "MCAG".
 **Dati Trattati**:
 - Anagrafica (Nome, Cognome, CF, Indirizzo)
 - Contatti (Email, Telefono)
@@ -30,3 +30,4 @@ Il trattamento è necessario per la gestione statutaria dell'associazione. I dat
 
 ## 5. Conclusioni
 Il rischio residuo è considerato **ACCETTABILE** date le misure tecniche e organizzative implementate.
+

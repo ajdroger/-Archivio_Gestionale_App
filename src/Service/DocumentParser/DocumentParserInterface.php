@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service\DocumentParser;
+namespace MCAG\Service\DocumentParser;
 
 interface DocumentParserInterface
 {
@@ -14,3 +14,5 @@ interface DocumentParserInterface
      */
     public function supports(string $filePath): bool;
 }
+
+

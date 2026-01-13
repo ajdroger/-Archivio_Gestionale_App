@@ -1,10 +1,10 @@
 <?php
 
-namespace FratellanzaMilitare\Controller;
+namespace MCAG\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use FratellanzaMilitare\Service\HealthCheckService;
+use MCAG\Service\HealthCheckService;
 use OpenApi\Attributes as OA;
 
 /**
@@ -71,3 +71,5 @@ final class HealthController
             ->withStatus($statusCode);
     }
 }
+
+

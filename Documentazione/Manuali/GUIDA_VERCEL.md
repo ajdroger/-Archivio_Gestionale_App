@@ -162,7 +162,7 @@ composer require aws/aws-sdk-php
    ```bash
    # App
    APP_ENV=production
-   APP_NAME=Fratellanza Militare Archivio
+   APP_NAME=MCAG Archivio
    APP_URL=https://your-project.vercel.app
    
    # Database (PlanetScale/Supabase/Turso)
@@ -178,7 +178,7 @@ composer require aws/aws-sdk-php
    MAIL_PASSWORD=your-app-password
    MAIL_ENCRYPTION=tls
    MAIL_FROM_ADDRESS=noreply@yourdomain.com
-   MAIL_FROM_NAME="Fratellanza Militare"
+   MAIL_FROM_NAME="MCAG"
    
    # Redis (per sessioni - Upstash)
    REDIS_URL=redis://default:password@host:port
@@ -406,3 +406,4 @@ Per problemi o domande:
 - Vercel Support: https://vercel.com/support
 - Vercel Community: https://github.com/vercel/vercel/discussions
 - Documentazione PHP: https://vercel.com/docs/functions/serverless-functions/runtimes/php
+

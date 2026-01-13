@@ -10,9 +10,9 @@ require_once __DIR__ . '/../../src/Debug/SystemCheck.php';
 require_once __DIR__ . '/../../src/Debug/DatabaseInspector.php';
 require_once __DIR__ . '/../../src/InfrastrutturaIT/Persistence/DatabaseConnection.php';
 
-use FratellanzaMilitare\Debug\SystemCheck;
-use FratellanzaMilitare\Debug\DatabaseInspector;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\Debug\SystemCheck;
+use MCAG\Debug\DatabaseInspector;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 echo "--- Diagnostica di Sistema ---\n";
 $checker = new SystemCheck();
@@ -31,3 +31,4 @@ try {
 } catch (Exception $e) {
     echo "Errore Database: " . $e->getMessage() . "\n";
 }
+

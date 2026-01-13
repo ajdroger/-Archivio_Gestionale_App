@@ -2,8 +2,8 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\Debug\SystemCheck;
-use FratellanzaMilitare\Debug\QueryLogger;
+use MCAG\Debug\SystemCheck;
+use MCAG\Debug\QueryLogger;
 
 echo "Fratellanza Militare - Debug Console\n";
 echo "1. Run System Diagnostics\n";
@@ -25,8 +25,8 @@ switch ($choice) {
         break;
     case 2:
         try {
-            $db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
-            $inspector = new \FratellanzaMilitare\Debug\DatabaseInspector($db);
+            $db = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+            $inspector = new \MCAG\Debug\DatabaseInspector($db);
             echo "Stato: " . $inspector->checkIntegrity() . "\n";
             echo "Dimensione: " . $inspector->getDatabaseSize() . "\n";
             foreach ($inspector->getTablesSummary() as $table) {
@@ -37,7 +37,7 @@ switch ($choice) {
         }
         break;
     case 3:
-        $logViewer = new \FratellanzaMilitare\Debug\LogViewer();
+        $logViewer = new \MCAG\Debug\LogViewer();
         foreach ($logViewer->listLogs() as $log) {
             echo "- {$log['name']} ({$log['size']})\n";
         }
@@ -53,3 +53,4 @@ switch ($choice) {
     default:
         echo "Invalid operation.\n";
 }
+

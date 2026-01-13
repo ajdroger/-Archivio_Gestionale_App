@@ -3,9 +3,9 @@
 require __DIR__ . '/../../vendor/autoload.php';
 
 use DI\ContainerBuilder;
-use FratellanzaMilitare\Debug\ResilienceMonitor;
-use FratellanzaMilitare\Debug\LogAnalyzer;
-use FratellanzaMilitare\Service\BackupService;
+use MCAG\Debug\ResilienceMonitor;
+use MCAG\Debug\LogAnalyzer;
+use MCAG\Service\BackupService;
 
 // Inizializza il container
 $containerBuilder = new ContainerBuilder();
@@ -101,3 +101,4 @@ while (true) {
             break;
     }
 }
+

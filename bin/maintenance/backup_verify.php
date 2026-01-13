@@ -254,3 +254,4 @@ class BackupVerifier
 
 // Run
 (new BackupVerifier())->run();
+

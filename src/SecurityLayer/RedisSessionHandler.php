@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 use Predis\Client as Redis;
 
@@ -54,3 +54,5 @@ class RedisSessionHandler implements \SessionHandlerInterface
         return 0;
     }
 }
+
+

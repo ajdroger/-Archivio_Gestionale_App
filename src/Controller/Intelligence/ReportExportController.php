@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Intelligence;
+namespace MCAG\Controller\Intelligence;
 
-use FratellanzaMilitare\GestioneSoci\SocioRepository;
+use MCAG\GestioneSoci\SocioRepository;
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -104,3 +104,5 @@ class ReportExportController
             ->withHeader('Content-Disposition', 'attachment; filename="Export_Soci_' . date('Y-m-d') . '.csv"');
     }
 }
+
+

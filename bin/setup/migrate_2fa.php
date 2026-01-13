@@ -7,7 +7,7 @@ $dotenv->load();
 echo "Migration Started: Per-User 2FA...\n";
 
 try {
-    $db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+    $db = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
 
     // 1. Add Column
     $cols = $db->query("PRAGMA table_info(users)")->fetchAll(\PDO::FETCH_ASSOC);
@@ -36,3 +36,4 @@ try {
     echo "Error: " . $e->getMessage() . "\n";
     exit(1);
 }
+

@@ -1,12 +1,12 @@
 <?php
 
-namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
+namespace MCAG\InfrastrutturaIT\Persistence;
 
-use FratellanzaMilitare\GestioneSoci\Documento;
-use FratellanzaMilitare\GestioneSoci\ModuloIscrizione;
-use FratellanzaMilitare\GestioneSoci\ConsensoGDPR;
-use FratellanzaMilitare\GestioneSoci\DocumentoRepository;
-use FratellanzaMilitare\Enum\StatoDocumento;
+use MCAG\GestioneSoci\Documento;
+use MCAG\GestioneSoci\ModuloIscrizione;
+use MCAG\GestioneSoci\ConsensoGDPR;
+use MCAG\GestioneSoci\DocumentoRepository;
+use MCAG\Enum\StatoDocumento;
 use PDO;
 use DateTime;
 
@@ -173,7 +173,7 @@ class PDODocumentoRepository implements DocumentoRepository
             $doc->Marketing = (bool) ($row['marketing'] ?? false);
             $doc->DataFirma = new DateTime($row['data_firma']);
         } else {
-            $doc = new \FratellanzaMilitare\GestioneSoci\DocumentoGenerico();
+            $doc = new \MCAG\GestioneSoci\DocumentoGenerico();
         }
 
         $doc->IdUnivoco = $row['id_univoco'];
@@ -183,7 +183,7 @@ class PDODocumentoRepository implements DocumentoRepository
 
         // Handle Stato (enum) with fallback for invalid values
         try {
-            $doc->Stato = constant("FratellanzaMilitare\\Enum\\StatoDocumento::" . $row['stato']);
+            $doc->Stato = constant("MCAG\\Enum\\StatoDocumento::" . $row['stato']);
         } catch (\Error $e) {
             // Fallback to IN_ATTESA if stato is invalid or NULL
             $doc->Stato = StatoDocumento::IN_ATTESA;
@@ -192,3 +192,5 @@ class PDODocumentoRepository implements DocumentoRepository
         return $doc;
     }
 }
+
+

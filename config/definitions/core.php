@@ -5,8 +5,8 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\JsonFormatter;
 use Predis\Client as RedisClient;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use Psr\Container\ContainerInterface;
 
 return [
@@ -87,7 +87,7 @@ return [
     PDOSocioRepository::class => function (PDO $pdo) {
         return new PDOSocioRepository($pdo);
     },
-    \FratellanzaMilitare\GestioneSoci\SocioRepository::class => \DI\get(PDOSocioRepository::class),
+    \MCAG\GestioneSoci\SocioRepository::class => \DI\get(PDOSocioRepository::class),
 
     // Template Engine (Mustache)
     Mustache_Engine::class => function () {
@@ -102,16 +102,16 @@ return [
         ];
 
         return new Mustache_Engine([
-            'loader' => new \FratellanzaMilitare\View\CascadingLoader($templatePaths),
-            'partials_loader' => new \FratellanzaMilitare\View\CascadingLoader($templatePaths),
+            'loader' => new \MCAG\View\CascadingLoader($templatePaths),
+            'partials_loader' => new \MCAG\View\CascadingLoader($templatePaths),
             'escape' => function ($value) {
                 return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
             },
         ]);
     },
     // Audit System
-    \FratellanzaMilitare\SecurityLayer\AuditTrail::class => function (ContainerInterface $c) {
-        $instance = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
+    \MCAG\SecurityLayer\AuditTrail::class => function (ContainerInterface $c) {
+        $instance = \MCAG\SecurityLayer\AuditTrail::getInstance();
         $instance->setLogger($c->get('audit_logger'));
         $instance->setPdo($c->get(PDO::class));
         return $instance;
@@ -126,3 +126,5 @@ return [
         return new HTMLPurifier($config);
     },
 ];
+
+

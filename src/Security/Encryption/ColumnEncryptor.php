@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Security\Encryption;
+namespace MCAG\Security\Encryption;
 
 use Exception;
 
@@ -88,3 +88,5 @@ class ColumnEncryptor
         return $plaintext;
     }
 }
+
+

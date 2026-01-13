@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\AI\RAG;
+namespace MCAG\AI\RAG;
 
 /**
  * Class DocumentChunkerService
@@ -8,7 +8,7 @@ namespace FratellanzaMilitare\AI\RAG;
  * Splits large texts into smaller chunks to fit into LLM context windows
  * and improve retrieval accuracy.
  * 
- * @package FratellanzaMilitare\AI\RAG
+ * @package MCAG\AI\RAG
  */
 class DocumentChunkerService
 {
@@ -55,3 +55,5 @@ class DocumentChunkerService
         return $chunks;
     }
 }
+
+

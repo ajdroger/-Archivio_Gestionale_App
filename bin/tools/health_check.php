@@ -13,7 +13,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 // Load .env from project root (bin/tools/../../.env)
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
@@ -229,3 +229,4 @@ if ($overallHealth) {
     echo "\nPer favore correggi i check falliti prima del deploy in produzione.\n";
     exit(1);
 }
+

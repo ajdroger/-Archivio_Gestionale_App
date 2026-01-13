@@ -5,8 +5,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 $cacheFile = __DIR__ . '/var/cache/stats_cache.json';
 
@@ -28,3 +28,4 @@ echo "Totale: " . $stats['totale'] . "\n";
 echo "Paganti: " . $stats['paganti'] . "\n";
 echo "perc_paganti: " . ($stats['perc_paganti'] ?? 'MISSING') . "%\n";
 echo "perc_morosi: " . ($stats['perc_morosi'] ?? 'MISSING') . "%\n";
+

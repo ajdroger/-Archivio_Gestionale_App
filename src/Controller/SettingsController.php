@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Controller;
+namespace MCAG\Controller;
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -147,3 +147,5 @@ class SettingsController
         return $response->withHeader('Location', $redirectUrl)->withStatus(302);
     }
 }
+
+

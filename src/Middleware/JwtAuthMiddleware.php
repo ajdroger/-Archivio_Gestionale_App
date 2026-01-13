@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -49,3 +49,5 @@ class JwtAuthMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 }
+
+

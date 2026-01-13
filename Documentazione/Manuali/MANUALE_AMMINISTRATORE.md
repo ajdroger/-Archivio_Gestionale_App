@@ -1,5 +1,5 @@
 # 📘 MANUALE UTENTE - AMMINISTRATORE
-## Sistema di Gestione Archivio Fratellanza Militare
+## Sistema di Gestione Archivio MCAG
 
 **Versione:** 2.0  
 **Data:** Gennaio 2026  
@@ -788,3 +788,4 @@ grep "request_id:abc123" logs/app.log
 **Fine Manuale Amministratore**  
 *Versione 2.0 - Gennaio 2026*  
 *Per assistenza: admin@associazione.it*
+

@@ -48,3 +48,4 @@ EOT;
 }
 echo "FAILURE: Could not connect to any MySQL.";
 exit(1);
+

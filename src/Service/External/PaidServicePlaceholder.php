@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service\External;
+namespace MCAG\Service\External;
 
 /**
  * Placeholder for Paid Services Integration.
@@ -39,3 +39,5 @@ abstract class PaidServicePlaceholder
         }
     }
 }
+
+

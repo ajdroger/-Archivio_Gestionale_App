@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
+namespace MCAG\InfrastrutturaIT\Persistence;
 
 class QueryBuilder
 {
@@ -144,3 +144,5 @@ class QueryBuilder
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Public;
+namespace MCAG\Controller\Public;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -11,7 +11,7 @@ class DemoRequestController
     private string $storagePath;
     private $emailService;
 
-    public function __construct(\FratellanzaMilitare\Service\EmailServiceInterface $emailService)
+    public function __construct(\MCAG\Service\EmailServiceInterface $emailService)
     {
         $this->emailService = $emailService;
         // Ensure storage directory exists
@@ -122,3 +122,5 @@ class DemoRequestController
         }
     }
 }
+
+

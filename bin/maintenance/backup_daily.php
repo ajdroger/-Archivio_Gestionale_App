@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\Service\BackupService;
+use MCAG\Service\BackupService;
 use Psr\Log\AbstractLogger;
 
 // Simple logger so we see output
@@ -133,3 +133,4 @@ foreach ($files as $file) {
 }
 
 echo "Backup process completed.\n";
+

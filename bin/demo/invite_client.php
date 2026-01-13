@@ -8,7 +8,7 @@
 require __DIR__ . '/../../vendor/autoload.php';
 
 use DI\ContainerBuilder;
-use FratellanzaMilitare\Service\Demo\DemoInvitationService;
+use MCAG\Service\Demo\DemoInvitationService;
 
 // Setup Container
 $containerBuilder = new ContainerBuilder();
@@ -56,7 +56,7 @@ try {
     if (!$container->has(DemoInvitationService::class)) {
         // Build dependencies manually for this script if not in container
         $logger = $container->get(\Psr\Log\LoggerInterface::class);
-        $emailService = $container->get(\FratellanzaMilitare\Service\EmailServiceInterface::class);
+        $emailService = $container->get(\MCAG\Service\EmailServiceInterface::class);
         $demoService = new DemoInvitationService($emailService, $logger);
     } else {
         $demoService = $container->get(DemoInvitationService::class);
@@ -74,3 +74,4 @@ try {
     echo "[CRITICAL ERROR] " . $e->getMessage() . "\n";
     exit(1);
 }
+

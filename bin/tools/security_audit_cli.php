@@ -54,7 +54,7 @@ foreach ($criticalDirs as $dir => $shouldBeWritable) {
 }
 
 // 3. Database Integrity
-$db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+$db = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
 try {
     $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 
@@ -114,3 +114,4 @@ foreach ($checks as $check) {
 
 echo "\nResult: " . ($hasFailures ? "FAILURES DETECTED" : "ALL CHECKS PASSED") . "\n";
 exit($hasFailures ? 1 : 0);
+

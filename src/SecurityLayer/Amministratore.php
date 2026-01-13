@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 class Amministratore extends UtenteSistema
 {
@@ -16,7 +16,7 @@ class Amministratore extends UtenteSistema
         // Hash della password
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        $db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+        $db = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
         $stmt = $db->prepare("INSERT INTO users (username, password_hash, role, created_at) VALUES (:username, :password, :role, NOW())");
         $stmt->execute([
             ':username' => $username,
@@ -73,3 +73,5 @@ class Amministratore extends UtenteSistema
         return $auditTrail->generaReport($periodo);
     }
 }
+
+

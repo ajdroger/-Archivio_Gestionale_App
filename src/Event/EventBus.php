@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Event;
+namespace MCAG\Event;
 
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -11,7 +11,7 @@ use Throwable;
  * Simple synchronous Event Bus implementation.
  * Dispatches events to registered listeners in order.
  * 
- * @package FratellanzaMilitare\Event
+ * @package MCAG\Event
  */
 class EventBus implements EventBusInterface
 {
@@ -69,3 +69,5 @@ class EventBus implements EventBusInterface
         }
     }
 }
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\InfrastrutturaIT;
+namespace MCAG\InfrastrutturaIT;
 
 interface ICloudStorage
 {
@@ -19,3 +19,5 @@ interface ICloudStorage
 
     public function delete(string $uuid): void;
 }
+
+

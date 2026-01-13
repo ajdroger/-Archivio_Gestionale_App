@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\GraphQL;
+namespace MCAG\GraphQL;
 
 use GraphQL\Type\Schema as GraphQLSchema;
-use FratellanzaMilitare\GraphQL\Types\QueryType;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\GraphQL\Types\QueryType;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 class Schema
 {
@@ -18,3 +18,5 @@ class Schema
         ]);
     }
 }
+
+

@@ -6,7 +6,7 @@ if (php_sapi_name() !== 'cli') {
 }
 
 try {
-    $db = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+    $db = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
 
     // Check tables
     $tables = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")->fetchAll(\PDO::FETCH_ASSOC);
@@ -36,3 +36,4 @@ try {
 } catch (\Exception $e) {
     echo "Error: " . $e->getMessage();
 }
+

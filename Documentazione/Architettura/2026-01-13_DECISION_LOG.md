@@ -570,7 +570,7 @@ Cosa è stato deciso e perché.
 ---
 
 **Mantainer**: Soobadur Mohammad Ajmeer ©  
-**Progetto**: Fratellanza Militare di Firenze - Archivio Digitale Soci  
+**Progetto**: MCAG di Firenze - Archivio Digitale Soci  
 **Ultimo Aggiornamento**: 2026-01-10  
 **Stato Progetto**: Production v2.4 - Enterprise Perfection (100/100)  
 **Decisioni Totali**: 18 ADR + 3 Pending
@@ -771,7 +771,7 @@ Implementare nel Backend (`DevToolsScriptController`) un rilevamento automatico 
 
 ### 3. [BRANDING] Naming Inconsistency
 - **Data/Ora**: 2026-01-11 01:32
-- **Errore**: Il terminale mostrava "Fratellanza Militare System" invece del nuovo brand "MCAG".
+- **Errore**: Il terminale mostrava "MCAG System" invece del nuovo brand "MCAG".
 - **Risoluzione**: Aggiornato stringa di benvenuto nel template `devtools.mustache`.
 
 ### 4. [PROCESS] Git History Compliance
@@ -891,5 +891,6 @@ Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa 
 - (+) **Precisione di Recupero**: I test (`verify_knowledge.php`) mostrano che le query specifiche ora recuperano il blocco corretto con score >0.70.
 - (-) **Complessità di Ingestione**: L'algoritmo è leggermente più pesante computazionalmente rispetto allo split cieco.
 - (-) **Dipendenza dal Formato**: Richiede che i documenti siano formattati con Markdown corretto per funzionare al meglio.
+
 
 

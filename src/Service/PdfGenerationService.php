@@ -1,9 +1,9 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use Dompdf\Dompdf;
-use FratellanzaMilitare\GestioneSoci\Socio;
+use MCAG\GestioneSoci\Socio;
 
 /**
  * Servizio wrapper per la generazione di PDF con Dompdf.
@@ -38,3 +38,5 @@ class PdfGenerationService
         return $dompdf->output();
     }
 }
+
+

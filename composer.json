@@ -3,7 +3,7 @@
     "description": "MCAG - Militare Civile Archivio Gestionale (v2.4)",
     "autoload": {
         "psr-4": {
-            "FratellanzaMilitare\\": "src/"
+            "MCAG\\": "src/"
         }
     },
     "autoload-dev": {

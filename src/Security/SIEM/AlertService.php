@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Security\SIEM;
+namespace MCAG\Security\SIEM;
 
 /**
  * Servizio Placeholder per integrazione SIEM / Breach Detection.
@@ -40,3 +40,5 @@ class AlertService
         file_put_contents($siemLogFile, $logEntry . PHP_EOL, FILE_APPEND);
     }
 }
+
+

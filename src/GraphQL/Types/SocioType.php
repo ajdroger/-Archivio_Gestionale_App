@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\GraphQL\Types;
+namespace MCAG\GraphQL\Types;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -12,7 +12,7 @@ class SocioType extends ObjectType
     {
         parent::__construct([
             'name' => 'Socio',
-            'description' => 'Un socio della Fratellanza Militare',
+            'description' => 'Un socio della MCAG',
             'fields' => [
                 'codiceFiscale' => [
                     'type' => Type::nonNull(Type::string()),
@@ -49,3 +49,5 @@ class SocioType extends ObjectType
         ]);
     }
 }
+
+

@@ -1,15 +1,15 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\GestioneSoci\ModuloIscrizione;
-use FratellanzaMilitare\GestioneSoci\SocioRepository;
-use FratellanzaMilitare\Enum\StatoIscrizione;
-use FratellanzaMilitare\Enum\StatoDocumento;
-use FratellanzaMilitare\Service\ValidationService;
-use FratellanzaMilitare\Service\PdfGenerationService;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\GestioneSoci\ModuloIscrizione;
+use MCAG\GestioneSoci\SocioRepository;
+use MCAG\Enum\StatoIscrizione;
+use MCAG\Enum\StatoDocumento;
+use MCAG\Service\ValidationService;
+use MCAG\Service\PdfGenerationService;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -160,3 +160,5 @@ class RegistrationService
         }
     }
 }
+
+

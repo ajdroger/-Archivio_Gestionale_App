@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Anagrafica\Soci;
+namespace MCAG\Controller\Anagrafica\Soci;
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -82,3 +82,5 @@ class DetailController
         return $response;
     }
 }
+
+

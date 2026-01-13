@@ -84,3 +84,4 @@ Supera il 100% dei **63 test** con PestPHP.
 Tutti gli asset frontend sono compilati e ottimizzati.
 La sicurezza è ai massimi livelli di settore (Auth DB, 2FA OTPHP, JSON Logs, Security Headers).
 Il sistema è containerizzato e pronto per il cloud.
+

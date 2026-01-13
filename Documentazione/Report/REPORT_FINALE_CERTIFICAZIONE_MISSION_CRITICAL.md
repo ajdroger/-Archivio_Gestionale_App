@@ -1,5 +1,5 @@
 # 🎖️ Report di Certificazione Finale Mission-Critical (v1.3.1)
-**Progetto:** Archivio Digitale Soci - Fratellanza Militare di Firenze  
+**Progetto:** Archivio Digitale Soci - MCAG di Firenze  
 **Status:** [CERTIFICATO] - Pronto per il Deployment in Produzione Critica  
 **Data Certificazione:** 21 Dicembre 2025  
 
@@ -47,7 +47,7 @@ Implementata la propagazione dei **Correlation IDs** (`X-Request-ID`). Ogni tran
 ---
 
 ## 5. Conclusioni e Raccomandazioni
-Il software ha raggiunto uno stato di maturità **v1.3.1 Mission-Critical**. Non si rilevano bug noti o vulnerabilità critiche. Il sistema è considerato **certificato** e pronto per la gestione reale dell'archivio storico e corrente della Fratellanza Militare.
+Il software ha raggiunto uno stato di maturità **v1.3.1 Mission-Critical**. Non si rilevano bug noti o vulnerabilità critiche. Il sistema è considerato **certificato** e pronto per la gestione reale dell'archivio storico e corrente della MCAG.
 
 **Next Steps suggeriti:**
 1. Rilasciare in produzione l'istanza Dockerizzata.
@@ -57,3 +57,4 @@ Il software ha raggiunto uno stato di maturità **v1.3.1 Mission-Critical**. Non
 ---
 *Certificato emesso con onore al termine della missione di perfezionamento.*  
 **Soobadur Mohammad Ajmeer - Tecnico Informatico & Security Analyst**
+

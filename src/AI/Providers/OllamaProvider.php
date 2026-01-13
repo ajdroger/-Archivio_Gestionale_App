@@ -1,9 +1,9 @@
 <?php
 
-namespace FratellanzaMilitare\AI\Providers;
+namespace MCAG\AI\Providers;
 
-use FratellanzaMilitare\AI\LLMProviderInterface;
-use FratellanzaMilitare\AI\EmbeddingProviderInterface;
+use MCAG\AI\LLMProviderInterface;
+use MCAG\AI\EmbeddingProviderInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
  * Implementation for local Ollama instance (typically running on port 11434).
  * Supports both Generation (Llama3/Mistral) and Embeddings (nomic-embed-text).
  * 
- * @package FratellanzaMilitare\AI\Providers
+ * @package MCAG\AI\Providers
  */
 class OllamaProvider implements LLMProviderInterface, EmbeddingProviderInterface
 {
@@ -127,3 +127,5 @@ class OllamaProvider implements LLMProviderInterface, EmbeddingProviderInterface
         return json_decode($result, true) ?? [];
     }
 }
+
+

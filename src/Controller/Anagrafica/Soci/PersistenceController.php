@@ -1,10 +1,10 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Anagrafica\Soci;
+namespace MCAG\Controller\Anagrafica\Soci;
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\Service\RegistrationService;
-use FratellanzaMilitare\Service\ValidationService;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Service\RegistrationService;
+use MCAG\Service\ValidationService;
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -204,3 +204,5 @@ class PersistenceController
         return $response->withHeader('Location', $routeParser->urlFor('socio_list'))->withStatus(302);
     }
 }
+
+

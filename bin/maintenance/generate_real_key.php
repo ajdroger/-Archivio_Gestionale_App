@@ -31,3 +31,4 @@ try {
     echo "Error generating key: " . $e->getMessage() . "\n";
     exit(1);
 }
+

@@ -8,3 +8,4 @@ if (function_exists('opcache_reset')) {
     echo "<p>If you are still seeing the error, please restart your web server (Ampps).</p>";
 }
 echo "<a href='/fratellanza-militare-archivio/public/devtools'>Back to DevTools</a>";
+

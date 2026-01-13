@@ -2,22 +2,22 @@
 
 arch('controllers')
     /** @phpstan-ignore-next-line */
-    ->expect('FratellanzaMilitare\Controller')
-    ->not->toUse('FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection')
+    ->expect('MCAG\Controller')
+    ->not->toUse('MCAG\InfrastrutturaIT\Persistence\DatabaseConnection')
     ->ignoring([
         // NEW: Auth Controllers (direct user table access for security)
-        'FratellanzaMilitare\Controller\Auth\LoginFlowController',
-        'FratellanzaMilitare\Controller\Auth\TwoFactorController',
-        'FratellanzaMilitare\Controller\Auth\LogoutController',
-        'FratellanzaMilitare\Controller\SettingsController',
+        'MCAG\Controller\Auth\LoginFlowController',
+        'MCAG\Controller\Auth\TwoFactorController',
+        'MCAG\Controller\Auth\LogoutController',
+        'MCAG\Controller\SettingsController',
         // NEW: Granular DevTools Controllers (use DatabaseConnection for admin operations)
-        'FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController',
-        'FratellanzaMilitare\Controller\DevTools\DevToolsFileSystemController',
-        'FratellanzaMilitare\Controller\DevTools\DevToolsDatabaseController',
-        'FratellanzaMilitare\Controller\DevTools\DevToolsSecurityController',
-        'FratellanzaMilitare\Controller\DevTools\DevToolsScriptController',
-        'FratellanzaMilitare\Controller\DevTools\DevToolsSystemController',
-        'FratellanzaMilitare\Controller\DevTools\DevToolsAuditController',
+        'MCAG\Controller\DevTools\DevToolsDashboardController',
+        'MCAG\Controller\DevTools\DevToolsFileSystemController',
+        'MCAG\Controller\DevTools\DevToolsDatabaseController',
+        'MCAG\Controller\DevTools\DevToolsSecurityController',
+        'MCAG\Controller\DevTools\DevToolsScriptController',
+        'MCAG\Controller\DevTools\DevToolsSystemController',
+        'MCAG\Controller\DevTools\DevToolsAuditController',
     ]);
 // Example exception if strictly needed, but ideally should be clean.
 
@@ -28,5 +28,6 @@ arch('debug')
 
 arch('models')
     /** @phpstan-ignore-next-line */
-    ->expect('FratellanzaMilitare\SecurityLayer')
-    ->not->toUse('FratellanzaMilitare\Controller');
+    ->expect('MCAG\SecurityLayer')
+    ->not->toUse('MCAG\Controller');
+

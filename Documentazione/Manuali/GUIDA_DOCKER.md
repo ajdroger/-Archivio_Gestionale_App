@@ -1,4 +1,4 @@
-# 🐳 Guida Completa a Docker - Fratellanza Militare v2.0 Enterprise
+# 🐳 Guida Completa a Docker - MCAG v2.0 Enterprise
 
 Questa guida spiega passo passo come eseguire l'intera applicazione utilizzando **Docker**.
 L'uso di Docker garantisce che l'app giri in un ambiente isolato, sicuro e identico per tutti gli sviluppatori, senza dover installare PHP o XAMPP sul tuo PC.
@@ -103,3 +103,4 @@ docker-compose down
 docker system prune -f
 docker-compose up --build
 ```
+

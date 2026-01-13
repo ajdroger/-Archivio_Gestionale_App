@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\Enum\StatoIscrizione;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\Enum\StatoIscrizione;
 
 // Load Env
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
@@ -111,3 +111,4 @@ try {
     echo $e->getTraceAsString();
     exit(1);
 }
+

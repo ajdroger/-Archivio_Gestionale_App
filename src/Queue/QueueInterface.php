@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Queue;
+namespace MCAG\Queue;
 
-use FratellanzaMilitare\Queue\Job\JobInterface;
+use MCAG\Queue\Job\JobInterface;
 
 interface QueueInterface
 {
@@ -16,3 +16,5 @@ interface QueueInterface
      */
     public function pop(): ?JobInterface;
 }
+
+

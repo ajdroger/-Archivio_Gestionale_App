@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\AI;
+namespace MCAG\AI;
 
 /**
  * Interface LLMProviderInterface
@@ -8,7 +8,7 @@ namespace FratellanzaMilitare\AI;
  * Defines the contract for interacting with Large Language Models.
  * Agnostic to the underlying provider (Ollama, OpenAI, Anthropic).
  * 
- * @package FratellanzaMilitare\AI
+ * @package MCAG\AI
  */
 interface LLMProviderInterface
 {
@@ -28,3 +28,5 @@ interface LLMProviderInterface
      */
     public function isAvailable(): bool;
 }
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 class QueryLogger
 {
@@ -27,3 +27,5 @@ class QueryLogger
         }
     }
 }
+
+

@@ -1,13 +1,13 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\Service\RegistrationService;
-use FratellanzaMilitare\Service\ValidationService;
-use FratellanzaMilitare\Service\PdfGenerationService;
-use FratellanzaMilitare\Service\FileEmailService;
-use FratellanzaMilitare\Enum\StatoIscrizione;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Service\RegistrationService;
+use MCAG\Service\ValidationService;
+use MCAG\Service\PdfGenerationService;
+use MCAG\Service\FileEmailService;
+use MCAG\Enum\StatoIscrizione;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -108,3 +108,4 @@ try {
 } catch (\Exception $e) {
     echo "\n[ERROR] " . $e->getMessage() . "\n";
 }
+

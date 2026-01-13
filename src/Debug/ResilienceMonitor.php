@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 use PDO;
 use Psr\Log\LoggerInterface;
@@ -144,3 +144,5 @@ class ResilienceMonitor
         ];
     }
 }
+
+

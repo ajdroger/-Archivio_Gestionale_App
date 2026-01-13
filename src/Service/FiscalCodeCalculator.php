@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 /**
  * Servizio per il calcolo del Codice Fiscale italiano.
@@ -270,3 +270,5 @@ class FiscalCodeCalculator
         return chr(65 + ($sum % 26));
     }
 }
+
+

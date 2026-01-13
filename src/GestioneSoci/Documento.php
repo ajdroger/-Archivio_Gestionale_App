@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
-use FratellanzaMilitare\Enum\StatoDocumento;
+use MCAG\Enum\StatoDocumento;
 use DateTime;
 
 /**
@@ -52,3 +52,5 @@ abstract class Documento
         return hash_equals($this->HashSHA256, $calcolato);
     }
 }
+
+

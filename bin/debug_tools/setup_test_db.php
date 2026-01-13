@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 echo ">>> SETTING UP TEST DATABASE <<<\n";
 
@@ -50,3 +50,4 @@ if ($returnVar === 0) {
     echo "\n✘ Migration Failed!\n";
     exit(1);
 }
+

@@ -3,16 +3,18 @@
 use Psr\Container\ContainerInterface;
 
 return [
-    \FratellanzaMilitare\Controller\Auth\LoginFlowController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Auth\LoginFlowController(
+    \MCAG\Controller\Auth\LoginFlowController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Auth\LoginFlowController(
             $c->get(Mustache_Engine::class),
-            new \FratellanzaMilitare\Service\InputValidator()
+            new \MCAG\Service\InputValidator()
         );
     },
-    \FratellanzaMilitare\Controller\Auth\TwoFactorController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Auth\TwoFactorController($c->get(Mustache_Engine::class));
+    \MCAG\Controller\Auth\TwoFactorController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Auth\TwoFactorController($c->get(Mustache_Engine::class));
     },
-    \FratellanzaMilitare\Controller\Auth\LogoutController::class => function () {
-        return new \FratellanzaMilitare\Controller\Auth\LogoutController();
+    \MCAG\Controller\Auth\LogoutController::class => function () {
+        return new \MCAG\Controller\Auth\LogoutController();
     },
 ];
+
+

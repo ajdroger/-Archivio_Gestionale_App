@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Jobs;
+namespace MCAG\Jobs;
 
-use FratellanzaMilitare\Service\PdfGenerationService;
+use MCAG\Service\PdfGenerationService;
 
 /**
  * Background Job per Generazione PDF
@@ -50,3 +50,5 @@ class GeneratePdfJob extends AbstractJob
         ];
     }
 }
+
+

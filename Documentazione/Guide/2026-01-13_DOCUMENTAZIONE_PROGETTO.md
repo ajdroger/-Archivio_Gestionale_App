@@ -1,5 +1,5 @@
 # DOCUMENTAZIONE COMPLETA PROGETTO
-## Digitalizzazione e Dematerializzazione Archivio Soci - Fratellanza Militare di Firenze
+## Digitalizzazione e Dematerializzazione Archivio Soci - MCAG di Firenze
 
 **Data:** 21 Dicembre 2025  
 **Versione Software:** 1.3.1 (Mission-Critical Enterprise)  
@@ -81,3 +81,4 @@ L'architettura Layered è stata potenziata con pattern di resilienza e osservabi
 
 ---
 *Digitalizzazione a cura di Soobadur Mohammad Ajmeer - Tecnico Informatico*
+

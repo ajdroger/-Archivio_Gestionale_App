@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use Monolog\Formatter\FormatterInterface;
 use Monolog\LogRecord;
@@ -22,7 +22,7 @@ class JsonLogFormatter implements FormatterInterface
 {
     private string $applicationName;
 
-    public function __construct(string $applicationName = 'FratellanzaMilitare')
+    public function __construct(string $applicationName = 'MCAG')
     {
         $this->applicationName = $applicationName;
     }
@@ -65,3 +65,5 @@ class JsonLogFormatter implements FormatterInterface
         return $formatted;
     }
 }
+
+

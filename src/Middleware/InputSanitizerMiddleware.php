@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use HTMLPurifier;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -69,3 +69,5 @@ class InputSanitizerMiddleware implements MiddlewareInterface
         return $input;
     }
 }
+
+

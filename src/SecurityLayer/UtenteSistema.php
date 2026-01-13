@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 abstract class UtenteSistema
 {
@@ -120,3 +120,5 @@ abstract class UtenteSistema
         $this->PasswordHash = password_hash($password, PASSWORD_DEFAULT);
     }
 }
+
+

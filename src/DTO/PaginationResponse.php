@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\DTO;
+namespace MCAG\DTO;
 
 class PaginationResponse
 {
@@ -31,3 +31,5 @@ class PaginationResponse
         ];
     }
 }
+
+

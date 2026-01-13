@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 use Psr\Log\LoggerInterface;
 
@@ -230,3 +230,5 @@ class AuditTrail
         throw new \InvalidArgumentException("Formato $formato non supportato.");
     }
 }
+
+

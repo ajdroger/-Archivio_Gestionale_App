@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 use PDO;
 use Exception;
@@ -67,3 +67,5 @@ class DatabaseInspector
         }
     }
 }
+
+

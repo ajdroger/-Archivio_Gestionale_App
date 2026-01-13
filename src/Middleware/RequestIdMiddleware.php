@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,3 +30,5 @@ class RequestIdMiddleware implements MiddlewareInterface
         return $response->withHeader(self::HEADER_NAME, $requestId);
     }
 }
+
+

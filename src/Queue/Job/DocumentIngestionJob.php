@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Queue\Job;
+namespace MCAG\Queue\Job;
 
-use FratellanzaMilitare\Service\AI\DocumentIngestionService;
+use MCAG\Service\AI\DocumentIngestionService;
 
 class DocumentIngestionJob implements JobInterface
 {
@@ -27,3 +27,5 @@ class DocumentIngestionJob implements JobInterface
         echo "Finished: {$chunksCreated} chunks created for {$this->filename}\n";
     }
 }
+
+
