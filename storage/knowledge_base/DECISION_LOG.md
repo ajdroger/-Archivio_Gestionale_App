@@ -894,7 +894,8 @@ Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa 
 
 
 
-## [ADR-030] Rebranding "Cuore Aperto" (MCAG)
+
+## [ADR-031] Rebranding "Cuore Aperto" (MCAG)
 **Data**: 2026-01-13
 **Stato**: ✅ Completato
 **Contesto**:
@@ -912,5 +913,44 @@ Eseguire un refactoring "Surgical Precision" (Piano Cuore Aperto):
 - (+) **Pulizia**: Rimozione debito tecnico legato a naming legacy.
 - (-) **Breaking Changes**: Script esterni non aggiornati che chiamano i vecchi namespace falliranno (mitigato parzialmente dagli alias).
 - (-) **Deploy**: Richiede downtime per migrazione DB e update config.
+
+---
+
+## [ADR-032] Commercial Strategy & Pricing Model
+**Data**: 2026-01-13
+**Stato**: ✅ Attivo
+**Contesto**:
+Con la maturità tecnica raggiunta (v5.3 Enterprise), il progetto necessita di una strategia commerciale definita per il lancio sul mercato associativo e PA.
+**Decisione**:
+Definire un modello di pricing basato sul valore ("Value-Based Pricing") supportato da tre tier di licenza perpetua:
+1.  **Standard (€115k)**: Core features + Source Code.
+2.  **Professional (€135k)**: +DevTools, Legal Kit, Priority Support.
+3.  **Enterprise (€175k)**: +HA Cluster, Customization, SLA 99.9%.
+
+Inoltre, formalizzare il valore dello sviluppatore unico tramite calcolo ROI (€63.08/h) e benchmark di mercato.
+
+**Conseguenze**:
+- (+) Posizionamento premium ("Platinum Enterprise").
+- (+) Chiarezza contrattuale per i clienti (Legal Kit v1.0).
+- (+) Sostenibilità a lungo termine del progetto.
+
+---
+
+## [ADR-033] Toolkit Console Architecture v2
+**Data**: 2026-01-13
+**Stato**: ✅ Attivo
+**Contesto**:
+Il terminale web (`terminal.php`) presentava problemi di stabilità su host Windows (Ampps) e fragilità nel parsing JSON in caso di warning PHP spuri.
+**Decisione**:
+Rifattorizzare il backend della console con:
+1.  **Output Buffering Rigoroso**: Cattura di qualsiasi output spurio (echo, warning) prima della generazione JSON.
+2.  **OS-Aware Execution**: Detection automatica dell'OS host.
+    - **Windows**: Incapsulamento comandi in PowerShell per emulare environment Unix.
+    - **Linux**: Passthrough diretto bash.
+3.  **Encoding Sanitization**: Conversione forzata CP850/1252 to UTF-8.
+
+**Conseguenze**:
+- (+) Stabilità "Bullet-proof" della console in environment eterogenei.
+- (+) UX consistente indipendentemente dall'OS sottostante.
 
 ---
