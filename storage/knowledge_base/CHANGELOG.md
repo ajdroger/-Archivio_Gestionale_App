@@ -34,10 +34,6 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
       $sections = preg_split('/^(?="#{1,3}\s)/m', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
       ```
     - **Risultato**: Il retrieval score per query specifiche (es. "Redis ADR") è passato da <0.60 a >0.71.
-- **RAG Recall Optimization**: Modifica parametri di recupero in `AssistantController.php` per evitare falsi negativi su query tecniche.
-    - **Threshold Relaxation**: Abbassata soglia *cosine similarity* da `0.55` a `0.45`. Questo permette all'AI di considerare "rilevanti" anche frammenti tecnici (regex, config) che hanno una densità semantica diversa dal linguaggio naturale.
-    - **Context Window Expansion**: Aumentato il numero di *chunks* recuperati da 5 a 10 (`search($embedding, 10)`).
-    - **Source Attribution**: Aggiunto metadata `[Source: filename]` nel prompt di sistema per permettere all'AI di citare le fonti con precisione.
 
 ### Risolto [CRITICAL]
 - **Ghost Data (Allucinazioni)**: Rimossa la presenza di duplici definizioni di `ADR-029` nel `DECISION_LOG.md`.

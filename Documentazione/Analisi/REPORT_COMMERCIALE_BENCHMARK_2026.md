@@ -26,7 +26,7 @@ Il sistema **MCAG** rappresenta una soluzione enterprise-grade pronta per commer
 | **v2.4.0** - Enterprise Perfection | Ottobre 2026 | €99.900 | 1.620h | +€30k (+43%) |
 | **v4.0.0** - Ultimate Edition | Gennaio 2026 | **€120.000** | **1.940h** | **+€20k (+20%)** |
 
-**Crescita Totale**: Da €8.000 (prototipo) a **€120.000** (enterprise) = **+€112.000** (+1.400%) in 13 mesi.
+**Crescita Totale**: Da €8.000 (prototipo v1.0) a **€120.000** (v4.0 Ultimate Edition) = **+€112.000** (+1.400%) in 13 mesi.
 
 ### ROI Sviluppatore (Soobadur Mohammad Ajmeer)
 

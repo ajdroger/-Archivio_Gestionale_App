@@ -29,7 +29,7 @@ class SociApiController
         tags: ["Soci"],
         summary: "Lista paginata dei soci",
         description: "Restituisce una lista di soci con paginazione opzionale",
-        security: [["cookieAuth" => []]],
+        security: [["apiKey" => []]],
         parameters: [
             new OA\Parameter(
                 name: "page",
@@ -110,7 +110,7 @@ class SociApiController
         tags: ["Soci"],
         summary: "Dettaglio singolo socio",
         description: "Recupera i dettagli completi di un socio tramite Codice Fiscale",
-        security: [["cookieAuth" => []]],
+        security: [["apiKey" => []]],
         parameters: [
             new OA\Parameter(
                 name: "cf",
@@ -162,7 +162,7 @@ class SociApiController
         tags: ["Soci"],
         summary: "Crea nuovo socio",
         description: "Crea un nuovo socio nel sistema",
-        security: [["cookieAuth" => []]],
+        security: [["apiKey" => []]],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
