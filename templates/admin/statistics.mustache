@@ -4,7 +4,7 @@
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-end border-bottom border-secondary pb-4">
             <div>
-                <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-chart-line me-3 text-primary"></i>REPORTING CENTER</h2>
+                <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-chart-line me-3 text-primary"></i>CENTRO ANALISI & MONITORAGGIO</h2>
                 <p class="text-secondary mb-0 mt-2">Analisi strategica in tempo reale. Intelligence su anagrafica e finanze.</p>
             </div>
             <div class="text-end">
@@ -27,7 +27,7 @@
                 <div class="fs-1 text-primary mb-3">
                     <i class="fa-solid fa-database"></i>
                 </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Integrità DB</h6>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Integrità Strutturale DB</h6>
                 <div id="mon-db">
                     {{#monitoring.database.status}}
                     <span class="badge bg-success-subtle text-success border border-success border-opacity-25">OPERATIVO</span>
@@ -45,7 +45,7 @@
                 <div class="fs-1 text-success mb-3">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Storage Salute</h6>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Stato Allocazione Storage</h6>
                 <div id="mon-storage">
                     {{#health.checks.storage.status}}
                     <span class="badge bg-success-subtle text-success border border-success border-opacity-25">{{health.checks.storage.message}}</span>
@@ -61,7 +61,7 @@
                 <div class="fs-1 text-info mb-3">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                 </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Backups (24h)</h6>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Ciclo Backup & Retention (24h)</h6>
                 <div id="mon-backups">
                     {{#monitoring.backups.status}}
                     <span class="badge bg-success-subtle text-success border border-success border-opacity-25">{{monitoring.backups.count}} BACKUPS</span>
@@ -79,7 +79,7 @@
                 <div class="fs-1 text-warning mb-3">
                     <i class="fa-solid fa-server"></i>
                 </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Server Uptime</h6>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Disponibilità Servizio (SLA)</h6>
                 <div id="mon-uptime">
                     <span class="badge bg-dark text-white border border-secondary">{{health.uptime}}</span>
                 </div>
@@ -94,7 +94,7 @@
     <div class="col-md-6 col-xl-4">
         <div class="card h-100 bg-dark border-secondary shadow-lg">
             <div class="card-header border-secondary bg-transparent py-3">
-                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-info"></i>STATO SOCI</h6>
+                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-info"></i>DISTRIBUZIONE STATUS GIURIDICO</h6>
             </div>
             <div class="card-body d-flex flex-column align-items-center justify-content-center">
                 <div style="height: 250px; width: 100%;">
@@ -112,7 +112,7 @@
     <div class="col-md-6 col-xl-4">
         <div class="card h-100 bg-dark border-secondary shadow-lg">
             <div class="card-header border-secondary bg-transparent py-3">
-                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-success"></i>SALUTE FINANZIARIA</h6>
+                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-success"></i>CONFORMITÀ CONTRIBUTIVA</h6>
             </div>
             <div class="card-body d-flex flex-column align-items-center justify-content-center">
                 <div style="height: 250px; width: 100%;">
@@ -136,21 +136,21 @@
                     </div>
                     <div>
                         <h3 class="text-white fw-bold mb-0">{{stats.totale}}</h3>
-                        <div class="text-secondary small text-uppercase fw-bold">Soci Totali</div>
+                        <div class="text-secondary small text-uppercase fw-bold">Anagrafiche Totali Gestite</div>
                     </div>
                 </div>
             </div>
             <div class="col-6">
                 <div class="card h-100 bg-dark border-secondary shadow-lg p-3 text-center" title="Percentuale di soci in regola con i pagamenti per l'anno corrente">
                     <h4 class="text-success fw-bold mb-0">{{stats.perc_paganti}}%</h4>
-                    <div class="text-secondary small fw-bold">PAGANTI REGOLARI</div>
+                    <div class="text-secondary small fw-bold">COMPLIANCE CONTRIBUTIVA</div>
                     <div class="text-white-50" style="font-size: 0.7rem;">Compliance Aziendale</div>
                 </div>
             </div>
             <div class="col-6">
                 <div class="card h-100 bg-dark border-secondary shadow-lg p-3 text-center" title="Percentuale di soci con irregolarità amministrative">
                     <h4 class="text-danger fw-bold mb-0">{{stats.perc_morosi}}%</h4>
-                    <div class="text-secondary small fw-bold">MOROSITÀ</div>
+                    <div class="text-secondary small fw-bold">ANOMALIE CONTRIBUTIVE</div>
                     <div class="text-white-50" style="font-size: 0.7rem;">Indice di Rischio</div>
                 </div>
             </div>
