@@ -38,20 +38,22 @@ class DocumentIngestionService
         $text = $this->pdfParser->extractText($filePath);
 
         // 2. Split into chunks
-        $chunks = $this->chunker->chunk($text);
+        $chunks = $this->chunker->split($text);
 
         // 3. Generate embeddings and store
         $chunksCreated = 0;
-        foreach ($chunks as $chunk) {
+        foreach ($chunks as $index => $chunk) {
             $embedding = $this->llm->embed($chunk);
             if (!empty($embedding)) {
-                $this->vectorStore->addChunk($chunk, $embedding);
+                // Generate unique ID for each chunk
+                $chunkId = md5($filePath . '_' . $index);
+                $this->vectorStore->addDocument($chunkId, $chunk, $embedding, [
+                    'source_file' => basename($filePath),
+                    'chunk_index' => $index
+                ]);
                 $chunksCreated++;
             }
         }
-
-        // 4. Persist vector store
-        $this->vectorStore->save();
 
         return $chunksCreated;
     }

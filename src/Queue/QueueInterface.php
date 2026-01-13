@@ -2,6 +2,8 @@
 
 namespace FratellanzaMilitare\Queue;
 
+use FratellanzaMilitare\Queue\Job\JobInterface;
+
 interface QueueInterface
 {
     /**
