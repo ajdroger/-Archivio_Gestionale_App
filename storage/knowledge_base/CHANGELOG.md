@@ -51,6 +51,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Accessibilità**: Migliorato contrasto pagine Policy (Privacy & Cookie) con tema scuro (`bg-dark`, `text-white`) per garantire leggibilità ottimale.
 - **Data Integrity**: Corretti link obsoleti e indirizzi email legacy (`fratellanza-firenze.it` -> `mcag.it`).
 - **Policy Sync**: Aggiornato `PolicyController` per riflettere l'intero contenuto (11 sezioni) del documento statico `privacy-policy.html`, includendo Base Giuridica, Data Retention, Sicurezza e Cookie details.
+- **Bugfix**: Risolto link "Leggi Cookie Policy" non funzionante nelle pagine policy; sostituito placeholder Mustache `{{base_url}}` (non processato) con interpolazione variabile PHP `$baseUrl`.
 - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
     - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
 - **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).

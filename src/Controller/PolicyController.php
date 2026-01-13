@@ -17,6 +17,11 @@ class PolicyController
 
     public function privacy(Request $request, Response $response): Response
     {
+        $baseUrl = (function () {
+            $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+            return $scriptDir === '/' ? '' : $scriptDir;
+        })();
+
         $policyContent = <<<HTML
             <div class="card bg-dark text-white border-secondary shadow-lg">
                 <div class="card-body p-5">
@@ -142,7 +147,7 @@ class PolicyController
                     <section class="mb-5">
                         <h4 class="text-info">9. Cookies</h4>
                         <p class="text-white-50">Il sito utilizza solo <strong>cookies tecnici essenziali</strong> (Sessione, CSRF). <strong>NO cookies di profilazione</strong> o tracking di terze parti.</p>
-                        <a href="{{base_url}}/cookie-policy" class="btn btn-outline-info btn-sm">Leggi Cookie Policy Completa</a>
+                        <a href="{$baseUrl}/cookie-policy" class="btn btn-outline-info btn-sm">Leggi Cookie Policy Completa</a>
                     </section>
 
                     <section class="mb-5">
@@ -161,10 +166,7 @@ HTML;
         $html = $this->engine->render('layout/layout', [
             'content' => $policyContent,
             'title' => 'Privacy Policy - MCAG',
-            'base_url' => (function () {
-                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-                return $scriptDir === '/' ? '' : $scriptDir;
-            })()
+            'base_url' => $baseUrl
         ]);
         $response->getBody()->write($html);
         return $response;
