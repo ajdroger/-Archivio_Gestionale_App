@@ -43,7 +43,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ### Compliance & Legal [NEW]
 - **Cookie Policy**: Implementazione banner conforme GDPR e link policy (#45).
-- **UI/UX**: Fix layout responsivo per "Registro Unico Anagrafiche", abilitato container fluid per prevenire taglio contenuti (#fix-container).
+- **UI/UX**: Fix layout responsivo per "Registro Unico Anagrafiche", abilitato container fluid per prevenire taglio contenuti (#fix-container). Aggiunti attributi `id` e `name` ai campi filtro per conformità standard web e accessibilità.
 - **Compliance**: Aggiornamento terminologia UI per allineamento a standard legali/audit.
 
 ### Fixed

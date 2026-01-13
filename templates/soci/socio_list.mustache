@@ -45,12 +45,12 @@
                     </tr>
                     <!-- Filter Row -->
                     <tr class="filter-row" style="background: rgba(15, 23, 42, 0.8);">
-                        <th class="ps-4 pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Cerca Nome/Nascita..."></th>
-                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Matricola"></th>
-                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Codice Fiscale"></th>
-                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Email/Tel"></th>
+                        <th class="ps-4 pb-2 border-secondary"><input type="text" id="filter_input_name" name="filter_nome" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Cerca Nome/Nascita..."></th>
+                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_matricola" name="filter_matricola" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Matricola"></th>
+                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_cf" name="filter_cf" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Codice Fiscale"></th>
+                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_contact" name="filter_contatti" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Email/Tel"></th>
                         <th class="pb-2 text-center border-secondary">
-                            <select class="form-select form-select-sm bg-dark text-white border-secondary small">
+                            <select id="filter_select_status" name="filter_status" class="form-select form-select-sm bg-dark text-white border-secondary small">
                                 <option value="">Tutti</option>
                                 <option value="ATTIVO">ATTIVO</option>
                                 <option value="SOSPESO">SOSPESO</option>
@@ -59,7 +59,7 @@
                             </select>
                         </th>
                         <th class="pb-2 text-center border-secondary">
-                            <select class="form-select form-select-sm bg-dark text-white border-secondary small">
+                            <select id="filter_select_compliance" name="filter_compliance" class="form-select form-select-sm bg-dark text-white border-secondary small">
                                 <option value="">Tutti</option>
                                 <option value="MOROSO">MOROSO</option>
                                 <option value="OK">OK</option>
