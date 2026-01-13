@@ -1,6 +1,11 @@
 <?php
 
 use Psr\Container\ContainerInterface;
+use FratellanzaMilitare\Service\DocumentParser\PdfParserService;
+use FratellanzaMilitare\Service\DocumentParser\WordParserService;
+use FratellanzaMilitare\Service\DocumentParser\ExcelParserService;
+use FratellanzaMilitare\Service\DocumentParser\CodeParserService;
+use FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory;
 
 return [
     \FratellanzaMilitare\Controller\Intelligence\StatsDashboardController::class => function (ContainerInterface $c) {
@@ -36,24 +41,24 @@ return [
         );
     },
 
-    \FratellanzaMilitare\Service\DocumentParser\PdfParserService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\DocumentParser\PdfParserService();
+    PdfParserService::class => function (ContainerInterface $c) {
+        return new PdfParserService();
     },
 
-    \FratellanzaMilitare\Service\DocumentParser\WordParserService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\DocumentParser\WordParserService();
+    WordParserService::class => function (ContainerInterface $c) {
+        return new WordParserService();
     },
 
-    \FratellanzaMilitare\Service\DocumentParser\ExcelParserService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\DocumentParser\ExcelParserService();
+    ExcelParserService::class => function (ContainerInterface $c) {
+        return new ExcelParserService();
     },
 
-    \FratellanzaMilitare\Service\DocumentParser\CodeParserService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\DocumentParser\CodeParserService();
+    CodeParserService::class => function (ContainerInterface $c) {
+        return new CodeParserService();
     },
 
-    \FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory($c);
+    DocumentParserFactory::class => function (ContainerInterface $c) {
+        return new DocumentParserFactory($c);
     },
 
     \FratellanzaMilitare\AI\RAG\DocumentChunkerService::class => function (ContainerInterface $c) {
@@ -62,7 +67,7 @@ return [
 
     \FratellanzaMilitare\Service\AI\DocumentIngestionService::class => function (ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\AI\DocumentIngestionService(
-            $c->get(\FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory::class),
+            $c->get(DocumentParserFactory::class),
             $c->get(\FratellanzaMilitare\AI\RAG\DocumentChunkerService::class),
             $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class),
             $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class)
