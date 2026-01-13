@@ -66,7 +66,11 @@ class ListController
             'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
             'username' => $_SESSION['username'] ?? 'Utente',
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
-            'container_fluid' => true
+            'container_fluid' => true,
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })()
         ];
 
         $html = $this->mustache->render('socio_list', $viewData);
