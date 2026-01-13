@@ -88,6 +88,7 @@ return function (App $app) {
     $app->group('/ai', function ($group) {
         $group->get('/assistant', AssistantController::class . ':chatWindow')->setName('ai_assistant_window');
         $group->post('/assistant/message', AssistantController::class . ':message')->setName('ai_assistant_message');
+        $group->post('/assistant/upload', AssistantController::class . ':uploadDocument')->setName('ai_assistant_upload');
     })->add($statsRole);
 
     $app->group('/statistiche', function ($group) use ($exportLimit) {
