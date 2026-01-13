@@ -983,3 +983,13 @@ This allows us to selectively enable full-width layouts for data-heavy pages (li
 - templates/layout/layout_header.mustache
 - src/Controller/Anagrafica/Soci/ListController.php
 - User feedback regarding truncated UI.
+
+## [ADR-036] Professional Footer Redesign
+**Data**: 2026-01-14
+**Stato**: Implementato
+**Contesto**: Il footer precedente era minimale e puramente funzionale, giudicato 'rozzo' e non in linea con il restyling 'Mission-Critical' e 'Premium' del resto dell'applicazione (v5.3). Mancava di gerarchia visiva e spazio per link legali e di supporto.
+**Decisione**:
+1. **Fat Footer Architecture**: Adozione di un layout a 4 colonne (Brand, Navigazione, Legal, Sviluppo) per massimizzare la discoverability delle risorse e conferire autorevolezza.
+2. **Visual Hierarchy**: Separazione netta tra footer di navigazione (percorsi utili) e 'bottom bar' (Copyright, Versione, Crediti tecnici).
+3. **Compliance Visibility**: Sezione dedicata per Privacy, Cookie Policy e Termini, rendendo esplicita la conformità normativa.
+**Conseguenze**: Migliore esperienza utente, percezione di prodotto 'Enterprise' e maggiore facilità di accesso alle informazioni legali e di supporto.
