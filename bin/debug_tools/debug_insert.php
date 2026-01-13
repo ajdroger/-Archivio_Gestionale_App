@@ -1,8 +1,8 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\SecurityLayer\TotpEncryptionService;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\SecurityLayer\TotpEncryptionService;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -37,3 +37,4 @@ try {
 } catch (Exception $e) {
     echo "GENERAL ERROR: " . $e->getMessage() . "\n";
 }
+

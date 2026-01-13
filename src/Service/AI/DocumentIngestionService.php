@@ -1,11 +1,11 @@
 <?php
 
-namespace FratellanzaMilitare\Service\AI;
+namespace MCAG\Service\AI;
 
-use FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory;
-use FratellanzaMilitare\AI\RAG\DocumentChunkerService;
-use FratellanzaMilitare\AI\RAG\SimpleVectorStore;
-use FratellanzaMilitare\AI\Providers\OllamaProvider;
+use MCAG\Service\DocumentParser\DocumentParserFactory;
+use MCAG\AI\RAG\DocumentChunkerService;
+use MCAG\AI\RAG\SimpleVectorStore;
+use MCAG\AI\Providers\OllamaProvider;
 
 class DocumentIngestionService
 {
@@ -61,3 +61,5 @@ class DocumentIngestionService
         return $chunksCreated;
     }
 }
+
+

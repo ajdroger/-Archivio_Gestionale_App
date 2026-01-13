@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 /**
  * Implementazione del servizio Email su File (Log).
@@ -29,3 +29,5 @@ class FileEmailService implements EmailServiceInterface
         return (file_put_contents($this->logFile, $logEntry, FILE_APPEND) !== false);
     }
 }
+
+

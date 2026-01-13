@@ -31,3 +31,4 @@ $latency = rand(1000000, 3000000);
 usleep($latency);
 echo "Chaos: Induced latency of " . ($latency / 1000) . "ms\n";
 echo "Chaos completed.\n";
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 class AccessControlList
 {
@@ -86,3 +86,5 @@ class AccessControlList
         return self::$permessi[$ruolo] ?? [];
     }
 }
+
+

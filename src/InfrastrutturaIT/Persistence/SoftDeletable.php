@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
+namespace MCAG\InfrastrutturaIT\Persistence;
 
 trait SoftDeletable
 {
@@ -35,3 +35,5 @@ trait SoftDeletable
     abstract protected function getTableName(): string;
     abstract protected function getPrimaryKey(): string;
 }
+
+

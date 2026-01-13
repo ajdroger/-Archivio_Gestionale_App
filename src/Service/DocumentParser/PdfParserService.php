@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service\DocumentParser;
+namespace MCAG\Service\DocumentParser;
 
 use Smalot\PdfParser\Parser;
 
@@ -33,3 +33,5 @@ class PdfParserService implements DocumentParserInterface
         return $mimeType === 'application/pdf';
     }
 }
+
+

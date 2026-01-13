@@ -1,13 +1,13 @@
 <?php
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response as SlimResponse;
 use Psr\Log\LoggerInterface;
-use FratellanzaMilitare\Service\RedisService;
+use MCAG\Service\RedisService;
 
 /**
  * Rate Limit Middleware - Redis-backed persistente
@@ -185,3 +185,5 @@ class RateLimitMiddleware
         }
     }
 }
+
+

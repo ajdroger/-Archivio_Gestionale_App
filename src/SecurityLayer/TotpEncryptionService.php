@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
@@ -105,3 +105,5 @@ class TotpEncryptionService
         return $key->saveToAsciiSafeString();
     }
 }
+
+

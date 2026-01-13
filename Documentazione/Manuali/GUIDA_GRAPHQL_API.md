@@ -43,3 +43,4 @@ query {
 È possibile testare le query usando:
 1. **Postman/Insomnia**: Puntando all'endpoint `/api/graphql`.
 2. **DevTools**: Usando lo script `bin/debug_tools/graphql_debug.php` per visualizzare lo schema completo.
+

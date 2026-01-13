@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service\DocumentParser;
+namespace MCAG\Service\DocumentParser;
 
 use Psr\Container\ContainerInterface;
 
@@ -51,3 +51,5 @@ class DocumentParserFactory
         }
     }
 }
+
+

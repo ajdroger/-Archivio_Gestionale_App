@@ -6,7 +6,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 use DI\ContainerBuilder;
-use FratellanzaMilitare\Queue\QueueInterface;
+use MCAG\Queue\QueueInterface;
 
 echo "--- Debug Trace Start ---\n";
 
@@ -37,3 +37,4 @@ try {
     echo "FATAL ERROR: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString();
 }
+

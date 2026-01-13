@@ -1,12 +1,12 @@
 <?php
 
-namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
+namespace MCAG\InfrastrutturaIT\Persistence;
 
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\SocioRepository;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\Enum\StatoIscrizione;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDODocumentoRepository;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\SocioRepository;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\Enum\StatoIscrizione;
+use MCAG\InfrastrutturaIT\Persistence\PDODocumentoRepository;
 use PDO;
 use DateTime;
 
@@ -180,7 +180,7 @@ class PDOSocioRepository implements SocioRepository
         try {
             // MySQL standard column
             $statusName = $row['stato_iscrizione'] ?? 'IN_ATTESA';
-            $socio->Stato = constant("FratellanzaMilitare\\Enum\\StatoIscrizione::{$statusName}");
+            $socio->Stato = constant("MCAG\\Enum\\StatoIscrizione::{$statusName}");
         } catch (\Throwable $e) {
             $socio->Stato = StatoIscrizione::IN_ATTESA;
         }
@@ -432,7 +432,7 @@ class PDOSocioRepository implements SocioRepository
             $this->pdo->commit();
 
             $pseudoCF = substr($codiceFiscale, 0, 3) . '***' . substr($codiceFiscale, -3);
-            $trail = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
+            $trail = \MCAG\SecurityLayer\AuditTrail::getInstance();
             $trail->logEvento(
                 null,
                 'GDPR_HARD_DELETE',
@@ -545,3 +545,5 @@ class PDOSocioRepository implements SocioRepository
         return 'codice_fiscale';
     }
 }
+
+

@@ -182,7 +182,7 @@ Il sistema MCAG (Militare Civile Archivio Gestionale) v4.0.0 Ultimate Edition ra
 #### **feature/rebranding-mcag**
 **LOC**: +800 | **Files**: 45
 
-Rinominazione completa da "Fratellanza Militare Archivio" a "MCAG System". Aggiornati:
+Rinominazione completa da "MCAG Archivio" a "MCAG System". Aggiornati:
 - Tutti i template (29 views)
 - README, documentazione (20+ files)
 - Configurazioni Docker/CI
@@ -621,3 +621,4 @@ Il sistema soddisfa i requisiti tecnici per:
 
 **Firma Digitale SHA-256**:  
 `e8f4c2a1b9d7e3f6a4c8b2d9e5f1a7c3b4d8e2f9a6c1b5d3e7f2a8c4b9d6e1f5`
+

@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Service\Demo;
+namespace MCAG\Service\Demo;
 
-use FratellanzaMilitare\Service\EmailServiceInterface;
+use MCAG\Service\EmailServiceInterface;
 use Psr\Log\LoggerInterface;
 
 class DemoInvitationService
@@ -91,3 +91,5 @@ class DemoInvitationService
         return $this->emailService->send($recipientEmail, $subject, $htmlContent);
     }
 }
+
+

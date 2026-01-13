@@ -1,6 +1,6 @@
 # Guida Completa ai Comandi Git Bash
 
-Questa guida fornisce una spiegazione dettagliata dei comandi Git Bash fondamentali e delle procedure specifiche adottate per il progetto "Fratellanza Militare".
+Questa guida fornisce una spiegazione dettagliata dei comandi Git Bash fondamentali e delle procedure specifiche adottate per il progetto "MCAG".
 
 ## Indice
 1. [Concetti Base](#concetti-base)
@@ -136,3 +136,4 @@ git merge hotfix/descrizione-bug
 git checkout stable
 git merge main
 ```
+

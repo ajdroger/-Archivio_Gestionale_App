@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\Service\BackupVerificationService;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\Service\BackupVerificationService;
 use Dotenv\Dotenv;
 
 // Load environment
@@ -47,3 +47,4 @@ if ($result['success']) {
     echo "Errore: {$result['message']}\n";
     exit(1);
 }
+

@@ -23,3 +23,4 @@ try {
     echo "Error creating database: " . $e->getMessage() . "\n";
     exit(1);
 }
+

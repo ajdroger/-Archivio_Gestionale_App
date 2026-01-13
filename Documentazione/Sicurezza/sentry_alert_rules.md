@@ -24,3 +24,4 @@ Definire regole precise per evitare "alert fatigue" e garantire che gli errori c
 *   **Condition**: Event tag `category` equals `security`.
 *   **Action**: Trigger PagerDuty (via Webhook) to Security Team.
 *   **Why**: Potential attack in progress.
+

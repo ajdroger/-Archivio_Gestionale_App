@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Service\SmtpEmailService;
+use MCAG\Service\SmtpEmailService;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
@@ -87,3 +87,4 @@ try {
     echo "❌ Exception: " . $e->getMessage() . "\n";
     exit(1);
 }
+

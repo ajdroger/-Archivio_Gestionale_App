@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use PDO;
-use FratellanzaMilitare\Service\RedisService;
+use MCAG\Service\RedisService;
 
 /**
  * Enhanced Health Check Service
@@ -250,3 +250,5 @@ class HealthCheckService
         return implode(' ', $parts);
     }
 }
+
+

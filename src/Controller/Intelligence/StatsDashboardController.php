@@ -1,10 +1,10 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Intelligence;
+namespace MCAG\Controller\Intelligence;
 
-use FratellanzaMilitare\GestioneSoci\SocioRepository;
-use FratellanzaMilitare\Debug\ResilienceMonitor;
-use FratellanzaMilitare\Service\HealthCheckService;
+use MCAG\GestioneSoci\SocioRepository;
+use MCAG\Debug\ResilienceMonitor;
+use MCAG\Service\HealthCheckService;
 use Mustache_Engine;
 use Predis\Client as RedisClient;
 use Psr\Http\Message\ResponseInterface;
@@ -188,3 +188,5 @@ class StatsDashboardController
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Event;
+namespace MCAG\Event;
 
 /**
  * Interface EventBusInterface
@@ -8,7 +8,7 @@ namespace FratellanzaMilitare\Event;
  * Defines the contract for an Event Dispatcher system.
  * Allows decoupling of event producers from consumers.
  * 
- * @package FratellanzaMilitare\Event
+ * @package MCAG\Event
  */
 interface EventBusInterface
 {
@@ -29,3 +29,5 @@ interface EventBusInterface
      */
     public function subscribe(string $eventClass, callable|ListenerInterface $listener): void;
 }
+
+

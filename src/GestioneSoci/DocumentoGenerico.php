@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
 /**
  * Rappresenta un documento generico non tipizzato.
@@ -12,3 +12,5 @@ class DocumentoGenerico extends Documento
 {
     // Nessuna proprietà specifica al momento.
 }
+
+

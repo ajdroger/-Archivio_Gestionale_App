@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -82,3 +82,5 @@ class CsrfViewMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 }
+
+

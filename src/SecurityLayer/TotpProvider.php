@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 use OTPHP\TOTP;
 
@@ -59,3 +59,5 @@ class TotpProvider
         return $totp->getProvisioningUri();
     }
 }
+
+

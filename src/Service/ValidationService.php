@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 /**
  * Servizio di validazione dati centralizzato.
@@ -143,3 +143,5 @@ class ValidationService
         return true; // Placeholder: sempre pulito
     }
 }
+
+

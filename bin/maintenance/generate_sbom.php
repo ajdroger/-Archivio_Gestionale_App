@@ -38,3 +38,4 @@ $outputPath = __DIR__ . '/../../sbom.json';
 file_put_contents($outputPath, json_encode($sbom, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
 echo "SBOM generated at $outputPath\n";
+

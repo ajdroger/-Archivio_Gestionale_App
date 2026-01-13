@@ -52,3 +52,4 @@ if (is_dir($logDir)) {
 }
 
 echo "Cleanup Completed.\n";
+

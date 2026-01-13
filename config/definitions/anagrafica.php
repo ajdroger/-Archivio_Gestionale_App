@@ -1,45 +1,47 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 return [
-    \FratellanzaMilitare\Controller\Anagrafica\Soci\ListController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Anagrafica\Soci\ListController(
+    \MCAG\Controller\Anagrafica\Soci\ListController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Anagrafica\Soci\ListController(
             $c->get(Mustache_Engine::class),
             $c->get(PDOSocioRepository::class)
         );
     },
-    \FratellanzaMilitare\Controller\Anagrafica\Soci\DetailController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Anagrafica\Soci\DetailController(
+    \MCAG\Controller\Anagrafica\Soci\DetailController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Anagrafica\Soci\DetailController(
             $c->get(Mustache_Engine::class),
             $c->get(PDOSocioRepository::class),
             $c->get('audit_logger')
         );
     },
-    \FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController(
+    \MCAG\Controller\Anagrafica\Soci\PersistenceController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Anagrafica\Soci\PersistenceController(
             $c->get(Mustache_Engine::class),
             $c->get(PDOSocioRepository::class),
             $c->get('audit_logger'),
-            $c->get(\FratellanzaMilitare\Service\ValidationService::class),
-            $c->get(\FratellanzaMilitare\Service\RegistrationService::class)
+            $c->get(\MCAG\Service\ValidationService::class),
+            $c->get(\MCAG\Service\RegistrationService::class)
         );
     },
-    \FratellanzaMilitare\Controller\Anagrafica\Soci\ActionController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Anagrafica\Soci\ActionController($c->get('audit_logger'));
+    \MCAG\Controller\Anagrafica\Soci\ActionController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Anagrafica\Soci\ActionController($c->get('audit_logger'));
     },
-    \FratellanzaMilitare\Controller\Anagrafica\Documenti\StorageController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Anagrafica\Documenti\StorageController(
+    \MCAG\Controller\Anagrafica\Documenti\StorageController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Anagrafica\Documenti\StorageController(
             $c->get(PDOSocioRepository::class),
             $c->get('audit_logger'),
-            $c->get(\FratellanzaMilitare\Service\ValidationService::class)
+            $c->get(\MCAG\Service\ValidationService::class)
         );
     },
-    \FratellanzaMilitare\Controller\Anagrafica\Servizi\SocioExportController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\Anagrafica\Servizi\SocioExportController(
+    \MCAG\Controller\Anagrafica\Servizi\SocioExportController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Anagrafica\Servizi\SocioExportController(
             $c->get(PDOSocioRepository::class),
             $c->get(Mustache_Engine::class)
         );
     },
 ];
+
+

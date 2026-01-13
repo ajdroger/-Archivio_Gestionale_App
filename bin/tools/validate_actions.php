@@ -73,3 +73,4 @@ if ($errors === 0) {
     echo "RISULTATO: TROVATI $errors ERRORI.\n";
     exit(1);
 }
+

@@ -1,5 +1,5 @@
 # 📙 MANUALE UTENTE - UTENTE BASE
-## Sistema di Gestione Archivio Fratellanza Militare
+## Sistema di Gestione Archivio MCAG
 
 **Versione:** 2.0  
 **Data:** Gennaio 2026  
@@ -24,7 +24,7 @@
 
 ## 🌟 INTRODUZIONE {#introduzione}
 
-Benvenuto come **Utente Base** del sistema Archivio Fratellanza Militare!
+Benvenuto come **Utente Base** del sistema Archivio MCAG!
 
 ### Cosa Puoi Fare
 
@@ -507,3 +507,4 @@ Se hai bisogno di formazione aggiuntiva:
 *Per assistenza: supporto@associazione.it*
 
 **Buona Consultazione! 👍**
+

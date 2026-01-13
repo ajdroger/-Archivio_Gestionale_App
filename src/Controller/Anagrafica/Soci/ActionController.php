@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Anagrafica\Soci;
+namespace MCAG\Controller\Anagrafica\Soci;
 
-use FratellanzaMilitare\Service\FiscalCodeCalculator;
+use MCAG\Service\FiscalCodeCalculator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -49,3 +49,5 @@ class ActionController
         }
     }
 }
+
+

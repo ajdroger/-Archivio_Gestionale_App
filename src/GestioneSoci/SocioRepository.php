@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
 /**
  * Interfaccia principale per il repository dei Soci.
@@ -51,3 +51,5 @@ interface SocioRepository
      */
     public function search(string $query): array;
 }
+
+

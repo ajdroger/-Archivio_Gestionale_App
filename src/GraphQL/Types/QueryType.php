@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\GraphQL\Types;
+namespace MCAG\GraphQL\Types;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 class QueryType extends ObjectType
 {
@@ -41,3 +41,5 @@ class QueryType extends ObjectType
         ]);
     }
 }
+
+

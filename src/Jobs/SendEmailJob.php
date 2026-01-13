@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Jobs;
+namespace MCAG\Jobs;
 
-use FratellanzaMilitare\Service\EmailServiceInterface;
+use MCAG\Service\EmailServiceInterface;
 
 /**
  * Background Job per Invio Email
@@ -44,3 +44,5 @@ class SendEmailJob extends AbstractJob
         ];
     }
 }
+
+

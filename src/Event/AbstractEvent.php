@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Event;
+namespace MCAG\Event;
 
 use DateTimeImmutable;
 
@@ -10,7 +10,7 @@ use DateTimeImmutable;
  * Base class for all domain events.
  * Provides timestamping and unique ID generation (optional).
  * 
- * @package FratellanzaMilitare\Event
+ * @package MCAG\Event
  */
 abstract class AbstractEvent
 {
@@ -46,3 +46,5 @@ abstract class AbstractEvent
         $this->propagationStopped = true;
     }
 }
+
+

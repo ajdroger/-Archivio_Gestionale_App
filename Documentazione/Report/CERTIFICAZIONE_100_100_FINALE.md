@@ -1,5 +1,5 @@
 # 🏆 CERTIFICAZIONE ECCELLENZA TECNICA: 100/100
-**Progetto:** Archivio Digitale Fratellanza Militare  
+**Progetto:** Archivio Digitale MCAG  
 **Data Certificazione:** 06 Gennaio 2026  
 **Status Finale:** ENTERPRISE PRODUCTION-READY ⭐⭐⭐⭐⭐
 
@@ -61,7 +61,8 @@ Il sistema offre ora **doppia interfaccia** di accesso dati:
 ---
 
 ## 🎓 Verdetto
-Il progetto **Fratellanza Militare Archivio** rappresenta ora lo stato dell'arte dello sviluppo PHP moderno.
+Il progetto **MCAG Archivio** rappresenta ora lo stato dell'arte dello sviluppo PHP moderno.
 È pronto per la messa in produzione in ambienti critici, scalabili e ad alta sicurezza.
 
 **Progetto Concluso con Successo.** 🥂
+

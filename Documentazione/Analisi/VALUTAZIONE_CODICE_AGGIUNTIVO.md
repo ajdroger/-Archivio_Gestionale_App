@@ -1,6 +1,6 @@
 # Valutazione Obbiettiva delle Aggiunte al Progetto
 
-Dopo aver analizzato il codice proposto rispetto allo stato attuale del progetto (`Fratellanza Militare - Gestione Soci`), ecco il mio parere tecnico dettagliato.
+Dopo aver analizzato il codice proposto rispetto allo stato attuale del progetto (`MCAG - Gestione Soci`), ecco il mio parere tecnico dettagliato.
 
 In sintesi: **Il codice proposto è di alta qualità e fortemente raccomandato**, ma con alcune riserve specifiche sulla complessità architettonica di alcuni componenti (GraphQL, QueryBuilder Custom).
 
@@ -71,3 +71,4 @@ In sintesi: **Il codice proposto è di alta qualità e fortemente raccomandato**
 3.  **Priorità Bassa (Future/Scale):**
     *   `GraphQL` (Solo se richiesto)
     *   `ProxySQL` (Solo se sotto carico)
+

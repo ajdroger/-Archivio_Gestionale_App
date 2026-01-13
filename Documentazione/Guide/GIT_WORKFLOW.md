@@ -1,5 +1,5 @@
 # 🔀 Strategia di Branching Git (Gitflow Model)
-**Strategia Operativa per Fratellanza Militare - Archivio Digitale**
+**Strategia Operativa per MCAG - Archivio Digitale**
 
 In seguito all'analisi del modello "A successful Git branching model" (Vincent Driessen), adottiamo questa strategia per garantire un flusso di lavoro professionale, stabile e ordinato, anche in un contesto "Single Developer".
 
@@ -115,4 +115,5 @@ Per garantire "Historical Rigor" e manutenibilità Enterprise, ogni commit DEVE 
     *   Commentare logiche complesse ("Why", not "What").
 3.  **Commit Message**:
     *   Formato: `type(scope): subject` (es. `feat(auth): implement 2fa strict check`).
+
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use Predis\Client;
 use Predis\ClientInterface;
@@ -239,3 +239,5 @@ class RedisService
         }
     }
 }
+
+

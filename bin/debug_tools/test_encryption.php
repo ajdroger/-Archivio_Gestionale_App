@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\SecurityLayer\TotpEncryptionService;
+use MCAG\SecurityLayer\TotpEncryptionService;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
@@ -23,3 +23,4 @@ try {
     echo "❌ Error: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString();
 }
+

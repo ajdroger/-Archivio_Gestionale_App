@@ -3,7 +3,7 @@
 require __DIR__ . '/../../vendor/autoload.php';
 
 use DI\ContainerBuilder;
-use FratellanzaMilitare\Service\BackupService;
+use MCAG\Service\BackupService;
 
 /**
  * Script di Backup Database
@@ -43,3 +43,4 @@ try {
     echo "[CRITICO] Errore durante l'inizializzazione del backup: " . $e->getMessage() . "\n";
     exit(1);
 }
+

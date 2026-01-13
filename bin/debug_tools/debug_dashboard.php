@@ -11,10 +11,10 @@ require_once __DIR__ . '/../../src/Debug/LogViewer.php';
 require_once __DIR__ . '/../../src/Debug/QueryLogger.php';
 require_once __DIR__ . '/../../src/InfrastrutturaIT/Persistence/DatabaseConnection.php';
 
-use FratellanzaMilitare\Debug\SystemCheck;
-use FratellanzaMilitare\Debug\DatabaseInspector;
-use FratellanzaMilitare\Debug\LogViewer;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\Debug\SystemCheck;
+use MCAG\Debug\DatabaseInspector;
+use MCAG\Debug\LogViewer;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 $checker = new SystemCheck();
 $diag = $checker->runDiagnostics();

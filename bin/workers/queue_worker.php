@@ -13,8 +13,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
-use FratellanzaMilitare\Queue\QueueInterface;
-use FratellanzaMilitare\Queue\Job\JobInterface;
+use MCAG\Queue\QueueInterface;
+use MCAG\Queue\Job\JobInterface;
 use Psr\Container\ContainerInterface;
 
 // Load environment
@@ -72,3 +72,4 @@ while (true) {
         sleep(2);
     }
 }
+

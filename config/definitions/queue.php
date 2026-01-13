@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\Queue\QueueInterface;
-use FratellanzaMilitare\Queue\DatabaseQueue;
+use MCAG\Queue\QueueInterface;
+use MCAG\Queue\DatabaseQueue;
 use Psr\Container\ContainerInterface;
 
 return [
@@ -10,3 +10,5 @@ return [
         return new DatabaseQueue($pdo);
     },
 ];
+
+

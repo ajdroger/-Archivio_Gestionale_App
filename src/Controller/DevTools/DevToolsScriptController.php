@@ -1,10 +1,10 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\DevTools;
+namespace MCAG\Controller\DevTools;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use FratellanzaMilitare\Debug\LogAnalyzer;
+use MCAG\Debug\LogAnalyzer;
 
 /**
  * DevTools Script Controller
@@ -230,3 +230,5 @@ class DevToolsScriptController
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+
+

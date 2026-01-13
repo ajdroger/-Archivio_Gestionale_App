@@ -68,3 +68,4 @@ Apri il browser su: [http://localhost:8000](http://localhost:8000)
 - **User:** `admin`
 - **Pass:** `admin123`
 - **2FA:** (Al primo login ti verrà chiesto di scansionare il QR Code)
+

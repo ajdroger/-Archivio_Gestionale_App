@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Helper;
+namespace MCAG\Helper;
 
 class PaginationHelper
 {
@@ -27,3 +27,5 @@ class PaginationHelper
         ];
     }
 }
+
+

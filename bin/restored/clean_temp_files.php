@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 /**
  * Script Pulizia Storage Temporaneo
@@ -39,3 +39,4 @@ echo "[+] Controllo file orfani temporanei...\n";
 // (Logica simulata: non cancelliamo uploads reali)
 
 echo "\n[SUCCESSO] Pulizia completata.\n";
+

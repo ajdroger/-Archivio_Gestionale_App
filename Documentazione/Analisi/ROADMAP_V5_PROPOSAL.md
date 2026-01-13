@@ -93,3 +93,4 @@ L'introduzione dell'AI giustifica un aumento del **Pricing Enterprise del 40%**.
 ---
 
 **Approvazione Richiesta per Procedere alla Fase 1 (Architettura).**
+

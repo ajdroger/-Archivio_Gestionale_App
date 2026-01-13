@@ -5,3 +5,4 @@ echo "<h1>PHP Info & Configurazione INI</h1>";
 echo "<strong>Loaded Configuration File:</strong> " . php_ini_loaded_file();
 echo "<hr>";
 phpinfo();
+

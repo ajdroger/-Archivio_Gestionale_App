@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Anagrafica\Servizi;
+namespace MCAG\Controller\Anagrafica\Servizi;
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -74,3 +74,5 @@ class SocioExportController
             ->withHeader('Content-Disposition', 'attachment; filename="soci_fm_' . date('Y-m-d') . '.csv"');
     }
 }
+
+

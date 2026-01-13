@@ -18,7 +18,7 @@ Copia questo contenuto COMPLETO nel tuo `.env`:
 ```env
 APP_ENV=local
 APP_DEBUG=true
-APP_NAME="Fratellanza Militare Archivio"
+APP_NAME="MCAG Archivio"
 APP_URL=http://localhost:8000
 
 # Database Configuration (MySQL/MariaDB Required)
@@ -64,3 +64,4 @@ Il sistema ti chiederà il codice 2FA dall'app Authenticator.
 ---
 
 **Status**: ⏳ Aspettando che tu aggiunga la chiave al file `.env`
+

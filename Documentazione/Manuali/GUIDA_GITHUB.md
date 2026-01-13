@@ -22,7 +22,7 @@ Questa guida ti aiuterà a creare una repository privata su GitHub e caricare il
 3. **Configura la Repository**
    ```
    Repository name: fratellanza-militare-archivio
-   Description: Sistema di Gestione Archivio per Fratellanza Militare - Enterprise-grade membership and document management system
+   Description: Sistema di Gestione Archivio per MCAG - Enterprise-grade membership and document management system
    Visibility: ☑️ Private (IMPORTANTE!)
    
    ⚠️ NON selezionare:
@@ -106,7 +106,7 @@ Se GitHub richiede un token:
 2. Click **"Generate new token"** → **"Generate new token (classic)"**
 3. Configura:
    ```
-   Note: Fratellanza Militare Archivio
+   Note: MCAG Archivio
    Expiration: 90 days (o come preferisci)
    Scopes: ☑️ repo (seleziona tutto sotto "repo")
    ```
@@ -223,3 +223,4 @@ Dopo il caricamento su GitHub, considera:
 Per problemi o domande:
 - GitHub Docs: https://docs.github.com
 - Git Reference: https://git-scm.com/docs
+

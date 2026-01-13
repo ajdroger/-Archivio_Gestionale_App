@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 /**
  * Script di Audit Integrità Database.
@@ -64,3 +64,4 @@ try {
     echo "\033[31m[ERROR] " . $e->getMessage() . "\033[0m\n";
     exit(1);
 }
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Auth;
+namespace MCAG\Controller\Auth;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,3 +35,5 @@ class LogoutController
         return $response->withHeader('Location', $routeParser->urlFor('login'))->withStatus(302);
     }
 }
+
+

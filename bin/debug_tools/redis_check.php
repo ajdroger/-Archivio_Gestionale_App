@@ -46,3 +46,4 @@ try {
     echo "[ERROR] " . $e->getMessage() . "\n";
     echo "Note: If you don't have Redis installed, this is expected.\n";
 }
+

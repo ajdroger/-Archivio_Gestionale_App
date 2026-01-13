@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\AI;
+namespace MCAG\AI;
 
 /**
  * Interface EmbeddingProviderInterface
@@ -8,7 +8,7 @@ namespace FratellanzaMilitare\AI;
  * Defines the contract for generating vector embeddings from text.
  * Used for RAG (Retrieval-Augmented Generation).
  * 
- * @package FratellanzaMilitare\AI
+ * @package MCAG\AI
  */
 interface EmbeddingProviderInterface
 {
@@ -20,3 +20,5 @@ interface EmbeddingProviderInterface
      */
     public function embed(string $text): array;
 }
+
+

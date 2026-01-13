@@ -161,4 +161,5 @@ Per visualizzare la storia direttamente online o nell'editor.
 *   **Visualizing Git**: [Git School](https://git-school.github.io/visualizing-git/). Sandbox interattiva per visualizzare l'effetto dei comandi sul grafo.
 
 ---
-Compilato per **Fratellanza Militare - Archivio Digitale**
+Compilato per **MCAG - Archivio Digitale**
+

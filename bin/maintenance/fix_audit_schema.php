@@ -17,3 +17,4 @@ try {
 } catch (PDOException $e) {
     echo "INFO: " . $e->getMessage() . " (may already exist)\n";
 }
+

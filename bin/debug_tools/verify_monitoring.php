@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\Controller\DevTools\DevToolsSystemController;
+use MCAG\Controller\DevTools\DevToolsSystemController;
 
 echo ">>> VERIFYING EXPERT MONITORING SUITE <<<\n";
 
@@ -60,3 +60,4 @@ if (function_exists('opcache_get_status')) {
 }
 
 echo "\n>>> VERIFICATION COMPLETE <<<\n";
+

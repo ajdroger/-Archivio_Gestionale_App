@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Controller;
+namespace MCAG\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use FratellanzaMilitare\Helper\PaginationHelper;
-use FratellanzaMilitare\DTO\PaginationResponse;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Helper\PaginationHelper;
+use MCAG\DTO\PaginationResponse;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -242,3 +242,5 @@ class SocioSummarySchema
 class SocioDetailSchema
 {
 }
+
+

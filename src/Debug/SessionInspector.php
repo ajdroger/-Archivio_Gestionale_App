@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 class SessionInspector
 {
@@ -53,3 +53,5 @@ class SessionInspector
         return false;
     }
 }
+
+

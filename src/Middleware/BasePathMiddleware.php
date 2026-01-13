@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -41,3 +41,5 @@ class BasePathMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 }
+
+

@@ -69,7 +69,7 @@ Script di startup che:
 ```bash
 # App Configuration
 APP_ENV=production
-APP_NAME=Fratellanza Militare Archivio
+APP_NAME=MCAG Archivio
 APP_DEBUG=false
 
 # Database (SQLite - già configurato)
@@ -507,3 +507,4 @@ Railway auto-deploya! 🎉
 ```
 
 ✅ **Il tuo progetto è live su Railway!**
+

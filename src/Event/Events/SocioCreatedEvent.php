@@ -1,15 +1,15 @@
 <?php
 
-namespace FratellanzaMilitare\Event\Events;
+namespace MCAG\Event\Events;
 
-use FratellanzaMilitare\Event\AbstractEvent;
+use MCAG\Event\AbstractEvent;
 
 /**
  * Class SocioCreatedEvent
  * 
  * Triggered when a new Socio is successfully persisted.
  * 
- * @package FratellanzaMilitare\Event\Events
+ * @package MCAG\Event\Events
  */
 class SocioCreatedEvent extends AbstractEvent
 {
@@ -23,3 +23,5 @@ class SocioCreatedEvent extends AbstractEvent
         parent::__construct();
     }
 }
+
+

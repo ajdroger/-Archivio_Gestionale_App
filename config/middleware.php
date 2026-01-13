@@ -10,7 +10,7 @@ return function (App $app) {
     $logger = $container->get(LoggerInterface::class);
 
     // 0. Request ID (Correlation ID) - Primo della lista per tracciabilità totale
-    $app->add(new \FratellanzaMilitare\Middleware\RequestIdMiddleware());
+    $app->add(new \MCAG\Middleware\RequestIdMiddleware());
 
     // 0b. Body Parsing (JSON fields)
     $app->addBodyParsingMiddleware();
@@ -32,8 +32,8 @@ return function (App $app) {
 
     // CSRF View Injection (Automated)
     $mustache = $container->get(Mustache_Engine::class);
-    $app->add(new \FratellanzaMilitare\Middleware\BasePathMiddleware($mustache));
-    $app->add(new \FratellanzaMilitare\Middleware\CsrfViewMiddleware($mustache));
+    $app->add(new \MCAG\Middleware\BasePathMiddleware($mustache));
+    $app->add(new \MCAG\Middleware\CsrfViewMiddleware($mustache));
 
     // CSRF Protection
     $responseFactory = $app->getResponseFactory();
@@ -62,25 +62,25 @@ return function (App $app) {
     });
 
     // Security Headers
-    $app->add(new \FratellanzaMilitare\Middleware\SecurityHeadersMiddleware());
+    $app->add(new \MCAG\Middleware\SecurityHeadersMiddleware());
 
     // Authentication
-    $app->add(new \FratellanzaMilitare\Middleware\AuthMiddleware());
+    $app->add(new \MCAG\Middleware\AuthMiddleware());
 
     // Input Sanitization (XSS Prevention) - Runs before Auth and Logic
     $purifier = $container->get(HTMLPurifier::class);
-    $app->add(new \FratellanzaMilitare\Middleware\InputSanitizerMiddleware($purifier));
+    $app->add(new \MCAG\Middleware\InputSanitizerMiddleware($purifier));
 
     // Rate Limiting (con Redis support)
-    $redisService = $container->has(\FratellanzaMilitare\Service\RedisService::class)
-        ? $container->get(\FratellanzaMilitare\Service\RedisService::class)
+    $redisService = $container->has(\MCAG\Service\RedisService::class)
+        ? $container->get(\MCAG\Service\RedisService::class)
         : null;
-    $app->add(new \FratellanzaMilitare\Middleware\RateLimitMiddleware(100, 60, $redisService, $logger));
+    $app->add(new \MCAG\Middleware\RateLimitMiddleware(100, 60, $redisService, $logger));
 
     // Error Middleware
     $displayErrorDetails = ($_ENV['APP_DEBUG'] ?? 'false') === 'true';
     $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, true, true, $logger);
-    $customErrorHandler = new \FratellanzaMilitare\Debug\GlobalExceptionHandler($logger, $mustache);
+    $customErrorHandler = new \MCAG\Debug\GlobalExceptionHandler($logger, $mustache);
     $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 
     // Routing Middleware - Must be added LAST to run FIRST
@@ -88,5 +88,7 @@ return function (App $app) {
     $app->addRoutingMiddleware();
 
     // Sentry Monitoring (Runs first)
-    $app->add(new \FratellanzaMilitare\Middleware\SentryMiddleware());
+    $app->add(new \MCAG\Middleware\SentryMiddleware());
 };
+
+

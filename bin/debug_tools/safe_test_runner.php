@@ -134,3 +134,4 @@ if ($damageDetected) {
 }
 
 exit($testExitCode);
+

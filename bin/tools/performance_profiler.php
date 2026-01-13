@@ -10,8 +10,8 @@ require __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
@@ -164,3 +164,4 @@ foreach ($benchmarks as $test => $value) {
     $unit = strpos($test, 'memory') !== false ? 'KB' : 'ms';
     echo sprintf("   - %-20s: %.2f %s\n", $test, $value, $unit);
 }
+

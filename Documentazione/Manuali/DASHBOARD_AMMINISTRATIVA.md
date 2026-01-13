@@ -68,4 +68,5 @@ php bin/maintenance/regenerate_key_clean.php
 *⚠️ Attenzione: Questo disconnetterà tutti gli utenti attualmente loggati.*
 
 ---
-*Manuale Tecnico - Fratellanza Militare IT Dept.*
+*Manuale Tecnico - MCAG IT Dept.*
+

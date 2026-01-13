@@ -46,3 +46,4 @@ exec("$cmd 2>&1", $output, $returnVar);
 $outputText = implode("\n", $output);
 
 echo json_encode(['output' => $outputText]);
+

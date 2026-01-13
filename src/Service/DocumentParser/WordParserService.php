@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service\DocumentParser;
+namespace MCAG\Service\DocumentParser;
 
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Element\AbstractContainer;
@@ -58,3 +58,5 @@ class WordParserService implements DocumentParserInterface
         return in_array($extension, ['docx', 'doc', 'rtf']);
     }
 }
+
+

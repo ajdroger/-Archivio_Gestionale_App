@@ -4,7 +4,7 @@ if (php_sapi_name() !== 'cli') {
 die('Access Denied: CLI only.');
 }
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();

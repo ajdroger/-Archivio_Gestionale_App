@@ -188,3 +188,4 @@ if (php_sapi_name() === 'cli') {
     $renamer = new SystemRenamer($argv[1], $dryRun);
     $renamer->execute();
 }
+

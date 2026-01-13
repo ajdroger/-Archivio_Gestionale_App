@@ -499,7 +499,7 @@ MCAG Project Root/
 
 ### Business Due Diligence ✅
 
-- [x] Market Validation: Caso d'uso reale (Fratellanza Militare Firenze)
+- [x] Market Validation: Caso d'uso reale (MCAG Militare Civile Archivio Gestionale)
 - [x] Product-Market Fit: Validated for associations/NGO/PA
 - [x] Competitive Analysis: Unique positioning (custom quality + SMB price)
 - [x] Revenue Model: Diversified (perpetual, SaaS, services)
@@ -645,3 +645,4 @@ MCAG Project Root/
 ---
 
 **🏆 MCAG - Qualità Enterprise, Prezzo Accessibile, Risultati Misurabili**
+

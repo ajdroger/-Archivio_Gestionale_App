@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
-use FratellanzaMilitare\Jobs\JobInterface;
+use MCAG\Jobs\JobInterface;
 use PDO;
 use Exception;
 
@@ -239,3 +239,5 @@ class QueueService
         }
     }
 }
+
+

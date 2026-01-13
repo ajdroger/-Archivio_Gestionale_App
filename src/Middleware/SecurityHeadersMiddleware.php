@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -39,3 +39,5 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
             ->withHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
     }
 }
+
+

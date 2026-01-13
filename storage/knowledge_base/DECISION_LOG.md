@@ -893,3 +893,24 @@ Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa 
 - (-) **Dipendenza dal Formato**: Richiede che i documenti siano formattati con Markdown corretto per funzionare al meglio.
 
 
+
+## [ADR-030] Rebranding "Cuore Aperto" (MCAG)
+**Data**: 2026-01-13
+**Stato**: ✅ Completato
+**Contesto**:
+Necessità imperativa di cambiare l'identità del sistema da "Fratellanza Militare" a "MCAG" (Militare-Civile Archivio Gestionale) per riposizionamento strategico, mantenendo però la stabilità tecnica.
+
+**Decisione**:
+Eseguire un refactoring "Surgical Precision" (Piano Cuore Aperto):
+1.  **Codebase**: Rename Namespace `FratellanzaMilitare` -> `MCAG` (Breaking Change).
+2.  **Database**: Rename fisico Database `fratellanza_db` -> `mcag_db`.
+3.  **Safety**: Creazione layer di alias (`legacy_aliases.php`) per mitigare errori runtime immediati.
+4.  **Content**: Aggiornamento massivo stringhe UI e DB (`settings` table).
+
+**Conseguenze**:
+- (+) **Identità**: Allineamento totale al nuovo brand v5.3.
+- (+) **Pulizia**: Rimozione debito tecnico legato a naming legacy.
+- (-) **Breaking Changes**: Script esterni non aggiornati che chiamano i vecchi namespace falliranno (mitigato parzialmente dagli alias).
+- (-) **Deploy**: Richiede downtime per migrazione DB e update config.
+
+---

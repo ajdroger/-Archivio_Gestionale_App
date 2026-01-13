@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
 /**
  * Rappresenta un modulo di iscrizione annuale.
@@ -16,3 +16,5 @@ class ModuloIscrizione extends Documento
     public float $QuotaVersata = 0.0;
     public string $MetodoPagamento = '';
 }
+
+

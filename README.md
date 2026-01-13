@@ -135,12 +135,12 @@ docker-compose down
 
 ## 📄 License
 
-Proprietary - © 2025 Fratellanza Militare di Firenze
+Proprietary - © 2026 MCAG
 
 ## 👨‍💻 Credits
 
 **Developer**: Soobadur Mohammad Ajmeer - IT Technical Specialist  
-**Organization**: Fratellanza Militare di Firenze  
+**Organization**: MCAG  
 **Version**: 1.3.1 MySQL Edition
 
 ---

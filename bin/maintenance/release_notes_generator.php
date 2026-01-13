@@ -63,3 +63,4 @@ if (!empty($categories['other'])) {
 }
 
 echo $output;
+

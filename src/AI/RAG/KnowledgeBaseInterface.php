@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\AI\RAG;
+namespace MCAG\AI\RAG;
 
 /**
  * Interface KnowledgeBaseInterface
@@ -8,7 +8,7 @@ namespace FratellanzaMilitare\AI\RAG;
  * Defines the contract for storing and retrieving document chunks
  * and their vector embeddings.
  * 
- * @package FratellanzaMilitare\AI\RAG
+ * @package MCAG\AI\RAG
  */
 interface KnowledgeBaseInterface
 {
@@ -32,3 +32,5 @@ interface KnowledgeBaseInterface
      */
     public function search(array $queryEmbedding, int $limit = 3): array;
 }
+
+

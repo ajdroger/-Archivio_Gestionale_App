@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Queue\Job;
+namespace MCAG\Queue\Job;
 
 interface JobInterface
 {
@@ -9,3 +9,5 @@ interface JobInterface
      */
     public function handle($container): void;
 }
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\InfrastrutturaIT;
+namespace MCAG\InfrastrutturaIT;
 
 class OCREngine
 {
@@ -41,3 +41,5 @@ class OCREngine
         return $normalized;
     }
 }
+
+

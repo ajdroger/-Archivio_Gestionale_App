@@ -1,11 +1,11 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\DevTools;
+namespace MCAG\Controller\DevTools;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\SecurityLayer\TotpEncryptionService;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\SecurityLayer\TotpEncryptionService;
 
 /**
  * DevTools Security Controller
@@ -195,3 +195,5 @@ class DevToolsSecurityController
         return $response->withHeader('Content-Type', 'application/json')->withStatus($status);
     }
 }
+
+

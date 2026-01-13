@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
 use DateTime;
 
@@ -25,3 +25,5 @@ class DatiAnagrafici
     public ?string $TitoloStudio = null; // NEW
     public ?string $Professione = null; // NEW
 }
+
+

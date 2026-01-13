@@ -1,10 +1,10 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\DevTools;
+namespace MCAG\Controller\DevTools;
 
 use Mustache_Engine;
-use FratellanzaMilitare\Debug\ResilienceMonitor;
-use FratellanzaMilitare\Debug\SessionInspector;
+use MCAG\Debug\ResilienceMonitor;
+use MCAG\Debug\SessionInspector;
 
 /**
  * Controller per la gestione e il monitoraggio del sistema.
@@ -473,3 +473,5 @@ class DevToolsSystemController
         }
     }
 }
+
+

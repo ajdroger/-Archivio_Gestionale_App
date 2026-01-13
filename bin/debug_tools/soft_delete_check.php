@@ -4,7 +4,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->safeLoad();
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 echo "--- Soft Delete Integrity Check ---\n";
 
@@ -37,3 +37,4 @@ try {
 } catch (\Throwable $e) {
     echo "[FATAL] " . $e->getMessage() . "\n";
 }
+

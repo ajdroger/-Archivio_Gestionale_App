@@ -1,4 +1,4 @@
-# 🚀 DEPLOYMENT GUIDE - Fratellanza Militare (v2.0)
+# 🚀 DEPLOYMENT GUIDE - MCAG (v2.0)
 
 ## 📋 Pre-Deployment Checklist
 
@@ -100,3 +100,4 @@ git pull origin master
 composer install --no-dev
 php bin/tools/health_check.php
 ```
+
