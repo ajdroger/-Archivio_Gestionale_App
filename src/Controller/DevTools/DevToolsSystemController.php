@@ -1,10 +1,10 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\DevTools;
+namespace MCAG\Controller\DevTools;
 
 use Mustache_Engine;
-use FratellanzaMilitare\Debug\ResilienceMonitor;
-use FratellanzaMilitare\Debug\SessionInspector;
+use MCAG\Debug\ResilienceMonitor;
+use MCAG\Debug\SessionInspector;
 
 /**
  * Controller per la gestione e il monitoraggio del sistema.
@@ -158,7 +158,7 @@ class DevToolsSystemController
     public function getPrivacyStats(): array
     {
         // 1. Log Redaction (Approximate)
-        $logFile = __DIR__ . '/../../../logs/app.log';
+        $logFile = __DIR__ . '/../../../var/logs/app.log';
         $maskedLogs = 0;
         $maskedLogEntries = [];
 
@@ -271,7 +271,7 @@ class DevToolsSystemController
     public function getRecentLogs(): array
     {
         $logs = [];
-        $logFile = __DIR__ . '/../../../logs/app.log';
+        $logFile = __DIR__ . '/../../../var/logs/app.log';
         if (file_exists($logFile)) {
             $lines = $this->tailFile($logFile, 20); // Last 20 lines
             foreach ($lines as $line) {
@@ -357,7 +357,7 @@ class DevToolsSystemController
 
     public function getIntrusionStats(): array
     {
-        $logFile = __DIR__ . '/../../../logs/app.log';
+        $logFile = __DIR__ . '/../../../var/logs/app.log';
         if (!file_exists($logFile)) {
             return ['count' => 0, 'status' => 'clean'];
         }
@@ -378,7 +378,7 @@ class DevToolsSystemController
 
     private function countRecentErrors(): int
     {
-        $logFile = __DIR__ . '/../../../logs/app.log';
+        $logFile = __DIR__ . '/../../../var/logs/app.log';
         if (!file_exists($logFile))
             return 0;
 
@@ -473,3 +473,5 @@ class DevToolsSystemController
         }
     }
 }
+
+

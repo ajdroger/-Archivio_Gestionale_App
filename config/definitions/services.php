@@ -6,49 +6,49 @@ use Psr\Log\LoggerInterface;
 return [
     // ===== NEW SERVICES - Q1 & Q2 =====
 
-    \FratellanzaMilitare\Service\RedisService::class => function () {
-        return new \FratellanzaMilitare\Service\RedisService();
+    \MCAG\Service\RedisService::class => function () {
+        return new \MCAG\Service\RedisService();
     },
 
-    \FratellanzaMilitare\Service\CacheService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\CacheService(
-            $c->get(\FratellanzaMilitare\Service\RedisService::class)
+    \MCAG\Service\CacheService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\CacheService(
+            $c->get(\MCAG\Service\RedisService::class)
         );
     },
 
-    \FratellanzaMilitare\Service\QueueService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\QueueService(
+    \MCAG\Service\QueueService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\QueueService(
             $c->get(PDO::class)
         );
     },
 
-    \FratellanzaMilitare\Service\BackupVerificationService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\BackupVerificationService(
+    \MCAG\Service\BackupVerificationService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\BackupVerificationService(
             $c->get(PDO::class),
             __DIR__ . '/../../storage/backups'
         );
     },
 
-    \FratellanzaMilitare\Service\HealthCheckService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\HealthCheckService(
+    \MCAG\Service\HealthCheckService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\HealthCheckService(
             $c->get(PDO::class),
-            $c->get(\FratellanzaMilitare\Service\RedisService::class),
-            $c->get(\FratellanzaMilitare\Service\QueueService::class),
+            $c->get(\MCAG\Service\RedisService::class),
+            $c->get(\MCAG\Service\QueueService::class),
             __DIR__ . '/../../storage'
         );
     },
 
-    \FratellanzaMilitare\Service\JsonLogFormatter::class => function () {
-        return new \FratellanzaMilitare\Service\JsonLogFormatter('FratellanzaMilitare');
+    \MCAG\Service\JsonLogFormatter::class => function () {
+        return new \MCAG\Service\JsonLogFormatter('MCAG');
     },
 
     // ===== EXISTING SERVICES =====
-    \FratellanzaMilitare\Service\ValidationService::class => function () {
-        return new \FratellanzaMilitare\Service\ValidationService();
+    \MCAG\Service\ValidationService::class => function () {
+        return new \MCAG\Service\ValidationService();
     },
 
-    \FratellanzaMilitare\Service\BackupService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\BackupService(
+    \MCAG\Service\BackupService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\BackupService(
             __DIR__ . '/../../database.sqlite',
             __DIR__ . '/../../storage/backups',
             $c->get(LoggerInterface::class),
@@ -56,86 +56,88 @@ return [
         );
     },
 
-    \FratellanzaMilitare\Debug\ResilienceMonitor::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Debug\ResilienceMonitor(
+    \MCAG\Debug\ResilienceMonitor::class => function (ContainerInterface $c) {
+        return new \MCAG\Debug\ResilienceMonitor(
             $c->get(PDO::class),
             $c->get(LoggerInterface::class),
             __DIR__ . '/../../storage'
         );
     },
 
-    \FratellanzaMilitare\Service\EmailServiceInterface::class => function (ContainerInterface $c) {
+    \MCAG\Service\EmailServiceInterface::class => function (ContainerInterface $c) {
         $config = [
             'host' => $_ENV['SMTP_HOST'] ?? 'smtp.example.com',
             'username' => $_ENV['SMTP_USER'] ?? 'user@example.com',
             'password' => $_ENV['SMTP_PASS'] ?? 'secret',
             'port' => $_ENV['SMTP_PORT'] ?? 587
         ];
-        return new \FratellanzaMilitare\Service\SmtpEmailService($c->get(LoggerInterface::class), $config);
+        return new \MCAG\Service\SmtpEmailService($c->get(LoggerInterface::class), $config);
     },
 
-    \FratellanzaMilitare\Service\PdfGenerationService::class => function () {
-        return new \FratellanzaMilitare\Service\PdfGenerationService();
+    \MCAG\Service\PdfGenerationService::class => function () {
+        return new \MCAG\Service\PdfGenerationService();
     },
 
-    \FratellanzaMilitare\Service\RegistrationService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\RegistrationService(
-            $c->get(\FratellanzaMilitare\GestioneSoci\SocioRepository::class),
-            $c->get(\FratellanzaMilitare\Service\ValidationService::class),
-            $c->get(\FratellanzaMilitare\Service\PdfGenerationService::class),
-            $c->get(\FratellanzaMilitare\Service\EmailServiceInterface::class),
+    \MCAG\Service\RegistrationService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\RegistrationService(
+            $c->get(\MCAG\GestioneSoci\SocioRepository::class),
+            $c->get(\MCAG\Service\ValidationService::class),
+            $c->get(\MCAG\Service\PdfGenerationService::class),
+            $c->get(\MCAG\Service\EmailServiceInterface::class),
             $c->get(LoggerInterface::class)
         );
     },
 
-    \FratellanzaMilitare\Service\Demo\DemoInvitationService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\Demo\DemoInvitationService(
-            $c->get(\FratellanzaMilitare\Service\EmailServiceInterface::class),
+    \MCAG\Service\Demo\DemoInvitationService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\Demo\DemoInvitationService(
+            $c->get(\MCAG\Service\EmailServiceInterface::class),
             $c->get(LoggerInterface::class),
-            $_ENV['APP_URL'] ?? 'http://localhost/fratellanza-militare-archivio/public',
+            $_ENV['APP_URL'] ?? 'http://localhost/MCAG_Militare-Civile-Archivio-Gestionale/public',
             $c->get(PDO::class)
         );
     },
 
     // ===== EVENT BUS ARCHITECTURE (v5.0) =====
-    \FratellanzaMilitare\Event\EventBusInterface::class => function (ContainerInterface $c) {
-        $bus = new \FratellanzaMilitare\Event\EventBus($c->get(LoggerInterface::class));
+    \MCAG\Event\EventBusInterface::class => function (ContainerInterface $c) {
+        $bus = new \MCAG\Event\EventBus($c->get(LoggerInterface::class));
 
         // Register Listeners
         // 1. Log Socio Creation
         $bus->subscribe(
-            \FratellanzaMilitare\Event\Events\SocioCreatedEvent::class,
-            new \FratellanzaMilitare\Event\Listeners\LogSocioCreationListener($c->get(LoggerInterface::class))
+            \MCAG\Event\Events\SocioCreatedEvent::class,
+            new \MCAG\Event\Listeners\LogSocioCreationListener($c->get(LoggerInterface::class))
         );
 
         // 2. AI Indexing (RAG)
         $bus->subscribe(
-            \FratellanzaMilitare\Event\Events\SocioCreatedEvent::class,
-            $c->get(\FratellanzaMilitare\Event\Listeners\IndexSocioListener::class)
+            \MCAG\Event\Events\SocioCreatedEvent::class,
+            $c->get(\MCAG\Event\Listeners\IndexSocioListener::class)
         );
 
         return $bus;
     },
 
     // ===== AI SERVICES (v5.0 Phase 3) =====
-    \FratellanzaMilitare\AI\Providers\OllamaProvider::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\AI\Providers\OllamaProvider(
+    \MCAG\AI\Providers\OllamaProvider::class => function (ContainerInterface $c) {
+        return new \MCAG\AI\Providers\OllamaProvider(
             $c->get(LoggerInterface::class)
         );
     },
 
-    \FratellanzaMilitare\AI\RAG\SimpleVectorStore::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\AI\RAG\SimpleVectorStore(
+    \MCAG\AI\RAG\SimpleVectorStore::class => function (ContainerInterface $c) {
+        return new \MCAG\AI\RAG\SimpleVectorStore(
             $c->get(LoggerInterface::class),
             __DIR__ . '/../../storage/ai/index.json'
         );
     },
 
-    \FratellanzaMilitare\Event\Listeners\IndexSocioListener::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Event\Listeners\IndexSocioListener(
+    \MCAG\Event\Listeners\IndexSocioListener::class => function (ContainerInterface $c) {
+        return new \MCAG\Event\Listeners\IndexSocioListener(
             $c->get(LoggerInterface::class),
-            $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class),
-            $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class)
+            $c->get(\MCAG\AI\Providers\OllamaProvider::class),
+            $c->get(\MCAG\AI\RAG\SimpleVectorStore::class)
         );
     },
 ];
+
+

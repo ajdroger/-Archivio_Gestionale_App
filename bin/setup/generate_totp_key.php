@@ -22,3 +22,4 @@ echo "TOTP_ENCRYPTION_KEY=\"{$keyString}\"\n\n";
 echo "Length: " . strlen($keyString) . " characters\n";
 echo "\n⚠️  IMPORTANT: Keep this key secure! If lost, 2FA for all users will break.\n";
 echo "📋 Backup this key in a secure location.\n\n";
+

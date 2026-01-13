@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use PDO;
-use FratellanzaMilitare\SecurityLayer\AuditTrail;
+use MCAG\SecurityLayer\AuditTrail;
 
 /**
  * API Key Management Service
@@ -12,7 +12,7 @@ use FratellanzaMilitare\SecurityLayer\AuditTrail;
  * Gestisce la creazione, revoca e rotazione delle API keys.
  * Le chiavi sono generate in modo sicuro e memorizzate con hash.
  * 
- * @package FratellanzaMilitare\Service
+ * @package MCAG\Service
  */
 class ApiKeyManager
 {
@@ -247,3 +247,5 @@ class ApiKeyManager
         return $key;
     }
 }
+
+

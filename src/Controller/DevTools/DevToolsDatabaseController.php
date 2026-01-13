@@ -1,12 +1,12 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\DevTools;
+namespace MCAG\Controller\DevTools;
 
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\SecurityLayer\AuditTrail;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\SecurityLayer\AuditTrail;
 
 /**
  * DevTools Database Controller
@@ -181,3 +181,5 @@ class DevToolsDatabaseController
         return $filters;
     }
 }
+
+

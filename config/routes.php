@@ -1,38 +1,38 @@
 <?php
 
 use Slim\App;
-use FratellanzaMilitare\Controller\LoginController;
-use FratellanzaMilitare\Controller\HomeController;
-use FratellanzaMilitare\Controller\SocioController;
-use FratellanzaMilitare\Controller\StatisticsController;
-use FratellanzaMilitare\Controller\SettingsController;
-use FratellanzaMilitare\Controller\Auth\LoginFlowController;
-use FratellanzaMilitare\Controller\Auth\TwoFactorController;
-use FratellanzaMilitare\Controller\Auth\LogoutController;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\ListController as SocioList;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\DetailController as SocioDetail;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController as SocioPersistence;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\ActionController as SocioAction;
-use FratellanzaMilitare\Controller\Anagrafica\Documenti\StorageController as SocioStorage;
-use FratellanzaMilitare\Controller\Anagrafica\Servizi\SocioExportController as SocioExport;
-use FratellanzaMilitare\Controller\Intelligence\StatsDashboardController as StatsDashboard;
-use FratellanzaMilitare\Controller\Intelligence\ReportExportController as StatsExport;
-use FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController;
-use FratellanzaMilitare\Controller\DevTools\DevToolsFileSystemController;
-use FratellanzaMilitare\Controller\DevTools\DevToolsDatabaseController;
-use FratellanzaMilitare\Controller\DevTools\DevToolsSecurityController;
-use FratellanzaMilitare\Controller\DevTools\DevToolsScriptController;
-use FratellanzaMilitare\Controller\AI\AssistantController;
-use FratellanzaMilitare\Middleware\AdminMiddleware;
-use FratellanzaMilitare\Middleware\RateLimitMiddleware;
-use FratellanzaMilitare\Middleware\RoleMiddleware;
+use MCAG\Controller\LoginController;
+use MCAG\Controller\HomeController;
+use MCAG\Controller\SocioController;
+use MCAG\Controller\StatisticsController;
+use MCAG\Controller\SettingsController;
+use MCAG\Controller\Auth\LoginFlowController;
+use MCAG\Controller\Auth\TwoFactorController;
+use MCAG\Controller\Auth\LogoutController;
+use MCAG\Controller\Anagrafica\Soci\ListController as SocioList;
+use MCAG\Controller\Anagrafica\Soci\DetailController as SocioDetail;
+use MCAG\Controller\Anagrafica\Soci\PersistenceController as SocioPersistence;
+use MCAG\Controller\Anagrafica\Soci\ActionController as SocioAction;
+use MCAG\Controller\Anagrafica\Documenti\StorageController as SocioStorage;
+use MCAG\Controller\Anagrafica\Servizi\SocioExportController as SocioExport;
+use MCAG\Controller\Intelligence\StatsDashboardController as StatsDashboard;
+use MCAG\Controller\Intelligence\ReportExportController as StatsExport;
+use MCAG\Controller\DevTools\DevToolsDashboardController;
+use MCAG\Controller\DevTools\DevToolsFileSystemController;
+use MCAG\Controller\DevTools\DevToolsDatabaseController;
+use MCAG\Controller\DevTools\DevToolsSecurityController;
+use MCAG\Controller\DevTools\DevToolsScriptController;
+use MCAG\Controller\AI\AssistantController;
+use MCAG\Middleware\AdminMiddleware;
+use MCAG\Middleware\RateLimitMiddleware;
+use MCAG\Middleware\RoleMiddleware;
 
 return function (App $app) {
     // Error Handling
     $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
     // Auth Routes
-    $loginLimit = new RateLimitMiddleware(5, 60);
+    $loginLimit = new RateLimitMiddleware(100, 60);
     $app->get('/login', LoginFlowController::class . ':form')->setName('login')->add($loginLimit);
     $app->post('/login', LoginFlowController::class . ':verifyCredentials')->setName('login_verify')->add($loginLimit);
     $app->get('/login/2fa', TwoFactorController::class . ':form')->setName('login_2fa')->add($loginLimit);
@@ -40,10 +40,10 @@ return function (App $app) {
     $app->get('/logout', LogoutController::class . ':logout')->setName('logout');
 
     // Demo Mode
-    $app->map(['GET', 'POST'], '/auth/start-demo', \FratellanzaMilitare\Controller\Auth\DemoModeController::class . ':startDemo')->setName('demo_launch');
+    $app->map(['GET', 'POST'], '/auth/start-demo', \MCAG\Controller\Auth\DemoModeController::class . ':startDemo')->setName('demo_launch');
 
     // Demo Request Public API
-    $app->post('/api/public/demo-request', \FratellanzaMilitare\Controller\Public\DemoRequestController::class . ':submit')->setName('demo_request_submit');
+    $app->post('/api/public/demo-request', \MCAG\Controller\Public\DemoRequestController::class . ':submit')->setName('demo_request_submit');
 
     // Main
     $app->get('/', HomeController::class . ':dashboard')->setName('dashboard');
@@ -77,8 +77,8 @@ return function (App $app) {
     $app->get('/soci/export/csv', SocioExport::class . ':exportCsv')->setName('socio_export')->add(new RateLimitMiddleware(30, 60));
 
     // Compliance & Privacy
-    $app->get('/privacy-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':privacy')->setName('privacy_policy');
-    $app->get('/cookie-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':cookie')->setName('cookie_policy');
+    $app->get('/privacy-policy', \MCAG\Controller\PolicyController::class . ':privacy')->setName('privacy_policy');
+    $app->get('/cookie-policy', \MCAG\Controller\PolicyController::class . ':cookie')->setName('cookie_policy');
 
     // Intelligence (Stats & Reports)
     $statsRole = new RoleMiddleware(['admin', 'presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
@@ -100,30 +100,30 @@ return function (App $app) {
     // API Layer
     // Stricter Rate Limit for API: 60 req/min
     $container = $app->getContainer();
-    $redis = $container->has(\FratellanzaMilitare\Service\RedisService::class) ? $container->get(\FratellanzaMilitare\Service\RedisService::class) : null;
+    $redis = $container->has(\MCAG\Service\RedisService::class) ? $container->get(\MCAG\Service\RedisService::class) : null;
     $logger = $container->get(\Psr\Log\LoggerInterface::class);
     $apiLimit = new RateLimitMiddleware(60, 60, $redis, $logger);
 
     $app->group('/api/v1', function ($group) {
-        $group->get('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':list');
-        $group->get('/soci/{cf}', \FratellanzaMilitare\Controller\SociApiController::class . ':get');
-        $group->post('/soci', \FratellanzaMilitare\Controller\SociApiController::class . ':create');
+        $group->get('/soci', \MCAG\Controller\SociApiController::class . ':list');
+        $group->get('/soci/{cf}', \MCAG\Controller\SociApiController::class . ':get');
+        $group->post('/soci', \MCAG\Controller\SociApiController::class . ':create');
     })
-        ->add(new \FratellanzaMilitare\Middleware\ApiKeyMiddleware(
+        ->add(new \MCAG\Middleware\ApiKeyMiddleware(
             $container->get(PDO::class),
-            $container->get(\FratellanzaMilitare\SecurityLayer\AuditTrail::class)
+            $container->get(\MCAG\SecurityLayer\AuditTrail::class)
         ))
         ->add($apiLimit);
-    // ->add(new \FratellanzaMilitare\Middleware\JwtAuthMiddleware()); // TODO: Enable when Auth0 is ready
+    // ->add(new \MCAG\Middleware\JwtAuthMiddleware()); // TODO: Enable when Auth0 is ready
 
     // GraphQL API
-    $app->post('/api/graphql', \FratellanzaMilitare\Controller\GraphQLController::class . ':handle')->setName('graphql_api');
+    $app->post('/api/graphql', \MCAG\Controller\GraphQLController::class . ':handle')->setName('graphql_api');
     // ->add(...) // Disabled for testing connectivity
 
 
     // API Documentation
-    $app->get('/api/docs', \FratellanzaMilitare\Controller\Docs\DocumentationController::class . ':ui')->setName('api_docs');
-    $app->get('/api/docs/json', \FratellanzaMilitare\Controller\Docs\DocumentationController::class . ':spec')->setName('api_docs_json');
+    $app->get('/api/docs', \MCAG\Controller\Docs\DocumentationController::class . ':ui')->setName('api_docs');
+    $app->get('/api/docs/json', \MCAG\Controller\Docs\DocumentationController::class . ':spec')->setName('api_docs_json');
 
     // Admin & DevTools
     $app->group('', function ($group) {
@@ -150,3 +150,5 @@ return function (App $app) {
     })->add(new AdminMiddleware());
 
 };
+
+

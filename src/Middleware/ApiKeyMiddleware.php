@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response;
-use FratellanzaMilitare\SecurityLayer\AuditTrail;
+use MCAG\SecurityLayer\AuditTrail;
 use PDO;
 
 /**
@@ -20,7 +20,7 @@ use PDO;
  * - Rate limiting specifico per chiave
  * - Scadenza
  * 
- * @package FratellanzaMilitare\Middleware
+ * @package MCAG\Middleware
  */
 class ApiKeyMiddleware implements MiddlewareInterface
 {
@@ -195,3 +195,5 @@ class ApiKeyMiddleware implements MiddlewareInterface
             ->withHeader('Content-Type', 'application/json');
     }
 }
+
+

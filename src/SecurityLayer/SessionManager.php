@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 class SessionManager
 {
@@ -38,3 +38,5 @@ class SessionManager
         }
     }
 }
+
+

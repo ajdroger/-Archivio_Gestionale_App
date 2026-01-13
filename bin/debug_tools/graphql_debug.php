@@ -1,9 +1,9 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\GraphQL\Schema;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\GraphQL\Schema;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use GraphQL\Utils\SchemaPrinter;
 
 try {
@@ -30,3 +30,4 @@ try {
     echo "[ERROR] " . $e->getMessage() . "\n";
     echo $e->getTraceAsString();
 }
+

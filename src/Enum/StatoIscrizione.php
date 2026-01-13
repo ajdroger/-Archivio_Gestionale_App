@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Enum;
+namespace MCAG\Enum;
 
 enum StatoIscrizione
 {
@@ -9,3 +9,5 @@ enum StatoIscrizione
     case DECADUTO;
     case IN_ATTESA;
 }
+
+

@@ -207,3 +207,4 @@ $outputPath = __DIR__ . '/../../public/reports/MCAG_Benchmark_2026.pdf';
 file_put_contents($outputPath, $dompdf->output());
 
 echo "Report PDF generated successfully at: $outputPath\n";
+

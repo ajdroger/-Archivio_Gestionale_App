@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
 /**
  * Interfaccia per la persistenza dei documenti.
@@ -26,3 +26,5 @@ interface DocumentoRepository
      */
     public function findBySocio(string $socioCf): array;
 }
+
+

@@ -40,3 +40,4 @@ echo "Pulizia sessioni e cache... ";
 echo "COMPLETATA.\n";
 
 echo "=== OPERAZIONE TERMINATA ===\n";
+

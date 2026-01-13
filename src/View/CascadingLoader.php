@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\View;
+namespace MCAG\View;
 
 use Mustache_Loader;
 use Mustache_Loader_FilesystemLoader;
@@ -38,3 +38,5 @@ class CascadingLoader implements Mustache_Loader
         throw new Mustache_Exception_UnknownTemplateException($name);
     }
 }
+
+

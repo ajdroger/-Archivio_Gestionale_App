@@ -10,7 +10,7 @@
 
 ## 🎯 EXECUTIVE SUMMARY
 
-Questo documento fornisce una **mappatura completa e meticolosa** dell'intera architettura del sistema gestionale "Fratellanza Militare Archivio", includendo:
+Questo documento fornisce una **mappatura completa e meticolosa** dell'intera architettura del sistema gestionale "MCAG Archivio", includendo:
 - Gerarchia completa di **224 file sorgente** (~1MB di codice produzione)
 - Analisi dettagliata di **80+ classi** distribuite su **13 namespace**
 - Documentazione **layer-by-layer** dell'architettura enterprise
@@ -1463,4 +1463,5 @@ services:
 ---
 
 **© 2026 Soobadur Mohammad Ajmeer. All Rights Reserved.**  
-**Fratellanza Militare di Firenze - Archivio Gestionale Enterprise v2.3**
+**MCAG di Firenze - Archivio Gestionale Enterprise v2.3**
+

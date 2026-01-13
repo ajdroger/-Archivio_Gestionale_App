@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Middleware;
+namespace MCAG\Middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -42,9 +42,11 @@ class RoleMiddleware implements MiddlewareInterface
             // For now, redirect to Flash error logic or simple 403.
             // Let's us 403 page if possible, or redirect home.
             // Simplified: Redirect to Dashboard.
-            return $response->withHeader('Location', '/fratellanza-militare-archivio/public/')->withStatus(302);
+            return $response->withHeader('Location', '/MCAG_Militare-Civile-Archivio-Gestionale/public/')->withStatus(302);
         }
 
         return $handler->handle($request);
     }
 }
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Infrastructure\Monitoring;
+namespace MCAG\Infrastructure\Monitoring;
 
 /**
  * Wrapper per Agente APM (New Relic / Datadog).
@@ -23,3 +23,5 @@ class NewRelicAgent
         }
     }
 }
+
+

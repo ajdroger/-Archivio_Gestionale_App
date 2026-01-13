@@ -1,13 +1,13 @@
 <?php
 
-namespace FratellanzaMilitare\Event;
+namespace MCAG\Event;
 
 /**
  * Interface ListenerInterface
  * 
  * Contract for classes that listen to events.
  * 
- * @package FratellanzaMilitare\Event
+ * @package MCAG\Event
  */
 interface ListenerInterface
 {
@@ -19,3 +19,5 @@ interface ListenerInterface
      */
     public function handle(object $event): void;
 }
+
+

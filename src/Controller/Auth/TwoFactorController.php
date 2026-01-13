@@ -1,11 +1,11 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Auth;
+namespace MCAG\Controller\Auth;
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\SecurityLayer\SessionManager;
-use FratellanzaMilitare\SecurityLayer\TotpEncryptionService;
-use FratellanzaMilitare\SecurityLayer\TotpProvider;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\SecurityLayer\SessionManager;
+use MCAG\SecurityLayer\TotpEncryptionService;
+use MCAG\SecurityLayer\TotpProvider;
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -59,7 +59,7 @@ class TwoFactorController
 
         $viewData = [
             'secret' => $secret,
-            'qr_uri' => $this->totp->getProvisioningUri($secret, 'Fratellanza (' . $user['username'] . ')')
+            'qr_uri' => $this->totp->getProvisioningUri($secret, 'MCAG (' . $user['username'] . ')')
         ];
 
         $html = $this->mustache->render('login_2fa', $viewData);
@@ -132,3 +132,5 @@ class TwoFactorController
 html;
     }
 }
+
+

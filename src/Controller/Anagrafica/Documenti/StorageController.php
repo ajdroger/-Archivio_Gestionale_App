@@ -1,11 +1,11 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Anagrafica\Documenti;
+namespace MCAG\Controller\Anagrafica\Documenti;
 
-use FratellanzaMilitare\Enum\StatoDocumento;
-use FratellanzaMilitare\GestioneSoci\DocumentoGenerico;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\Service\ValidationService;
+use MCAG\Enum\StatoDocumento;
+use MCAG\GestioneSoci\DocumentoGenerico;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Service\ValidationService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -160,3 +160,5 @@ class StorageController
         return $response->withHeader('Location', $routeParser->urlFor('socio_detail', ['cf' => $args['cf']]))->withStatus(302);
     }
 }
+
+

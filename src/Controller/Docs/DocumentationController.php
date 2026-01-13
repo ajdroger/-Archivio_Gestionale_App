@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Docs;
+namespace MCAG\Controller\Docs;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -49,3 +49,5 @@ class DocumentationController
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+
+

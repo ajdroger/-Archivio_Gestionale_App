@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\SecurityLayer\RedisSessionHandler;
+use MCAG\SecurityLayer\RedisSessionHandler;
 use Predis\Client;
 
 beforeEach(function () {

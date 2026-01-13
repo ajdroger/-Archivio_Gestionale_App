@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\InfrastrutturaIT;
+namespace MCAG\InfrastrutturaIT;
 
 class GoogleDriveAdapter implements ICloudStorage
 {
@@ -30,3 +30,5 @@ class GoogleDriveAdapter implements ICloudStorage
         // echo "Eseguita eliminazione di {$uuid} da Google Drive";
     }
 }
+
+

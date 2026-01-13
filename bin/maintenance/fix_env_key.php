@@ -30,3 +30,4 @@ $newLines[] = "TOTP_ENCRYPTION_KEY=$key"; // No quotes to be safe
 
 file_put_contents($envFile, implode("\n", $newLines) . "\n");
 echo "Refreshed .env with clean key.\n";
+

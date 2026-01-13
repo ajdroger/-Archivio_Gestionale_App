@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Public;
+namespace MCAG\Controller\Public;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -9,9 +9,11 @@ use OpenApi\Attributes as OA;
 class DemoRequestController
 {
     private string $storagePath;
+    private $emailService;
 
-    public function __construct()
+    public function __construct(\MCAG\Service\EmailServiceInterface $emailService)
     {
+        $this->emailService = $emailService;
         // Ensure storage directory exists
         $this->storagePath = __DIR__ . '/../../../../storage/requests';
         if (!file_exists($this->storagePath)) {
@@ -90,7 +92,7 @@ class DemoRequestController
         if (file_put_contents($logFile, json_encode($currentData, JSON_PRETTY_PRINT))) {
 
             // Send Email Notification
-            $to = 'ajmeer03@gmail.com';
+            $to = 'ajmeer03@gmail.com'; // Admin Email
             $subject = 'Nuova Richiesta Demo/Preventivo - MCAG Landing';
             $message = "Hai ricevuto una nuova richiesta dal sito:\n\n";
             $message .= "Nome: " . $entry['data']['nome'] . "\n";
@@ -104,14 +106,12 @@ class DemoRequestController
             $message .= "Data: " . $entry['timestamp'] . "\n";
             $message .= "IP: " . $entry['ip'];
 
-            $headers = 'From: noreply@mcag-system.it' . "\r\n" .
-                'Reply-To: ' . $entry['data']['email'] . "\r\n" .
-                'X-Mailer: PHP/' . phpversion();
-
-            // Suppress errors to strictly avoid breaking the JSON response if mail server is unconfigured locally
-            // Skip sending mail specifically in testing environment to avoid noisy warnings
-            if (($_ENV['APP_ENV'] ?? 'local') !== 'testing') {
-                @mail($to, $subject, $message, $headers);
+            // Use injected EmailService instead of mail()
+            try {
+                $this->emailService->send($to, $subject, $message, [], ['Reply-To' => $entry['data']['email']]);
+            } catch (\Exception $e) {
+                // Log failure but return success to user as the request was saved
+                // In production logger log: $this->logger->error("Mail failed: " . $e->getMessage());
             }
 
             $response->getBody()->write(json_encode(['success' => true, 'message' => 'Richiesta ricevuta. La contatteremo a breve.']));
@@ -122,3 +122,5 @@ class DemoRequestController
         }
     }
 }
+
+

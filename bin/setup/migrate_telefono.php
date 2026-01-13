@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 try {
     $db = DatabaseConnection::getConnection();
@@ -34,3 +34,4 @@ try {
     echo "Errore: " . $e->getMessage() . "\n";
     exit(1);
 }
+

@@ -18,14 +18,14 @@ require __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
 
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\GestioneSoci\ModuloIscrizione;
-use FratellanzaMilitare\InfrastrutturaIT\OCREngine;
-use FratellanzaMilitare\InfrastrutturaIT\GoogleDriveAdapter;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\Enum\StatoDocumento;
-use FratellanzaMilitare\Enum\StatoIscrizione;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\GestioneSoci\ModuloIscrizione;
+use MCAG\InfrastrutturaIT\OCREngine;
+use MCAG\InfrastrutturaIT\GoogleDriveAdapter;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Enum\StatoDocumento;
+use MCAG\Enum\StatoIscrizione;
 
 // --- CLI HELPER FUNCTIONS ---
 
@@ -209,3 +209,4 @@ try {
     echo $e->getTraceAsString();
     exit(1);
 }
+

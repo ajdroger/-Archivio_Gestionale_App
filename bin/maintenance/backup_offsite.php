@@ -30,7 +30,7 @@ system($cmd, $retval);
 
 if ($retval === 0) {
     echo "\n✅ Off-site backup completed successfully.\n";
-    \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance()->logEvento(
+    \MCAG\SecurityLayer\AuditTrail::getInstance()->logEvento(
         null,
         'BACKUP_OFFSITE',
         'rclone_sync_success'
@@ -39,3 +39,4 @@ if ($retval === 0) {
     echo "\n❌ Backup failed with exit code $retval.\n";
     exit(1);
 }
+

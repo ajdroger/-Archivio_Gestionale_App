@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\InfrastrutturaIT;
+namespace MCAG\InfrastrutturaIT;
 
 class SharePointAdapter implements ICloudStorage
 {
@@ -68,3 +68,5 @@ class SharePointAdapter implements ICloudStorage
         // Simula successo (in produzione: chiamata API reale)
     }
 }
+
+

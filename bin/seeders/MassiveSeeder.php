@@ -2,8 +2,8 @@
 
 use Faker\Factory;
 use DI\ContainerBuilder;
-use FratellanzaMilitare\Service\RegistrationService;
-use FratellanzaMilitare\Service\FiscalCodeCalculator;
+use MCAG\Service\RegistrationService;
+use MCAG\Service\FiscalCodeCalculator;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
@@ -27,7 +27,7 @@ foreach ($definitions as $def) {
 $container = $containerBuilder->build();
 
 // Setup Audit Trail (Singleton Bridge)
-$auditTrail = \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance();
+$auditTrail = \MCAG\SecurityLayer\AuditTrail::getInstance();
 $auditTrail->setLogger($container->get('audit_logger'));
 $auditTrail->setPdo($container->get(PDO::class));
 
@@ -118,3 +118,4 @@ for ($i = 0; $i < 1000; $i++) {
 
 echo "\nSEEDING COMPLETATO.\n";
 print_r($totals);
+

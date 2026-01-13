@@ -1,8 +1,8 @@
 <?php
 
-use FratellanzaMilitare\InfrastrutturaIT\OCREngine;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\OCREngine;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 test('ocr performance', function () {
     /** @var \Tests\TestCase $this */

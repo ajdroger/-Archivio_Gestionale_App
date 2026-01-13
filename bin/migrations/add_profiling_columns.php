@@ -6,7 +6,7 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 use Dotenv\Dotenv;
 
 echo "Inizio migrazione DB: Aggiunta colonne Profilazione Socio...\n";
@@ -78,3 +78,4 @@ if ($errorCount > 0) {
     exit(1);
 }
 exit(0);
+

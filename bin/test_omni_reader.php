@@ -4,10 +4,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
-use FratellanzaMilitare\Service\AI\DocumentIngestionService;
-use FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory;
-use FratellanzaMilitare\Service\DocumentParser\WordParserService;
-use FratellanzaMilitare\Service\DocumentParser\ExcelParserService;
+use MCAG\Service\AI\DocumentIngestionService;
+use MCAG\Service\DocumentParser\DocumentParserFactory;
+use MCAG\Service\DocumentParser\WordParserService;
+use MCAG\Service\DocumentParser\ExcelParserService;
 
 // Load environment
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -45,7 +45,7 @@ try {
     $excelParser = $container->get(ExcelParserService::class);
     echo "  - ExcelParserService: ✅ OK\n";
 
-    $codeParser = $container->get(\FratellanzaMilitare\Service\DocumentParser\CodeParserService::class);
+    $codeParser = $container->get(\MCAG\Service\DocumentParser\CodeParserService::class);
     echo "  - CodeParserService: ✅ OK\n";
 
     echo "\n🎉 Omni-Reader System is READY!\n";
@@ -54,3 +54,4 @@ try {
     echo "\n❌ ERROR: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString();
 }
+

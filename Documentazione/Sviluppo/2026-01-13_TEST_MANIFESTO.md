@@ -18,3 +18,4 @@
 ## 3. Certificazione
 Questo branch serve come "Quality Gate" obbligatorio prima del merge in Stable.
 Tutti i test devono passare qui.
+

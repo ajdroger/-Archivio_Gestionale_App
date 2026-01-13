@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Jobs;
+namespace MCAG\Jobs;
 
 /**
  * Abstract Base Job
@@ -46,3 +46,5 @@ abstract class AbstractJob implements JobInterface
      */
     abstract protected function getJobData(): array;
 }
+
+

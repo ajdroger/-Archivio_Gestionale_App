@@ -55,3 +55,4 @@ graph TD
 
 ## 5. Deployment
 Il sistema è progettato per il deployment su container (Docker) o server tradizionali (Apache/Nginx) con supporto per load balancing delle sessioni tramite Redis.
+

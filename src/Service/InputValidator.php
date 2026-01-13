@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use Respect\Validation\Validator as v;
 use Respect\Validation\Exceptions\ValidationException;
@@ -54,3 +54,5 @@ class InputValidator
         return v::stringType()->length(8, null); // Todo: add complexity
     }
 }
+
+

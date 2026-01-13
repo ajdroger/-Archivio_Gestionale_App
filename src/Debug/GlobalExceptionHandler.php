@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -131,3 +131,5 @@ class GlobalExceptionHandler
         });
     }
 }
+
+

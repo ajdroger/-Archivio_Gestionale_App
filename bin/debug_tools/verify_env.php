@@ -33,3 +33,4 @@ try {
     echo "PDO Error: " . $e->getMessage() . "\n";
     exit(1);
 }
+

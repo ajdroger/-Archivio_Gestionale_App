@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\AI\RAG;
+namespace MCAG\AI\RAG;
 
 use Psr\Log\LoggerInterface;
 
@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
  * Stores documents and embeddings in a JSON file.
  * Performs linear search with cosine similarity (slow for millions, fine for thousands).
  * 
- * @package FratellanzaMilitare\AI\RAG
+ * @package MCAG\AI\RAG
  */
 class SimpleVectorStore implements KnowledgeBaseInterface
 {
@@ -106,3 +106,5 @@ class SimpleVectorStore implements KnowledgeBaseInterface
         return $dotProduct / (sqrt($normA) * sqrt($normB));
     }
 }
+
+

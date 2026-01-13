@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Enum;
+namespace MCAG\Enum;
 
 enum StatoDocumento
 {
@@ -9,3 +9,5 @@ enum StatoDocumento
     case RESPINTO;
     case ARCHIVIATO;
 }
+
+

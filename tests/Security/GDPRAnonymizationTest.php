@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\SecurityLayer\AuditTrail;
-use FratellanzaMilitare\SecurityLayer\Operatore;
+use MCAG\SecurityLayer\AuditTrail;
+use MCAG\SecurityLayer\Operatore;
 
 test('cf anonymization', function () {
     $audit = AuditTrail::getInstance();

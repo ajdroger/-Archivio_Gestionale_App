@@ -1,4 +1,4 @@
-📁 FRATELLANZA MILITARE - COMPLETE FILE STRUCTURE INDEX
+📁 MCAG - COMPLETE FILE STRUCTURE INDEX
 Generated: 2025-12-27 10:30 CET
 Version: 2.0.1 Enterprise Edition - Deployment Ready
 Total Files: 175+

@@ -7,4 +7,5 @@ if (function_exists('opcache_reset')) {
     echo "<h1>OPcache not enabled</h1>";
     echo "<p>If you are still seeing the error, please restart your web server (Ampps).</p>";
 }
-echo "<a href='/fratellanza-militare-archivio/public/devtools'>Back to DevTools</a>";
+echo "<a href='/MCAG_Militare-Civile-Archivio-Gestionale/public/devtools'>Back to DevTools</a>";
+

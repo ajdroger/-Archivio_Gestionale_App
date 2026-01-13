@@ -1,5 +1,5 @@
 # Rapporto di Analisi Tecnica Approfondita
-## Progetto: Digitalizzazione Archivio Soci - Fratellanza Militare di Firenze
+## Progetto: Digitalizzazione Archivio Soci - MCAG di Firenze
 
 **Versione:** 1.3.1 (Mission-Critical Enterprise)  
 **Data:** 21 Dicembre 2025  
@@ -54,3 +54,4 @@ L'analisi conferma che il sistema rispetti ora i più alti standard di ingegneri
 
 ---
 *Fine del Report Tecnico v1.3.1*
+

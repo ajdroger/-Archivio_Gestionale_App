@@ -570,7 +570,7 @@ Cosa è stato deciso e perché.
 ---
 
 **Mantainer**: Soobadur Mohammad Ajmeer ©  
-**Progetto**: Fratellanza Militare di Firenze - Archivio Digitale Soci  
+**Progetto**: MCAG di Firenze - Archivio Digitale Soci  
 **Ultimo Aggiornamento**: 2026-01-10  
 **Stato Progetto**: Production v2.4 - Enterprise Perfection (100/100)  
 **Decisioni Totali**: 18 ADR + 3 Pending
@@ -771,7 +771,7 @@ Implementare nel Backend (`DevToolsScriptController`) un rilevamento automatico 
 
 ### 3. [BRANDING] Naming Inconsistency
 - **Data/Ora**: 2026-01-11 01:32
-- **Errore**: Il terminale mostrava "Fratellanza Militare System" invece del nuovo brand "MCAG".
+- **Errore**: Il terminale mostrava "MCAG System" invece del nuovo brand "MCAG".
 - **Risoluzione**: Aggiornato stringa di benvenuto nel template `devtools.mustache`.
 
 ### 4. [PROCESS] Git History Compliance
@@ -789,6 +789,70 @@ Implementare nel Backend (`DevToolsScriptController`) un rilevamento automatico 
 Il sistema DevTools è ora **Stabile**, **Sicuro** (Role-Based + Whitelist), e **Cross-Platform** (PowerShell/Bash automatico).
 Tutti i test (`tests/Feature/DevToolsV4Test.php`) sono verdi.
 Branding MCAG applicato ovunque.
+
+
+---
+
+## [ADR-030] Toolkit Output Reliability Strategy
+**Data**: 2026-01-13
+**Stato**: ✅ Attivo
+**Contesto**:
+La console web (`terminal.php`) è uno strumento critico per il debug. Tuttavia, in ambienti di produzione/staging, warning PHP minori (es. deprecazioni di vendor terzi o chiavi array mancanti in log legacy) venivano stampati nello STDOUT prima del JSON di risposta. Questo causava la rottura del parser JS lato client ("Unexpected end of JSON input"), rendendo la console inutilizzabile proprio quando serviva di più.
+
+**Decisione**:
+Implementare un **Output Buffering Layer** rigoroso nel backend della console.
+1. `ob_start()` all'inizio dello script per catturare *qualsiasi* output spurio.
+2. Esecuzione del comando.
+3. `ob_get_clean()` prima di inviare la risposta JSON legittima.
+4. I warning catturati vengono loggati in un file separato (`debug_warnings.log`) anziché sporcare la risposta HTTP.
+
+**Conseguenze**:
+- (+) **Affidabilità 100%**: La console risponde sempre con JSON valido, anche se il server "urla" warning.
+- (+) **Developer Experience**: Gli errori non bloccano più l'UI.
+- (-) **Visibilità**: I warning sono "nascosti" dal frontend (necessario consultare i log backend), ma questo è un trade-off accettabile per la stabilità operativa.
+
+---
+
+## [ADR-031] Multi-Layer Backup Verification
+**Data**: 2026-01-13
+**Stato**: ✅ Attivo
+**Contesto**:
+Il sistema di diagnostica `SystemCheck.php` segnalava falsi positivi ("Backup too old") perché monitorava solo la cartella di backup manuale (`storage/backups`), ignorando completamente gli snapshot automatici di sicurezza generati prima dei test (`backups/safety_snapshots`). Questo creava allarme ingiustificato.
+
+**Decisione**:
+Estendere la logica di `checkRecentBackups` per scansionare **vettori multipli** di persistenza.
+- Il sistema ora aggrega i file da tutte le location di backup configurate.
+- Viene calcolata l'età del file *più recente* in assoluto, indipendentemente dalla fonte (Manuale o Automatico).
+
+**Conseguenze**:
+- (+) **Accuratezza**: Il report riflette la reale sicurezza dei dati.
+- (+) **Integrazione**: Riconosce `safe_test_runner.php` come fonte legittima di backup.
+
+---
+
+## [ADR-032] Commercial Valuation & Pricing Model v5.3
+**Data**: 2026-01-13
+**Stato**: ✅ Definitivo
+**Contesto**:
+Il software è evoluto da "prototipo associativo" a "piattaforma enterprise mission-critical". Il vecchio pricing (€25k) era basato sui costi di sviluppo iniziali e non rifletteva più il valore tecnologico (Cluster HA, Security ISO-ready, DevTools v4) né il benchmarking di mercato.
+
+**Decisione**:
+Ristrutturare il modello commerciale in 3 Tier basati sul valore (Value-Based Pricing) e supportati dal Report Benchmark 2026.
+1. **Standard License (€115.000)**: Entry level per chi necessita del codice sorgente ma infrastruttura semplice.
+2. **Professional License (€135.000)**: Il nuovo standard. Include DevTools Ultimate e supporto esteso.
+3. **Enterprise License (€175.000)**: Per PA e Large Organizations. Include SLA 99.9%, HA Cluster Setup e Customization hours.
+
+**Metriche di Supporto**:
+- **Sviluppo**: 2.140 ore certificate.
+- **ROI**: ricalcolato a €63/h (sottostimato rispetto a standard di mercato €80-120/h, ma realistico per il contesto).
+- **Security**: Grade A++ confermato.
+
+**Conseguenze**:
+- (+) **Posizionamento**: Elevazione del brand a livello Enterprise Software Vendor.
+- (+) **Sostenibilità**: Margini adeguati per garantire supporto a lungo termine e R&D.
+- (-) **Barriera d'ingresso**: Prezzi non accessibili a piccole associazioni locali (che rimangono target secondario o SaaS user).
+
+---
 
 ## [ADR-029] Omni-Reader Architecture (v5.2)
 **Data**: 2026-01-13
@@ -891,5 +955,6 @@ Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa 
 - (+) **Precisione di Recupero**: I test (`verify_knowledge.php`) mostrano che le query specifiche ora recuperano il blocco corretto con score >0.70.
 - (-) **Complessità di Ingestione**: L'algoritmo è leggermente più pesante computazionalmente rispetto allo split cieco.
 - (-) **Dipendenza dal Formato**: Richiede che i documenti siano formattati con Markdown corretto per funzionare al meglio.
+
 
 

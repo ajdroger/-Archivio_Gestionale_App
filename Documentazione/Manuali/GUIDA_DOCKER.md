@@ -1,4 +1,4 @@
-# 🐳 Guida Completa a Docker - Fratellanza Militare v2.0 Enterprise
+# 🐳 Guida Completa a Docker - MCAG v2.0 Enterprise
 
 Questa guida spiega passo passo come eseguire l'intera applicazione utilizzando **Docker**.
 L'uso di Docker garantisce che l'app giri in un ambiente isolato, sicuro e identico per tutti gli sviluppatori, senza dover installare PHP o XAMPP sul tuo PC.
@@ -18,7 +18,7 @@ Prima di iniziare, assicurati di avere installato:
 Il progetto è stato configurato per essere "Docker-Ready". Tutti i file di configurazione si trovano nella cartella `docker/`:
 
 ```text
-fratellanza-militare-archivio/
+MCAG_Militare-Civile-Archivio-Gestionale/
 ├── docker/
 │   ├── config/              # Configurazioni (PHP, Nginx, Supervisor)
 │   ├── Dockerfile           # Ricetta per costruire l'immagine
@@ -103,3 +103,4 @@ docker-compose down
 docker system prune -f
 docker-compose up --build
 ```
+

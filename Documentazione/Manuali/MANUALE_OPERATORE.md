@@ -1,5 +1,5 @@
 # 📗 MANUALE UTENTE - OPERATORE
-## Sistema di Gestione Archivio Fratellanza Militare
+## Sistema di Gestione Archivio MCAG
 
 **Versione:** 2.0  
 **Data:** Gennaio 2026  
@@ -26,7 +26,7 @@
 
 ## 🌟 INTRODUZIONE {#introduzione}
 
-Benvenuto nel ruolo di **Operatore** del sistema Archivio Fratellanza Militare!
+Benvenuto nel ruolo di **Operatore** del sistema Archivio MCAG!
 
 ### Cosa Puoi Fare
 
@@ -739,3 +739,4 @@ Grazie
 *Per assistenza: supporto@associazione.it*
 
 **Buon Lavoro! 🚀**
+

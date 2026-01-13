@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 /**
  * Implementazione del servizio Email su File (Log).
@@ -20,7 +20,7 @@ class FileEmailService implements EmailServiceInterface
     /**
      * Simula l'invio scrivendo su file.
      */
-    public function send(string $to, string $subject, string $body, array $attachments = []): bool
+    public function send(string $to, string $subject, string $body, array $attachments = [], array $headers = []): bool
     {
         $date = date('Y-m-d H:i:s');
         $count = count($attachments);
@@ -29,3 +29,5 @@ class FileEmailService implements EmailServiceInterface
         return (file_put_contents($this->logFile, $logEntry, FILE_APPEND) !== false);
     }
 }
+
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\InfrastrutturaIT\Persistence;
+namespace MCAG\InfrastrutturaIT\Persistence;
 
 use PDO;
 use PDOException;
@@ -63,3 +63,5 @@ class DatabaseConnection
         return self::$connection;
     }
 }
+
+

@@ -45,3 +45,4 @@ I file `.mustache` sono stati ripuliti dai blocchi `<script>` inline e sostituit
 
 ## Conclusioni
 Il refactoring è stato completato con successo. Il codice JavaScript è ora centralizzato, documentato e separato dalla logica di presentazione HTML/PHP. Questo facilita futuri aggiornamenti, il linting del codice e il caching del browser.
+

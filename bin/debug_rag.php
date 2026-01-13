@@ -1,8 +1,8 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-use FratellanzaMilitare\AI\RAG\SimpleVectorStore;
-use FratellanzaMilitare\AI\Providers\OllamaProvider;
+use MCAG\AI\RAG\SimpleVectorStore;
+use MCAG\AI\Providers\OllamaProvider;
 use DI\ContainerBuilder;
 use Dotenv\Dotenv;
 
@@ -90,3 +90,4 @@ try {
     echo "❌ Error: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString();
 }
+

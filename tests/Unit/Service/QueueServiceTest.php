@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Service;
 
-use FratellanzaMilitare\Jobs\JobInterface;
-use FratellanzaMilitare\Service\QueueService;
+use MCAG\Jobs\JobInterface;
+use MCAG\Service\QueueService;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\TestCase;

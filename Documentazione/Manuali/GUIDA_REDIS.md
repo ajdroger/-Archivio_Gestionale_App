@@ -1,8 +1,8 @@
-# 📚 GUIDA REDIS - Fratellanza Militare
+# 📚 GUIDA REDIS - MCAG
 
 ## Panoramica
 
-Il sistema Fratellanza Militare v2.0 utilizza Redis per:
+Il sistema MCAG v2.0 utilizza Redis per:
 - **Caching** distribuito e performante
 - **Rate Limiting** persistente
 - **Queue System** (opzionale)
@@ -224,3 +224,4 @@ Per deployment multi-server, configurare Redis Cluster o Sentinel per alta dispo
 
 **Versione Guida**: 2.0  
 **Ultima modifica**: 26 Dicembre 2025
+

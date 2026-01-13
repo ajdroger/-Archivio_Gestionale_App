@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
 
 test('empty dati personali throws error on access', function () {
     $socio = new Socio();

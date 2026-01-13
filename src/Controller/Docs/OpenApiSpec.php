@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Docs;
+namespace MCAG\Controller\Docs;
 
 use OpenApi\Attributes as OA;
 
@@ -9,11 +9,11 @@ use OpenApi\Attributes as OA;
     title: "MCAG API - Militare Civile Archivio Gestionale",
     description: "API REST/GraphQL per la gestione dell'Archivio Militare e Civile. Include autenticazione 2FA, gestione soci, documenti e statistiche.",
     contact: new OA\Contact(
-        email: "tech@fratellanzamilitare.it"
+        email: "tech@MCAG.it"
     ),
     license: new OA\License(
         name: "Proprietary",
-        url: "http://fratellanzamilitare.it"
+        url: "http://MCAG.it"
     )
 )]
 #[OA\Server(
@@ -36,3 +36,5 @@ class OpenApiSpec
 {
     // This class is used purely for global OA annotations.
 }
+
+

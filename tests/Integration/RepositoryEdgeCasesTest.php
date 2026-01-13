@@ -3,13 +3,13 @@
 namespace Tests\Integration;
 
 use Tests\TestCase;
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\Enum\StatoIscrizione;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\Enum\StatoIscrizione;
 
 test('repository handles special characters in search', function () {
     /** @var TestCase $this */
-    $repo = new \FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository($this->db);
+    $repo = new \MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository($this->db);
 
     $socio = new Socio();
     $socio->CodiceFiscale = 'EDGE_CASE_01';
@@ -40,7 +40,7 @@ test('repository handles special characters in search', function () {
 
 test('repository handles unicode characters', function () {
     /** @var TestCase $this */
-    $repo = new \FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository($this->db);
+    $repo = new \MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository($this->db);
 
     $socio = new Socio();
     $socio->CodiceFiscale = 'UNICODE_02';

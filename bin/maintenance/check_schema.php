@@ -23,3 +23,4 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 echo "\n=== CHECK COMPLETE ===\n";
+

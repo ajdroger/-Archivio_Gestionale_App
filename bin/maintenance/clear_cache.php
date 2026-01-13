@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\Utils\Path;
+use MCAG\Utils\Path;
 
 $cacheDir = __DIR__ . '/../../cache';
 $output = [];
@@ -41,3 +41,4 @@ foreach ($files as $fileinfo) {
 echo "Cache pulita con successo.\n";
 echo "File rimossi: $deletedFiles\n";
 echo "Cartelle rimosse: $deletedDirs\n";
+

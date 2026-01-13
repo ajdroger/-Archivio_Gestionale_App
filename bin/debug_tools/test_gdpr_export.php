@@ -2,8 +2,8 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
@@ -62,3 +62,4 @@ try {
     echo "Stack trace:\n{$e->getTraceAsString()}\n";
     exit(1);
 }
+

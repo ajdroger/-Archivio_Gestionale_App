@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -28,7 +28,7 @@ class SmtpEmailService implements EmailServiceInterface
      * 
      * @return bool True se l'invio riesce, False e log dell'errore altrimenti.
      */
-    public function send(string $to, string $subject, string $body, array $attachments = []): bool
+    public function send(string $to, string $subject, string $body, array $attachments = [], array $headers = []): bool
     {
         $mail = new PHPMailer(true);
 
@@ -53,6 +53,11 @@ class SmtpEmailService implements EmailServiceInterface
                 }
             }
 
+            // Custom Headers
+            if (isset($headers['Reply-To'])) {
+                $mail->addReplyTo($headers['Reply-To']);
+            }
+
             // Content
             $mail->isHTML(true);
             $mail->Subject = $subject;
@@ -68,3 +73,5 @@ class SmtpEmailService implements EmailServiceInterface
         }
     }
 }
+
+

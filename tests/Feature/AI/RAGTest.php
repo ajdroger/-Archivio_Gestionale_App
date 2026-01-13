@@ -1,7 +1,9 @@
 <?php
 
-use FratellanzaMilitare\AI\RAG\SimpleVectorStore;
-use FratellanzaMilitare\AI\Providers\OllamaProvider;
+use MCAG\AI\RAG\SimpleVectorStore;
+use MCAG\AI\RAG\RAGService;
+use MCAG\AI\Providers\OllamaProvider;
+use MCAG\AI\DTO\ChatMessage;
 use Psr\Log\NullLogger;
 
 test('SimpleVectorStore stores and retrieves documents', function () {

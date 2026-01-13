@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Controller\GraphQLController;
+use MCAG\Controller\GraphQLController;
 use Pest\Expectation;
 
 // Note: This relies on a running server or proper mocking of Slim request/response environment.

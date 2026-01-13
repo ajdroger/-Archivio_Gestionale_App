@@ -245,3 +245,4 @@ call plug#end()
 
 > **Nota**: Se vuoi il salto di qualità definitivo, considera **Neovim** (`nvim`), che è un fork moderno di Vim ottimizzato per la velocità e l'estensibilità con Lua.
 
+

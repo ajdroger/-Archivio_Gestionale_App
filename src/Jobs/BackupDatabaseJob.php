@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Jobs;
+namespace MCAG\Jobs;
 
-use FratellanzaMilitare\Service\BackupService;
+use MCAG\Service\BackupService;
 
 /**
  * Background Job per Backup Database
@@ -33,3 +33,5 @@ class BackupDatabaseJob extends AbstractJob
         ];
     }
 }
+
+

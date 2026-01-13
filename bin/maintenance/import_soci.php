@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 // Configurazione
 $inputFile = __DIR__ . '/../../public/data/nuovi_soci.json';
@@ -91,3 +91,4 @@ try {
     echo "[ERRORE CRITICO] " . $e->getMessage() . "\n";
     exit(1);
 }
+

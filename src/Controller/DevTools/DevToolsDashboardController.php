@@ -1,14 +1,14 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\DevTools;
+namespace MCAG\Controller\DevTools;
 
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\SecurityLayer\AuditTrail;
-use FratellanzaMilitare\Debug\ResilienceMonitor;
-use FratellanzaMilitare\Debug\SessionInspector;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\SecurityLayer\AuditTrail;
+use MCAG\Debug\ResilienceMonitor;
+use MCAG\Debug\SessionInspector;
 
 /**
  * DevTools Dashboard Controller
@@ -26,13 +26,13 @@ class DevToolsDashboardController
     private Mustache_Engine $mustache;
     private DevToolsSystemController $systemController;
     private DevToolsAuditController $auditController;
-    private \FratellanzaMilitare\Service\Demo\DemoInvitationService $demoService;
+    private \MCAG\Service\Demo\DemoInvitationService $demoService;
 
     public function __construct(
         Mustache_Engine $mustache,
         DevToolsSystemController $systemController,
         DevToolsAuditController $auditController,
-        \FratellanzaMilitare\Service\Demo\DemoInvitationService $demoService
+        \MCAG\Service\Demo\DemoInvitationService $demoService
     ) {
         $this->mustache = $mustache;
         $this->systemController = $systemController;
@@ -205,3 +205,5 @@ class DevToolsDashboardController
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+
+

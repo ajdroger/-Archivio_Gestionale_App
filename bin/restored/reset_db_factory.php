@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 /**
  * Script Ripristino Completo (FACTORY RESET)
@@ -53,3 +53,4 @@ try {
     echo "\n[ERRORE CRITICO] " . $e->getMessage() . "\n";
     exit(1);
 }
+

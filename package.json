@@ -1,7 +1,7 @@
 {
-  "name": "fratellanza-militare-archivio",
-  "version": "1.0.0",
-  "description": "Benvenuti nel repository del progetto di digitalizzazione e dematerializzazione dell'archivio soci della Fratellanza Militare di Firenze.",
+  "name": "mcag-archivio-gestionale",
+  "version": "5.3.0",
+  "description": "Benvenuti nel repository del progetto di digitalizzazione e dematerializzazione dell'archivio MCAG.",
   "main": "index.js",
   "directories": {
     "test": "tests"

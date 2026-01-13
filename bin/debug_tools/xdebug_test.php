@@ -16,3 +16,4 @@ if (function_exists('xdebug_info')) {
 } else {
     echo "<p style='color:red;'>Xdebug NON è caricato in questo contesto!</p>";
 }
+

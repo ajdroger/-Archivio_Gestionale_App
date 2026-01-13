@@ -33,6 +33,10 @@ class DemoRequestTest extends TestCase
             'privacy_consent' => true
         ];
 
+        // Mock Email Service (Should NOT be called here, but good practice to safegaurd)
+        $mockEmail = $this->createMock(\MCAG\Service\EmailServiceInterface::class);
+        $this->app->getContainer()->set(\MCAG\Service\EmailServiceInterface::class, $mockEmail);
+
         $request = (new ServerRequestFactory())->createServerRequest('POST', '/api/public/demo-request');
         $request = $request->withHeader('Content-Type', 'application/json');
         $request->getBody()->write(json_encode($data));
@@ -57,6 +61,16 @@ class DemoRequestTest extends TestCase
             'messaggio' => 'This is a test request.',
             'privacy_consent' => true
         ];
+
+        // MOCK Email Service to prevent mail() calls and verify interaction
+        $mockEmail = $this->createMock(\MCAG\Service\EmailServiceInterface::class);
+        $mockEmail->expects($this->once())
+            ->method('send')
+            ->willReturn(true);
+
+        // Override container definition
+        $this->app->getContainer()->set(\MCAG\Service\EmailServiceInterface::class, $mockEmail);
+
 
         $request = (new ServerRequestFactory())->createServerRequest('POST', '/api/public/demo-request');
         $request = $request->withHeader('Content-Type', 'application/json');

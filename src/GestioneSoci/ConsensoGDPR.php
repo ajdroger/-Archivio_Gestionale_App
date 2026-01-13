@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\GestioneSoci;
+namespace MCAG\GestioneSoci;
 
 use DateTime;
 
@@ -29,14 +29,14 @@ class ConsensoGDPR extends Documento
      * @param bool $cessione Consenso cessione dati a terzi
      * @param bool $marketing Consenso comunicazioni commerciali
      * @param string $versione Identificativo versione informativa (es. "v2024.1")
-     * @param \FratellanzaMilitare\SecurityLayer\UtenteSistema $operatore Chi effettua l'operazione
+     * @param \MCAG\SecurityLayer\UtenteSistema $operatore Chi effettua l'operazione
      */
     public function aggiornaConsensi(
         bool $trattamento,
         bool $cessione,
         bool $marketing,
         string $versione,
-        \FratellanzaMilitare\SecurityLayer\UtenteSistema $operatore
+        \MCAG\SecurityLayer\UtenteSistema $operatore
     ): void {
         $this->TrattamentoDati = $trattamento;
         $this->CessioneTerzi = $cessione;
@@ -45,7 +45,7 @@ class ConsensoGDPR extends Documento
         $this->DataFirma = new DateTime();
         $this->Attivo = true;
 
-        \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance()->logEvento(
+        \MCAG\SecurityLayer\AuditTrail::getInstance()->logEvento(
             $operatore,
             'GDPR_CONSENT_UPDATE',
             "socio_cf_{$this->IdUnivoco}"
@@ -59,18 +59,20 @@ class ConsensoGDPR extends Documento
      * Questa azione inibisce trattamenti futuri ma mantiene lo storico.
      * 
      * @param string $motivo Ragione della revoca
-     * @param \FratellanzaMilitare\SecurityLayer\UtenteSistema $operatore
+     * @param \MCAG\SecurityLayer\UtenteSistema $operatore
      */
-    public function revoca(string $motivo, \FratellanzaMilitare\SecurityLayer\UtenteSistema $operatore): void
+    public function revoca(string $motivo, \MCAG\SecurityLayer\UtenteSistema $operatore): void
     {
         $this->Attivo = false;
         $this->DataRevoca = new DateTime();
         $this->MotivoRevoca = $motivo;
 
-        \FratellanzaMilitare\SecurityLayer\AuditTrail::getInstance()->logEvento(
+        \MCAG\SecurityLayer\AuditTrail::getInstance()->logEvento(
             $operatore,
             'GDPR_CONSENT_REVOKE',
             "socio_cf_{$this->IdUnivoco}"
         );
     }
 }
+
+

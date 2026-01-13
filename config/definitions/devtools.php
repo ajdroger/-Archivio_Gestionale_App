@@ -3,52 +3,54 @@
 use Psr\Container\ContainerInterface;
 
 return [
-    \FratellanzaMilitare\Controller\SettingsController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\SettingsController($c->get(Mustache_Engine::class));
+    \MCAG\Controller\SettingsController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\SettingsController($c->get(Mustache_Engine::class));
     },
 
-    \FratellanzaMilitare\Controller\HomeController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\HomeController(
+    \MCAG\Controller\HomeController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\HomeController(
             $c->get(Mustache_Engine::class),
-            $c->get(\FratellanzaMilitare\GestioneSoci\SocioRepository::class)
+            $c->get(\MCAG\GestioneSoci\SocioRepository::class)
         );
     },
 
-    \FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\DevTools\DevToolsSystemController(
+    \MCAG\Controller\DevTools\DevToolsSystemController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\DevTools\DevToolsSystemController(
             $c->get(Mustache_Engine::class),
-            $c->get(\FratellanzaMilitare\Debug\ResilienceMonitor::class),
+            $c->get(\MCAG\Debug\ResilienceMonitor::class),
             $c->get(PDO::class)
         );
     },
 
-    \FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\DevTools\DevToolsAuditController(
+    \MCAG\Controller\DevTools\DevToolsAuditController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\DevTools\DevToolsAuditController(
             $c->get(Mustache_Engine::class),
             $c->get(PDO::class)
         );
     },
 
-    \FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController(
+    \MCAG\Controller\DevTools\DevToolsDashboardController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\DevTools\DevToolsDashboardController(
             $c->get(Mustache_Engine::class),
-            $c->get(\FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class),
-            $c->get(\FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class),
-            $c->get(\FratellanzaMilitare\Service\Demo\DemoInvitationService::class)
+            $c->get(\MCAG\Controller\DevTools\DevToolsSystemController::class),
+            $c->get(\MCAG\Controller\DevTools\DevToolsAuditController::class),
+            $c->get(\MCAG\Service\Demo\DemoInvitationService::class)
         );
     },
 
-    \FratellanzaMilitare\Controller\DevTools\DevToolsFileSystemController::class => function () {
-        return new \FratellanzaMilitare\Controller\DevTools\DevToolsFileSystemController();
+    \MCAG\Controller\DevTools\DevToolsFileSystemController::class => function () {
+        return new \MCAG\Controller\DevTools\DevToolsFileSystemController();
     },
 
-    \FratellanzaMilitare\Controller\DevTools\DevToolsDatabaseController::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Controller\DevTools\DevToolsDatabaseController(
+    \MCAG\Controller\DevTools\DevToolsDatabaseController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\DevTools\DevToolsDatabaseController(
             $c->get(Mustache_Engine::class)
         );
     },
 
-    \FratellanzaMilitare\Controller\DevTools\DevToolsSecurityController::class => function () {
-        return new \FratellanzaMilitare\Controller\DevTools\DevToolsSecurityController();
+    \MCAG\Controller\DevTools\DevToolsSecurityController::class => function () {
+        return new \MCAG\Controller\DevTools\DevToolsSecurityController();
     },
 ];
+
+

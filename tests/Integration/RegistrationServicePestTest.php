@@ -1,9 +1,9 @@
 <?php
 
-use FratellanzaMilitare\Service\RegistrationService;
-use FratellanzaMilitare\Service\ValidationService;
-use FratellanzaMilitare\Service\PdfGenerationService;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Service\RegistrationService;
+use MCAG\Service\ValidationService;
+use MCAG\Service\PdfGenerationService;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use Psr\Log\NullLogger;
 
 beforeEach(function () {
@@ -24,7 +24,7 @@ afterEach(function () {
 test('registrazione fallisce se utente esiste gia', function () {
     /** @var \Tests\TestCase $this */
     $repo = new PDOSocioRepository($this->db);
-    $service = new RegistrationService($repo, new ValidationService(), new PdfGenerationService(), new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
+    $service = new RegistrationService($repo, new ValidationService(), new PdfGenerationService(), new \MCAG\Service\FileEmailService(__DIR__ . '/../../var/logs/tests/test_pest_emails.txt'), new NullLogger());
 
     $data = [
         'nome' => 'Mario',
@@ -50,13 +50,13 @@ test('pdf generato solo se pagamento effettuato', function () {
     $repo = new PDOSocioRepository($this->db);
     // Mock PDF Service using Anonymous Class to avoid Mocking issues
     $pdfService = new class () extends PdfGenerationService {
-        public function generateRegistrationReceipt(\FratellanzaMilitare\GestioneSoci\Socio $socio, float $amount, int $year): string
+        public function generateRegistrationReceipt(\MCAG\GestioneSoci\Socio $socio, float $amount, int $year): string
         {
             throw new Exception("Unexpected call to generateRegistrationReceipt");
         }
     };
 
-    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
+    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \MCAG\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
 
     $data = [
         'nome' => 'Luigi',
@@ -78,7 +78,7 @@ test('pdf generato se pagamento presente', function () {
     // Let's use Real to verify integration
     $pdfService = new PdfGenerationService();
 
-    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
+    $service = new RegistrationService($repo, new ValidationService(), $pdfService, new \MCAG\Service\FileEmailService(__DIR__ . '/../../logs/tests/test_pest_emails.txt'), new NullLogger());
 
     $data = [
         'nome' => 'Anna',

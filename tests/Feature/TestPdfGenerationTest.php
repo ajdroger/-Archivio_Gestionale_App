@@ -1,8 +1,8 @@
 <?php
 
-use FratellanzaMilitare\Service\ValidationService;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController;
+use MCAG\Service\ValidationService;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Controller\Anagrafica\Soci\PersistenceController;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
@@ -45,11 +45,11 @@ test('it generates physical pdf on socio creation with payment', function () {
         $this->repo,
         $logger,
         $validator,
-        new \FratellanzaMilitare\Service\RegistrationService(
+        new \MCAG\Service\RegistrationService(
             $this->repo,
             $validator,
-            new \FratellanzaMilitare\Service\PdfGenerationService(),
-            new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../logs/test_pdf_emails.txt'),
+            new \MCAG\Service\PdfGenerationService(),
+            new \MCAG\Service\FileEmailService(__DIR__ . '/../../logs/test_pdf_emails.txt'),
             $logger
         )
     );

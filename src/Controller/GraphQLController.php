@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Controller;
+namespace MCAG\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GraphQL\GraphQL;
 use GraphQL\Error\DebugFlag;
-use FratellanzaMilitare\GraphQL\Schema;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\GraphQL\Schema;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 class GraphQLController
 {
@@ -44,3 +44,5 @@ class GraphQLController
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
+
+

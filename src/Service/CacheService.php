@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FratellanzaMilitare\Service;
+namespace MCAG\Service;
 
 use Closure;
 
@@ -148,3 +148,5 @@ class CacheService
         return $this->redis->flush();
     }
 }
+
+

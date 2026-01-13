@@ -1,8 +1,8 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\Auth;
+namespace MCAG\Controller\Auth;
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,7 +15,7 @@ use Slim\Routing\RouteContext;
  * Si occupa di mostrare il form di login e verificare le credenziali primarie
  * (username e password). Se valide, prepara la sessione per il 2FA.
  */
-use FratellanzaMilitare\Service\InputValidator;
+use MCAG\Service\InputValidator;
 
 class LoginFlowController
 {
@@ -121,7 +121,7 @@ class LoginFlowController
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$title - Fratellanza Militare</title>
+    <title>$title - MCAG</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="$baseUrl/css/premium.css">
@@ -134,3 +134,5 @@ class LoginFlowController
 html;
     }
 }
+
+

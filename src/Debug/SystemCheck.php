@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 class SystemCheck
 {
@@ -46,7 +46,7 @@ class SystemCheck
     private function checkDatabase(): array
     {
         try {
-            $pdo = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+            $pdo = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
             $driver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
             // Basic query to test connection
@@ -90,11 +90,11 @@ class SystemCheck
         }
 
         // Check Audit Log
-        $auditPath = __DIR__ . '/../../logs/audit.log';
+        $auditPath = __DIR__ . '/../../var/logs/audit.log';
         if (!file_exists($auditPath)) {
             // Create if missing
             file_put_contents($auditPath, '');
-            $results['audit_log'] = ['status' => true, 'message' => "INFO: Creato file logs/audit.log"];
+            $results['audit_log'] = ['status' => true, 'message' => "INFO: Creato file var/logs/audit.log"];
         } else {
             $results['audit_log'] = ['status' => is_writable($auditPath), 'message' => "Audit Log: Presente"];
         }
@@ -126,9 +126,21 @@ class SystemCheck
 
     private function checkRecentBackups(): array
     {
-        $backupDir = __DIR__ . '/../../storage/backups';
-        // Now looking for .sql files (standard dumb)
-        $backups = glob($backupDir . '/*.sql');
+        $backupDirs = [
+            __DIR__ . '/../../storage/backups',
+            __DIR__ . '/../../backups/safety_snapshots'
+        ];
+
+        $backups = [];
+        foreach ($backupDirs as $dir) {
+            if (is_dir($dir)) {
+                // Find all .sql files
+                $found = glob($dir . '/*.sql');
+                if ($found) {
+                    $backups = array_merge($backups, $found);
+                }
+            }
+        }
 
         if (empty($backups)) {
             return [
@@ -155,7 +167,7 @@ class SystemCheck
     private function checkIntegrity(): array
     {
         try {
-            $pdo = \FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
+            $pdo = \MCAG\InfrastrutturaIT\Persistence\DatabaseConnection::getConnection();
             $driver = $pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
             // MySQL: CHECK TABLE is an option but excessive for "integrity" of the whole DB.
@@ -217,3 +229,5 @@ class SystemCheck
         echo sprintf("%-10s %s\n", $status, $message);
     }
 }
+
+

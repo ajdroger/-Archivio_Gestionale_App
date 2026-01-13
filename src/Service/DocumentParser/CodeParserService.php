@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service\DocumentParser;
+namespace MCAG\Service\DocumentParser;
 
 class CodeParserService implements DocumentParserInterface
 {
@@ -49,3 +49,5 @@ class CodeParserService implements DocumentParserInterface
         return in_array($extension, $supported);
     }
 }
+
+

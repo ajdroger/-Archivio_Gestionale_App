@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 class LogViewer
 {
@@ -51,3 +51,5 @@ class LogViewer
         return implode("", $tail);
     }
 }
+
+

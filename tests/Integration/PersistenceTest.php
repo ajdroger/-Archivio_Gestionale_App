@@ -1,9 +1,9 @@
 <?php
 
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\Enum\StatoIscrizione;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\Enum\StatoIscrizione;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Service\DocumentParser;
+namespace MCAG\Service\DocumentParser;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -45,3 +45,5 @@ class ExcelParserService implements DocumentParserInterface
         return in_array($extension, ['xlsx', 'xls', 'csv', 'ods']);
     }
 }
+
+

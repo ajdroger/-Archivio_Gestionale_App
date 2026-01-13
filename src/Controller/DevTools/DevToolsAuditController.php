@@ -1,9 +1,9 @@
 <?php
 
-namespace FratellanzaMilitare\Controller\DevTools;
+namespace MCAG\Controller\DevTools;
 
 use Mustache_Engine;
-use FratellanzaMilitare\SecurityLayer\AuditTrail;
+use MCAG\SecurityLayer\AuditTrail;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 /**
@@ -60,3 +60,5 @@ class DevToolsAuditController
         return $auditTrail->ricercaAzioni($auditFilters, $page, $perPage);
     }
 }
+
+

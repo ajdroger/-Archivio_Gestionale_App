@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\SecurityLayer\Operatore;
-use FratellanzaMilitare\SecurityLayer\AuditTrail;
+use MCAG\SecurityLayer\Operatore;
+use MCAG\SecurityLayer\AuditTrail;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */

@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Controller;
+namespace MCAG\Controller;
 
 use Mustache_Engine;
 use Psr\Http\Message\ResponseInterface;
@@ -15,9 +15,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class HomeController
 {
     private Mustache_Engine $mustache;
-    private \FratellanzaMilitare\GestioneSoci\SocioRepository $repo;
+    private \MCAG\GestioneSoci\SocioRepository $repo;
 
-    public function __construct(Mustache_Engine $mustache, \FratellanzaMilitare\GestioneSoci\SocioRepository $repo)
+    public function __construct(Mustache_Engine $mustache, \MCAG\GestioneSoci\SocioRepository $repo)
     {
         $this->mustache = $mustache;
         $this->repo = $repo;
@@ -58,3 +58,5 @@ class HomeController
         return $response;
     }
 }
+
+

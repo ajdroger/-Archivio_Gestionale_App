@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\SecurityLayer;
+namespace MCAG\SecurityLayer;
 
 class Operatore extends UtenteSistema
 {
@@ -89,3 +89,5 @@ class Operatore extends UtenteSistema
         return $report;
     }
 }
+
+

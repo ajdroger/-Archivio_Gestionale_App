@@ -82,7 +82,13 @@ echo "✔ Backup saved to: " . basename($backupFile) . "\n";
 echo "\n[3/5] Running Test Suite (Pest)...\n";
 echo "------------------------------------\n";
 // Pass through the command output live
-$pestCmd = (stripos(PHP_OS, 'WIN') === 0) ? '..\\..\\vendor\\bin\\pest' : '../../vendor/bin/pest';
+$pestCmd = realpath(__DIR__ . '/../../vendor/bin/pest');
+// Append .bat for Windows if needed, though PHP usually handles it if invoked correctly.
+// Better: invoke via internal PHP if it's a PHP script, but pest is a valid binary.
+// On Windows shell_exec/passthru needs .bat
+if (stripos(PHP_OS, 'WIN') === 0) {
+    $pestCmd = '"' . $pestCmd . '.bat"';
+}
 passthru("$pestCmd --colors=always", $testExitCode);
 echo "------------------------------------\n";
 
@@ -134,3 +140,4 @@ if ($damageDetected) {
 }
 
 exit($testExitCode);
+

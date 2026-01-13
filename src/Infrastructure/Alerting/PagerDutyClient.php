@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Infrastructure\Alerting;
+namespace MCAG\Infrastructure\Alerting;
 
 /**
  * Client per PagerDuty API (v2 Events).
@@ -50,3 +50,5 @@ class PagerDutyClient
         return $httpCode === 202;
     }
 }
+
+

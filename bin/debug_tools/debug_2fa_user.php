@@ -4,7 +4,7 @@ if (php_sapi_name() !== 'cli') {
 die('Access Denied: CLI only.');
 }
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 try {
 $pdo = DatabaseConnection::getConnection();

@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use FratellanzaMilitare\Service\FiscalCodeCalculator;
+use MCAG\Service\FiscalCodeCalculator;
 
 $calc = new FiscalCodeCalculator();
 
@@ -33,3 +33,4 @@ if ($cf === 'RSSMRA80A01H501U') {
 echo "\nTesting Calculation for: Maria Verdi, 1990-05-15, F, Milano\n";
 $cf2 = $calc->calculate('Maria', 'Verdi', '1990-05-15', 'F', 'Milano');
 echo "Result: $cf2\n";
+

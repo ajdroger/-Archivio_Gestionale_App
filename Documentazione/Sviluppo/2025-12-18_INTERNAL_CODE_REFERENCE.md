@@ -380,3 +380,4 @@ Generato automaticamente via `bin/generate_docs.php` il 18/12/2025 22:23:28
 
 ---
 
+

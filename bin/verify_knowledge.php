@@ -1,8 +1,8 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-use FratellanzaMilitare\AI\Providers\OllamaProvider;
-use FratellanzaMilitare\AI\RAG\SimpleVectorStore;
+use MCAG\AI\Providers\OllamaProvider;
+use MCAG\AI\RAG\SimpleVectorStore;
 use Dotenv\Dotenv;
 
 // Load env
@@ -44,3 +44,4 @@ foreach ($questions as $key => $query) {
         echo "   ✅ Top Match: $topSource (Score: " . number_format($topScore, 4) . ")\n";
     }
 }
+

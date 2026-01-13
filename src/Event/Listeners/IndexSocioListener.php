@@ -1,11 +1,11 @@
 <?php
 
-namespace FratellanzaMilitare\Event\Listeners;
+namespace MCAG\Event\Listeners;
 
-use FratellanzaMilitare\Event\ListenerInterface;
-use FratellanzaMilitare\Event\Events\SocioCreatedEvent;
-use FratellanzaMilitare\AI\EmbeddingProviderInterface;
-use FratellanzaMilitare\AI\RAG\KnowledgeBaseInterface;
+use MCAG\Event\ListenerInterface;
+use MCAG\Event\Events\SocioCreatedEvent;
+use MCAG\AI\EmbeddingProviderInterface;
+use MCAG\AI\RAG\KnowledgeBaseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
  * Listens for new Socio creation and indexes their data into the AI Knowledge Base.
  * This makes the socio immediately searchable by the RAG system.
  * 
- * @package FratellanzaMilitare\Event\Listeners
+ * @package MCAG\Event\Listeners
  */
 class IndexSocioListener implements ListenerInterface
 {
@@ -63,3 +63,5 @@ class IndexSocioListener implements ListenerInterface
         }
     }
 }
+
+

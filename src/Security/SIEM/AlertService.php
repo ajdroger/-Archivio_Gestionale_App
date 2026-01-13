@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Security\SIEM;
+namespace MCAG\Security\SIEM;
 
 /**
  * Servizio Placeholder per integrazione SIEM / Breach Detection.
@@ -36,7 +36,9 @@ class AlertService
         // In produzione, questo invierebbe una HTTP Request a Splunk/ELK.
         // Qui simuliamo scrivendo su un log dedicato alla sicurezza (audit).
         $logEntry = json_encode($payload, JSON_UNESCAPED_SLASHES);
-        $siemLogFile = __DIR__ . '/../../../logs/siem_security.log';
+        $siemLogFile = __DIR__ . '/../../../var/logs/siem_security.log';
         file_put_contents($siemLogFile, $logEntry . PHP_EOL, FILE_APPEND);
     }
 }
+
+

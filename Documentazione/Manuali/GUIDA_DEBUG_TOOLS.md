@@ -22,5 +22,6 @@ Il toolkit avanzato di debug si trova in `bin/debug_tools/` ed è accessibile vi
 
 ## Accesso Dashboard
 Tutti questi script sono eseguibili direttamente dalla pagina:
-`http://localhost:8080/fratellanza-militare-archivio/public/devtools`
+`http://localhost:8080/MCAG_Militare-Civile-Archivio-Gestionale/public/devtools`
 Sezione **Scripts & Utilities**.
+

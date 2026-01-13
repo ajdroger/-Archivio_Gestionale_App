@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 // Load Env
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
@@ -54,3 +54,4 @@ try {
     echo "Error: " . $e->getMessage() . "\n";
     exit(1);
 }
+

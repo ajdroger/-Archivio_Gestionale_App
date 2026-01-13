@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 try {
     // 1. Load Dotenv explicitly to be sure
@@ -29,3 +29,4 @@ try {
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
+

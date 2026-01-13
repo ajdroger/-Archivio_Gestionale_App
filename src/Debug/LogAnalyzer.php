@@ -1,6 +1,6 @@
 <?php
 
-namespace FratellanzaMilitare\Debug;
+namespace MCAG\Debug;
 
 class LogAnalyzer
 {
@@ -72,3 +72,5 @@ class LogAnalyzer
         return $summary;
     }
 }
+
+

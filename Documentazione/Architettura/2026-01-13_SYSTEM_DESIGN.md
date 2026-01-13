@@ -11,7 +11,7 @@
 
 **Copyright Notice**
 Soobadur Mohammad Ajmeer ©
-Oragnizzazione: Fratellanza Militare di Firenze
+Oragnizzazione: MCAG di Firenze
 
 ---
 
@@ -82,3 +82,4 @@ The `bin/tools/` directory contains the "Black Box" diagnostics suite:
 **Appendix**
 *   **API Reference**: See `../Manuali/API_REFERENCE.md`.
 *   **Structure Index**: See `Structure_Index.md`.
+

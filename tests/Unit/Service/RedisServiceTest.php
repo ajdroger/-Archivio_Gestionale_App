@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Service;
 
-use FratellanzaMilitare\Service\RedisService;
+use MCAG\Service\RedisService;
 use PHPUnit\Framework\TestCase;
 use Predis\Client;
 
