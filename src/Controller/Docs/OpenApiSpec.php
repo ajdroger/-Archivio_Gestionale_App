@@ -26,6 +26,12 @@ use OpenApi\Attributes as OA;
     in: "cookie",
     name: "PHPSESSID"
 )]
+#[OA\SecurityScheme(
+    securityScheme: "apiKey",
+    type: "apiKey",
+    in: "header",
+    name: "X-API-Key"
+)]
 class OpenApiSpec
 {
     // This class is used purely for global OA annotations.
