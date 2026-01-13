@@ -21,6 +21,15 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [5.2.0] - 2026-01-13 "**Omni-Reader Edition**"
+### Aggiunto
+- **Omni-Reader AI Engine**: Supporto unificato per .pdf, .docx, .xlsx, .md, .txt, .php, .py, .java, .js, .sql.
+- **Global AI Widget**: Assistente fluttuante disponibile su tutte le pagine (`templates/partials/ai_widget.mustache`).
+- **Smart Context**: L'AI rileva automaticamente il contesto della pagina corrente (Scheda Socio, Dashboard) e inietta i dati nel prompt.
+- **Voice Interface**: Funzionalità Speech-to-Text per comandi vocali.
+- **Zero-Dependency Architecture**: Rimossa dipendenza hard da Redis per le code; fallback automatico su Database Queue.
+- **Code Parser Service**: Gestione dedicata per blocchi di codice e file markdown.
+
 ## [5.1.1] - 2026-01-13 "**Singularity Hotfix**"
 ### Risolto [CRITICAL]
 - **AI Assistant Infinite Spinner**: La libreria `htmx.min.js` mancava nell'header della dashboard amministrativa (`admin_header.mustache`). Aggiunta inclusione globale.
