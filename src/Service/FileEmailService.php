@@ -20,7 +20,7 @@ class FileEmailService implements EmailServiceInterface
     /**
      * Simula l'invio scrivendo su file.
      */
-    public function send(string $to, string $subject, string $body, array $attachments = []): bool
+    public function send(string $to, string $subject, string $body, array $attachments = [], array $headers = []): bool
     {
         $date = date('Y-m-d H:i:s');
         $count = count($attachments);

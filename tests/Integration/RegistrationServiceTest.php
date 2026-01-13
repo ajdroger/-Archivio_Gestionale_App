@@ -35,7 +35,7 @@ test('Integration: Registration Service Register New Member Flow', function () {
     $repo = new PDOSocioRepository($this->pdo);
     $validator = new ValidationService();
     $pdfService = new PdfGenerationService();
-    $emailService = new FileEmailService(__DIR__ . '/../../logs/tests/test_integration_emails.txt');
+    $emailService = new FileEmailService(__DIR__ . '/../../var/logs/tests/test_integration_emails.txt');
 
     $service = new RegistrationService(
         $repo,

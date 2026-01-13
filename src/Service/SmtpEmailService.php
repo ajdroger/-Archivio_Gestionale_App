@@ -28,7 +28,7 @@ class SmtpEmailService implements EmailServiceInterface
      * 
      * @return bool True se l'invio riesce, False e log dell'errore altrimenti.
      */
-    public function send(string $to, string $subject, string $body, array $attachments = []): bool
+    public function send(string $to, string $subject, string $body, array $attachments = [], array $headers = []): bool
     {
         $mail = new PHPMailer(true);
 
@@ -51,6 +51,11 @@ class SmtpEmailService implements EmailServiceInterface
                 if (file_exists($path)) {
                     $mail->addAttachment($path);
                 }
+            }
+
+            // Custom Headers
+            if (isset($headers['Reply-To'])) {
+                $mail->addReplyTo($headers['Reply-To']);
             }
 
             // Content
