@@ -751,7 +751,7 @@ grep "request_id:abc123" logs/app.log
 ## 📚 RISORSE AGGIUNTIVE
 
 - **📖 Documentazione Completa**: `Documentazione/` folder
-- **🔌 API Reference**: `Documentazione/Manuali/API_REFERENCE.md`
+- **🔌 API Reference**: `Documentazione/Sviluppo/2026-01-13_API_REFERENCE.md`
 - **🐳 Docker Guide**: `Documentazione/Manuali/GUIDA_DOCKER.md`
 - **☁️ Deploy Railway**: `Documentazione/Manuali/GUIDA_RAILWAY.md`
 - **🔧 Debug Tools**: `Documentazione/Manuali/GUIDA_DEBUG_TOOLS.md`
