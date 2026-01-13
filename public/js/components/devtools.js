@@ -481,6 +481,14 @@ window.securityAddUserModal = () => {
     let modal = bootstrap.Modal.getInstance(el);
     if (!modal) modal = new bootstrap.Modal(el);
 
+    // Fix for "Blocked aria-hidden on an element because its descendant retained focus"
+    // When modal hides, immediately blur focus from internal elements (like the close button)
+    el.addEventListener('hide.bs.modal', function () {
+        if (document.activeElement && el.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+    }, { once: true }); // Use once to avoid stacking listeners
+
     modal.show();
 };
 
