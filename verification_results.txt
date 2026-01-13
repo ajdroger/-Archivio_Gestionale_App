@@ -1,0 +1,20 @@
+
+🔎 Testing: Regex (Qual è la regex esatta utilizzata nel nuovo approccio di Semantic Chunking descritto nel Changelog v5.2.1?)
+   [0] Score: 0.7755 | Source: DECISION_LOG.md | '## [ADR-029] Omni-Reader Architecture (v5.2) **Data**: 2026-01-13 **Stato**: ✅ Implementato **C...'
+   [1] Score: 0.7755 | Source: DECISION_LOG.md | '## [ADR-029] Omni-Reader Architecture (v5.2) **Data**: 2026-01-13 **Stato**: ✅ Implementato **C...'
+   [2] Score: 0.7632 | Source: DECISION_LOG.md | '## [ADR-028] Strict Polyglot Separation & Clean Code **Data**: 2026-01-11 **Stato**: ✅ Attivo *...'
+
+🔎 Testing: Redis (Perché nell'ADR-016 abbiamo deciso di non usare Redis? Cosa dice il documento?)
+   [0] Score: 0.7470 | Source: CHANGELOG.md | '- **Request Correlation**: Ogni richiesta HTTP ha un ID univoco tracciato nei log. - **Environment I...'
+   [1] Score: 0.7470 | Source: CHANGELOG.md | '- **Request Correlation**: Ogni richiesta HTTP ha un ID univoco tracciato nei log. - **Environment I...'
+   [2] Score: 0.7435 | Source: DECISION_LOG.md | '[CRITICAL] HTML Structural Failure (Layout Collapse) - **Data/Ora**: 2026-01-11 01:27 - **Sintomo*...'
+
+🔎 Testing: Growth (Qual è la crescita percentuale del valore del software dal prototipo v1.0 alla versione v4.0 Ultimate?)
+   [0] Score: 0.7597 | Source: REPORT_COMMERCIALE_BENCHMARK_2026.md | '### Sviluppo Completo: Soobadur Mohammad Ajmeer  **Tutto il sistema è stato sviluppato interament...'
+   [1] Score: 0.7595 | Source: REPORT_COMMERCIALE_BENCHMARK_2026.md | 'Contatti & Licensing  **Sviluppo**: AJ Developing & Coding   **Versione**: 4.0.0 DevTools Ultimat...'
+   [2] Score: 0.7527 | Source: REPORT_COMMERCIALE_BENCHMARK_2026.md | '```md # 📊 REPORT COMMERCIALE & BENCHMARK COMPLETO 2026 ## MCAG - Militare Civile Archivio Gestio...'
+
+🔎 Testing: ROTI (Qual è il Return on Time Investment (ROTI) calcolato per lo sviluppatore nel report 2026?)
+   [0] Score: 0.7529 | Source: MCAG_BENCHMARK_COMPLETO_2026.md | '**Pricing consigliato**: - **€89,900** (licenza perpetua) per enti strutturati - **€24,900/ann...'
+   [1] Score: 0.7304 | Source: DECISION_LOG.md | '```md # Registro delle Decisioni (ADR - Architecture Decision Records)     **Stato**: ✅ Complet...'
+   [2] Score: 0.7304 | Source: DECISION_LOG.md | '```md # Registro delle Decisioni (ADR - Architecture Decision Records)     **Stato**: ✅ Complet...'

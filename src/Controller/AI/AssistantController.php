@@ -92,10 +92,13 @@ class AssistantController
         // 2. Retrieve Document Context (RAG)
         $ragContext = "";
         if (!empty($embedding)) {
-            $results = $this->vectorStore->search($embedding, 3);
+            // RELAXED RAG SETTINGS (v5.2.1)
+            // Increased limit to 10 to capture more widespread context
+            // Lowered threshold to 0.45 to ensure code blocks and specific technical details are retrieved
+            $results = $this->vectorStore->search($embedding, 10);
             foreach ($results as $res) {
-                if ($res['score'] > 0.6) {
-                    $ragContext .= "- " . $res['content'] . "\n";
+                if ($res['score'] > 0.45) {
+                    $ragContext .= "- [Source: {$res['metadata']['source_file']}] " . $res['content'] . "\n\n";
                 }
             }
         }
@@ -132,15 +135,16 @@ class AssistantController
         }
 
         // 4. Prompt Engineering
-        $systemPrompt = "Sei 'Archivio Parlante', assistente AI del sistema MCAG v5.0. ";
-        $systemPrompt .= "Usa le informazioni fornite per rispondere. Rispondi in italiano.\n\n";
+        $systemPrompt = "Sei 'Archivio Parlante', assistente AI del sistema MCAG v5.2 'Omni-Reader'. ";
+        $systemPrompt .= "Hai accesso a documenti interni (Decision Log, Changelog, Benchmark).\n";
+        $systemPrompt .= "IMPORTANTE: Rispondi SEMPRE in ITALIANO. Usa le INFORMAZIONI CONTESTUALI fornite qui sotto per rispondere. Se trovi la risposta nel contesto, usala. Non inventare.\n\n";
 
         if (!empty($smartContext)) {
-            $systemPrompt .= "INFORMAZIONI CONTESTUALI (Dalla pagina corrente):\n$smartContext\n\n";
+            $systemPrompt .= "### CONTESTO UTENTE (Pagina Corrente):\n$smartContext\n\n";
         }
 
         if (!empty($ragContext)) {
-            $systemPrompt .= "INFORMAZIONI DALLA DOCUMENTAZIONE (Base di Conoscenza):\n$ragContext\n\n";
+            $systemPrompt .= "### DOCUMENTAZIONE INTERNA (Knowledge Base):\n$ragContext\n\n";
         }
 
         $systemPrompt .= "DOMANDA UTENTE: $userMessage";

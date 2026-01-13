@@ -1,0 +1,417 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "MCAG API - Militare Civile Archivio Gestionale",
+        "description": "API REST/GraphQL per la gestione dell'Archivio Militare e Civile. Include autenticazione 2FA, gestione soci, documenti e statistiche.",
+        "contact": {
+            "email": "tech@fratellanzamilitare.it"
+        },
+        "license": {
+            "name": "Proprietary",
+            "url": "http://fratellanzamilitare.it"
+        },
+        "version": "2.4.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Main App Server"
+        }
+    ],
+    "paths": {
+        "/auth/start-demo": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Avvia la modalità Demo",
+                "description": "Avvia una sessione ospite limitata senza password per testare l'applicazione.",
+                "operationId": "aa5e2f890e1236df5e17495f57ec83ce",
+                "responses": {
+                    "302": {
+                        "description": "Redirect alla Dashboard"
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "System"
+                ],
+                "summary": "System Health Check",
+                "description": "Verifica lo stato di Database, FileSystem e Servizi Essenziali",
+                "operationId": "9953598966810ae248e68cea4fbfee51",
+                "responses": {
+                    "200": {
+                        "description": "Sistema operativo (Healthy)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "healthy"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "checks": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Sistema degradato o non disponibile (Unhealthy)"
+                    }
+                }
+            }
+        },
+        "/api/public/demo-request": {
+            "post": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Invia una richiesta di demo/accesso",
+                "operationId": "2ad4a55c9ec7f4b0fb9dc60b01b4d036",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nome": {
+                                        "type": "string"
+                                    },
+                                    "organizzazione": {
+                                        "type": "string"
+                                    },
+                                    "ruolo": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "telefono": {
+                                        "type": "string"
+                                    },
+                                    "tipo_licenza": {
+                                        "type": "string"
+                                    },
+                                    "numero_soci": {
+                                        "type": "string"
+                                    },
+                                    "messaggio": {
+                                        "type": "string"
+                                    },
+                                    "privacy_consent": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Richiesta inviata con successo"
+                    },
+                    "400": {
+                        "description": "Dati non validi"
+                    }
+                }
+            }
+        },
+        "/api/v1/soci": {
+            "get": {
+                "tags": [
+                    "Soci"
+                ],
+                "summary": "Lista paginata dei soci",
+                "description": "Restituisce una lista di soci con paginazione opzionale",
+                "operationId": "45f48df96d0dc5cb182f91b9f5006d35",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Numero pagina",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Elementi per pagina",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista recuperata con successo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SocioSummary"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total_pages": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorizzato"
+                    },
+                    "403": {
+                        "description": "Accesso negato"
+                    }
+                },
+                "security": [
+                    {
+                        "apiKey": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Soci"
+                ],
+                "summary": "Crea nuovo socio",
+                "description": "Crea un nuovo socio nel sistema",
+                "operationId": "8c60cee4367f9aa9fee2c9f0e22a966e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "codice_fiscale",
+                                    "nome",
+                                    "cognome"
+                                ],
+                                "properties": {
+                                    "codice_fiscale": {
+                                        "type": "string",
+                                        "example": "RSSMRA80A01H501U"
+                                    },
+                                    "nome": {
+                                        "type": "string",
+                                        "example": "Mario"
+                                    },
+                                    "cognome": {
+                                        "type": "string",
+                                        "example": "Rossi"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "mario.rossi@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Socio creato con successo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Socio creato con successo"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/SocioDetail"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Dati mancanti o invalidi"
+                    },
+                    "500": {
+                        "description": "Errore interno"
+                    }
+                },
+                "security": [
+                    {
+                        "apiKey": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/soci/{cf}": {
+            "get": {
+                "tags": [
+                    "Soci"
+                ],
+                "summary": "Dettaglio singolo socio",
+                "description": "Recupera i dettagli completi di un socio tramite Codice Fiscale",
+                "operationId": "92b5f17a4986ee0ec6037ccea4b30a37",
+                "parameters": [
+                    {
+                        "name": "cf",
+                        "in": "path",
+                        "description": "Codice Fiscale del socio",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Socio trovato",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SocioDetail"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Socio non trovato"
+                    }
+                },
+                "security": [
+                    {
+                        "apiKey": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "SocioSummary": {
+                "properties": {
+                    "cf": {
+                        "type": "string",
+                        "example": "RSSMRA80A01H501U"
+                    },
+                    "nome": {
+                        "type": "string",
+                        "example": "Mario"
+                    },
+                    "cognome": {
+                        "type": "string",
+                        "example": "Rossi"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "stato": {
+                        "type": "string",
+                        "example": "Attivo"
+                    }
+                },
+                "type": "object"
+            },
+            "SocioDetail": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SocioSummary"
+                    },
+                    {
+                        "properties": {
+                            "data_nascita": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "1980-01-01"
+                            },
+                            "telefono": {
+                                "type": "string",
+                                "example": "+39 333 1234567"
+                            },
+                            "indirizzo": {
+                                "type": "string",
+                                "example": "Via Roma 1"
+                            },
+                            "matricola": {
+                                "type": "string",
+                                "example": "2024-001"
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            }
+        },
+        "securitySchemes": {
+            "cookieAuth": {
+                "type": "apiKey",
+                "name": "PHPSESSID",
+                "in": "cookie"
+            },
+            "apiKey": {
+                "type": "apiKey",
+                "name": "X-API-Key",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Soci",
+            "description": "Gestione Soci e Anagrafica"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "System",
+            "description": "System"
+        },
+        {
+            "name": "Public",
+            "description": "Public"
+        }
+    ]
+}
