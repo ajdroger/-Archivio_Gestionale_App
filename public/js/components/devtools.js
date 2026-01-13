@@ -110,6 +110,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Force load AI Tab on show if empty/spin-only
+    const aiTab = document.getElementById('v-pills-ai-tab');
+    if (aiTab) {
+        aiTab.addEventListener('shown.bs.tab', () => {
+            const container = document.getElementById('v-pills-ai-content');
+            // If contains spinner (loading state), trigger htmx via native event
+            if (container && container.querySelector('.spinner-border')) {
+                // Use native dispatch to avoid ReferenceError if htmx global is missing
+                const evt = new MouseEvent('click', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window
+                });
+                aiTab.dispatchEvent(evt);
+            }
+        });
+    }
+
     // Inizializzazione Security Tab Listener
     const secTab = document.getElementById('v-pills-security-tab');
     if (secTab) {

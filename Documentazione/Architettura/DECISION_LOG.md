@@ -21,6 +21,47 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+## [ADR-016] Zero-Dependency Asynchronous Queue
+**Data**: 2026-01-13
+**Stato**: ✅ Implementato
+**Contesto**:
+Necessità di elaborare task onerosi (es. ingestion documenti AI) senza bloccare l'interfaccia utente. Redis è ottimo ma aggiunge dipendenze infrastrutturali complesse per piccoli deployment.
+
+**Decisione**:
+Implementare `DatabaseQueue` che utilizza una tabella SQL (`jobs`) come backend per la coda.
+- Interfaccia: `QueueInterface` standard (compatibile con implementazioni future Redis/RabbitMQ).
+- Storage: MariaDB/MySQL (già presente).
+- Worker: Script PHP puro (`worker.php`) in long-polling.
+
+**Conseguenze**:
+- (+) Zero costi aggiuntivi infrastrutturali.
+- (+) Persistenza dei job inclusa nei backup database standard.
+- (+) Semplicità di deployment (basta una migrazione SQL).
+- (-) Throughput inferiore a Redis (ma sufficiente per volumi attuali).
+
+---
+
+## [ADR-015] Local RAG Architecture (Ollama)
+**Data**: 2026-01-13
+**Stato**: ✅ Implementato
+**Contesto**:
+Richiesta di funzionalità AI "Chat with PDF" mantenendo privacy assoluta (no Cloud API) e costi zero.
+
+**Decisione**:
+Adottare architettura RAG (Retrieval-Augmented Generation) locale:
+1.  **LLM**: Ollama con modello `llama3` o `mistral` (Locale).
+2.  **Embedding**: `nomic-embed-text` (Locale).
+3.  **Vector Store**: `SimpleVectorStore` (File-based JSON per MVP, scalabile a pgvector).
+4.  **Ingestion**: `smalot/pdfparser` per estrazione testo + Chunking logico.
+
+**Conseguenze**:
+- (+) Privacy Totale: Nessun dato lascia il server.
+- (+) Costo Zero: Nessun token API da pagare.
+- (+) Indipendenza: Funziona offline/intranet.
+- (-) Richiede hardware con RAM decente (8GB+) sul server ospitante.
+
+---
+
 ## [ADR-014] Migration Testing Strategy Comprehensive
 **Data**: 2026-01-06  
 **Stato**: ✅ Attivo  
@@ -757,6 +798,19 @@ La cancellazione dei branch dopo il merge, sebbene pulita, distrugge il contesto
 **Decisione**:
 1.  **Retention Totale**: Nessun branch (`feature/*`, `tests/*`, `hotfix/*`) viene mai cancellato.
 2.  **Stato "Chiuso"**: I branch mergiati vengono considerati "chiusi" (archiviati) semplicemente spostando l'HEAD su `develop` o `main`, ma rimangono nel reflog/repo.
+
+### ADR-027: AI Assistant Hotfix Strategy
+**Date:** 2026-01-13
+**Status**: ✅ Active
+**Context**: The AI Assistant feature (v5.1.0) failed in production due to environmental differences (HTMX missing in admin header) and Queue serialization mismatch.
+**Decision**: 
+1.  **Frontend**: Force HTMX library injection in `admin_header.mustache` (Global).
+2.  **Security**: Inject CSRF tokens into AI Chat forms via Controller + Hidden Inputs.
+3.  **Queue**: Refactor `queue_worker.php` to use Dependency Injection Container and handle `JobInterface` objects instead of raw arrays.
+**Consequences**: RESTORED full functionality. 
+- Infinite Spinner fixed (HTMX init).
+- 403 Forbidden fixed (CSRF).
+- Background Jobs fixed (DI Container).
 3.  **Logging Sincrono**: È vietato chiudere un branch senza aver aggiornato `CHANGELOG.md` e `DECISION_LOG.md`.
 
 **Conseguenze**:

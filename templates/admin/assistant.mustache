@@ -22,17 +22,39 @@
     </div>
     
     <div class="card-footer bg-dark border-top border-secondary">
-        <form hx-post="{{base_url}}/ai/assistant/message" 
-              hx-target="#ai-chat-response" 
-              hx-swap="beforeend scroll:bottom"
-              hx-on::after-request="this.reset()">
-              
-            <div class="input-group">
-                <input type="text" name="message" class="form-control bg-black text-white border-secondary" placeholder="Chiedi qualcosa..." aria-label="Messaggio" required autocomplete="off">
-                <button class="btn btn-info text-white" type="submit">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
+        <div class="d-flex gap-2">
+            <!-- Upload Form -->
+            <form hx-post="{{base_url}}/ai/assistant/upload" 
+                  hx-encoding="multipart/form-data" 
+                  hx-target="#ai-chat-response" 
+                  hx-swap="beforeend scroll:bottom"
+                  class="d-flex">
+                
+                <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+                
+                <label for="ai-file-upload" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" style="width: 42px;" data-bs-toggle="tooltip" title="Carica PDF">
+                    <i class="fa-solid fa-paperclip"></i>
+                </label>
+                <input type="file" id="ai-file-upload" name="document" accept=".pdf,.txt,.md" class="d-none" onchange="htmx.trigger(this.form, 'submit'); this.value='';">
+            </form>
+
+            <!-- Message Form -->
+            <form hx-post="{{base_url}}/ai/assistant/message" 
+                  hx-target="#ai-chat-response" 
+                  hx-swap="beforeend scroll:bottom"
+                  hx-on::after-request="this.reset()"
+                  class="flex-grow-1">
+                  
+                <div class="input-group">
+                    <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                    <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+                    <input type="text" name="message" class="form-control bg-black text-white border-secondary" placeholder="Chiedi qualcosa o carica un documento..." aria-label="Messaggio" required autocomplete="off">
+                    <button class="btn btn-info text-white" type="submit">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

@@ -21,6 +21,35 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [5.1.1] - 2026-01-13 "**Singularity Hotfix**"
+### Risolto [CRITICAL]
+- **AI Assistant Infinite Spinner**: La libreria `htmx.min.js` mancava nell'header della dashboard amministrativa (`admin_header.mustache`). Aggiunta inclusione globale.
+- **Errore 403 Forbidden (Chat)**: Il modulo di chat AI non includeva i token CSRF. Iniettati token validi via `AssistantController` e campi nascosti nel form.
+- **Queue Worker Crash**: Lo script `worker.php` non riusciva a deserializzare i Job Objects (`JobInterface`). Rifattorizzato il worker per utilizzare il DI Container e l'autoloading corretto.
+- **Layout**: Aggiunto pulsante di "Avvio Manuale" come fallback per browser con policy restrittive.
+
+---
+
+## [5.1.0] - 2026-01-13 "**Singularity: AI & Async**"
+### Aggiunto
+- **Archivio Parlante (RAG Engine)**:
+    - **Local AI**: Integrazione con Ollama (`llama3`) per privacy totale.
+    - **Knowledge Base**: Caricamento PDF, Chunking automatico e Vector Store (JSON-based).
+    - **Chat Interface**: UI in stile "chat" con HTMX e streaming della risposta.
+- **Asynchronous Processing**:
+    - **Database Queue**: Sistema di coda lavori su MariaDB/MySQL (Zero-Config, Zero-Cost).
+    - **Worker**: Script background (`php bin/worker.php`) per elaborazione documenti pesanti.
+    - **Job System**: Architettura scalabile `QueueInterface` / `JobInterface`.
+- **Integrazioni**:
+    - **PDF Parser**: Estrazione testo automatica da documenti caricati.
+    - **Timeout Handling**: Estensione limiti esecuzione per generazione LLM.
+
+### Ottimizzato
+- **Layout**: Risolti percorsi asset (CSS/JS) mancanti.
+- **Worker**: Eliminati warning su namespace globali (`use PDO`).
+
+---
+
 ## [4.0.0] - 2026-01-11/12 "**Ultimate Upgrade & Sales Ready**"
 ### Aggiunto
 - **DevTools Ultimate v4.0**: Dashboard amministrativa completa (Terminal, Security, Audit).
