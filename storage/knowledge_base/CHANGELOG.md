@@ -42,8 +42,12 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
     - Fix encoding CP850 -> UTF-8 per caratteri accentati in console.
 
 ### Compliance & Legal [NEW]
-- **Cookie Policy**: Implementazione banner informativo (`cookie_banner.mustache`) e pagine dedicate (`PolicyController`) conformi GDPR.
-    - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
+- **Cookie Policy**: Implementazione banner conforme GDPR e link policy (#45).
+- **UI/UX**: Fix layout responsivo per "Registro Unico Anagrafiche", abilitato container fluid per prevenire taglio contenuti (#fix-container).
+- **Compliance**: Aggiornamento terminologia UI per allineamento a standard legali/audit.
+
+### Fixed
+- **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
     - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
 - **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).
 

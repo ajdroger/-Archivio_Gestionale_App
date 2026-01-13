@@ -65,7 +65,8 @@ class ListController
             'search_query' => $query,
             'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
             'username' => $_SESSION['username'] ?? 'Utente',
-            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1))
+            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
+            'container_fluid' => true
         ];
 
         $html = $this->mustache->render('socio_list', $viewData);

@@ -951,3 +951,35 @@ Eseguire un refactoring "Surgical Precision" (Piano Cuore Aperto):
 **Conseguenze**: Piena conformità normativa (GDPR Art. 13-14) senza degradare l'esperienza d'uso operativa mission-critical.
 
 ---
+
+# ADR-035: Adoption of Fluid Layout for Data-Intensive Views
+
+## Status
+ACCEPTED
+
+## Context
+The 'Registro Unico Anagrafiche' (Members List) view contains a wide data table with multiple columns (Identity, Matricola, CF, Contacts, Status, etc.).
+On standard displays, the default Bootstrap .container class constrains the width, causing the table to be cut off or requiring a double scrollbar (one for the table responsive div, one for the browser if the card is too wide).
+This negatively impacts user experience and 'Mission-Critical' usability standards.
+
+## Decision
+We have decided to implement a dynamic layout system in layout_header.mustache.
+- A new Mustache variable {{container_fluid}} will be introduced.
+- If this variable is true, the main content wrapper will use the .container-fluid class (100% width with padding).
+- If false or unset, it defaults to the standard .container (fixed max-width steps).
+
+This allows us to selectively enable full-width layouts for data-heavy pages (like the Members List or Statistics Dashboard) while keeping text-heavy pages (like Landing or Settings) centered and constrained for readability.
+
+## Consequences
+### Positive
+- **Improved Usability**: Data tables can expand to fill the screen, reducing horizontal scrolling.
+- **Flexibility**: Developers can opt-in to fluid layouts per-controller.
+- **Backward Compatibility**: Existing pages remain unchanged by default.
+
+### Negative
+- **Inconsistent Visuals**: Users navigating between fluid and fixed pages might notice the layout 'jump' in width. This is considered acceptable for the utility gained.
+
+## References
+- templates/layout/layout_header.mustache
+- src/Controller/Anagrafica/Soci/ListController.php
+- User feedback regarding truncated UI.

@@ -73,7 +73,7 @@
         </div>
     </nav>
     <main class="flex-shrink-0 main-content">
-        <div class="container">
+        <div class="{{#container_fluid}}container-fluid{{/container_fluid}}{{^container_fluid}}container{{/container_fluid}}">
             <!-- Flash Messages -->
             {{#flash_message}}
             <div class="alert alert-{{type}} alert-dismissible fade show shadow border-0 mb-4 bg-dark text-white" role="alert" style="border-left: 5px solid var(--bs-{{type}}) !important;">
