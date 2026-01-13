@@ -13,7 +13,7 @@ return [
         // Logger Generale Sistema
     LoggerInterface::class => function (ContainerInterface $c) {
         $logger = new Logger('system');
-        $handler = new StreamHandler(__DIR__ . '/../../logs/app.log', Logger::DEBUG);
+        $handler = new StreamHandler(__DIR__ . '/../../var/logs/app.log', Logger::DEBUG);
         $handler->setFormatter(new JsonFormatter());
         $logger->pushHandler($handler);
 
@@ -30,7 +30,7 @@ return [
     // Canale Audit
     'audit_logger' => function () {
         $logger = new Logger('audit');
-        $handler = new StreamHandler(__DIR__ . '/../../logs/audit_trail.log', Logger::INFO);
+        $handler = new StreamHandler(__DIR__ . '/../../var/logs/audit_trail.log', Logger::INFO);
         $handler->setFormatter(new JsonFormatter());
 
         $logger->pushProcessor(function ($record) {

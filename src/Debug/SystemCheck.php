@@ -90,11 +90,11 @@ class SystemCheck
         }
 
         // Check Audit Log
-        $auditPath = __DIR__ . '/../../logs/audit.log';
+        $auditPath = __DIR__ . '/../../var/logs/audit.log';
         if (!file_exists($auditPath)) {
             // Create if missing
             file_put_contents($auditPath, '');
-            $results['audit_log'] = ['status' => true, 'message' => "INFO: Creato file logs/audit.log"];
+            $results['audit_log'] = ['status' => true, 'message' => "INFO: Creato file var/logs/audit.log"];
         } else {
             $results['audit_log'] = ['status' => is_writable($auditPath), 'message' => "Audit Log: Presente"];
         }
