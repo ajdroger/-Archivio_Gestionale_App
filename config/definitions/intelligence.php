@@ -40,13 +40,29 @@ return [
         return new \FratellanzaMilitare\Service\DocumentParser\PdfParserService();
     },
 
+    \FratellanzaMilitare\Service\DocumentParser\WordParserService::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\DocumentParser\WordParserService();
+    },
+
+    \FratellanzaMilitare\Service\DocumentParser\ExcelParserService::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\DocumentParser\ExcelParserService();
+    },
+
+    \FratellanzaMilitare\Service\DocumentParser\CodeParserService::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\DocumentParser\CodeParserService();
+    },
+
+    \FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory::class => function (ContainerInterface $c) {
+        return new \FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory($c);
+    },
+
     \FratellanzaMilitare\AI\RAG\DocumentChunkerService::class => function (ContainerInterface $c) {
         return new \FratellanzaMilitare\AI\RAG\DocumentChunkerService();
     },
 
     \FratellanzaMilitare\Service\AI\DocumentIngestionService::class => function (ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\AI\DocumentIngestionService(
-            $c->get(\FratellanzaMilitare\Service\DocumentParser\PdfParserService::class),
+            $c->get(\FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory::class),
             $c->get(\FratellanzaMilitare\AI\RAG\DocumentChunkerService::class),
             $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class),
             $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class)
@@ -59,7 +75,8 @@ return [
             $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class),
             $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class),
             $c->get(\Psr\Log\LoggerInterface::class),
-            $c->get(\FratellanzaMilitare\Queue\QueueInterface::class)
+            $c->get(\FratellanzaMilitare\Queue\QueueInterface::class),
+            $c->get(\FratellanzaMilitare\GestioneSoci\SocioRepository::class)
         );
     },
 ];
