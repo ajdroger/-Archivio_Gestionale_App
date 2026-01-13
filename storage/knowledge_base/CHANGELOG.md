@@ -41,6 +41,12 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
     - Introdotto output buffering (`ob_start`) per prevenire corruzione JSON da warning PHP.
     - Fix encoding CP850 -> UTF-8 per caratteri accentati in console.
 
+### Compliance & Legal [NEW]
+- **Cookie Policy**: Implementazione banner informativo (`cookie_banner.mustache`) e pagine dedicate (`PolicyController`) conformi GDPR.
+    - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
+    - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
+- **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).
+
 ---
 
 ## [5.2.1] - 2026-01-13 "**Omni-Reader Precision**"

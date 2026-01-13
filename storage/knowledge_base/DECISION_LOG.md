@@ -918,39 +918,36 @@ Eseguire un refactoring "Surgical Precision" (Piano Cuore Aperto):
 
 ## [ADR-032] Commercial Strategy & Pricing Model
 **Data**: 2026-01-13
-**Stato**: ✅ Attivo
-**Contesto**:
-Con la maturità tecnica raggiunta (v5.3 Enterprise), il progetto necessita di una strategia commerciale definita per il lancio sul mercato associativo e PA.
+**Stato**: Accettato
+**Contesto**: Il progetto MCAG ha raggiunto un livello di maturità "Enterprise" (v5.3.0). È necessario definire un modello di pricing che rifletta il valore reale del software (181 test, security score 97.2/100, 2.140 ore di sviluppo) e le metriche di mercato attuali.
 **Decisione**:
-Definire un modello di pricing basato sul valore ("Value-Based Pricing") supportato da tre tier di licenza perpetua:
-1.  **Standard (€115k)**: Core features + Source Code.
-2.  **Professional (€135k)**: +DevTools, Legal Kit, Priority Support.
-3.  **Enterprise (€175k)**: +HA Cluster, Customization, SLA 99.9%.
-
-Inoltre, formalizzare il valore dello sviluppatore unico tramite calcolo ROI (€63.08/h) e benchmark di mercato.
-
-**Conseguenze**:
-- (+) Posizionamento premium ("Platinum Enterprise").
-- (+) Chiarezza contrattuale per i clienti (Legal Kit v1.0).
-- (+) Sostenibilità a lungo termine del progetto.
-
----
+1.  **Modello Value-Based**: Pricing non basato sulle ore ma sul valore fornito (Security, Compliance, Reliability).
+2.  **Tiering**:
+    *   *Standard*: €115.000 (Core features).
+    *   *Professional*: €135.000 (Full suite + Analytics).
+    *   *Enterprise*: €175.000 + (Custom SLA, Dedicated Support).
+3.  **ROI Calculation**: Basato su metriche ROTI (Return on Time Investment) aggiornate (€63.08/h).
+**Conseguenze**: Posizionamento premium sul mercato, giustificazione degli alti standard di sicurezza richiesti.
 
 ## [ADR-033] Toolkit Console Architecture v2
 **Data**: 2026-01-13
-**Stato**: ✅ Attivo
-**Contesto**:
-Il terminale web (`terminal.php`) presentava problemi di stabilità su host Windows (Ampps) e fragilità nel parsing JSON in caso di warning PHP spuri.
+**Stato**: Accettato
+**Contesto**: La console di debug (`terminal.php`) presentava problemi di encoding JSON su ambienti Windows/Powershell e instabilità nell'output buffering, causando crash del frontend DevTools.
 **Decisione**:
-Rifattorizzare il backend della console con:
-1.  **Output Buffering Rigoroso**: Cattura di qualsiasi output spurio (echo, warning) prima della generazione JSON.
-2.  **OS-Aware Execution**: Detection automatica dell'OS host.
-    - **Windows**: Incapsulamento comandi in PowerShell per emulare environment Unix.
-    - **Linux**: Passthrough diretto bash.
-3.  **Encoding Sanitization**: Conversione forzata CP850/1252 to UTF-8.
+1.  **JSON Response Enforcement**: Forzatura header `Content-Type: application/json` e pulizia preventiva dei buffer di output PHP.
+2.  **Cross-Platform Shell Wrapper**: Astrazione dell'esecuzione comandi per gestire differenze tra `bash` e `powershell` (es. escaping caratteri).
+3.  **Error Handling**: Catch globale delle eccezioni durante l'esecuzione comandi per garantire sempre una risposta JSON valida, anche in caso di errore fatale dello script chiamato.
+**Conseguenze**: Maggiore stabilità degli strumenti di diagnostica e possibilità di eseguire test suite complete da interfaccia web senza timeout o errori di parsing.
 
-**Conseguenze**:
-- (+) Stabilità "Bullet-proof" della console in environment eterogenei.
-- (+) UX consistente indipendentemente dall'OS sottostante.
+## [ADR-034] Cookie Policy & Compliance Banner Implementation
+**Data**: 2026-01-13
+**Stato**: Implementato
+**Contesto**: In fase di rilascio v5.3.0, è emersa la necessità di adeguare la piattaforma alle normative GDPR/ePrivacy per quanto riguarda la gestione dei cookie e l'informativa privacy, specificatamente per un contesto "Militare-Civile".
+**Decisione**:
+1.  **Banner Informativo "Zero-Block"**: Implementazione di un banner non intrusivo (bottom-fixed) in `cookie_banner.mustache` che informa l'utente senza bloccare l'operatività critica (essendo un gestionale interno).
+2.  **Policy Controller Refactoring**: Aggiornamento di `PolicyController` per servire contenuti HTML statici ma "rich" (con formattazione Bootstrap) invece di placeholder vuoti.
+3.  **Local Storage Consent**: Utilizzo di `localStorage` (chiave `cookieConsented`) lato client per memorizzare la scelta dell'utente, evitando cookie server-side aggiuntivi per la gestione del consenso stesso.
+4.  **Privacy Policy "Hardened"**: Redazione di una Privacy Policy che specifica chiaramente la natura dei dati trattati (solo tecnici/funzionali, niente profilazione marketing) per rassicurare l'utenza istituzionale.
+**Conseguenze**: Piena conformità normativa (GDPR Art. 13-14) senza degradare l'esperienza d'uso operativa mission-critical.
 
 ---
