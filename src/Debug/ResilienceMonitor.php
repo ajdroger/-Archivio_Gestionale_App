@@ -106,7 +106,7 @@ class ResilienceMonitor
 
     private function checkLogTracciability(): array
     {
-        $logFile = __DIR__ . '/../../logs/app.log';
+        $logFile = __DIR__ . '/../../var/logs/app.log';
         if (!file_exists($logFile)) {
             return ['status' => false, 'message' => 'Log file mancante'];
         }
