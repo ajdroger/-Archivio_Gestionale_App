@@ -14,17 +14,20 @@ class AssistantController
     private $llm;
     private $vectorStore;
     private $logger;
+    private $queue;
 
     public function __construct(
         $view,
         OllamaProvider $llm,
         SimpleVectorStore $vectorStore,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        \FratellanzaMilitare\Queue\QueueInterface $queue
     ) {
         $this->view = $view;
         $this->llm = $llm;
         $this->vectorStore = $vectorStore;
         $this->logger = $logger;
+        $this->queue = $queue;
     }
 
     /**
@@ -32,9 +35,41 @@ class AssistantController
      */
     public function chatWindow(Request $request, Response $response): Response
     {
-        return $this->view->render($response, 'admin/assistant.mustache', [
-            'is_available' => $this->llm->isAvailable()
-        ]);
+        try {
+            $this->logger->info("AssistantController: Loading chat window.");
+            $available = false;
+            try {
+                $available = $this->llm->isAvailable();
+                $this->logger->info("AssistantController: Ollama availability checked: " . ($available ? 'YES' : 'NO'));
+            } catch (\Throwable $e) {
+                $this->logger->error("AssistantController: Ollama check failed: " . $e->getMessage());
+                $available = false;
+            }
+
+            // [FIX] Mustache render returns string. Do NOT pass $response object as first arg.
+            $content = $this->view->render('admin/assistant.mustache', [
+                'is_available' => $available,
+                'csrf' => [
+                    'name' => $request->getAttribute('csrf_name'),
+                    'value' => $request->getAttribute('csrf_value'),
+                    'keys' => [
+                        'name' => 'csrf_name',
+                        'value' => 'csrf_value'
+                    ]
+                ],
+                'base_url' => (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    return $scriptDir === '/' ? '' : $scriptDir;
+                })()
+            ]);
+
+            $response->getBody()->write($content);
+            return $response;
+        } catch (\Throwable $e) {
+            $this->logger->error("AssistantController: Critical error: " . $e->getMessage());
+            $response->getBody()->write("CRITICAL AI ERROR: " . $e->getMessage() . "<br><pre>" . $e->getTraceAsString() . "</pre>");
+            return $response->withStatus(500);
+        }
     }
 
     /**
@@ -42,6 +77,9 @@ class AssistantController
      */
     public function message(Request $request, Response $response): Response
     {
+        // Increase timeout for AI generation
+        set_time_limit(120);
+
         $data = $request->getParsedBody();
         $userMessage = trim($data['message'] ?? '');
 
@@ -66,7 +104,9 @@ class AssistantController
         }
 
         // 3. Prompt Engineering
-        $systemPrompt = "Sei 'Archivio Parlante', l'assistente AI della Fratellanza Militare. ";
+        $systemPrompt = "Sei 'Archivio Parlante', l'assistente AI avanzato del sistema MCAG v5.0 (Militare Civile Archivio Gestionale). ";
+        $systemPrompt .= "Il progetto è sviluppato da Soobadur Mohammad Ajmeer come soluzione commerciale ad alte prestazioni ('Singularity Edition'). ";
+        $systemPrompt .= "Non sei affiliato alla 'Fratellanza Militare' se non come software di gestione. ";
         $systemPrompt .= "Rispondi in italiano in modo formale e preciso. ";
         $systemPrompt .= "Usa SOLO le informazioni fornite nel contesto seguente per rispondere. ";
         $systemPrompt .= "Se non sai la risposta, dillo chiaramente.\n\n";
@@ -86,6 +126,57 @@ class AssistantController
                 <i class="fa-solid fa-robot text-warning me-2"></i> ' . nl2br(htmlspecialchars($answer)) . '
             </div>
         </div>';
+
+        $response->getBody()->write($html);
+        return $response;
+    }
+
+    /**
+     * Handles document upload for RAG ingestion (Async via Queue).
+     */
+    public function uploadDocument(Request $request, Response $response): Response
+    {
+        $uploadedFiles = $request->getUploadedFiles();
+
+        if (empty($uploadedFiles['document'])) {
+            $response->getBody()->write('<div class="alert alert-danger">Nessun file selezionato.</div>');
+            return $response;
+        }
+
+        /** @var \Psr\Http\Message\UploadedFileInterface $uploadedFile */
+        $uploadedFile = $uploadedFiles['document'];
+
+        if ($uploadedFile->getError() !== UPLOAD_ERR_OK) {
+            $response->getBody()->write('<div class="alert alert-danger">Errore upload: ' . $uploadedFile->getError() . '</div>');
+            return $response;
+        }
+
+        $filename = $uploadedFile->getClientFilename();
+        // Sanitize filename
+        $filename = preg_replace('/[^a-zA-Z0-9-_\.]/', '', $filename);
+        $targetPath = __DIR__ . '/../../../storage/knowledge_base/' . $filename;
+
+        // Ensure dir exists
+        if (!is_dir(dirname($targetPath))) {
+            mkdir(dirname($targetPath), 0755, true);
+        }
+
+        $uploadedFile->moveTo($targetPath);
+
+        // Push to Queue (Async)
+        try {
+            $job = new \FratellanzaMilitare\Queue\Job\DocumentIngestionJob($targetPath, $filename);
+            $this->queue->push($job);
+
+            $html = '<div class="d-flex justify-content-start mb-2">
+                    <div class="bg-dark text-light p-2 rounded-3 border border-secondary" style="max-width: 80%">
+                        <i class="fa-solid fa-file-import text-success me-2"></i> Documento <strong>' . htmlspecialchars($filename) . '</strong> in coda di elaborazione (Background).
+                    </div>
+                </div>';
+        } catch (\Throwable $e) {
+            $this->logger->error("Queue Push Failed: " . $e->getMessage());
+            $html = '<div class="alert alert-danger">Errore accodamento: ' . $e->getMessage() . '</div>';
+        }
 
         $response->getBody()->write($html);
         return $response;

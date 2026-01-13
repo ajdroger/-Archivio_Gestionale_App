@@ -6,96 +6,69 @@ declare(strict_types=1);
  * Queue Worker - Processa job dalla queue
  * 
  * Usage:
- *   php bin/workers/queue_worker.php [queue_name]
- * 
- * Example:
- *   php bin/workers/queue_worker.php default
- *   php bin/workers/queue_worker.php emails
+ *   php bin/workers/queue_worker.php
  */
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
-use FratellanzaMilitare\Service\QueueService;
+use DI\ContainerBuilder;
 use Dotenv\Dotenv;
+use FratellanzaMilitare\Queue\QueueInterface;
+use FratellanzaMilitare\Queue\Job\JobInterface;
+use Psr\Container\ContainerInterface;
 
 // Load environment
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
 
-// Get queue name from arguments
-$queueName = $argv[1] ?? 'default';
+// Build Container
+$containerBuilder = new ContainerBuilder();
+if (($_ENV['APP_ENV'] ?? 'production') === 'production') {
+    $containerBuilder->enableCompilation(__DIR__ . '/../../var/cache');
+}
 
-echo "🚀 Queue Worker started for queue: $queueName\n";
+// Load definitions from central configuration
+$definitions = require __DIR__ . '/../../config/container.php';
+foreach ($definitions as $def) {
+    $containerBuilder->addDefinitions($def);
+}
+
+/** @var ContainerInterface $container */
+$container = $containerBuilder->build();
+
+// Get Queue
+/** @var QueueInterface $queue */
+$queue = $container->get(QueueInterface::class);
+
+echo "🚀 Queue Worker started (Standard Queue)\n";
 echo "Press Ctrl+C to stop\n\n";
 
-// Initialize dependencies
-$pdo = DatabaseConnection::getConnection();
-$queueService = new QueueService($pdo);
-
-// Worker loop
 $processed = 0;
-$failed = 0;
 
 while (true) {
     try {
         // Pop next job
-        $job = $queueService->pop($queueName);
+        $job = $queue->pop();
 
         if ($job === null) {
-            // No jobs available, sleep and retry
-            usleep(100000); // 100ms
+            usleep(500000); // 500ms sleep
             continue;
         }
 
-        echo "[" . date('Y-m-d H:i:s') . "] Processing job #{$job['id']}...\n";
+        echo "[" . date('H:i:s') . "] Processing Job: " . get_class($job) . "\n";
 
-        try {
-            // Reconstruct job object from payload
-            $payload = $job['payload'];
-            $jobClass = $payload['class'];
-
-            if (!class_exists($jobClass)) {
-                throw new Exception("Job class not found: $jobClass");
-            }
-
-            // Execute job
-            // Note: In production, use DI container to resolve dependencies
-            // For now, we log the attempt
-            echo "  → Job class: $jobClass\n";
-            echo "  → Attempt: {$job['attempts']}\n";
-
-            // Mark as complete
-            $queueService->complete($job['id']);
+        if ($job instanceof JobInterface) {
+            // Execute Job passing Container for DI resolution
+            $job->handle($container);
             $processed++;
-
-            echo "  ✓ Job completed successfully\n\n";
-
-        } catch (Exception $e) {
-            echo "  ✗ Job failed: " . $e->getMessage() . "\n";
-
-            // Check if should retry
-            if ($job['attempts'] >= 3) {
-                // Max retries reached, move to failed
-                $queueService->fail($job['id'], $e);
-                $failed++;
-                echo "  → Moved to failed jobs (max retries reached)\n\n";
-            } else {
-                // Retry with exponential backoff
-                $delay = min(60 * pow(2, $job['attempts']), 3600); // Max 1 hour
-                $queueService->release($job['id'], $delay);
-                echo "  → Released for retry in {$delay}s\n\n";
-            }
+            echo "  ✓ Completed.\n\n";
+        } else {
+            echo "  ✗ Error: Job does not implement JobInterface\n";
         }
 
-        // Show stats every 10 jobs
-        if ($processed % 10 === 0) {
-            $stats = $queueService->getStats($queueName);
-            echo "📊 Stats: Processed: $processed | Failed: $failed | Pending: {$stats['pending']} | Processing: {$stats['processing']}\n\n";
-        }
-
-    } catch (Exception $e) {
-        echo "Worker error: " . $e->getMessage() . "\n";
-        sleep(5); // Wait before retrying
+    } catch (\Throwable $e) {
+        echo "  ✗ Worker Critical Error: " . $e->getMessage() . "\n";
+        echo $e->getTraceAsString() . "\n\n";
+        sleep(2);
     }
 }

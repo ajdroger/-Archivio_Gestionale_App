@@ -14,4 +14,5 @@ return [
     __DIR__ . '/definitions/anagrafica.php',
     __DIR__ . '/definitions/intelligence.php',
     __DIR__ . '/definitions/devtools.php',
+    __DIR__ . '/definitions/queue.php',
 ];

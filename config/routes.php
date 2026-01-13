@@ -81,13 +81,14 @@ return function (App $app) {
     $app->get('/cookie-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':cookie')->setName('cookie_policy');
 
     // Intelligence (Stats & Reports)
-    $statsRole = new RoleMiddleware(['presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
+    $statsRole = new RoleMiddleware(['admin', 'presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
     $exportLimit = new RateLimitMiddleware(30, 60);
 
     // AI Assistant (Placed here to access $statsRole)
     $app->group('/ai', function ($group) {
         $group->get('/assistant', AssistantController::class . ':chatWindow')->setName('ai_assistant_window');
         $group->post('/assistant/message', AssistantController::class . ':message')->setName('ai_assistant_message');
+        $group->post('/assistant/upload', AssistantController::class . ':uploadDocument')->setName('ai_assistant_upload');
     })->add($statsRole);
 
     $app->group('/statistiche', function ($group) use ($exportLimit) {
