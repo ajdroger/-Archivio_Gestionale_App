@@ -97,6 +97,7 @@ return [
             __DIR__ . '/../../templates/soci',
             __DIR__ . '/../../templates/admin',
             __DIR__ . '/../../templates/layout',
+            __DIR__ . '/../../templates/partials',
             __DIR__ . '/../../templates/errors',
         ];
 

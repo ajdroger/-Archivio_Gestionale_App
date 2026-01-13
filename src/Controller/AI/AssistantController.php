@@ -15,19 +15,22 @@ class AssistantController
     private $vectorStore;
     private $logger;
     private $queue;
+    private $socioRepo;
 
     public function __construct(
         $view,
         OllamaProvider $llm,
         SimpleVectorStore $vectorStore,
         LoggerInterface $logger,
-        \FratellanzaMilitare\Queue\QueueInterface $queue
+        \FratellanzaMilitare\Queue\QueueInterface $queue,
+        \FratellanzaMilitare\GestioneSoci\SocioRepository $socioRepo
     ) {
         $this->view = $view;
         $this->llm = $llm;
         $this->vectorStore = $vectorStore;
         $this->logger = $logger;
         $this->queue = $queue;
+        $this->socioRepo = $socioRepo;
     }
 
     /**
@@ -40,22 +43,16 @@ class AssistantController
             $available = false;
             try {
                 $available = $this->llm->isAvailable();
-                $this->logger->info("AssistantController: Ollama availability checked: " . ($available ? 'YES' : 'NO'));
             } catch (\Throwable $e) {
-                $this->logger->error("AssistantController: Ollama check failed: " . $e->getMessage());
                 $available = false;
             }
 
-            // [FIX] Mustache render returns string. Do NOT pass $response object as first arg.
             $content = $this->view->render('admin/assistant.mustache', [
                 'is_available' => $available,
                 'csrf' => [
                     'name' => $request->getAttribute('csrf_name'),
                     'value' => $request->getAttribute('csrf_value'),
-                    'keys' => [
-                        'name' => 'csrf_name',
-                        'value' => 'csrf_value'
-                    ]
+                    'keys' => ['name' => 'csrf_name', 'value' => 'csrf_value']
                 ],
                 'base_url' => (function () {
                     $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
@@ -67,7 +64,7 @@ class AssistantController
             return $response;
         } catch (\Throwable $e) {
             $this->logger->error("AssistantController: Critical error: " . $e->getMessage());
-            $response->getBody()->write("CRITICAL AI ERROR: " . $e->getMessage() . "<br><pre>" . $e->getTraceAsString() . "</pre>");
+            $response->getBody()->write("Error loading AI Interface.");
             return $response->withStatus(500);
         }
     }
@@ -82,47 +79,82 @@ class AssistantController
 
         $data = $request->getParsedBody();
         $userMessage = trim($data['message'] ?? '');
+        $contextUrl = $data['context_url'] ?? '';
+        $contextTitle = $data['context_title'] ?? '';
 
         if (empty($userMessage)) {
             return $response;
         }
 
         // 1. Embed Query
-        $logger = $this->logger;
         $embedding = $this->llm->embed($userMessage);
 
-        // 2. Retrieve Context (RAG)
-        $context = "";
+        // 2. Retrieve Document Context (RAG)
+        $ragContext = "";
         if (!empty($embedding)) {
             $results = $this->vectorStore->search($embedding, 3);
             foreach ($results as $res) {
-                // Only use high relevance
                 if ($res['score'] > 0.6) {
-                    $context .= "- " . $res['content'] . "\n";
+                    $ragContext .= "- " . $res['content'] . "\n";
                 }
             }
         }
 
-        // 3. Prompt Engineering
-        $systemPrompt = "Sei 'Archivio Parlante', l'assistente AI avanzato del sistema MCAG v5.0 (Militare Civile Archivio Gestionale). ";
-        $systemPrompt .= "Il progetto è sviluppato da Soobadur Mohammad Ajmeer come soluzione commerciale ad alte prestazioni ('Singularity Edition'). ";
-        $systemPrompt .= "Non sei affiliato alla 'Fratellanza Militare' se non come software di gestione. ";
-        $systemPrompt .= "Rispondi in italiano in modo formale e preciso. ";
-        $systemPrompt .= "Usa SOLO le informazioni fornite nel contesto seguente per rispondere. ";
-        $systemPrompt .= "Se non sai la risposta, dillo chiaramente.\n\n";
-        $systemPrompt .= "CONTESTO:\n$context\n\n";
-        $systemPrompt .= "DOMANDA: $userMessage";
+        // 3. Smart Context Injection (User Navigation)
+        $smartContext = "";
+        if (!empty($contextUrl)) {
+            // Detect Socio Detail Page (/soci/detail/{cf} or similar)
+            // Pattern: .../soci/ABC123456...
+            if (preg_match('/\/soci\/([A-Z0-9]{16})/i', $contextUrl, $matches)) {
+                $cf = $matches[1];
+                try {
+                    $socio = $this->socioRepo->findByCodiceFiscale($cf);
+                    if ($socio) {
+                        $smartContext .= "\n[CONTESTO UTENTE]: L'utente sta visualizzando la scheda del socio:\n";
+                        $smartContext .= "Nome: {$socio->getNome()} {$socio->getCognome()}\n";
+                        $smartContext .= "CF: {$socio->getCodiceFiscale()}\n";
+                        $smartContext .= "Email: {$socio->getEmail()}\n";
+                        $smartContext .= "Stato: {$socio->getStato()}\n";
+                        $smartContext .= "Moroso: " . ($socio->isMoroso() ? 'SÌ' : 'NO') . "\n";
+                    }
+                } catch (\Throwable $e) {
+                    $this->logger->warning("Smart Context failed lookup: " . $e->getMessage());
+                }
+            } elseif (strpos($contextUrl, '/statistiche') !== false) {
+                try {
+                    $stats = $this->socioRepo->getStatistics();
+                    $smartContext .= "\n[CONTESTO UTENTE]: L'utente sta guardando la Dashboard Statistiche.\n";
+                    $smartContext .= "Totale Soci: {$stats['total']}\n";
+                    $smartContext .= "Attivi: {$stats['active']}\n";
+                } catch (\Throwable $e) {
+                }
+            }
+        }
 
-        // 4. Generate Answer
+        // 4. Prompt Engineering
+        $systemPrompt = "Sei 'Archivio Parlante', assistente AI del sistema MCAG v5.0. ";
+        $systemPrompt .= "Usa le informazioni fornite per rispondere. Rispondi in italiano.\n\n";
+
+        if (!empty($smartContext)) {
+            $systemPrompt .= "INFORMAZIONI CONTESTUALI (Dalla pagina corrente):\n$smartContext\n\n";
+        }
+
+        if (!empty($ragContext)) {
+            $systemPrompt .= "INFORMAZIONI DALLA DOCUMENTAZIONE (Base di Conoscenza):\n$ragContext\n\n";
+        }
+
+        $systemPrompt .= "DOMANDA UTENTE: $userMessage";
+
+        // 5. Generate Answer
         $answer = $this->llm->generate($systemPrompt);
 
-        // 5. Render Message Bubble (HTMX Swap)
+        // 6. Render Message Bubble
         $html = '
         <div class="d-flex justify-content-end mb-2">
-            <div class="bg-primary text-white p-2 rounded-3" style="max-width: 80%">' . htmlspecialchars($userMessage) . '</div>
+            <div class="bg-primary text-white p-2 rounded-3 small" style="max-width: 85%">' . htmlspecialchars($userMessage) . '</div>
         </div>
         <div class="d-flex justify-content-start mb-2">
-            <div class="bg-dark text-light p-2 rounded-3 border border-secondary" style="max-width: 80%">
+            <div class="bg-dark text-light p-2 rounded-3 border border-secondary small" style="max-width: 85%">
                 <i class="fa-solid fa-robot text-warning me-2"></i> ' . nl2br(htmlspecialchars($answer)) . '
             </div>
         </div>';
