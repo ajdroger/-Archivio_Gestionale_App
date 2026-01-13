@@ -790,14 +790,24 @@ Il sistema DevTools è ora **Stabile**, **Sicuro** (Role-Based + Whitelist), e *
 Tutti i test (`tests/Feature/DevToolsV4Test.php`) sono verdi.
 Branding MCAG applicato ovunque.
 
-## [ADR-026] Strict Branch Retention & Mandatory Auditing
-**Data**: 2026-01-11
-**Stato**: ✅ Attivo
+## [ADR-029] Omni-Reader Architecture (v5.2)
+**Data**: 2026-01-13
+**Stato**: ✅ Implementato
 **Contesto**:
-La cancellazione dei branch dopo il merge, sebbene pulita, distrugge il contesto storico granulare dei tentativi, dei test falliti/passati e delle iterazioni di sviluppo. In un contesto Enterprise, l'Audit Trail è prioritario sulla pulizia visiva.
+L'AI Assistant v5.0 era limitato ai soli PDF e aveva un'interfaccia segregata. L'utente richiede supporto per formati Office (.docx, .xlsx) e Codice (.php, .md) e un accesso "onnipresente".
+
 **Decisione**:
-1.  **Retention Totale**: Nessun branch (`feature/*`, `tests/*`, `hotfix/*`) viene mai cancellato.
-2.  **Stato "Chiuso"**: I branch mergiati vengono considerati "chiusi" (archiviati) semplicemente spostando l'HEAD su `develop` o `main`, ma rimangono nel reflog/repo.
+1.  **Pattern Factory**: Implementare `DocumentParserFactory` per selezione dinamica del parser (`WordParserService`, `ExcelParserService`, `CodeParserService`).
+2.  **Global Widget**: Trasformare l'interfaccia Chat in un Partial (`templates/partials/ai_widget.mustache`) iniettato nel layout principale, gestito da Alpine.js per lo stato (open/close).
+3.  **Smart Context**: Iniettare dati di contesto (URL parsing) nel System Prompt (es. "L'utente sta guardando il socio X").
+
+**Conseguenze**:
+- (+) **Estensibilità**: Aggiungere nuovi formati (es. PPTX) richiede solo una nuova classe Service.
+- (+) **UX**: L'utente può interrogare l'AI senza lasciare la pagina di lavoro.
+- (+) **Code-Aware**: Il supporto esplicito ai blocchi di codice migliora drasticamente le risposte tecniche.
+
+---
+
 
 ### ADR-027: AI Assistant Hotfix Strategy
 **Date:** 2026-01-13
