@@ -46,9 +46,25 @@ class AssistantController
                 $available = false;
             }
 
-            return $this->view->render($response, 'admin/assistant.mustache', [
-                'is_available' => $available
+            // [FIX] Mustache render returns string. Do NOT pass $response object as first arg.
+            $content = $this->view->render('admin/assistant.mustache', [
+                'is_available' => $available,
+                'csrf' => [
+                    'name' => $request->getAttribute('csrf_name'),
+                    'value' => $request->getAttribute('csrf_value'),
+                    'keys' => [
+                        'name' => 'csrf_name',
+                        'value' => 'csrf_value'
+                    ]
+                ],
+                'base_url' => (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    return $scriptDir === '/' ? '' : $scriptDir;
+                })()
             ]);
+
+            $response->getBody()->write($content);
+            return $response;
         } catch (\Throwable $e) {
             $this->logger->error("AssistantController: Critical error: " . $e->getMessage());
             $response->getBody()->write("CRITICAL AI ERROR: " . $e->getMessage() . "<br><pre>" . $e->getTraceAsString() . "</pre>");

@@ -100,7 +100,7 @@
             </button>
 
             <!-- Tab: AI Assistant (New) -->
-            <button class="nav-link sidebar-link text-start" id="v-pills-ai-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ai" type="button" role="tab" hx-get="{{base_url}}/ai/assistant" hx-target="#v-pills-ai-content" hx-trigger="click once">
+            <button class="nav-link sidebar-link text-start" id="v-pills-ai-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ai" type="button" role="tab" hx-get="{{base_url}}/ai/assistant" hx-target="#v-pills-ai-content" hx-swap="innerHTML" hx-trigger="click">
                 <i class="fa-solid fa-brain w-30px me-3 text-center"></i>AI Assistant
             </button>
             
@@ -1070,10 +1070,14 @@
             <div class="tab-pane fade" id="v-pills-ai" role="tabpanel">
                 <div class="d-flex flex-column h-100 gap-4" id="v-pills-ai-content">
                     <!-- HTMX will load 'assistant.mustache' here -->
-                    <div class="d-flex justify-content-center align-items-center h-100">
-                        <div class="spinner-border text-info" role="status">
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center">
+                        <div class="spinner-border text-info mb-3" role="status" style="width: 3rem; height: 3rem;">
                             <span class="visually-hidden">Loading AI...</span>
                         </div>
+                        <h5 class="text-white mb-3">Caricamento Modulo AI...</h5>
+                        <button class="btn btn-outline-info" hx-get="{{base_url}}/ai/assistant" hx-target="#v-pills-ai-content" hx-swap="innerHTML">
+                            <i class="fa-solid fa-power-off me-2"></i>AVVIA ARCHIVIO PARLANTE
+                        </button>
                     </div>
                 </div>
             </div>

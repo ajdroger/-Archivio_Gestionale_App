@@ -81,7 +81,7 @@ return function (App $app) {
     $app->get('/cookie-policy', \FratellanzaMilitare\Controller\PolicyController::class . ':cookie')->setName('cookie_policy');
 
     // Intelligence (Stats & Reports)
-    $statsRole = new RoleMiddleware(['presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
+    $statsRole = new RoleMiddleware(['admin', 'presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
     $exportLimit = new RateLimitMiddleware(30, 60);
 
     // AI Assistant (Placed here to access $statsRole)
