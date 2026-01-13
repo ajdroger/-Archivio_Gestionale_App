@@ -112,7 +112,10 @@ class PolicyController
         $html = $this->engine->render('layout/layout', [
             'content' => $cookieContent,
             'title' => 'Cookie Policy - MCAG',
-            'base_url' => ''
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })()
         ]);
         $response->getBody()->write($html);
         return $response;
