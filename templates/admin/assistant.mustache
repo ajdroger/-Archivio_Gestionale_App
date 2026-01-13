@@ -33,10 +33,10 @@
                 <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
                 <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
                 
-                <label for="ai-file-upload" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" style="width: 42px;" data-bs-toggle="tooltip" title="Carica PDF">
+                <label for="ai-file-upload" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" style="width: 42px;" data-bs-toggle="tooltip" title="Carica PDF/Office/Code">
                     <i class="fa-solid fa-paperclip"></i>
                 </label>
-                <input type="file" id="ai-file-upload" name="document" accept=".pdf,.txt,.md" class="d-none" onchange="htmx.trigger(this.form, 'submit'); this.value='';">
+                <input type="file" id="ai-file-upload" name="document" accept=".pdf,.docx,.xlsx,.txt,.md,.php,.js,.py,.java,.sql" class="d-none" onchange="htmx.trigger(this.form, 'submit'); this.value='';">
             </form>
 
             <!-- Message Form -->

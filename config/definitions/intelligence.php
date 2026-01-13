@@ -1,6 +1,11 @@
 <?php
 
 use Psr\Container\ContainerInterface;
+use FratellanzaMilitare\Service\DocumentParser\PdfParserService;
+use FratellanzaMilitare\Service\DocumentParser\WordParserService;
+use FratellanzaMilitare\Service\DocumentParser\ExcelParserService;
+use FratellanzaMilitare\Service\DocumentParser\CodeParserService;
+use FratellanzaMilitare\Service\DocumentParser\DocumentParserFactory;
 
 return [
     \FratellanzaMilitare\Controller\Intelligence\StatsDashboardController::class => function (ContainerInterface $c) {
@@ -36,8 +41,24 @@ return [
         );
     },
 
-    \FratellanzaMilitare\Service\DocumentParser\PdfParserService::class => function (ContainerInterface $c) {
-        return new \FratellanzaMilitare\Service\DocumentParser\PdfParserService();
+    PdfParserService::class => function (ContainerInterface $c) {
+        return new PdfParserService();
+    },
+
+    WordParserService::class => function (ContainerInterface $c) {
+        return new WordParserService();
+    },
+
+    ExcelParserService::class => function (ContainerInterface $c) {
+        return new ExcelParserService();
+    },
+
+    CodeParserService::class => function (ContainerInterface $c) {
+        return new CodeParserService();
+    },
+
+    DocumentParserFactory::class => function (ContainerInterface $c) {
+        return new DocumentParserFactory($c);
     },
 
     \FratellanzaMilitare\AI\RAG\DocumentChunkerService::class => function (ContainerInterface $c) {
@@ -46,7 +67,7 @@ return [
 
     \FratellanzaMilitare\Service\AI\DocumentIngestionService::class => function (ContainerInterface $c) {
         return new \FratellanzaMilitare\Service\AI\DocumentIngestionService(
-            $c->get(\FratellanzaMilitare\Service\DocumentParser\PdfParserService::class),
+            $c->get(DocumentParserFactory::class),
             $c->get(\FratellanzaMilitare\AI\RAG\DocumentChunkerService::class),
             $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class),
             $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class)
@@ -59,7 +80,8 @@ return [
             $c->get(\FratellanzaMilitare\AI\Providers\OllamaProvider::class),
             $c->get(\FratellanzaMilitare\AI\RAG\SimpleVectorStore::class),
             $c->get(\Psr\Log\LoggerInterface::class),
-            $c->get(\FratellanzaMilitare\Queue\QueueInterface::class)
+            $c->get(\FratellanzaMilitare\Queue\QueueInterface::class),
+            $c->get(\FratellanzaMilitare\GestioneSoci\SocioRepository::class)
         );
     },
 ];

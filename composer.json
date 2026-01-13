@@ -39,7 +39,10 @@
         "sentry/sentry": "^4.0",
         "webonyx/graphql-php": "^15.29",
         "ezyang/htmlpurifier": "^4.19",
-        "respect/validation": "^2.3"
+        "respect/validation": "^2.3",
+        "phpoffice/phpword": "^1.4",
+        "phpoffice/phpspreadsheet": "^5.4",
+        "smalot/pdfparser": "^2.12"
     },
     "config": {
         "allow-plugins": {
