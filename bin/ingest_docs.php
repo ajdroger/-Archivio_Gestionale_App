@@ -35,7 +35,7 @@ try {
     echo "✅ Successfully Ingested CHANGELOG.md\n";
 
     // Also Ingest Decision Log
-    $decisionLog = __DIR__ . '/../Documentazione/Architettura/DECISION_LOG.md';
+    $decisionLog = __DIR__ . '/../Documentazione/Architettura/2026-01-13_DECISION_LOG.md';
     if (file_exists($decisionLog)) {
         echo "Reading file: $decisionLog\n";
         $ingestionService->ingest($decisionLog, ['category' => 'architecture', 'title' => 'Decision Log']);
