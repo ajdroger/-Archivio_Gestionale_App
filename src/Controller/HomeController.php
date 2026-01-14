@@ -50,11 +50,23 @@ class HomeController
         $stats = $this->repo->getStatistics();
         $username = $_SESSION['username'] ?? 'Utente';
         $isGodMode = ($username === 'Aj_GodMode');
-        $isAdmin = (($_SESSION['user_role'] ?? '') === 'admin') || $isGodMode;
 
-        // Advanced Data Loading for GodMode/Admin
-        $systemHealth = $isAdmin ? $this->health->checkAll() : null;
-        $resilienceData = $isAdmin ? $this->resilience->monitorHealth() : null;
+        // Privilege Check
+        $realIsAdmin = (($_SESSION['user_role'] ?? '') === 'admin') || $isGodMode;
+
+        // View Mode Logic (Query Param override)
+        $queryParams = $request->getQueryParams();
+        $requestedView = $queryParams['view'] ?? 'admin';
+
+        // Effective Render State
+        $effectiveIsAdmin = $realIsAdmin;
+        if ($realIsAdmin && $requestedView === 'user') {
+            $effectiveIsAdmin = false;
+        }
+
+        // Advanced Data Loading (Only if effectively admin)
+        $systemHealth = $effectiveIsAdmin ? $this->health->checkAll() : null;
+        $resilienceData = $effectiveIsAdmin ? $this->resilience->monitorHealth() : null;
 
         // Load operational state
         $appConfig = $this->config->getAll();
@@ -65,7 +77,9 @@ class HomeController
             'content' => 'Benvenuto nel sistema di digitalizzazione archivio.',
             'stats' => $stats,
             'stats_json' => json_encode($stats),
-            'is_admin' => $isAdmin,
+            'real_is_admin' => $realIsAdmin, // Keeps the toggles visible
+            'is_admin' => $effectiveIsAdmin, // Controls the view
+            'view_mode' => $requestedView, // For button styling
             'is_god_mode' => $isGodMode,
             'system_health' => $systemHealth,
             'resilience_metrics' => $resilienceData,

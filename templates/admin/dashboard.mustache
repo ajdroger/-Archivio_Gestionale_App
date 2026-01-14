@@ -1,4 +1,17 @@
 {{> layout_header }}
+
+<!-- VIEW MODE TOGGLES (Only for Real Admins) -->
+{{#real_is_admin}}
+<div class="d-flex justify-content-end mb-3 gap-2">
+    <a href="?view=admin" class="btn btn-sm {{^is_admin}}btn-outline-secondary{{/is_admin}}{{#is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-gauge-high me-2"></i>Mission Control
+    </a>
+    <a href="?view=user" class="btn btn-sm {{#is_admin}}btn-outline-secondary{{/is_admin}}{{^is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-user me-2"></i>Vista Utente
+    </a>
+</div>
+{{/real_is_admin}}
+
 <div class="row mb-5">
     <div class="col-12">
         <div class="card border-0 shadow-lg overflow-hidden" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(30, 41, 59, 0.8)); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
