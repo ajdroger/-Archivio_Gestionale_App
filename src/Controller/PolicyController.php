@@ -170,6 +170,7 @@ HTML;
             'content' => $policyContent,
             'title' => 'Privacy Policy - MCAG',
             'base_url' => $baseUrl,
+            'is_public_policy' => true,
             'ai_context' => 'L\'utente sta visualizzando la Privacy Policy ufficiale. Se chiede informazioni sulla privacy, fai riferimento a questo contenuto.'
         ]);
         $response->getBody()->write($html);
@@ -242,7 +243,8 @@ HTML;
         $html = $this->engine->render('layout/layout', [
             'content' => $cookieContent,
             'title' => 'Cookie Policy - MCAG',
-            'base_url' => $baseUrl
+            'base_url' => $baseUrl,
+            'is_public_policy' => true
         ]);
         $response->getBody()->write($html);
         return $response;
