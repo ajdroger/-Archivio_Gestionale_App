@@ -7,7 +7,11 @@
  * @version 5.4.2
  */
 
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('load', function () {
+    // Check Dependencies
+    if (typeof bootstrap === 'undefined') console.warn('Mission Control: Bootstrap 5 not detected.');
+    if (typeof Chart === 'undefined') console.warn('Mission Control: Chart.js not detected.');
+    if (typeof Swal === 'undefined') console.warn('Mission Control: SweetAlert2 not detected.');
     // --- 1. INITIALIZATION & CONFIG ---
     const dataEl = document.getElementById('dashboard-data');
     let stats = dataEl ? JSON.parse(dataEl.textContent) : { attivi: 0, morosi: 0, trend_iscritti: [] };
