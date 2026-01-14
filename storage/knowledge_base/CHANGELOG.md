@@ -22,7 +22,19 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 ---
 
 
-## [5.3.0] - 2026-01-13 "**Rebranding Open Heart**" (GOLD MASTER)
+## [5.4.0] - 2026-01-14 "**Fluid & Symmetrical**" (LATEST)
+### Layout & UI Deep Polish
+- **Global Fluid Layout**: Adozione di `container-fluid px-4` su tutte le viste (Header, Main, Footer) per massimizzare l'uso dello schermo (ADR-030).
+- **Navbar Revolution**:
+    - **Centralizzazione**: Raggruppamento e centratura perfetta (`mx-auto`) di Badge + Menu.
+    - **Simmetria**: Rimozione separatori e integrazione del badge "Mission-Critical" come elemento di lista.
+    - **Spaziatura**: Aumento gap (`gap-4`) per layout arioso.
+- **Talking Archive Stylization**: Redesign dei controlli in stile "Premium Minimal" (Outline buttons, icone pulite).
+- **Asset Optimization**: Caricamento differito script TTS e fallback widget.
+
+---
+
+## [5.3.0] - 2026-01-13 "**Rebranding Open Heart**" (CORE RELEASE)
 ### Modificato [BREAKING CHANGE]
 - **Global Rebranding**: Sostituzione massiva di tutte le occorrenze "Fratellanza Militare" con "**MCAG**" (Militare-Civile Archivio Gestionale).
 - **Namespace Migration**: Refactoring completo `FratellanzaMilitare\*` -> `MCAG\*`. Incluso file `legacy_aliases.php` per retrocompatibilità temporanea.
@@ -30,6 +42,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Assets**: Aggiornamento loghi, favicon e og:image.
 
 ### Aggiunto
+- **Talking Archive Engine**: Core functionality `talking_archive.js` (SpeechSynthesis API) funzionante.
 - **Commercial Landing 2026**: Pagina di vendita aggiornata con nuovo pricing model (Standard/Professional/Enterprise).
 - **Report 2026**: Inclusione automatica del report di benchmark e pricing ufficiale.
 - **Email Rebranding**: Aggiornamento template email (inviti demo, auth) con nuova identità e versioning.
@@ -41,40 +54,11 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
     - Introdotto output buffering (`ob_start`) per prevenire corruzione JSON da warning PHP.
     - Fix encoding CP850 -> UTF-8 per caratteri accentati in console.
 
-### Compliance & Legal [NEW]
+### Compliance & Legal
 - **Cookie Policy**: Implementazione banner conforme GDPR e link policy (#45).
-- **UI/UX**: Fix layout responsivo per "Registro Unico Anagrafiche", abilitato container fluid per prevenire taglio contenuti (#fix-container). Aggiunti attributi `id` e `name` ai campi filtro per conformità standard web e accessibilità. Redesign completo del Footer ("Fat Footer") con layout a 4 colonne, navigazione rapida e sezione compliance dedicata.
-- **Compliance**: Aggiornamento terminologia UI per allineamento a standard legali/audit.
-
-### Fixed
-- **Fix Critico**: Risolto errore `Unexpected token '<'` su caricamento JS (htmx, alpine, cookie_banner) in ambienti subdirectory (Ampps), iniettando correttamente `base_url` in tutti i controller (`ListController`, `DetailController`, `StatsDashboardController`, `PolicyController::privacy`).
-- **Accessibilità**: Migliorato contrasto pagine Policy (Privacy & Cookie) con tema scuro (`bg-dark`, `text-white`) per garantire leggibilità ottimale.
-- **Data Integrity**: Corretti link obsoleti e indirizzi email legacy (`fratellanza-firenze.it` -> `mcag.it`).
-- **Policy Sync**: Aggiornato `PolicyController` per riflettere l'intero contenuto (11 sezioni) del documento statico `privacy-policy.html`, includendo Base Giuridica, Data Retention, Sicurezza e Cookie details.
-- **Bugfix**: Risolto link "Leggi Cookie Policy" non funzionante nelle pagine policy; sostituito placeholder Mustache `{{base_url}}` (non processato) con interpolazione variabile PHP `$baseUrl`.
-- **Policy Pages**: Implementata pagina `terms-of-service` (route dinamica + file statico `public/terms-of-service.html` per compatibilità) con contenuto EULA completo.
-- **Talking Archive**: Creato motore TTS `public/js/talking_archive.js` con supporto SpeechSynthesis API, smart parsing dei contenuti e gestione stato riproduzione (Play/Pause/Stop).
-    - **Integrazione UI**: Aggiunti controlli audio in `layout_header.mustache`.
-    - **Smart Narratives**: Completata integrazione "Narrativa" in Dashboard, Statistiche e Lista Soci (riassunti nascosti per AI/TTS).
-    - **AI Context-Aware**: Implementato RBAC in `AssistantController` per sanitizzare il contesto in base al ruolo utente (`Aj_GodMode` vs Admin vs Standard).
 - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
     - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
 - **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).
-    - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
-
-### Layout & UI Deep Polish [ULTRA-DETAILED]
-- **Navbar Revolution**: Riprogettazione completa della barra di navigazione (`layout_header.mustache`).
-    - **Centralizzazione**: Il blocco di navigazione (Dashboard, Soci, Report) e il badge di stato "Mission-Critical" sono stati unificati e centrati perfettamente nella viewport.
-    - **Simmetria**: Rimossi separatori verticali antiestetici; il badge di stato ora è trattato visivamente come un elemento di navigazione "premium", garantendo un ritmo visivo uniforme (`gap-4`).
-    - **Fluidità Globale**: Abbandonato il container a larghezza fissa in favore di `container-fluid px-4` su **tutte le pagine**, massimizzando l'uso dello spazio su monitor larghi (Ultrawide ready).
-- **Footer "Wide"**: Estensione del layout fluido anche al footer (`layout_footer.mustache`), garantendo allineamento verticale coerente con l'header.
-- **Talking Archive UI**: Refactoring dei controlli TTS.
-    - Stile "Premium Minimal": Rimossi sfondi scuri pesanti.
-    - Pulsante "Ascolta": Stile `btn-outline-info` con icona cuffie.
-    - Badge Stato: Integrato e animato (`animate__fadeIn`).
-- **Global Asset Loading**:
-    - Spostamento script `talking_archive.js` nel footer per garantire il caricamento post-DOM.
-    - Inclusione forzata del parziale `ai_widget.mustache` nel footer globale per garantire la presenza dell'assistente in ogni vista (inclusi errori e pagine legacy).
 
 ---
 
