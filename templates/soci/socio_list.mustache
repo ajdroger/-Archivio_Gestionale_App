@@ -1,142 +1,107 @@
 {{> layout_header }}
-<div class="card border-0 shadow-lg" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
-    <div class="card-header border-bottom border-secondary bg-transparent py-4">
-        <div class="row g-3 align-items-center justify-content-between">
-            <div class="col-12 col-md-auto">
-                <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-users me-2 text-primary"></i>Registro Unico Anagrafiche</h4>
-            </div>
-            <div class="col-12 col-md pt-2 pt-md-0">
-                <div class="d-flex flex-wrap gap-3 justify-content-md-end align-items-center">
-                    
-                    <!-- Smart Narrative Summary (Hidden for UI, Visible for TTS/AI) -->
-                    <div class="ta-smart-summary visually-hidden">
-                        Stai consultando il Registro Unico Anagrafiche.
-                        Attualmente sono visualizzati {{soci.length}} soci.
-                        Usa la barra di ricerca per filtrare per nome o matricola.
-                    </div>
 
-                    <!-- Server Side Search Form -->
-                    <form action="{{base_url}}/soci" method="GET" class="d-flex gap-2">
-                        <select name="tipo" class="form-select form-select-sm bg-dark text-white border-secondary fw-bold" style="width: 140px;">
-                            <option value="">- Tutti -</option>
-                            <option value="MILITARE">Militari</option>
-                            <option value="CIVILE">Civili</option>
-                        </select>
-                        <div class="input-group input-group-sm">
-                            <input type="text" name="q" class="form-control bg-dark text-white border-secondary" placeholder="Cerca..." value="{{search_query}}">
-                            <button class="btn btn-outline-light border-secondary" type="submit"><i class="fa-solid fa-search"></i></button>
-                            {{#search_query}}
-                            <a href="{{base_url}}/soci" class="btn btn-outline-danger border-secondary" title="Reset"><i class="fa-solid fa-times"></i></a>
-                            {{/search_query}}
-                        </div>
-                    </form>
+<!-- VIEW MODE TOGGLES (Only for Real Admins) -->
+{{#real_is_admin}}
+<div class="d-flex justify-content-end mb-4 gap-2">
+    <a href="?view=admin" class="btn btn-sm {{^is_admin}}btn-outline-secondary{{/is_admin}}{{#is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-gauge-high me-2"></i>Mission Control
+    </a>
+    <a href="?view=user" class="btn btn-sm {{#is_admin}}btn-outline-secondary{{/is_admin}}{{^is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-user me-2"></i>Vista Utente
+    </a>
+</div>
+{{/real_is_admin}}
 
-                    <a href="{{base_url}}/soci/nuovo" class="btn btn-primary px-4 shadow shadow-primary"><i class="fa-solid fa-user-plus me-2"></i>Nuova Registrazione</a>
+<div class="container-fluid px-4">
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold text-white mb-0">
+                {{#is_admin}}Gestione Anagrafica{{/is_admin}}
+                {{^is_admin}}Directory Soci{{/is_admin}}
+            </h1>
+            <p class="text-secondary lead mb-0">
+                {{#is_admin}}DB Master • {{count}} Records • Accesso Completo{{/is_admin}}
+                {{^is_admin}}Elenco pubblico degli associati MCAG{{/is_admin}}
+            </p>
+        </div>
+        
+        <!-- SEARCH BAR (Common) -->
+        <div class="d-flex gap-2">
+            <form action="" method="GET" class="d-flex">
+                 {{#view_mode}}<input type="hidden" name="view" value="{{view_mode}}">{{/view_mode}}
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="q" class="form-control bg-dark border-secondary text-white" placeholder="Cerca socio..." value="{{search_query}}">
                 </div>
-            </div>
+            </form>
+             {{#is_admin}}
+             <a href="{{base_url}}/soci/nuovo" class="btn btn-success d-flex align-items-center gap-2 rounded-pill px-4">
+                 <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline">Nuovo</span>
+             </a>
+             {{/is_admin}}
         </div>
     </div>
 
-    <div class="card-body p-0">
+    <!-- ADMIN VIEW: DATA DENSE TABLE -->
+    {{#is_admin}}
+    <div class="card border-0 shadow-lg bg-dark text-white overflow-hidden">
         <div class="table-responsive">
-            <table class="smart-table table table-dark table-hover align-middle mb-0" style="background: transparent;">
-                <thead class="text-secondary text-uppercase small" style="background: rgba(15, 23, 42, 0.5);">
+            <table class="table table-dark table-hover mb-0 align-middle">
+                <thead class="bg-black bg-opacity-25 text-secondary text-uppercase x-small">
                     <tr>
-                        <th class="ps-4 py-3 border-secondary" style="width: 25%;">Soggetto Interessato</th>
-                        <th class="border-secondary" style="width: 10%;">Matricola</th>
-                        <th class="border-secondary" style="width: 15%;">Codice Fiscale</th>
-                        <th class="border-secondary" style="width: 20%;">Recapiti Registrati</th>
-                        <th class="text-center border-secondary" style="width: 10%;">Stato Amministrativo</th>
-                        <th class="text-center border-secondary" style="width: 10%;">Regolarità Contributiva</th>
-                        <th class="text-end pe-4 border-secondary" style="width: 10%;">Azioni di Audit</th>
-                    </tr>
-                    <!-- Filter Row -->
-                    <tr class="filter-row" style="background: rgba(15, 23, 42, 0.8);">
-                        <th class="ps-4 pb-2 border-secondary"><input type="text" id="filter_input_name" name="filter_nome" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Cerca Nome/Nascita..."></th>
-                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_matricola" name="filter_matricola" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Matricola"></th>
-                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_cf" name="filter_cf" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Codice Fiscale"></th>
-                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_contact" name="filter_contatti" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Email/Tel"></th>
-                        <th class="pb-2 text-center border-secondary">
-                            <select id="filter_select_status" name="filter_status" class="form-select form-select-sm bg-dark text-white border-secondary small">
-                                <option value="">Tutti</option>
-                                <option value="ATTIVO">ATTIVO</option>
-                                <option value="SOSPESO">SOSPESO</option>
-                                <option value="DIMISSIONARIO">DIMISSIONARIO</option>
-                                <option value="CANCELLATO">CANCELLATO</option>
-                            </select>
-                        </th>
-                        <th class="pb-2 text-center border-secondary">
-                            <select id="filter_select_compliance" name="filter_compliance" class="form-select form-select-sm bg-dark text-white border-secondary small">
-                                <option value="">Tutti</option>
-                                <option value="MOROSO">MOROSO</option>
-                                <option value="OK">OK</option>
-                            </select>
-                        </th>
-                        <th class="border-secondary"></th>
+                        <th class="ps-4">Socio</th>
+                        <th>Matricola</th>
+                        <th>Codice Fiscale</th>
+                        <th>Stato</th>
+                        <th>Contatti</th>
+                        <th class="text-end pe-4">Azioni</th>
                     </tr>
                 </thead>
-                <tbody class="border-top-0">
+                <tbody>
                     {{#soci}}
-                    <tr style="transition: background 0.2s;">
-                        <td class="ps-4 py-3">
+                    <tr>
+                        <td class="ps-4">
                             <div class="d-flex align-items-center">
-                                <div class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary me-3 d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px; border: 1px solid rgba(56, 189, 248, 0.2);">
-                                    {{user_initial}}
+                                <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px;">
+                                    <i class="fa-solid fa-user text-white-50"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-bold text-white fs-6">{{nome}} {{cognome}}</div>
-                                    <div class="small text-secondary">Nascita: {{data_nascita}}</div>
+                                    <div class="fw-bold text-white">{{nome}} {{cognome}}</div>
+                                    <small class="text-secondary">{{data_nascita}}</small>
                                 </div>
                             </div>
                         </td>
-                        <td class="font-monospace text-warning small">{{matricola}}</td>
-                        <td class="font-monospace text-info small">{{cf}}</td>
+                        <td class="font-monospace text-info">{{matricola}}</td>
+                        <td class="font-monospace text-white-50">{{cf}}</td>
                         <td>
-                            <div class="d-flex flex-column small gap-1 text-secondary">
-                                <span><i class="fa-solid fa-at me-2 opacity-50"></i>{{email}}</span>
-                                <span><i class="fa-solid fa-phone-volume me-2 opacity-50"></i>{{telefono}}</span>
-                            </div>
-                        </td>
-                        <td class="text-center">
                             {{#is_attivo}}
-                            <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">ATTIVO</span>
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">ATTIVO</span>
                             {{/is_attivo}}
                             {{^is_attivo}}
-                            <span class="badge rounded-pill bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-2">{{stato}}</span>
+                                <span class="badge bg-secondary bg-opacity-25 text-secondary">INATTIVO</span>
                             {{/is_attivo}}
-                        </td>
-                        <td class="text-center">
                             {{#is_moroso}}
-                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-2"><i class="fa-solid fa-triangle-exclamation me-1"></i>MOROSO</span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1">MOROSO</span>
                             {{/is_moroso}}
-                            {{^is_moroso}}
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-2"><i class="fa-solid fa-check me-1"></i>OK</span>
-                            {{/is_moroso}}
+                        </td>
+                        <td>
+                             <a href="mailto:{{email}}" class="text-decoration-none text-secondary hover-white me-2"><i class="fa-solid fa-envelope"></i></a>
+                             <span class="text-secondary">{{telefono}}</span>
                         </td>
                         <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
-                                <a href="{{base_url}}/soci/{{cf}}" class="btn btn-sm btn-outline-info border-info border-opacity-25" title="Dettagli"><i class="fa-solid fa-fingerprint"></i></a>
-                                <a href="{{base_url}}/soci/{{cf}}/edit" class="btn btn-sm btn-outline-warning border-warning border-opacity-25" title="Modifica"><i class="fa-solid fa-user-pen"></i></a>
-                                <button type="button" class="btn btn-sm btn-outline-danger border-danger border-opacity-25" title="Elimina" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#deleteModal"
-                                        data-cf="{{cf}}"
-                                        data-nome="{{nome}} {{cognome}}">
-                                    <i class="fa-solid fa-user-minus"></i>
-                                </button>
+                            <div class="btn-group">
+                                <a href="{{base_url}}/soci/{{cf}}" class="btn btn-sm btn-outline-light" title="Dettaglio"><i class="fa-solid fa-eye"></i></a>
+                                <a href="{{base_url}}/soci/{{cf}}/edit" class="btn btn-sm btn-outline-info" title="Modifica"><i class="fa-solid fa-pen"></i></a>
                             </div>
                         </td>
                     </tr>
                     {{/soci}}
                     {{^soci}}
                     <tr>
-                        <td colspan="7" class="text-center py-5">
-                            <div class="text-secondary opacity-25 mb-4">
-                                <i class="fa-solid fa-users-slash fa-5x"></i>
-                            </div>
-                            <h4 class="text-secondary fw-light">Nessun record trovato nel database</h4>
-                            <p class="text-secondary small">I filtri correnti non hanno prodotto risultati o l'archivio è vuoto.</p>
-                             <a href="{{base_url}}/soci/nuovo" class="btn btn-outline-primary mt-3"><i class="fa-solid fa-user-plus me-2"></i>Inizializza Primo Socio</a>
+                        <td colspan="6" class="text-center py-5 text-secondary">
+                            <i class="fa-solid fa-ghost fa-2x mb-3 opacity-50"></i><br>
+                            Nessun socio trovato.
                         </td>
                     </tr>
                     {{/soci}}
@@ -144,45 +109,55 @@
             </table>
         </div>
     </div>
-    <div class="card-footer border-top border-secondary bg-transparent py-3 small text-secondary d-flex justify-content-between align-items-center">
-        <span><i class="fa-solid fa-database me-2 opacity-50"></i>Record caricati: <strong>{{count}}</strong></span>
-        <div class="btn-group btn-group-sm">
-            <a href="{{base_url}}/soci/export/csv" class="btn btn-outline-secondary border-secondary text-success"><i class="fa-solid fa-file-export me-2"></i>Esporta CSV</a>
-            <button onclick="window.print()" class="btn btn-outline-secondary border-secondary"><i class="fa-solid fa-print me-2"></i>Esporta PDF</button>
-        </div>
-    </div>
-    
-    <!-- Shared Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark border-danger border-opacity-25 shadow-lg">
-                <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title text-danger fw-bold"><i class="fa-solid fa-circle-exclamation me-2"></i>CANCELLAZIONE DEFINITIVA (Diritto all'Oblio)</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-start">
-                    <p class="text-white mb-2">Procedere con la cancellazione di: <br><strong id="modal-delete-name" class="fs-5 text-warning">Mario Rossi</strong></p>
-                    <p class="small text-secondary mb-0">Tutti i documenti associati e i log di attività verranno permanentemente rimossi dall'archivio.</p>
-                </div>
-                <div class="modal-footer border-top border-secondary bg-black bg-opacity-25">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">ANNULLA</button>
-                    <form id="modal-delete-form" action="" method="POST">
-                        <input type="hidden" name="csrf_name" value="{{csrf.name}}">
-                        <input type="hidden" name="csrf_value" value="{{csrf.value}}">
-                        <button type="submit" class="btn btn-danger px-4 fw-bold">CONFERMA ELIMINAZIONE</button>
-                    </form>
+    {{/is_admin}}
+
+    <!-- USER VIEW: CARD GRID -->
+    {{^is_admin}}
+    <div id="user-directory-grid" class="row g-4">
+        {{#soci}}
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
+                <div class="card-body text-center p-4">
+                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
+                    <p class="text-secondary small mb-3">Membro dal 2024</p> <!-- Placeholder, need join date in VM -->
+                    
+                    {{#is_attivo}}
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>
+                    {{/is_attivo}}
+                    {{^is_attivo}}
+                         <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>
+                    {{/is_attivo}}
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
+                    </div>
                 </div>
             </div>
         </div>
+        {{/soci}}
     </div>
     
-    <!-- DataTables for Pagination & Search -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Sentinel for Infinite Scroll (Observer Target) -->
+    <div id="scroll-sentinel" class="text-center py-5 mt-4"></div>
 
+    <style>
+        .hover-translate-y:hover { transform: translateY(-5px); }
+        .transition-all { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .duration-500 { transition-duration: 500ms; }
+        .ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+        
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+        
+        .translate-y-4 { transform: translateY(1rem); }
+        .translate-y-0 { transform: translateY(0); }
+    </style>
     <script src="{{base_url}}/js/pages/socio_list.js"></script>
-    {{> layout_footer }}
+    {{/is_admin}}
 
+</div>
 
+{{> layout_footer }}

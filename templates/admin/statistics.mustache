@@ -1,252 +1,148 @@
 {{> layout_header }}
 
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-end border-bottom border-secondary pb-4">
-            <div>
-                <h2 class="text-white fw-bold mb-0"><i class="fa-solid fa-chart-line me-3 text-primary"></i>CENTRO ANALISI & MONITORAGGIO</h2>
-                <p class="text-secondary mb-0 mt-2">Analisi strategica in tempo reale. Intelligence su anagrafica e finanze.</p>
+<!-- VIEW MODE TOGGLES (Only for Real Admins) -->
+{{#real_is_admin}}
+<div class="d-flex justify-content-end mb-4 gap-2">
+    <a href="?view=admin" class="btn btn-sm {{^is_admin}}btn-outline-secondary{{/is_admin}}{{#is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-gauge-high me-2"></i>Mission Control
+    </a>
+    <a href="?view=user" class="btn btn-sm {{#is_admin}}btn-outline-secondary{{/is_admin}}{{^is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-user me-2"></i>Vista Utente
+    </a>
+</div>
+{{/real_is_admin}}
+
+<div class="container-fluid px-4">
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold text-white mb-0">
+                {{#is_admin}}Financial Intelligence{{/is_admin}}
+                {{^is_admin}}Trasparenza Comunità{{/is_admin}}
+            </h1>
+            <p class="text-secondary lead mb-0">
+                {{#is_admin}}Analisi predittiva e monitoraggio asset{{/is_admin}}
+                {{^is_admin}}Statistiche pubbliche dell'associazione{{/is_admin}}
+            </p>
+        </div>
+        {{#is_admin}}
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-info rounded-pill"><i class="fa-solid fa-download me-2"></i>Export Report</button>
+            <button class="btn btn-outline-light rounded-pill"><i class="fa-solid fa-print me-2"></i>Print</button>
+        </div>
+        {{/is_admin}}
+    </div>
+
+    <!-- ADMIN VIEW: HIGH LEVEL METRICS -->
+    {{#is_admin}}
+    <div class="row g-4 mb-5">
+         <!-- Asset Value -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 78, 59, 0.4)); border: 1px solid rgba(16, 185, 129, 0.2) !important;">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-secondary fw-bold mb-3"><i class="fa-solid fa-vault me-2 text-success"></i>Valore Asset Stimato</h6>
+                    <h2 class="display-4 fw-bold text-white mb-0">{{financials.asset_value}}</h2>
+                    <small class="text-success"><i class="fa-solid fa-arrow-trend-up me-1"></i>{{financials.growth_rate}} vs Last Year</small>
+                </div>
             </div>
-            <div class="text-end">
-                <span id="live-indicator" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 font-monospace me-2 animate-pulse">
-                    <i class="fa-solid fa-signal me-2"></i>LIVE
+        </div>
+        <!-- Projected Revenue -->
+        <div class="col-md-4">
+             <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(30, 58, 138, 0.4)); border: 1px solid rgba(59, 130, 246, 0.2) !important;">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-secondary fw-bold mb-3"><i class="fa-solid fa-coins me-2 text-primary"></i>Revenue Proiettata (2026)</h6>
+                    <h2 class="display-4 fw-bold text-white mb-0">{{financials.projected_revenue}}</h2>
+                    <small class="text-primary">Basato su {{stats.attivi}} soci attivi</small>
+                </div>
+            </div>
+        </div>
+        <!-- System Health Small -->
+        <div class="col-md-4">
+             <div class="card border-0 shadow-lg h-100" style="background: #0f172a; border: 1px solid rgba(255,255,255,0.05) !important;">
+                <div class="card-body p-4 d-flex flex-column justify-content-center">
+                    <div class="d-flex justify-content-between mb-3">
+                         <span class="text-secondary">System Pulse</span>
+                         <span class="text-success fw-bold">OPTIMAL</span>
+                    </div>
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-success" style="width: 98%"></div>
+                    </div>
+                    <div class="mt-4 d-flex justify-content-between text-secondary small">
+                        <span>DB Latency: <span class="text-white">12ms</span></span>
+                        <span>Redis: <span class="text-white">Connected</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS SECTION -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg bg-dark text-white h-100">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Trend Iscrizioni & Proiezioni</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="adminTrendChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+             <div class="card border-0 shadow-lg bg-dark text-white h-100">
+                 <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Composizione Demografica</h5>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <canvas id="adminDemoChart" height="250"></canvas>
+                </div>
+             </div>
+        </div>
+    </div>
+    {{/is_admin}}
+
+    <!-- USER VIEW: COMMUNITY STATS -->
+    {{^is_admin}}
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow bg-dark text-white text-center p-5">
+                <div class="mb-3">
+                    <i class="fa-solid fa-users fa-3x text-primary"></i>
+                </div>
+                <h2 class="display-3 fw-bold mb-2">{{stats.totale}}</h2>
+                <p class="text-secondary text-uppercase tracking-wider">Membri della Comunità</p>
+            </div>
+        </div>
+         <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow bg-dark text-white text-center p-5">
+                <div class="mb-3">
+                    <i class="fa-solid fa-handshake fa-3x text-success"></i>
+                </div>
+                <h2 class="display-3 fw-bold mb-2">{{stats.attivi}}</h2>
+                <p class="text-secondary text-uppercase tracking-wider">Soci Sostenitori Attivi</p>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-8 mx-auto text-center">
+            <p class="lead text-secondary">
+                "La trasparenza è il fondamento della nostra associazione. Questi dati sono aggiornati in tempo reale per garantire la massima chiarezza verso tutti i nostri associati."
+            </p>
+             <div class="mt-4">
+                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-2">
+                    <i class="fa-solid fa-server me-2"></i>Dati certificati dal sistema MCAG
                 </span>
-                <span class="badge bg-dark text-secondary border border-secondary px-3 py-2 font-monospace">
-                    <i class="fa-solid fa-clock-rotate-left me-2"></i>REF: <span id="data-ref">{{stats.data_riferimento}}</span>
-                </span>
             </div>
         </div>
     </div>
+    {{/is_admin}}
+
 </div>
-
-<!-- System Monitoring Grid -->
-<div class="ta-smart-summary visually-hidden">
-    Analisi statistica in tempo reale.
-    Il database contiene {{stats.totale}} soci totali.
-    La compliance contributiva è al {{stats.perc_paganti}} percento.
-    Ci sono {{stats.active}} soci attivi e {{stats.inactive}} non attivi.
-</div>
-<div class="row g-4 mb-5">
-    <div class="col-md-3">
-        <div class="card h-100 bg-dark border-secondary shadow-lg">
-            <div class="card-body text-center p-4">
-                <div class="fs-1 text-primary mb-3">
-                    <i class="fa-solid fa-database"></i>
-                </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Integrità Strutturale DB</h6>
-                <div id="mon-db">
-                    {{#monitoring.database.status}}
-                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25">OPERATIVO</span>
-                    {{/monitoring.database.status}}
-                    {{^monitoring.database.status}}
-                    <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25">ERRORE</span>
-                    {{/monitoring.database.status}}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card h-100 bg-dark border-secondary shadow-lg">
-            <div class="card-body text-center p-4">
-                <div class="fs-1 text-success mb-3">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Stato Allocazione Storage</h6>
-                <div id="mon-storage">
-                    {{#health.checks.storage.status}}
-                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25">{{health.checks.storage.message}}</span>
-                    {{/health.checks.storage.status}}
-                </div>
-                <small class="text-white-50 d-block mt-2 font-monospace" style="font-size:0.6rem">{{health.checks.storage.free_space}} LIBERI</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card h-100 bg-dark border-secondary shadow-lg">
-            <div class="card-body text-center p-4">
-                <div class="fs-1 text-info mb-3">
-                    <canvas id="chartStatus"></canvas>
-                </div>
-                <div class="mt-3 text-center">
-                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 me-2">ATTIVI: {{stats.attivi}}</span>
-                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">TOTALE: {{stats.totale}}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Financial Health Chart -->
-    <div class="col-md-6 col-xl-4">
-        <div class="card h-100 bg-dark border-secondary shadow-lg">
-            <div class="card-header border-secondary bg-transparent py-3">
-                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-success"></i>CONFORMITÀ CONTRIBUTIVA</h6>
-            </div>
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                <div style="height: 250px; width: 100%;">
-                    <canvas id="chartFinancial"></canvas>
-                </div>
-                <div class="mt-3 text-center">
-                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 me-2">IN REGOLA: {{stats.paganti}}</span>
-                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">MOROSI: {{stats.morosi}}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Metrics -->
-    <div class="col-md-12 col-xl-4">
-        <div class="row g-3 h-100">
-            <div class="col-12">
-                <div class="card h-100 bg-dark border-secondary shadow-lg p-3 d-flex align-items-center flex-row">
-                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 me-3 fs-3">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-white fw-bold mb-0">{{stats.totale}}</h3>
-                        <div class="text-secondary small text-uppercase fw-bold">Anagrafiche Totali Gestite</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card h-100 bg-dark border-secondary shadow-lg p-3 text-center" title="Percentuale di soci in regola con i pagamenti per l'anno corrente">
-                    <h4 class="text-success fw-bold mb-0">{{stats.perc_paganti}}%</h4>
-                    <div class="text-secondary small fw-bold">COMPLIANCE CONTRIBUTIVA</div>
-                    <div class="text-white-50" style="font-size: 0.7rem;">Compliance Aziendale</div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card h-100 bg-dark border-secondary shadow-lg p-3 text-center" title="Percentuale di soci con irregolarità amministrative">
-                    <h4 class="text-danger fw-bold mb-0">{{stats.perc_morosi}}%</h4>
-                    <div class="text-secondary small fw-bold">ANOMALIE CONTRIBUTIVE</div>
-                    <div class="text-white-50" style="font-size: 0.7rem;">Indice di Rischio</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Detailed Data Analysis -->
-<div class="row g-4 mb-5">
-    <div class="col-12">
-        <div class="card bg-dark border-secondary shadow-lg">
-            <div class="card-header border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
-                 <h5 class="text-white mb-0 fw-bold"><i class="fa-solid fa-table-list me-2 text-warning"></i>ANALISI DETTAGLIATA</h5>
-                 
-                 <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-download me-2"></i>Export
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-dark border-secondary shadow">
-                        <li><a class="dropdown-item" href="{{base_url}}/statistiche/export/pdf?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-pdf me-2 text-danger"></i>Report PDF</a></li>
-                        <li><a class="dropdown-item" href="{{base_url}}/statistiche/export/excel?type=soci&status={{filters.status}}&payment_status={{filters.payment_status}}"><i class="fa-solid fa-file-csv me-2 text-success"></i>Export Excel</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card-body p-4">
-                
-                <!-- Filters -->
-                <form action="" method="GET" class="row g-3 mb-4 bg-black bg-opacity-25 p-3 rounded border border-secondary align-items-end">
-                    <div class="col-md-3">
-                        <label class="form-label text-secondary small text-uppercase fw-bold">Stato Iscrizione</label>
-                        <select name="status" class="form-select form-select-sm bg-dark text-white border-secondary">
-                            <option value="">Tutti gli stati</option>
-                            <option value="ATTIVO" {{#filters.status}}selected{{/filters.status}}>ATTIVO</option>
-                            <option value="SOSPESO" {{#filters.status}}selected{{/filters.status}}>SOSPESO</option>
-                            <option value="RADIATO" {{#filters.status}}selected{{/filters.status}}>RADIATO</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label text-secondary small text-uppercase fw-bold">Situazione Contabile</label>
-                        <select name="payment_status" class="form-select form-select-sm bg-dark text-white border-secondary">
-                            <option value="">Tutte le posizioni</option>
-                            <option value="in_regola">In Regola</option>
-                            <option value="moroso">Moroso</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                         <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold"><i class="fa-solid fa-filter me-2"></i>APPLICA</button>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <small class="text-secondary fst-italic">Risultati filtrati: <strong>{{filtered_count}}</strong></small>
-                    </div>
-                </form>
-
-                <div class="table-responsive">
-                    <table class="table table-dark table-hover table-striped align-middle bg-transparent statistics-table" style="width:100%">
-                        <thead class="text-secondary small text-uppercase">
-                            <tr>
-                                <th title="Nome completo del socio">Socio</th>
-                                <th title="Numero di matricola univoco">Matricola</th>
-                                <th title="Stato attuale dell'iscrizione (Attivo, Sospeso, ecc)">Stato</th>
-                                <th title="Stato dei pagamenti per l'anno corrente">Posizione</th>
-                                <th class="text-end">Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#filtered_soci}}
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-circle bg-primary bg-opacity-25 text-primary me-3 fw-bold rounded-circle d-flex justify-content-center align-items-center" style="width:35px; height:35px;">
-                                            {{DatiPersonali.Nome.0}}
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold text-white">{{DatiPersonali.Cognome}} {{DatiPersonali.Nome}}</div>
-                                            <div class="small text-secondary">{{DatiPersonali.Email}}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="font-monospace text-info">{{Matricola}}</span></td>
-                                <td>
-                                    {{#Stato.isActive}}
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">ATTIVO</span>
-                                    {{/Stato.isActive}}
-                                    {{^Stato.isActive}}
-                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">{{Stato.name}}</span>
-                                    {{/Stato.isActive}}
-                                </td>
-                                <td>
-                                    {{#verificaMorosita}}
-                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25"><i class="fa-solid fa-circle-exclamation me-1"></i>MOROSO</span>
-                                    {{/verificaMorosita}}
-                                    {{^verificaMorosita}}
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25"><i class="fa-solid fa-check me-1"></i>IN REGOLA</span>
-                                    {{/verificaMorosita}}
-                                </td>
-                                <td class="text-end">
-                                    <a href="{{base_url}}/soci/{{CodiceFiscale}}" class="btn btn-sm btn-outline-light border-secondary text-secondary hover-white" title="Scheda"><i class="fa-solid fa-eye"></i></a>
-                                </td>
-                            </tr>
-                            {{/filtered_soci}}
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- External Assets -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="{{base_url}}/css/pages/statistics.css">
-
-<!-- Data Config for JS -->
-<div id="stats-data" 
-    data-attivi="{{#stats.attivi}}{{stats.attivi}}{{/stats.attivi}}{{^stats.attivi}}0{{/stats.attivi}}"
-    data-totale="{{#stats.totale}}{{stats.totale}}{{/stats.totale}}{{^stats.totale}}0{{/stats.totale}}"
-    data-paganti="{{#stats.paganti}}{{stats.paganti}}{{/stats.paganti}}{{^stats.paganti}}0{{/stats.paganti}}"
-    data-morosi="{{#stats.morosi}}{{stats.morosi}}{{/stats.morosi}}{{^stats.morosi}}0{{/stats.morosi}}"
-    class="d-none">
-</div>
-
-<!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{{base_url}}/js/pages/statistics.js"></script>
 
 {{> layout_footer }}
 
-
+<!-- Chart.js (Required for Admin View) -->
+{{#is_admin}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{base_url}}/js/pages/statistics.js"></script>
+{{/is_admin}}

@@ -1,76 +1,101 @@
 /**
- * Socio List Page Logic
- * Location: public/js/pages/socio_list.js
- * 
- * Handles Delete Modal interactions and DataTables initialization.
+ * socio_list.js
+ * Handles Infinite Scroll for the User Directory View
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    // --- 1. Delete Modal Logic ---
-    var deleteModal = document.getElementById('deleteModal');
-    if (deleteModal) {
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var cf = button.getAttribute('data-cf');
-            var nome = button.getAttribute('data-nome');
 
-            var modalBodyName = deleteModal.querySelector('#modal-delete-name');
-            var modalForm = deleteModal.querySelector('#modal-delete-form');
+    // ADMIN view uses DataTables (Server-side rendering handled by template for now, or DataTables plugin)
+    // USER view uses Infinite Scroll
 
-            if (modalBodyName) modalBodyName.textContent = nome;
+    // Check if we are in User View locally by checking for the grid container
+    const gridContainer = document.getElementById('user-directory-grid');
+    if (!gridContainer) return; // Exit if not in User View
 
-            // Construct the action URL dynamically based on base_url
-            // We assume base_url is available via a global or data attribute.
-            // Failing that, we rely on relative paths or a pre-defined data-base-url on body.
-            // Best practice: use data-action-template on the form.
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
+    const sentinel = document.getElementById('scroll-sentinel');
 
-            // However, the original code used: modalForm.action = '{{base_url}}/soci/' + cf + '/elimina';
-            // We need to access base_url. It is commonly attached to window or body.
-            // Let's check for window.BASE_URL (from layout_header)
+    const loadMoreSoci = async () => {
+        if (loading || !hasMore) return;
 
-            const baseUrl = window.BASE_URL || '';
-            if (modalForm) modalForm.action = baseUrl + '/soci/' + cf + '/elimina';
-        });
-    }
+        loading = true;
+        sentinel.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
 
-    // --- 2. DataTables Initialization ---
-    var table = $('.smart-table').DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-        "pageLength": 10,
-        "orderCellsTop": true, // Critical for input filters
-        "language": {
-            "search": "<i class='fa-solid fa-search text-secondary me-2'></i>Cerca in tutto:",
-            "lengthMenu": "Mostra _MENU_",
-            "info": "Record _START_-_END_ di _TOTAL_",
-            "infoEmpty": "Nessun dato",
-            "infoFiltered": "(su _MAX_)",
-            "paginate": {
-                "first": '<i class="fa-solid fa-angles-left"></i>',
-                "last": '<i class="fa-solid fa-angles-right"></i>',
-                "next": '<i class="fa-solid fa-angle-right"></i>',
-                "previous": '<i class="fa-solid fa-angle-left"></i>'
-            },
-            "zeroRecords": "Nessun socio trovato con questi criteri"
-        },
-        "dom": '<"d-flex justify-content-between align-items-center mb-3"<"text-secondary"l><"search-box"f>>t<"d-flex justify-content-between align-items-center mt-3"<"text-secondary small"i><"pagination-box"p>>',
-        "initComplete": function () {
-            // Custom Styling for Dark Theme
-            $('.dataTables_filter input').addClass('form-control form-control-sm bg-dark text-white border-secondary').css('display', 'inline-block').css('width', 'auto');
-            $('.dataTables_length select').addClass('form-select form-select-sm bg-dark text-white border-secondary').css('display', 'inline-block').css('width', 'auto');
-            $('.page-link').addClass('bg-dark text-secondary border-secondary');
-            $('.page-item.active .page-link').addClass('bg-primary text-white border-primary').removeClass('bg-dark text-secondary');
+        try {
+            // Fetch next page from API
+            page++;
+            const response = await fetch(`${window.BASE_URL}/api/v1/soci?page=${page}&per_page=12`);
 
-            // Style Pagination on draw
-            this.api().on('draw', function () {
-                $('.page-link').addClass('bg-dark text-secondary border-secondary');
-                $('.page-item.active .page-link').removeClass('bg-dark text-secondary').addClass('bg-primary text-white border-primary');
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const data = await response.json();
+
+            // Check if we have data
+            if (!data.data || data.data.length === 0) {
+                hasMore = false;
+                sentinel.innerHTML = '<p class="text-secondary small">Non ci sono altri soci da visualizzare.</p>';
+                return;
+            }
+
+            // Append cards
+            data.data.forEach(socio => {
+                const cardHtml = createSocioCard(socio);
+                gridContainer.insertAdjacentHTML('beforeend', cardHtml);
             });
+
+            // Update meta
+            if (page >= data.meta.total_pages) {
+                hasMore = false;
+                sentinel.innerHTML = '<p class="text-secondary small">Hai raggiunto la fine della lista.</p>';
+            } else {
+                sentinel.innerHTML = ''; // Clear loader, wait for next intersection
+            }
+
+        } catch (error) {
+            console.error('Error loading soci:', error);
+            sentinel.innerHTML = '<p class="text-danger small">Errore nel caricamento. Riprova.</p>';
+        } finally {
+            loading = false;
         }
-    });
+    };
+
+    // Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            loadMoreSoci();
+        }
+    }, { rootMargin: '200px' });
+
+    observer.observe(sentinel);
+
 });
+
+// Helper: Card Template Builder (Matches Mustache Template)
+function createSocioCard(socio) {
+    const initial = socio.nome.charAt(0) + socio.cognome.charAt(0);
+    const badge = socio.stato === 'ATTIVO'
+        ? '<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>'
+        : '<span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>';
+
+    return `
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
+                <div class="card-body text-center p-4">
+                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold fs-4 text-primary">${initial}</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">${socio.nome} ${socio.cognome}</h5>
+                    <p class="text-secondary small mb-3">Membro dal 2024</p>
+                    
+                    ${badge}
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                         <a href="${window.BASE_URL}/soci/${socio.cf}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
