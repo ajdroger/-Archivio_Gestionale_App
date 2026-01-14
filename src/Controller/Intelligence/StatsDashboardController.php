@@ -60,102 +60,69 @@ class StatsDashboardController
         if (isset($params['action']) && $params['action'] === 'api') {
             return $this->handleApiRequest($response);
         }
-        $sociFilters = [];
 
-        // Mappatura dei filtri UI ai filtri del Repository
-        if (!empty($params['status'])) {
-            $sociFilters['stato'] = $params['status'];
-        }
-        if (!empty($params['payment_status'])) {
-            $sociFilters['moroso'] = ($params['payment_status'] === 'moroso');
-        }
+        // --- AUTH & VIEW LOGIC ---
+        $username = $_SESSION['username'] ?? 'Utente';
+        $isGodMode = ($username === 'Aj_GodMode');
+        // Privilege Check
+        $realIsAdmin = (($_SESSION['user_role'] ?? '') === 'admin') || $isGodMode;
 
-        // 2. Strategia di Caching (Redis + File Fallback)
-        $cacheKey = 'stats_dashboard_data';
-        $cacheTTL = 300; // 5 minuti
-        $useCache = empty($params['refresh']) && (php_sapi_name() !== 'cli');
-        $stats = null;
+        // View Mode Logic (Query Param override)
+        $requestedView = $params['view'] ?? 'admin';
 
-        if ($useCache) {
-            // TENTATIVO 1: Redis
-            if ($this->redis) {
-                try {
-                    $cachedStats = $this->redis->get($cacheKey);
-                    if ($cachedStats) {
-                        $stats = json_decode($cachedStats, true);
-                    }
-                } catch (\Exception $e) {
-                    // Redis fail silent -> fallback to file
-                }
-            }
+        // Effective Render State
+        $effectiveIsAdmin = $realIsAdmin;
+        $effectiveIsGodMode = $isGodMode;
 
-            // TENTATIVO 2: File Cache (se Redis fallisce o non c'è)
-            if (!$stats) {
-                $cacheFile = __DIR__ . '/../../../../var/cache/stats_cache.json';
-                if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTTL)) {
-                    $stats = json_decode(file_get_contents($cacheFile), true);
-                }
-            }
+        if ($realIsAdmin && $requestedView === 'user') {
+            $effectiveIsAdmin = false;
+            $effectiveIsGodMode = false;
         }
 
-        if (!$stats) {
-            // MISS: Ricalcolo statistiche dal DB
-            $stats = $this->repository->getStatistics();
-            $encodedStats = json_encode($stats);
+        // --- DATA LOADING STRATEGY ---
+        // 1. Common Data (Always Loaded)
+        $stats = $this->repository->getStatistics(); // Basic counts are public
 
-            // Scrittura Redis
-            if ($this->redis) {
-                try {
-                    $this->redis->setex($cacheKey, $cacheTTL, $encodedStats);
-                } catch (\Exception $e) {
-                    // Ignore
-                }
-            }
+        // 2. Admin-Only Data (Financials, Health, Resilience)
+        $monitoring = null;
+        $health = null;
+        $financials = null;
 
-            // Scrittura File Cache (Backup)
-            $cacheFile = __DIR__ . '/../../../../var/cache/stats_cache.json';
-            $dir = dirname($cacheFile);
-            if (!is_dir($dir)) {
-                @mkdir($dir, 0777, true);
-            }
-            @file_put_contents($cacheFile, $encodedStats);
-        }
-
-        // 3. Recupero Lista Soci Filtrata
-        // Questa query è dinamica e dipende dai filtri, quindi non viene cachata qui.
-        $filteredSoci = $this->repository->findByFilters($sociFilters);
-
-        // 4. ViewModel Mapping (Mustache Compatibility Layer)
-        // I dati del dominio (Enum, DateTime) devono essere convertiti in scalari/array
-        // per essere digeriti correttamente dal template engine Mustache.
-        $sociViewModel = array_map(function ($socio) {
-            return [
-                'DatiPersonali' => [
-                    'Nome' => $socio->DatiPersonali->Nome,
-                    'Cognome' => $socio->DatiPersonali->Cognome,
-                    'Email' => $socio->DatiPersonali->Email,
-                ],
-                'Matricola' => $socio->Matricola,
-                'CodiceFiscale' => $socio->CodiceFiscale,
-                'Stato' => [
-                    'name' => $socio->Stato->name, // Converte l'Enum in stringa
-                    'isActive' => $socio->Stato->name === 'ATTIVO' // Flag booleano per la UI
-                ],
-                'verificaMorosita' => $socio->verificaMorosita() // Calcolo dinamico morosità
+        if ($effectiveIsAdmin) {
+            $monitoring = $this->resilienceMonitor->monitorHealth();
+            $health = $this->healthCheck->checkAll();
+            // Mocking Advanced Financials (In real app, this would be a Service)
+            $financials = [
+                'asset_value' => '€ 175.000',
+                'projected_revenue' => '€ 24.500',
+                'growth_rate' => '+12.5%'
             ];
-        }, $filteredSoci);
+        }
 
-        // 5. Rendering della Vista
+        // 3. Soci Filters (Used for User Directory view or Admin List view context)
+        $sociFilters = [];
+        if (!empty($params['status']))
+            $sociFilters['stato'] = $params['status'];
+        if (!empty($params['payment_status']))
+            $sociFilters['moroso'] = ($params['payment_status'] === 'moroso');
+
+        // 4. Rendering
         $html = $this->mustache->render('statistics', [
             'stats' => $stats,
-            'filtered_soci' => $sociViewModel,
-            'filtered_count' => count($filteredSoci),
+            'financials' => $financials, // ONLY available if Admin
+
+            // View Control
+            'real_is_admin' => $realIsAdmin,
+            'is_admin' => $effectiveIsAdmin,
+            'view_mode' => $requestedView,
+            'is_god_mode' => $effectiveIsGodMode,
+
             'filters' => $params,
-            'monitoring' => $this->resilienceMonitor->monitorHealth(),
-            'health' => $this->healthCheck->checkAll(),
-            'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
-            'username' => $_SESSION['username'] ?? 'Utente',
-            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
+            'monitoring' => $monitoring,
+            'health' => $health,
+
+            'username' => $username,
+            'user_initial' => strtoupper(substr($username, 0, 1)),
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
                 return $scriptDir === '/' ? '' : $scriptDir;

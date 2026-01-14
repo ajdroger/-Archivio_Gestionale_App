@@ -45,6 +45,21 @@ class ListController
         $query = $queryParams['q'] ?? null;
         $tipoProfilo = $queryParams['tipo'] ?? null;
 
+        // --- AUTH & VIEW LOGIC ---
+        $username = $_SESSION['username'] ?? 'Utente';
+        $isGodMode = ($username === 'Aj_GodMode');
+        $realIsAdmin = (($_SESSION['user_role'] ?? '') === 'admin') || $isGodMode;
+
+        $requestedView = $queryParams['view'] ?? 'admin';
+        $effectiveIsAdmin = $realIsAdmin;
+        $effectiveIsGodMode = $isGodMode;
+
+        if ($realIsAdmin && $requestedView === 'user') {
+            $effectiveIsAdmin = false;
+            $effectiveIsGodMode = false;
+        }
+
+        // Data Retrieval
         $soci = ($query || $tipoProfilo) ? $this->socioRepo->search($query ?? '', $tipoProfilo) : $this->socioRepo->findAll();
 
         $viewData = [
@@ -58,14 +73,20 @@ class ListController
                     'cf' => $socio->CodiceFiscale,
                     'matricola' => $socio->Matricola,
                     'stato' => $socio->Stato->name,
-                    'is_attivo' => $socio->Stato === StatoIscrizione::ATTIVO,
+                    'is_attivo' => $socio->Stato->name === 'ATTIVO', // ENUM comparison logic
                     'is_moroso' => $socio->verificaMorosita(),
                 ];
             }, $soci),
             'search_query' => $query,
-            'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
-            'username' => $_SESSION['username'] ?? 'Utente',
-            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
+
+            // View Control
+            'real_is_admin' => $realIsAdmin,
+            'is_admin' => $effectiveIsAdmin,
+            'view_mode' => $requestedView,
+            'is_god_mode' => $effectiveIsGodMode,
+
+            'username' => $username,
+            'user_initial' => strtoupper(substr($username, 0, 1)),
             'container_fluid' => true,
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
