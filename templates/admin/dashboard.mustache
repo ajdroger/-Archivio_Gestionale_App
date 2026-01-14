@@ -162,10 +162,8 @@
     {{/is_admin}}
 </div>
 
-    {{/is_admin}}
-</div>
-
 <!-- INTERACTIVE WORKSPACE (v5.4.3) -->
+{{#is_admin}}
 <div class="row g-4 mb-5">
     <!-- 1. SWITCHBOARD - SYSTEM OPERATIONS -->
     <div class="col-12 col-xl-4">
@@ -263,6 +261,7 @@ Verificare log errori modulo pagamenti.</textarea>
         </div>
     </div>
 </div>
+{{/is_admin}}
 
 <!-- DYNAMIC WIDGETS GRID -->
 <div class="d-flex align-items-center mb-4">
