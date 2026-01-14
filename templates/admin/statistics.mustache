@@ -65,45 +65,6 @@
         <div class="card h-100 bg-dark border-secondary shadow-lg">
             <div class="card-body text-center p-4">
                 <div class="fs-1 text-info mb-3">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Ciclo Backup & Retention (24h)</h6>
-                <div id="mon-backups">
-                    {{#monitoring.backups.status}}
-                    <span class="badge bg-success-subtle text-success border border-success border-opacity-25">{{monitoring.backups.count}} BACKUPS</span>
-                    {{/monitoring.backups.status}}
-                    {{^monitoring.backups.status}}
-                    <span class="badge bg-warning-subtle text-warning border border-warning border-opacity-25">ALERT: {{monitoring.backups.message}}</span>
-                    {{/monitoring.backups.status}}
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card h-100 bg-dark border-secondary shadow-lg">
-            <div class="card-body text-center p-4">
-                <div class="fs-1 text-warning mb-3">
-                    <i class="fa-solid fa-server"></i>
-                </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Disponibilità Servizio (SLA)</h6>
-                <div id="mon-uptime">
-                    <span class="badge bg-dark text-white border border-secondary">{{health.uptime}}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Charts Section -->
-<div class="row g-4 mb-5">
-    <!-- Membership Health Chart -->
-    <div class="col-md-6 col-xl-4">
-        <div class="card h-100 bg-dark border-secondary shadow-lg">
-            <div class="card-header border-secondary bg-transparent py-3">
-                <h6 class="text-white mb-0 fw-bold"><i class="fa-solid fa-chart-pie me-2 text-info"></i>DISTRIBUZIONE STATUS GIURIDICO</h6>
-            </div>
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                <div style="height: 250px; width: 100%;">
                     <canvas id="chartStatus"></canvas>
                 </div>
                 <div class="mt-3 text-center">
