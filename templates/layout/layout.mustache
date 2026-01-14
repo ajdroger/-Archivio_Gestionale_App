@@ -84,8 +84,7 @@
         </div>
     </nav>
 
-    <!-- Talking Archive Engine -->
-    <script src="{{base_url}}/js/talking_archive.js"></script>
+
 
     <main class="flex-shrink-0 main-content">
         <div class="container">
@@ -130,6 +129,10 @@
     </script>
     
     {{> partials/ai_widget}}
+    
+    <!-- Talking Archive Engine (Forced Load) -->
+    <script src="{{base_url}}/js/talking_archive.js?v=2"></script>
+    
     {{> compliance/cookie_banner}}
 </body>
 </html>
