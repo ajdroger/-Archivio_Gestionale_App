@@ -798,6 +798,45 @@ L'AI Assistant v5.0 era limitato ai soli PDF e aveva un'interfaccia segregata. L
 
 **Decisione**:
 1.  **Pattern Factory**: Implementare `DocumentParserFactory` per selezione dinamica del parser (`WordParserService`, `ExcelParserService`, `CodeParserService`).
+2.  **Global Widget**: Integrazione `partials/ai_widget.mustache` nel footer globale (`layout_footer`).
+3.  **Smart Context**: Middleware che inietta metadati pagina (titolo, utente, ruolo) nel payload della chat.
+
+**Conseguenze**:
+- (+) UX Unificata: L'utente non deve "andare" dall'AI, l'AI è sempre lì.
+- (+) Supporto Formati Esteso: Copertura 99% casi d'uso ufficio.
+
+---
+
+## [ADR-030] Global Fluid Layout Strategy
+**Data**: 2026-01-14
+**Stato**: ✅ Attivo
+**Contesto**:
+L'uso di `container` (fixed width) su schermi moderni sprecava oltre il 40% dello spazio orizzontale, costringendo le tabelle dati (es. Lista Soci) a scroll orizzontali e comprimendo la navigazione.
+**Decisione**:
+Adottare **Global Fluid Layout** (`container-fluid`) come standard per l'intera applicazione.
+- **Padding Standard**: `px-4` per il contenuto principale, `px-5` per il footer (per bilanciamento visivo).
+- **Navbar**: Estesa a tutta larghezza per permettere spaziatura generosa (`gap-4`) tra gli elementi di navigazione.
+**Conseguenze**:
+- (+) Massimizzazione Density Dati: Le tabelle mostrano più colonne senza scroll.
+- (+) Look & Feel moderno ed "Enterprise".
+- (+) Allineamento visivo Header/Body/Footer perfetto.
+
+---
+
+## [ADR-031] Navbar Symmetry & Centralization
+**Data**: 2026-01-14
+**Stato**: ✅ Attivo
+**Contesto**:
+La navigazione precedente vedeva elementi sparsi: badge a sinistra, link al centro, controlli a destra, con separatori verticali che creavano "rumore visivo".
+**Decisione**:
+**Centralizzazione Radicale**:
+1.  Il "Mission-Critical Status Badge" non è più un elemento decorativo isolato, ma il **primo elemento** della lista di navigazione centrale.
+2.  Rimozione di tutti i separatori verticali (`vr`).
+3.  Uso di `mx-auto` sul contenitore `ul.navbar-nav` per garantire che l'intero blocco (Badge + Link) sia matematicamente centrato nella viewport.
+**Conseguenze**:
+- (+) Simmetria visiva immediata.
+- (+) Gerarchia chiara: Status -> Azione 1 -> Azione 2.
+- (+) Estetica pulita e professionale ("Less is More").
 2.  **Smart Context**: Iniettare dati di contesto (URL parsing) nel System Prompt (es. "L'utente sta guardando Mario Rossi").
 3.  **Widget Globale**: Sostituire la dashboard dedicata con una Floating Chat (`ai_widget.mustache`) presente in tutte le pagine (`layout.mustache`).
 4.  **Vocale**: Integrare Web Speech API per input vocale diretto.

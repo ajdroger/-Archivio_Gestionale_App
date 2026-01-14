@@ -60,6 +60,21 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
     - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
 - **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).
+    - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
+
+### Layout & UI Deep Polish [ULTRA-DETAILED]
+- **Navbar Revolution**: Riprogettazione completa della barra di navigazione (`layout_header.mustache`).
+    - **Centralizzazione**: Il blocco di navigazione (Dashboard, Soci, Report) e il badge di stato "Mission-Critical" sono stati unificati e centrati perfettamente nella viewport.
+    - **Simmetria**: Rimossi separatori verticali antiestetici; il badge di stato ora è trattato visivamente come un elemento di navigazione "premium", garantendo un ritmo visivo uniforme (`gap-4`).
+    - **Fluidità Globale**: Abbandonato il container a larghezza fissa in favore di `container-fluid px-4` su **tutte le pagine**, massimizzando l'uso dello spazio su monitor larghi (Ultrawide ready).
+- **Footer "Wide"**: Estensione del layout fluido anche al footer (`layout_footer.mustache`), garantendo allineamento verticale coerente con l'header.
+- **Talking Archive UI**: Refactoring dei controlli TTS.
+    - Stile "Premium Minimal": Rimossi sfondi scuri pesanti.
+    - Pulsante "Ascolta": Stile `btn-outline-info` con icona cuffie.
+    - Badge Stato: Integrato e animato (`animate__fadeIn`).
+- **Global Asset Loading**:
+    - Spostamento script `talking_archive.js` nel footer per garantire il caricamento post-DOM.
+    - Inclusione forzata del parziale `ai_widget.mustache` nel footer globale per garantire la presenza dell'assistente in ogni vista (inclusi errori e pagine legacy).
 
 ---
 
