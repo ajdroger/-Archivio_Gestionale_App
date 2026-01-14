@@ -1,9 +1,11 @@
 /* Scroll Navigator Component style */
 .scroll-navigator-container {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 9999;
+    bottom: 110px;
+    right: 16px;
+    /* Bootstrap p-3 = 16px, aligning center with AI Widget */
+    z-index: 9998;
+    /* Below Widget (9999) if overlap, but physically above */
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
@@ -47,7 +49,7 @@
 
 .scroll-icon {
     font-size: 1.2rem;
-    color: #38bdf8; /* Tailwind Sky-400 equivalent for premium tech look */
+    color: #38bdf8;
     z-index: 2;
     transition: color 0.3s ease;
 }
@@ -80,20 +82,30 @@
 }
 
 @keyframes bounceUp {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
 }
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
     .scroll-navigator-container {
-        bottom: 20px;
-        right: 20px;
+        bottom: 90px;
+        right: 16px;
+        /* Align matching desktop/widget padding */
     }
+
     .scroll-fab {
         width: 50px;
         height: 50px;
     }
+
     .progress-ring {
         width: 54px;
         height: 54px;
