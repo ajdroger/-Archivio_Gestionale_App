@@ -76,9 +76,16 @@
                         </button>
                     </div>
 
+                    {{#is_public_policy}}
+                    <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{{base_url}}/landing/index.html">
+                        <i class="fa-solid fa-house me-1"></i>Torna alla Home
+                    </a>
+                    {{/is_public_policy}}
+                    {{^is_public_policy}}
                     <a class="btn btn-outline-danger btn-sm rounded-pill px-3" href="{{base_url}}/logout">
                         <i class="fa-solid fa-power-off me-1"></i>Esci
                     </a>
+                    {{/is_public_policy}}
                 </div>
             </div>
         </div>
