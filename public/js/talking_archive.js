@@ -36,8 +36,10 @@ class TalkingArchive {
         }
 
         // Check if page has readable content
+        const summary = document.querySelector('.ta-smart-summary');
         const content = document.querySelector(this.contentSelector);
-        if (!content && !document.querySelector('[data-ta-summary]')) {
+
+        if (!content && !summary) {
             // No content to read, hide controls
             if (this.container) this.container.classList.add('d-none');
             return;
@@ -153,7 +155,7 @@ class TalkingArchive {
                 // Stopped
                 this.btnPlay.classList.remove('d-none');
                 this.btnPause.classList.add('d-none');
-                this.btnPlay.innerHTML = '<i class="fa-solid fa-headphones me-2"></i>Ascolta Pagina';
+                this.btnPlay.innerHTML = '<i class="fa-solid fa-headphones me-2"></i>Ascolta';
                 if (this.statusBadge) {
                     this.statusBadge.textContent = '';
                     this.statusBadge.classList.replace('bg-success', 'bg-secondary');

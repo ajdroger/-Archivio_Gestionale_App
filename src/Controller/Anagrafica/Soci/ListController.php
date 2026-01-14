@@ -71,7 +71,8 @@ class ListController
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
                 return $scriptDir === '/' ? '' : $scriptDir;
             })(),
-            'ai_context' => "L'utente è sul Registro Soci. Sono visualizzati " . count($soci) . " soci. È possibile cercare o filtrare."
+            'ai_context' => "L'utente è sul Registro Soci. Sono visualizzati " . count($soci) . " soci. È possibile cercare o filtrare.",
+            'count' => count($soci)
         ];
 
         $html = $this->mustache->render('socio_list', $viewData);
