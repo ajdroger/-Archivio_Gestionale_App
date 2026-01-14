@@ -1,10 +1,10 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-title Fratellanza Militare Archivio - Setup Windows
+title MCAG Archivio - Setup Windows
 
 echo ==================================================
-echo    FRATELLANZA MILITARE ARCHIVIO - SETUP WINDOWS
+echo    MCAG ARCHIVIO - SETUP WINDOWS
 echo ==================================================
 
 :: 1. Verifica Requisiti
