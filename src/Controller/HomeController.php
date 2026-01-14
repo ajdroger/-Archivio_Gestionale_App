@@ -16,6 +16,8 @@ class HomeController
 {
     private Mustache_Engine $mustache;
     private \MCAG\GestioneSoci\SocioRepository $repo;
+    private \MCAG\Debug\ResilienceMonitor $resilience;
+    private \MCAG\Service\HealthCheckService $health;
     private \MCAG\Service\ConfigurationService $config;
 
     public function __construct(
