@@ -178,7 +178,7 @@
                         <small class="text-secondary">Blocca accesso utenti non-admin</small>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleMaintenance" data-setting="maintenance">
+                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleMaintenance" data-setting="maintenance" {{#app_config.maintenance}}checked{{/app_config.maintenance}}>
                     </div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -187,7 +187,7 @@
                         <small class="text-secondary">Permetti signup autonomo</small>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleRegistrations" checked data-setting="registrations">
+                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleRegistrations" data-setting="registrations" {{#app_config.registrations}}checked{{/app_config.registrations}}>
                     </div>
                 </div>
                  <div class="d-flex justify-content-between align-items-center">
@@ -196,7 +196,7 @@
                         <small class="text-secondary">Richiedi OTP obbligatorio</small>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggle2FA" checked data-setting="strict_2fa">
+                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggle2FA" data-setting="strict_2fa" {{#app_config.strict_2fa}}checked{{/app_config.strict_2fa}}>
                     </div>
                 </div>
             </div>
@@ -251,11 +251,10 @@
                      <h6 class="text-uppercase fw-bold text-warning mb-0 text-dark opacity-50"><i class="fa-solid fa-note-sticky me-2"></i>Quick Notes</h6>
                 </div>
                 <div class="card-body p-0">
-                    <textarea class="form-control border-0 bg-transparent h-100 resize-none text-dark" style="font-family: 'Indie Flower', cursive; font-size: 1.1rem;" placeholder="Scrivi appunti veloci qui... (Salvato in locale)">Contattare fornitore server per upgrade RAM.
-Verificare log errori modulo pagamenti.</textarea>
+                    <textarea class="form-control border-0 bg-transparent h-100 resize-none text-dark" id="notes-area" style="font-family: 'Indie Flower', cursive; font-size: 1.1rem;" placeholder="Scrivi appunti veloci qui... (Salvato in locale)">{{admin_notes}}</textarea>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-end">
-                    <small class="text-muted fst-italic" id="notes-status">Saved</small>
+                    <small class="text-muted fst-italic" id="notes-status">Syncing...</small>
                 </div>
             </div>
         </div>

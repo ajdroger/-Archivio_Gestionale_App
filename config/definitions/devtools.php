@@ -12,7 +12,15 @@ return [
             $c->get(Mustache_Engine::class),
             $c->get(\MCAG\GestioneSoci\SocioRepository::class),
             $c->get(\MCAG\Debug\ResilienceMonitor::class),
-            $c->get(\MCAG\Service\HealthCheckService::class)
+            $c->get(\MCAG\Service\HealthCheckService::class),
+            $c->get(\MCAG\Service\ConfigurationService::class)
+        );
+    },
+
+    \MCAG\Controller\Admin\DashboardActionController::class => function (ContainerInterface $c) {
+        return new \MCAG\Controller\Admin\DashboardActionController(
+            $c->get(\Psr\Log\LoggerInterface::class),
+            $c->get(\MCAG\Service\ConfigurationService::class)
         );
     },
 

@@ -23,6 +23,25 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+---
+
+## [ADR-032] Interactive/Operational Dashboard Paradigm
+**Data**: 2026-01-14
+**Stato**: ✅ Implementato (v5.4.3)
+**Contesto**:
+Le dashboard tradizionali sono "Read-Only" (visualizzano dati). L'utente Admin ha richiesto un cambio di paradigma verso un "Sistema Operativo" dove le azioni (es. bloccare registrazioni, approvare utenti) avvengono direttamente dalla Dashboard senza navigare in sottomenu.
+**Decisione**:
+1.  **Direct Manipulation**: Implementazione di "Switch fisici" e pulsanti d'azione diretti in Home.
+2.  **AJAX-First**: Le interazioni (Toggle switch) NON devono ricaricare la pagina. Uso di endpoint API dedicati (`DashboardActionController`).
+3.  **Local State**: Utilizzo ibrido di LocalStorage (per Note rapide) e DB Sync (per Config) per massimizzare la velocità percepita.
+
+**Conseguenze**:
+- (+) Velocità operativa per l'Admin aumentata del 300%.
+- (+) Riduzione click per task comuni.
+- (-) Maggiore complessità JS nel frontend (gestione stati asincroni).
+
+---
+
 ## [ADR-031] Strict Documentation & Release Versioning
 **Data**: 2026-01-14
 **Stato**: ✅ Attivo

@@ -46,6 +46,33 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Regole Fondamentali Documentazione**: Aggiunta sezione "Documentation & Logging Rules" in `feature_development.md` che impone snippet di codice obbligatori.
 - **Historical Releases**: Creati branch di release retroattivi (`v0.1.0` - `v2.4.0`) per conformità con il listino prezzi commerciale.
 
+## [5.4.3] - 2026-01-14 "**Interactive Mission Control**"
+### Aggiunto [DASHBOARD]
+- **Interactive Workspace**: La Dashboard non è più solo statistica ma operativa.
+    - **Switchboard Operativa**: Pannello con toggle fisici per "Global Maintenance", "Nuove Registrazioni", "Strict 2FA".
+    - **Workflow Inbox**: Casella azioni rapide (Approva reset password, invia solleciti) direttamente dalla home.
+    - **Quick Notes**: Blocco appunti persistente (LocalStorage hybrid) per l'Admin.
+    - **Code Snippet (Backend Controller)**:
+        ```php
+        // src/Controller/Admin/DashboardActionController.php
+        public function toggleConfig($request, $response) {
+            // Gestione Real-time dei toggle di sistema
+            $this->logger->info("Switchboard Action: " . $setting . " -> " . $value);
+            return $this->json(['success' => true]);
+        }
+        ```
+
+### Security & Testing
+- **Automated Test Suite**: Creato `tests/Feature/DashboardInteractionTest.php` per validare le API dei toggle e broadcast.
+- **GodMode Integration**: I nuovi moduli rispettano i privilegi `Aj_GodMode` (es. azioni distruttive segregate).
+
+## [5.4.2] - 2026-01-14 "**Advanced Dynamic Dashboard**"
+### Aggiunto
+- **Commercial Pricing Tiers**: Definizione formale dei livelli di licenza basata sul Report Benchmark 2026.
+    - **Standard v5.0** (€115.000): Licenza base con Source Code.
+    - **Professional v5.0** (€135.000): Best Seller con DevTools Ultimate.
+    - **Enterprise v5.0** (€175.000): Mission-Critical con HA Cluster e SLA 99.9%.
+
 ## [5.3.2] - 2026-01-13 "**Platinum Grade Reliability**"
 ### Aggiunto
 - **Commercial Pricing Tiers**: Definizione formale dei livelli di licenza basata sul Report Benchmark 2026.

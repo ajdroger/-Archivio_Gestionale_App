@@ -16,19 +16,20 @@ class HomeController
 {
     private Mustache_Engine $mustache;
     private \MCAG\GestioneSoci\SocioRepository $repo;
-    private \MCAG\Debug\ResilienceMonitor $resilience;
-    private \MCAG\Service\HealthCheckService $health;
+    private \MCAG\Service\ConfigurationService $config;
 
     public function __construct(
         Mustache_Engine $mustache,
         \MCAG\GestioneSoci\SocioRepository $repo,
         \MCAG\Debug\ResilienceMonitor $resilience,
-        \MCAG\Service\HealthCheckService $health
+        \MCAG\Service\HealthCheckService $health,
+        \MCAG\Service\ConfigurationService $config // Injected
     ) {
         $this->mustache = $mustache;
         $this->repo = $repo;
         $this->resilience = $resilience;
         $this->health = $health;
+        $this->config = $config;
     }
 
     /**
@@ -53,6 +54,10 @@ class HomeController
         $systemHealth = $isAdmin ? $this->health->checkAll() : null;
         $resilienceData = $isAdmin ? $this->resilience->monitorHealth() : null;
 
+        // Load operational state
+        $appConfig = $this->config->getAll();
+        $adminNotes = $this->config->get('admin_notes', '');
+
         $html = $this->mustache->render('dashboard', [
             'title' => 'Dashboard Archivio',
             'content' => 'Benvenuto nel sistema di digitalizzazione archivio.',
@@ -66,6 +71,8 @@ class HomeController
             'username' => $username,
             'user_initial' => strtoupper(substr($username, 0, 1)),
             'current_date' => date('d M Y'),
+            'app_config' => $appConfig, // Pass full config
+            'admin_notes' => $adminNotes,
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
                 return $scriptDir === '/' ? '' : $scriptDir;

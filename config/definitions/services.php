@@ -10,6 +10,10 @@ return [
         return new \MCAG\Service\RedisService();
     },
 
+    \MCAG\Service\ConfigurationService::class => function () {
+        return new \MCAG\Service\ConfigurationService(__DIR__ . '/../../var/storage');
+    },
+
     \MCAG\Service\CacheService::class => function (ContainerInterface $c) {
         return new \MCAG\Service\CacheService(
             $c->get(\MCAG\Service\RedisService::class)

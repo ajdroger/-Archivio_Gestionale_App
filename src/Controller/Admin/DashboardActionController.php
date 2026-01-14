@@ -14,13 +14,12 @@ use Monolog\Logger;
 class DashboardActionController
 {
     private Logger $logger;
+    private ConfigurationService $config;
 
-    // In a real app, I'd inject a ConfigService. 
-    // For now, I'll simulate config persistence via JSON file or specific service if available.
-
-    public function __construct(Logger $logger)
+    public function __construct(Logger $logger, ConfigurationService $config)
     {
         $this->logger = $logger;
+        $this->config = $config;
     }
 
     /**
@@ -31,18 +30,21 @@ class DashboardActionController
     {
         $data = $request->getParsedBody();
         $setting = $data['setting'] ?? null;
-        $value = $data['value'] ?? false; // true/false
+        // Handle boolean value correctly from JSON or Form
+        $value = $data['value'] ?? false;
+
+        // Sanitize boolean
+        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
 
         if (!$setting) {
             $response->getBody()->write(json_encode(['success' => false, 'error' => 'Missing setting']));
             return $response->withStatus(400);
         }
 
-        // Simula salvataggio configurazione
-        $this->logger->info("Dashboard Toggle: $setting set to " . ($value ? 'ON' : 'OFF'));
+        // Persist Configuration
+        $this->config->set($setting, $value);
 
-        // Qui si chiamerebbe $this->configService->set($setting, $value);
-        // Per ora ritorniamo successo simulato.
+        $this->logger->info("Dashboard Toggle: $setting set to " . ($value ? 'ON' : 'OFF'));
 
         $response->getBody()->write(json_encode([
             'success' => true,
@@ -85,8 +87,8 @@ class DashboardActionController
         $data = $request->getParsedBody();
         $notes = $data['notes'] ?? '';
 
-        // Simula persistenza
-        // file_put_contents('notes.txt', $notes);
+        // Persist Notes
+        $this->config->set('admin_notes', $notes);
 
         $response->getBody()->write(json_encode(['success' => true, 'saved_at' => date('H:i:s')]));
         return $response->withHeader('Content-Type', 'application/json');
