@@ -2,7 +2,8 @@
 .scroll-navigator-container {
     position: fixed;
     bottom: 110px;
-    right: 30px;
+    right: 16px;
+    /* Bootstrap p-3 = 16px, aligning center with AI Widget */
     z-index: 9998;
     /* Below Widget (9999) if overlap, but physically above */
     opacity: 0;
@@ -49,7 +50,6 @@
 .scroll-icon {
     font-size: 1.2rem;
     color: #38bdf8;
-    /* Tailwind Sky-400 equivalent for premium tech look */
     z-index: 2;
     transition: color 0.3s ease;
 }
@@ -97,7 +97,8 @@
 @media (max-width: 768px) {
     .scroll-navigator-container {
         bottom: 90px;
-        right: 20px;
+        right: 16px;
+        /* Align matching desktop/widget padding */
     }
 
     .scroll-fab {
