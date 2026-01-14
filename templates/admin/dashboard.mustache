@@ -240,7 +240,7 @@
     <div class="col-12 col-xl-4">
         <div class="d-flex flex-column h-100 gap-4">
             <!-- Command Palette Trigger -->
-            <button class="btn btn-outline-secondary border-dashed p-3 text-start d-flex justify-content-between align-items-center hover-white" onclick="alert('Command Palette Coming Soon: Ctrl+K')">
+            <button class="btn btn-outline-secondary border-dashed p-3 text-start d-flex justify-content-between align-items-center hover-white" id="cmd-palette-trigger">
                 <span><i class="fa-solid fa-terminal me-2"></i>Type a command...</span>
                 <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-25">Ctrl+K</span>
             </button>
@@ -255,6 +255,27 @@
                 </div>
                 <div class="card-footer bg-transparent border-0 text-end">
                     <small class="text-muted fst-italic" id="notes-status">Syncing...</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- COMMAND PALETTE MODAL -->
+<div class="modal fade" id="commandPaletteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="background-color: #1e293b; color: #fff;">
+            <div class="modal-body p-0">
+                <div class="input-group border-bottom border-secondary border-opacity-25">
+                    <span class="input-group-text bg-transparent border-0 text-secondary ps-4"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" class="form-control bg-transparent border-0 text-white py-3 fs-5 shadow-none" id="cmd-input" placeholder="Type a command or search..." autocomplete="off">
+                </div>
+                <div class="list-group list-group-flush p-2" id="cmd-results" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Results populated by JS -->
+                </div>
+                <div class="bg-black bg-opacity-20 p-2 text-end text-secondary small">
+                    <span class="me-3"><kbd class="bg-secondary bg-opacity-25 border-0">Enter</kbd> to select</span>
+                    <span><kbd class="bg-secondary bg-opacity-25 border-0">Esc</kbd> to close</span>
                 </div>
             </div>
         </div>

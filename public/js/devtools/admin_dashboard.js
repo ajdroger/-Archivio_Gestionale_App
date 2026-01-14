@@ -155,4 +155,92 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+    // --- 6. COMMAND PALETTE ENGINE (Omni-Tool) ---
+    const cmdTrigger = document.getElementById('cmd-palette-trigger');
+    const cmdModalEl = document.getElementById('commandPaletteModal');
+    const cmdInput = document.getElementById('cmd-input');
+    const cmdResults = document.getElementById('cmd-results');
+
+    let cmdModal = null;
+    if (cmdModalEl && typeof bootstrap !== 'undefined') {
+        cmdModal = new bootstrap.Modal(cmdModalEl);
+
+        // Open on Click
+        if (cmdTrigger) {
+            cmdTrigger.onclick = () => cmdModal.show();
+        }
+
+        // Open on Ctrl+K
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                cmdModal.show();
+            }
+        });
+
+        // Focus input on show
+        cmdModalEl.addEventListener('shown.bs.modal', () => {
+            cmdInput.value = '';
+            renderCommands(); // Show all initially
+            cmdInput.focus();
+        });
+    }
+
+    // Command Definitions
+    const commands = [
+        { icon: 'fa-user-plus', title: 'Nuovo Socio', desc: 'Registra una nuova anagrafica', action: () => window.location.href = 'soci/nuovo' },
+        { icon: 'fa-users', title: 'Lista Soci', desc: 'Vai al registro completo', action: () => window.location.href = 'soci' },
+        { icon: 'fa-chart-pie', title: 'Statistiche', desc: 'Analisi demografica e finanziaria', action: () => window.location.href = 'statistiche' },
+        { icon: 'fa-house', title: 'Dashboard', desc: 'Torna alla home', action: () => window.location.href = 'dashboard' },
+        { icon: 'fa-terminal', title: 'DevTools', desc: 'Console di sviluppo', action: () => window.location.href = 'devtools' },
+        { icon: 'fa-lock', title: 'Toggle Maintenance', desc: 'Attiva/Disattiva manutenzione globale', action: () => document.getElementById('toggleMaintenance').click() },
+        { icon: 'fa-notes-medical', title: 'Add Sticky Note', desc: 'Focus su note rapide', action: () => { cmdModal.hide(); setTimeout(() => document.getElementById('notes-area').focus(), 500); } }
+    ];
+
+    function renderCommands(filter = '') {
+        if (!cmdResults) return;
+        cmdResults.innerHTML = '';
+
+        const filtered = commands.filter(c => c.title.toLowerCase().includes(filter.toLowerCase()) || c.desc.toLowerCase().includes(filter.toLowerCase()));
+
+        if (filtered.length === 0) {
+            cmdResults.innerHTML = '<div class="p-3 text-center text-muted">No commands found.</div>';
+            return;
+        }
+
+        filtered.forEach((cmd, index) => {
+            const item = document.createElement('a');
+            item.className = 'list-group-item list-group-item-action bg-transparent border-0 text-white d-flex align-items-center p-3';
+            item.href = '#';
+            if (index === 0) item.classList.add('active-command'); // Highlight first
+            item.innerHTML = `
+                <div class="rounded-circle bg-secondary bg-opacity-10 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <i class="fa-solid ${cmd.icon}"></i>
+                </div>
+                <div>
+                    <div class="fw-bold">${cmd.title}</div>
+                    <small class="text-white-50">${cmd.desc}</small>
+                </div>
+            `;
+            item.onclick = (e) => {
+                e.preventDefault();
+                cmd.action();
+                cmdModal.hide();
+            };
+            cmdResults.appendChild(item);
+        });
+    }
+
+    if (cmdInput) {
+        cmdInput.addEventListener('input', (e) => renderCommands(e.target.value));
+
+        // Keyboard Navigation (Basic Enter support)
+        cmdInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const first = cmdResults.querySelector('a');
+                if (first) first.click();
+            }
+        });
+    }
+
 });
