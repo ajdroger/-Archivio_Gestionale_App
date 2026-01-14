@@ -52,20 +52,24 @@
                 
                 <div class="d-flex align-items-center gap-3">
                     <!-- Talking Archive Controls -->
-                    <div id="talking-archive-controls" class="d-none d-flex align-items-center bg-dark bg-opacity-50 rounded-pill px-3 py-1 border border-secondary border-opacity-25" style="z-index: 9999; position: relative;">
-                        <span id="ta-status" class="badge bg-secondary me-2 animate__animated animate__fadeIn"></span>
+                    <div id="talking-archive-controls" class="d-none d-flex align-items-center gap-2" style="z-index: 9999; position: relative;">
+                        <!-- Status Badge (Minimal) -->
+                        <span id="ta-status" class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 rounded-pill animate__animated animate__fadeIn" style="font-size: 0.7em;"></span>
                         
-                        <button id="ta-play" class="btn btn-sm btn-link text-info text-decoration-none p-0" title="Ascolta Pagina">
-                            <i class="fa-solid fa-headphones me-2"></i>Ascolta
+                        <!-- Play Button (Premium) -->
+                        <button id="ta-play" class="btn btn-sm btn-outline-info rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm" title="Ascolta questa pagina">
+                            <i class="fa-solid fa-headphones"></i>
+                            <span class="small fw-bold">Ascolta</span>
                         </button>
                         
-                        <button id="ta-pause" class="btn btn-sm btn-link text-warning text-decoration-none p-0 d-none" title="Pausa">
-                            <i class="fa-solid fa-pause me-2"></i>Pausa
+                        <!-- Pause Button -->
+                        <button id="ta-pause" class="btn btn-sm btn-outline-warning rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm d-none" title="Pausa lettura">
+                            <i class="fa-solid fa-pause"></i>
+                            <span class="small fw-bold">Pausa</span>
                         </button>
                         
-                        <div class="vr mx-2 text-secondary"></div>
-                        
-                        <button id="ta-stop" class="btn btn-sm btn-link text-danger text-decoration-none p-0" title="Stop">
+                        <!-- Stop Button (Icon Only) -->
+                        <button id="ta-stop" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" style="width: 32px; height: 32px;" title="Interrompi">
                             <i class="fa-solid fa-stop"></i>
                         </button>
                     </div>
