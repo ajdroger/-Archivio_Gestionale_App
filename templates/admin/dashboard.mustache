@@ -162,6 +162,108 @@
     {{/is_admin}}
 </div>
 
+    {{/is_admin}}
+</div>
+
+<!-- INTERACTIVE WORKSPACE (v5.4.3) -->
+<div class="row g-4 mb-5">
+    <!-- 1. SWITCHBOARD - SYSTEM OPERATIONS -->
+    <div class="col-12 col-xl-4">
+        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h6 class="text-uppercase fw-bold text-secondary mb-0"><i class="fa-solid fa-sliders me-2 text-primary"></i>Switchboard Operativa</h6>
+            </div>
+            <div class="card-body px-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <div class="fw-bold text-white">Global Maintenance</div>
+                        <small class="text-secondary">Blocca accesso utenti non-admin</small>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleMaintenance" data-setting="maintenance">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                         <div class="fw-bold text-white">Nuove Registrazioni</div>
+                        <small class="text-secondary">Permetti signup autonomo</small>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleRegistrations" checked data-setting="registrations">
+                    </div>
+                </div>
+                 <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                         <div class="fw-bold text-white">Strict 2FA Enforcement</div>
+                        <small class="text-secondary">Richiedi OTP obbligatorio</small>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggle2FA" checked data-setting="strict_2fa">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. WORKFLOW INBOX -->
+    <div class="col-12 col-xl-4">
+        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05) !important;">
+             <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between">
+                <h6 class="text-uppercase fw-bold text-secondary mb-0"><i class="fa-solid fa-inbox me-2 text-success"></i>Workflow Inbox</h6>
+                <span class="badge bg-danger rounded-pill">3 Pending</span>
+            </div>
+            <div class="list-group list-group-flush bg-transparent">
+                <!-- Item 1 -->
+                <div class="list-group-item bg-transparent border-secondary border-opacity-10 px-4 py-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <small class="text-warning fw-bold">RICHIESTA ACCESSO</small>
+                        <small class="text-secondary">2m ago</small>
+                    </div>
+                    <p class="text-white small mb-2">Utente <strong>M.Rossi</strong> richiede reset password manuale.</p>
+                    <div class="d-grid gap-2 d-flex">
+                        <button class="btn btn-xs btn-success flex-grow-1"><i class="fa-solid fa-check me-1"></i>Approva</button>
+                        <button class="btn btn-xs btn-outline-secondary"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="list-group-item bg-transparent border-secondary border-opacity-10 px-4 py-3">
+                     <div class="d-flex justify-content-between align-items-start mb-2">
+                        <small class="text-info fw-bold">SCADENZA</small>
+                        <small class="text-secondary">1h ago</small>
+                    </div>
+                    <p class="text-white small mb-2">Rinnovo quota socio <strong>#4412</strong> in scadenza.</p>
+                    <button class="btn btn-xs btn-outline-info w-100"><i class="fa-solid fa-paper-plane me-1"></i>Invia Sollecito</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. ADMIN STICKY NOTES & TOOLS -->
+    <div class="col-12 col-xl-4">
+        <div class="d-flex flex-column h-100 gap-4">
+            <!-- Command Palette Trigger -->
+            <button class="btn btn-outline-secondary border-dashed p-3 text-start d-flex justify-content-between align-items-center hover-white" onclick="alert('Command Palette Coming Soon: Ctrl+K')">
+                <span><i class="fa-solid fa-terminal me-2"></i>Type a command...</span>
+                <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-25">Ctrl+K</span>
+            </button>
+
+            <!-- Sticky Notes -->
+            <div class="card border-0 shadow-lg flex-grow-1" style="background: #fffbeb;">
+                <div class="card-header bg-transparent border-0 pt-3 px-3">
+                     <h6 class="text-uppercase fw-bold text-warning mb-0 text-dark opacity-50"><i class="fa-solid fa-note-sticky me-2"></i>Quick Notes</h6>
+                </div>
+                <div class="card-body p-0">
+                    <textarea class="form-control border-0 bg-transparent h-100 resize-none text-dark" style="font-family: 'Indie Flower', cursive; font-size: 1.1rem;" placeholder="Scrivi appunti veloci qui... (Salvato in locale)">Contattare fornitore server per upgrade RAM.
+Verificare log errori modulo pagamenti.</textarea>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-end">
+                    <small class="text-muted fst-italic" id="notes-status">Saved</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- DYNAMIC WIDGETS GRID -->
 <div class="d-flex align-items-center mb-4">
     <h3 class="h5 fw-bold text-uppercase tracking-wider text-secondary mb-0">
