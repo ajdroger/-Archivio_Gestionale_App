@@ -73,3 +73,4 @@ Lo SLA decade o non si applica in caso di:
 ---
 **Approvazione SLA**:
 L'adesione a un piano di supporto (Standard, Professional o Enterprise) implica l'accettazione integrale del presente SLA.
+
