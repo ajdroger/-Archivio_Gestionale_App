@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLA & Supporto - MCAG System</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-3"
+        style="background: rgba(9, 10, 12, 0.95); backdrop-filter: blur(10px);">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="../index.html">
+                <i class="fas fa-shield-alt text-info"></i> MCAG <span class="text-white-50">System v5.4</span>
+            </a>
+            <a href="../index.html" class="btn btn-outline-light btn-sm rounded-pill ms-auto">Torna alla Home</a>
+        </div>
+    </nav>
+
+    <div class="container py-5 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="glass-card p-5">
+                    <h1 class="fw-bold mb-4 text-white">Service Level Agreement (SLA) & Policy di Supporto</h1>
+                    <div class="text-secondary mb-5 pb-4 border-bottom border-secondary border-opacity-25">
+                        <p><strong>Riferimento:</strong> Piano di Manutenzione & Supporto Tecnico<br>
+                            <strong>Applicabilità:</strong> Licenze Professional / Enterprise<br>
+                            <strong>Revisione:</strong> Gennaio 2026
+                        </p>
+                    </div>
+
+                    <div class="legal-content text-light">
+                        <h3 class="text-white mt-4 mb-3">1. LIVELLI DI SERVIZIO</h3>
+                        <p>Il presente documento definisce i livelli di servizio garantiti (Service Level Agreement -
+                            SLA) per i clienti con contratto di manutenzione attivo.</p>
+
+                        <div class="table-responsive my-4 border border-secondary border-opacity-25 rounded">
+                            <table class="table table-dark table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="p-3 text-info">Priorità</th>
+                                        <th class="p-3 text-info">Descrizione</th>
+                                        <th class="p-3 text-info">Tempo di Risposta (Enterprise)</th>
+                                        <th class="p-3 text-info">Tempo di Risoluzione Obiettivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="p-3 fw-bold text-danger">P1 - CRITICA</td>
+                                        <td class="p-3">Sistema inagibile, blocco totale delle operazioni, perdita dati.
+                                        </td>
+                                        <td class="p-3 fw-bold text-warning">&lt; 2 Ore (24/7)</td>
+                                        <td class="p-3">4 Ore (Workaround)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 fw-bold text-warning">P2 - ALTA</td>
+                                        <td class="p-3">Funzionalità principali compromesse, sistema rallentato
+                                            gravemente.</td>
+                                        <td class="p-3">&lt; 4 Ore (Bus. Hours)</td>
+                                        <td class="p-3">8 Ore</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 fw-bold text-primary">P3 - MEDIA</td>
+                                        <td class="p-3">Malfunzionamenti minori, bug non bloccanti.</td>
+                                        <td class="p-3">1 Giorno Lavorativo</td>
+                                        <td class="p-3">Prossima Patch</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 fw-bold text-secondary">P4 - BASSA</td>
+                                        <td class="p-3">Richieste di informazioni, modifiche estetiche.</td>
+                                        <td class="p-3">2 Giorni Lavorativi</td>
+                                        <td class="p-3">Best Effort</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="text-white mt-5 mb-3">2. CANALI DI SUPPORTO</h3>
+                        <p>Il supporto è fornito attraverso i seguenti canali:</p>
+                        <ul>
+                            <li><strong>Ticket Portal</strong>: Accessibile via DevTools Dashboard (Prioritario).</li>
+                            <li><strong>Email Dedicata</strong>: <code>support@mcag-system.it</code> (Per Utenti P2-P4).
+                            </li>
+                            <li><strong>Linea Emergenza</strong>: Numero riservato (Solo Clienti Enterprise P1).</li>
+                        </ul>
+
+                        <h3 class="text-white mt-5 mb-3">3. AGGIORNAMENTI SOFTWARE</h3>
+                        <p>Il piano di manutenzione include:</p>
+                        <ul>
+                            <li><strong>Patch di Sicurezza</strong>: Rilascio immediato per vulnerabilità critiche (CVSS
+                                > 7.0).</li>
+                            <li><strong>Minor Updates (es. 5.4.x)</strong>: Correzione bug e miglioramenti performance.
+                            </li>
+                            <li><strong>Major Updates (es. 6.0)</strong>: Accesso preferenziale e sconto 50%
+                                sull'upgrade.</li>
+                        </ul>
+
+                        <h3 class="text-white mt-5 mb-3">4. ESCLUSIONI</h3>
+                        <p>Il supporto NON copre:</p>
+                        <ul>
+                            <li>Problemi causati da hardware, reti o sistemi operativi non supportati.</li>
+                            <li>Modifiche al codice sorgente effettuate dal cliente senza validazione.</li>
+                            <li>Recupero dati da backup non verificati.</li>
+                        </ul>
+
+                        <h3 class="text-white mt-5 mb-3">5. PENALI E RIMBORSI</h3>
+                        <p>In caso di mancato rispetto degli SLA per eventi P1 (Critici), il cliente ha diritto a un
+                            credito di servizio pari al <strong>5% del canone annuale</strong> per ogni evento, fino a
+                            un massimo del 20% annuo.</p>
+
+                    </div>
+                </div>
+
+                <footer class="mt-5 text-center text-secondary small">
+                    <p>&copy; 2026 MCAG System. Tutti i diritti riservati.</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
