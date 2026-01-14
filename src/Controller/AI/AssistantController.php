@@ -114,11 +114,11 @@ class AssistantController
                     $socio = $this->socioRepo->findByCodiceFiscale($cf);
                     if ($socio) {
                         $smartContext .= "\n[CONTESTO UTENTE]: L'utente sta visualizzando la scheda del socio:\n";
-                        $smartContext .= "Nome: {$socio->getNome()} {$socio->getCognome()}\n";
-                        $smartContext .= "CF: {$socio->getCodiceFiscale()}\n";
-                        $smartContext .= "Email: {$socio->getEmail()}\n";
-                        $smartContext .= "Stato: {$socio->getStato()}\n";
-                        $smartContext .= "Moroso: " . ($socio->isMoroso() ? 'SÌ' : 'NO') . "\n";
+                        $smartContext .= "Nome: " . $socio->DatiPersonali->Nome . " " . $socio->DatiPersonali->Cognome . "\n";
+                        $smartContext .= "CF: " . $socio->CodiceFiscale . "\n";
+                        $smartContext .= "Email: " . $socio->DatiPersonali->Email . "\n";
+                        $smartContext .= "Stato: " . $socio->Stato->name . "\n";
+                        $smartContext .= "Moroso: " . ($socio->verificaMorosita() ? 'SÌ' : 'NO') . "\n";
                     }
                 } catch (\Throwable $e) {
                     $this->logger->warning("Smart Context failed lookup: " . $e->getMessage());
