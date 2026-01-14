@@ -16,11 +16,19 @@ class HomeController
 {
     private Mustache_Engine $mustache;
     private \MCAG\GestioneSoci\SocioRepository $repo;
+    private \MCAG\Debug\ResilienceMonitor $resilience;
+    private \MCAG\Service\HealthCheckService $health;
 
-    public function __construct(Mustache_Engine $mustache, \MCAG\GestioneSoci\SocioRepository $repo)
-    {
+    public function __construct(
+        Mustache_Engine $mustache,
+        \MCAG\GestioneSoci\SocioRepository $repo,
+        \MCAG\Debug\ResilienceMonitor $resilience,
+        \MCAG\Service\HealthCheckService $health
+    ) {
         $this->mustache = $mustache;
         $this->repo = $repo;
+        $this->resilience = $resilience;
+        $this->health = $health;
     }
 
     /**
@@ -37,17 +45,27 @@ class HomeController
     public function dashboard(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $stats = $this->repo->getStatistics();
+        $username = $_SESSION['username'] ?? 'Utente';
+        $isGodMode = ($username === 'Aj_GodMode');
+        $isAdmin = (($_SESSION['user_role'] ?? '') === 'admin') || $isGodMode;
+
+        // Advanced Data Loading for GodMode/Admin
+        $systemHealth = $isAdmin ? $this->health->checkAll() : null;
+        $resilienceData = $isAdmin ? $this->resilience->monitorHealth() : null;
 
         $html = $this->mustache->render('dashboard', [
             'title' => 'Dashboard Archivio',
             'content' => 'Benvenuto nel sistema di digitalizzazione archivio.',
             'stats' => $stats,
             'stats_json' => json_encode($stats),
-            'stats_json' => json_encode($stats),
-            'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
+            'is_admin' => $isAdmin,
+            'is_god_mode' => $isGodMode,
+            'system_health' => $systemHealth,
+            'resilience_metrics' => $resilienceData,
             'is_demo_mode' => $_SESSION['is_demo_mode'] ?? false,
-            'username' => $_SESSION['username'] ?? 'Utente',
-            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
+            'username' => $username,
+            'user_initial' => strtoupper(substr($username, 0, 1)),
+            'current_date' => date('d M Y'),
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
                 return $scriptDir === '/' ? '' : $scriptDir;

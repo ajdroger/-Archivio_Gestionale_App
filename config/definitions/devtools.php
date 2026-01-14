@@ -10,7 +10,9 @@ return [
     \MCAG\Controller\HomeController::class => function (ContainerInterface $c) {
         return new \MCAG\Controller\HomeController(
             $c->get(Mustache_Engine::class),
-            $c->get(\MCAG\GestioneSoci\SocioRepository::class)
+            $c->get(\MCAG\GestioneSoci\SocioRepository::class),
+            $c->get(\MCAG\Debug\ResilienceMonitor::class),
+            $c->get(\MCAG\Service\HealthCheckService::class)
         );
     },
 
