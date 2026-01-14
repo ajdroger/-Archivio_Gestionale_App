@@ -23,22 +23,22 @@
 </head>
 <body class="d-flex flex-column h-100 {{body_class}}">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-mc sticky-top mb-0">
-        <div class="container">
+        <div class="container-fluid px-4">
             <a class="navbar-brand" href="{{base_url}}/">
                 <i class="fa-solid fa-shield-halved me-2 text-warning"></i>MCAG ARCHIVIO
             </a>
-            <div class="ms-2 d-none d-sm-inline">
-                <span class="mc-status-badge">
-                    <i class="fa-solid fa-circle-check me-1"></i>Mission-Critical Health OK
-                </span>
-            </div>
-            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
             <div class="collapse navbar-collapse" id="navbarMain">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <!-- Centered Navigation Group -->
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center gap-4">
+                    <li class="nav-item d-none d-lg-block">
+                        <span class="mc-status-badge border border-success border-opacity-25 bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 small fw-bold shadow-sm">
+                            <i class="fa-solid fa-circle-check me-1"></i>Mission-Critical Health OK
+                        </span>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{base_url}}/"><i class="fa-solid fa-gauge-high me-1"></i>Dashboard</a>
                     </li>
@@ -50,7 +50,30 @@
                     </li>
                 </ul>
                 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Talking Archive Controls -->
+                    <div id="talking-archive-controls" class="d-none d-flex align-items-center gap-2" style="z-index: 9999; position: relative;">
+                        <!-- Status Badge (Minimal) -->
+                        <span id="ta-status" class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 rounded-pill animate__animated animate__fadeIn" style="font-size: 0.7em;"></span>
+                        
+                        <!-- Play Button (Premium) -->
+                        <button id="ta-play" class="btn btn-sm btn-outline-info rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm" title="Ascolta questa pagina">
+                            <i class="fa-solid fa-headphones"></i>
+                            <span class="small fw-bold">Ascolta</span>
+                        </button>
+                        
+                        <!-- Pause Button -->
+                        <button id="ta-pause" class="btn btn-sm btn-outline-warning rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm d-none" title="Pausa lettura">
+                            <i class="fa-solid fa-pause"></i>
+                            <span class="small fw-bold">Pausa</span>
+                        </button>
+                        
+                        <!-- Stop Button (Icon Only) -->
+                        <button id="ta-stop" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" style="width: 32px; height: 32px;" title="Interrompi">
+                            <i class="fa-solid fa-stop"></i>
+                        </button>
+                    </div>
+
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 bg-dark rounded-pill border border-secondary" id="userDropdown" data-bs-toggle="dropdown">
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-2" style="width: 28px; height: 28px; font-size: 0.8rem;">{{user_initial}}</div>
@@ -73,7 +96,7 @@
         </div>
     </nav>
     <main class="flex-shrink-0 main-content">
-        <div class="container">
+        <div class="container-fluid px-4">
             <!-- Flash Messages -->
             {{#flash_message}}
             <div class="alert alert-{{type}} alert-dismissible fade show shadow border-0 mb-4 bg-dark text-white" role="alert" style="border-left: 5px solid var(--bs-{{type}}) !important;">

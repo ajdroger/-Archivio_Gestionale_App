@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\Controller\DevTools\DevToolsDashboardController;
-use FratellanzaMilitare\Controller\DevTools\DevToolsScriptController;
+use MCAG\Controller\DevTools\DevToolsDashboardController;
+use MCAG\Controller\DevTools\DevToolsScriptController;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 
@@ -37,9 +37,9 @@ test('v4.0 terminal endpoint executes commands via ScriptController', function (
 test('v4.0 dashboard renders with new tabs', function () {
     // Mock Dependencies
     $mustache = $this->createMock(\Mustache_Engine::class);
-    $system = $this->createMock(\FratellanzaMilitare\Controller\DevTools\DevToolsSystemController::class);
-    $audit = $this->createMock(\FratellanzaMilitare\Controller\DevTools\DevToolsAuditController::class);
-    $demoService = $this->createMock(\FratellanzaMilitare\Service\Demo\DemoInvitationService::class);
+    $system = $this->createMock(\MCAG\Controller\DevTools\DevToolsSystemController::class);
+    $audit = $this->createMock(\MCAG\Controller\DevTools\DevToolsAuditController::class);
+    $demoService = $this->createMock(\MCAG\Service\Demo\DemoInvitationService::class);
 
     // Setup Mock Returns to avoid null pointers
     $system->method('getSystemInfo')->willReturn(['php_version' => '8.2']);

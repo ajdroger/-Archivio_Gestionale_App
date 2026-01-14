@@ -6,9 +6,9 @@ require __DIR__ . '/../../vendor/autoload.php';
 // Register Global Error Handling
 $logger = new \Monolog\Logger('test_2fa');
 $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../../logs/test.log', \Monolog\Logger::DEBUG));
-\FratellanzaMilitare\Debug\GlobalExceptionHandler::registerGlobalHandlers($logger);
+\MCAG\Debug\GlobalExceptionHandler::registerGlobalHandlers($logger);
 
-use FratellanzaMilitare\SecurityLayer\Amministratore;
+use MCAG\SecurityLayer\Amministratore;
 
 echo "=== TEST VERIFICA 2FA/TOTP ===\n\n";
 

@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Controller\Auth\LoginFlowController;
+use MCAG\Controller\Auth\LoginFlowController;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 
@@ -11,7 +11,7 @@ test('login form renders', function () {
         ->method('render')
         ->willReturn('<form>MCAG Login</form>');
 
-    $validator = new \FratellanzaMilitare\Service\InputValidator();
+    $validator = new \MCAG\Service\InputValidator();
     $controller = new LoginFlowController($mustache, $validator);
 
     $request = (new ServerRequestFactory())->createServerRequest('GET', '/login');
@@ -26,7 +26,7 @@ test('login verify success redirects', function () {
     /** @var \Tests\TestCase $this */
     $mustache = $this->createMock(\Mustache_Engine::class);
 
-    $validator = new \FratellanzaMilitare\Service\InputValidator();
+    $validator = new \MCAG\Service\InputValidator();
     $controller = new LoginFlowController($mustache, $validator);
 
     $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('POST', '/login')

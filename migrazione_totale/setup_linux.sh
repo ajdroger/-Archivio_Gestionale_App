@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Setup Script per Fratellanza Militare Archivio (Linux)
-# Version 2.3 Enterprise
+# Setup Script per MCAG Archivio (Linux)
+# Version 5.4.0 Enterprise (Fluid Edition)
 
 echo "=================================================="
-echo "   FRATELLANZA MILITARE ARCHIVIO - SETUP LINUX"
+echo "   MCAG ARCHIVIO - SETUP LINUX"
 echo "=================================================="
 
 # 1. Verifica Requisiti

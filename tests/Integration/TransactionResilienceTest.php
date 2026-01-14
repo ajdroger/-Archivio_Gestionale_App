@@ -2,12 +2,12 @@
 
 // tests/Integration/TransactionResilienceTest.php
 
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\Enum\StatoIscrizione;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
-use FratellanzaMilitare\GestioneSoci\ModuloIscrizione;
-use FratellanzaMilitare\Enum\StatoDocumento;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\Enum\StatoIscrizione;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\GestioneSoci\ModuloIscrizione;
+use MCAG\Enum\StatoDocumento;
 
 test('verifica rollback su errore durante il salvataggio dei documenti', function () {
     $repo = new PDOSocioRepository($this->db);
@@ -47,7 +47,7 @@ test('verifica rollback su errore durante il salvataggio dei documenti', functio
 
     // Per forzare un errore "reale" nel DB durante la transazione,
     // possiamo provare a sovrascrivere il repo documenti nel SocioRepository con uno che fallisce.
-    $brokenDocRepo = new class ($this->db) extends \FratellanzaMilitare\InfrastrutturaIT\Persistence\PDODocumentoRepository {
+    $brokenDocRepo = new class ($this->db) extends \MCAG\InfrastrutturaIT\Persistence\PDODocumentoRepository {
         public function save($doc, $cf): void
         {
             throw new Exception("Simulated DB Failure during document save");

@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Debug\GlobalExceptionHandler;
+use MCAG\Debug\GlobalExceptionHandler;
 
 test('handler can be instantiated', function () {
     // GlobalExceptionHandler registers handlers in constructor usually, 

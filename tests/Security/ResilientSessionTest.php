@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\SecurityLayer\SessionManager;
+use MCAG\SecurityLayer\SessionManager;
 
 test('SessionManager rigenera l\'ID di sessione correttamente', function () {
     if (session_status() === PHP_SESSION_NONE) {

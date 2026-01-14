@@ -1,6 +1,6 @@
 <?php
 /**
- * Fratellanza Militare - Test & Automation Dashboard (Compact Grid Edition)
+ * MCAG System - Test & Automation Dashboard (Compact Grid Edition)
  */
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -118,7 +118,7 @@ ksort($grouped);
 
 <head>
     <meta charset="UTF-8">
-    <title>Toolkit Compact - Fratellanza Militare</title>
+    <title>Toolkit Compact - MCAG System</title>
     <link rel="stylesheet" href="../../public/css/premium.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 

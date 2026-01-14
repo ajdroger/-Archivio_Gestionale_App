@@ -10,7 +10,7 @@ if (class_exists('Sentry\SentrySdk')) {
     \Sentry\init([
         'dsn' => $_ENV['SENTRY_DSN'] ?? '',
         'environment' => $_ENV['APP_ENV'] ?? 'production',
-        'release' => 'fratellanza-militare@2.3.0',
+        'release' => 'mcag-system@5.3.0',
         'traces_sample_rate' => 0.2, // 20% performance monitoring
         'profiles_sample_rate' => 0.2,
     ]);
@@ -60,7 +60,7 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 // Automatic Base Path Detection
-// Allows the app to run in a subdirectory (e.g. /fratellanza-militare-archivio/public)
+// Allows the app to run in a subdirectory (e.g. /MCAG_Militare-Civile-Archivio-Gestionale/public)
 // or at the domain root without manual configuration.
 $basePath = (function () {
     $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));

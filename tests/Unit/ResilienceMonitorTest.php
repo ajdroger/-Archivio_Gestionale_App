@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Debug\ResilienceMonitor;
+use MCAG\Debug\ResilienceMonitor;
 use Psr\Log\LoggerInterface;
 
 test('monitor health returns array', function () {

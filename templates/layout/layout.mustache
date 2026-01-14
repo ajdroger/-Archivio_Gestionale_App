@@ -17,7 +17,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <link href="/css/style.css" rel="stylesheet">
+    <link href="{{base_url}}/css/style.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column h-100">
     {{#is_demo_mode}}
@@ -56,7 +56,26 @@
                     {{/is_demo_mode}}
                 </ul>
                 
-                <div class="ms-auto d-flex align-items-center">
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <!-- Talking Archive Controls (Hidden by default) -->
+                    <div id="talking-archive-controls" class="d-none d-flex align-items-center bg-dark bg-opacity-50 rounded-pill px-3 py-1 border border-secondary border-opacity-25" style="z-index: 9999; position: relative;">
+                        <span id="ta-status" class="badge bg-secondary me-2 animate__animated animate__fadeIn"></span>
+                        
+                        <button id="ta-play" class="btn btn-sm btn-link text-info text-decoration-none p-0" title="Ascolta Pagina">
+                            <i class="fa-solid fa-headphones me-2"></i>Ascolta
+                        </button>
+                        
+                        <button id="ta-pause" class="btn btn-sm btn-link text-warning text-decoration-none p-0 d-none" title="Pausa">
+                            <i class="fa-solid fa-pause me-2"></i>Pausa
+                        </button>
+                        
+                        <div class="vr mx-2 text-secondary"></div>
+                        
+                        <button id="ta-stop" class="btn btn-sm btn-link text-danger text-decoration-none p-0" title="Stop">
+                            <i class="fa-solid fa-stop"></i>
+                        </button>
+                    </div>
+
                     <a class="btn btn-outline-danger btn-sm rounded-pill px-3" href="{{base_url}}/logout">
                         <i class="fa-solid fa-power-off me-1"></i>Esci
                     </a>
@@ -64,6 +83,8 @@
             </div>
         </div>
     </nav>
+
+
 
     <main class="flex-shrink-0 main-content">
         <div class="container">
@@ -108,6 +129,11 @@
     </script>
     
     {{> partials/ai_widget}}
+    
+    <!-- Talking Archive Engine (Forced Load) -->
+    <script src="{{base_url}}/js/talking_archive.js?v=2"></script>
+    
+    {{> compliance/cookie_banner}}
 </body>
 </html>
 

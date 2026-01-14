@@ -18,7 +18,7 @@ Prima di iniziare, assicurati di avere installato:
 Il progetto è stato configurato per essere "Docker-Ready". Tutti i file di configurazione si trovano nella cartella `docker/`:
 
 ```text
-fratellanza-militare-archivio/
+MCAG_Militare-Civile-Archivio-Gestionale/
 ├── docker/
 │   ├── config/              # Configurazioni (PHP, Nginx, Supervisor)
 │   ├── Dockerfile           # Ricetta per costruire l'immagine

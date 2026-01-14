@@ -1,7 +1,7 @@
 # Guida: Creazione Repository GitHub Privata
 
 ## 📋 Panoramica
-Questa guida ti aiuterà a creare una repository privata su GitHub e caricare il progetto **fratellanza-militare-archivio**.
+Questa guida ti aiuterà a creare una repository privata su GitHub e caricare il progetto **MCAG_Militare-Civile-Archivio-Gestionale**.
 
 ## ✅ Lavoro Completato
 - ✓ `.gitignore` migliorato con esclusioni complete per file sensibili
@@ -21,7 +21,7 @@ Questa guida ti aiuterà a creare una repository privata su GitHub e caricare il
    
 3. **Configura la Repository**
    ```
-   Repository name: fratellanza-militare-archivio
+   Repository name: MCAG_Militare-Civile-Archivio-Gestionale
    Description: Sistema di Gestione Archivio per MCAG - Enterprise-grade membership and document management system
    Visibility: ☑️ Private (IMPORTANTE!)
    
@@ -38,7 +38,7 @@ Questa guida ti aiuterà a creare una repository privata su GitHub e caricare il
    - Dopo la creazione, vedrai una pagina con le istruzioni
    - Copia l'URL HTTPS che apparirà in questo formato:
      ```
-     https://github.com/TUO_USERNAME/fratellanza-militare-archivio.git
+     https://github.com/TUO_USERNAME/MCAG_Militare-Civile-Archivio-Gestionale.git
      ```
 
 ### Opzione B: Via GitHub CLI (Se Installato)
@@ -53,7 +53,7 @@ winget install --id GitHub.cli
 gh auth login
 
 # Crea repository privata
-gh repo create fratellanza-militare-archivio --private --source=. --remote=origin --push
+gh repo create MCAG_Militare-Civile-Archivio-Gestionale --private --source=. --remote=origin --push
 ```
 
 ## 🔗 Passo 2: Collega il Repository Locale a GitHub
@@ -62,7 +62,7 @@ Dopo aver creato la repository su GitHub, esegui questi comandi nel terminale:
 
 ### Verifica Remote Esistente
 ```powershell
-cd 'c:\Program Files\Ampps\www\fratellanza-militare-archivio'
+cd 'c:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale'
 git remote -v
 ```
 
@@ -75,7 +75,7 @@ git remote remove origin
 > ⚠️ **IMPORTANTE**: Sostituisci `TUO_USERNAME` con il tuo username GitHub!
 
 ```powershell
-git remote add origin https://github.com/TUO_USERNAME/fratellanza-militare-archivio.git
+git remote add origin https://github.com/TUO_USERNAME/MCAG_Militare-Civile-Archivio-Gestionale.git
 ```
 
 ### Verifica Remote
@@ -85,8 +85,8 @@ git remote -v
 
 Dovresti vedere:
 ```
-origin  https://github.com/TUO_USERNAME/fratellanza-militare-archivio.git (fetch)
-origin  https://github.com/TUO_USERNAME/fratellanza-militare-archivio.git (push)
+origin  https://github.com/TUO_USERNAME/MCAG_Militare-Civile-Archivio-Gestionale.git (fetch)
+origin  https://github.com/TUO_USERNAME/MCAG_Militare-Civile-Archivio-Gestionale.git (push)
 ```
 
 ## 📤 Passo 3: Push del Codice su GitHub
@@ -124,7 +124,7 @@ git status
 Dovresti vedere: `Your branch is up to date with 'origin/master'.`
 
 ### Verifica su GitHub
-1. Vai su `https://github.com/TUO_USERNAME/fratellanza-militare-archivio`
+1. Vai su `https://github.com/TUO_USERNAME/MCAG_Militare-Civile-Archivio-Gestionale`
 2. Verifica che tutti i file siano stati caricati
 3. Controlla che la repository sia marcata come **Private** (icona lucchetto)
 
@@ -132,7 +132,7 @@ Dovresti vedere: `Your branch is up to date with 'origin/master'.`
 
 La repository conterrà:
 ```
-fratellanza-militare-archivio/
+MCAG_Militare-Civile-Archivio-Gestionale/
 ├── 📁 bin/                     # Script di utilità e diagnostica
 ├── 📁 config/                  # Configurazioni dell'applicazione
 ├── 📁 db/                      # Migration e schema database
@@ -176,8 +176,8 @@ git push origin master
 
 ### Clonare la Repository (su altro computer)
 ```powershell
-git clone https://github.com/TUO_USERNAME/fratellanza-militare-archivio.git
-cd fratellanza-militare-archivio
+git clone https://github.com/TUO_USERNAME/MCAG_Militare-Civile-Archivio-Gestionale.git
+cd MCAG_Militare-Civile-Archivio-Gestionale
 composer install
 npm install
 cp .env.example .env

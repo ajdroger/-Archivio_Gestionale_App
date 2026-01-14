@@ -155,7 +155,11 @@ class StatsDashboardController
             'health' => $this->healthCheck->checkAll(),
             'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
             'username' => $_SESSION['username'] ?? 'Utente',
-            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1))
+            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })()
         ]);
 
         $response->getBody()->write($html);

@@ -8,7 +8,7 @@ export default defineConfig({
     workers: process.env.CI ? 1 : undefined,
     reporter: 'html',
     use: {
-        baseURL: 'http://localhost:8080/fratellanza-militare-archivio/public',
+        baseURL: 'http://localhost:8080/MCAG_Militare-Civile-Archivio-Gestionale/public',
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
     },
@@ -24,7 +24,7 @@ export default defineConfig({
     ],
     webServer: {
         command: 'php -S localhost:8080 -t public',
-        url: 'http://localhost:8080/fratellanza-militare-archivio/public/login',
+        url: 'http://localhost:8080/MCAG_Militare-Civile-Archivio-Gestionale/public/login',
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
     },

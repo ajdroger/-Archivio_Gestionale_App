@@ -14,15 +14,15 @@ foreach ($hosts as $host) {
                 $pdo = new PDO("mysql:host=$host", $user, $pass);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                $dbName = 'fratellanza_db';
+                $dbName = 'mcag_db';
                 $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 
                 // FOUND! Write .env using PHP (Bypasses Agent GitIgnore)
                 $envContent = <<<EOT
 APP_ENV=local
 APP_DEBUG=true
-APP_NAME="Fratellanza Militare Archivio"
-APP_URL=http://localhost/fratellanza-militare-archivio/public
+APP_NAME="MCAG Militare Civile Archivio Gestionale"
+APP_URL=http://localhost/MCAG_Militare-Civile-Archivio-Gestionale/public
 
 # Database Configuration (MySQL / MariaDB)
 DB_CONNECTION=mysql

@@ -2,14 +2,14 @@
 
 namespace Tests\Unit;
 
-use FratellanzaMilitare\Service\RegistrationService;
-use FratellanzaMilitare\GestioneSoci\SocioRepository;
-use FratellanzaMilitare\Service\ValidationService;
-use FratellanzaMilitare\Service\PdfGenerationService;
-use FratellanzaMilitare\Service\EmailServiceInterface;
+use MCAG\Service\RegistrationService;
+use MCAG\GestioneSoci\SocioRepository;
+use MCAG\Service\ValidationService;
+use MCAG\Service\PdfGenerationService;
+use MCAG\Service\EmailServiceInterface;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
-use FratellanzaMilitare\GestioneSoci\Socio;
+use MCAG\GestioneSoci\Socio;
 
 class SocioProfileTest extends TestCase
 {

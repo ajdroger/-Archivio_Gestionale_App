@@ -26,13 +26,22 @@
 </div>
 
 
+
+    <!-- Smart Narrative Summary (Hidden for UI, Visible for TTS/AI) -->
+    <div class="ta-smart-summary visually-hidden">
+        Benvenuto sulla Dashboard di Mission Control. 
+        Attualmente ci sono {{stats.totale}} soci registrati.
+        Il sistema è operativo.
+        {{#is_demo_mode}}La modalità demo è attiva con funzionalità limitate.{{/is_demo_mode}}
+    </div>
+
 <!-- Visual Intelligence Section -->
 <div class="row g-4 mb-5">
     <!-- Chart 1: Status Distribution -->
     <div class="col-12 col-lg-4">
         <div class="card border-0 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important;">
             <div class="card-body position-relative">
-                <h6 class="text-secondary text-uppercase fw-bold small mb-3"><i class="fa-solid fa-pie-chart me-2"></i>Salute Archivio</h6>
+                <h6 class="text-secondary text-uppercase fw-bold small mb-3"><i class="fa-solid fa-pie-chart me-2"></i>Stato Conformità Archivio</h6>
                 <div style="height: 250px;">
                     <canvas id="chartStatus"></canvas>
                 </div>
@@ -48,7 +57,7 @@
     <div class="col-12 col-lg-8">
         <div class="card border-0 shadow-sm h-100" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important;">
              <div class="card-body">
-                <h6 class="text-secondary text-uppercase fw-bold small mb-3"><i class="fa-solid fa-arrow-trend-up me-2"></i>Trend Iscrizioni (Anno Corrente)</h6>
+                <h6 class="text-secondary text-uppercase fw-bold small mb-3"><i class="fa-solid fa-arrow-trend-up me-2"></i>Analisi Flussi Ingressi (Anno Corrente)</h6>
                 <div style="height: 250px; width: 100%;">
                     <canvas id="chartTrend"></canvas>
                 </div>
@@ -58,7 +67,7 @@
 </div>
 
 <div class="d-flex align-items-center mb-4">
-    <h3 class="h5 fw-bold text-uppercase tracking-wider text-secondary mb-0"><i class="fa-solid fa-bolt-lightning me-2 text-warning"></i>Azioni di Sistema</h3>
+    <h3 class="h5 fw-bold text-uppercase tracking-wider text-secondary mb-0"><i class="fa-solid fa-bolt-lightning me-2 text-warning"></i>Operazioni di Gestione e Audit</h3>
     <div class="flex-grow-1 ms-3 border-bottom border-secondary opacity-25"></div>
 </div>
 
@@ -68,7 +77,7 @@
             <div class="card h-100 border-0 shadow-sm hover-up" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important; transition: all 0.3s ease;">
                 <div class="card-body p-4 text-center">
                     <div class="display-5 text-primary mb-3"><i class="fa-solid fa-users-viewfinder"></i></div>
-                    <h5 class="fw-bold text-white">Anagrafica Soci</h5>
+                    <h5 class="fw-bold text-white">Registro Generale Soci</h5>
                     <p class="text-secondary small">Gestione completa dell'elenco soci, filtri avanzati e monitoraggio morosità.</p>
                 </div>
             </div>
@@ -80,7 +89,7 @@
             <div class="card h-100 border-0 shadow-sm hover-up" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important; transition: all 0.3s ease;">
                  <div class="card-body p-4 text-center">
                     <div class="display-5 text-success mb-3"><i class="fa-solid fa-user-plus"></i></div>
-                    <h5 class="fw-bold text-white">Nuova Iscrizione</h5>
+                    <h5 class="fw-bold text-white">Nuova Acquisizione Anagrafica</h5>
                     <p class="text-secondary small">Processo guidato di registrazione per nuovi membri con supporto OCR.</p>
                 </div>
             </div>
@@ -98,7 +107,7 @@
             <div class="card h-100 border-0 shadow-sm hover-up" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05) !important; transition: all 0.3s ease;">
                  <div class="card-body p-4 text-center">
                     <div class="display-5 text-info mb-3"><i class="fa-solid fa-chart-line"></i></div>
-                    <h5 class="fw-bold text-white">Advanced Insights</h5>
+                    <h5 class="fw-bold text-white">Reporting & Analisi Compliance</h5>
                     <p class="text-secondary small">Analisi demografica e flussi finanziari con reportistica exportabile.</p>
                 </div>
             </div>

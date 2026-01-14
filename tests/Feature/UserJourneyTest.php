@@ -1,12 +1,12 @@
 <?php
 
-use FratellanzaMilitare\Controller\Anagrafica\Soci\ListController;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\DetailController;
-use FratellanzaMilitare\Controller\Anagrafica\Soci\PersistenceController;
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\Enum\StatoIscrizione;
-use FratellanzaMilitare\GestioneSoci\ModuloIscrizione;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\PDOSocioRepository;
+use MCAG\Controller\Anagrafica\Soci\ListController;
+use MCAG\Controller\Anagrafica\Soci\DetailController;
+use MCAG\Controller\Anagrafica\Soci\PersistenceController;
+use MCAG\GestioneSoci\Socio;
+use MCAG\Enum\StatoIscrizione;
+use MCAG\GestioneSoci\ModuloIscrizione;
+use MCAG\InfrastrutturaIT\Persistence\PDOSocioRepository;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Factory\ResponseFactory;
 use Psr\Log\NullLogger;
@@ -25,11 +25,11 @@ test('User Journey: Complete Lifecycle of a Socio via Modulo Anagrafica', functi
 
     $repo = new PDOSocioRepository($this->db);
     $logger = new NullLogger();
-    $validator = new \FratellanzaMilitare\Service\ValidationService();
+    $validator = new \MCAG\Service\ValidationService();
 
-    $pdfService = new \FratellanzaMilitare\Service\PdfGenerationService();
-    $emailService = new \FratellanzaMilitare\Service\FileEmailService(__DIR__ . '/../../var/logs/tests/test_journey_emails.txt');
-    $registrationService = new \FratellanzaMilitare\Service\RegistrationService($repo, $validator, $pdfService, $emailService, $logger);
+    $pdfService = new \MCAG\Service\PdfGenerationService();
+    $emailService = new \MCAG\Service\FileEmailService(__DIR__ . '/../../var/logs/tests/test_journey_emails.txt');
+    $registrationService = new \MCAG\Service\RegistrationService($repo, $validator, $pdfService, $emailService, $logger);
 
     $listCtrl = new ListController($mustache, $repo);
     $detailCtrl = new DetailController($mustache, $repo, $logger);

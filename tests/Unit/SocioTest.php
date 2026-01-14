@@ -1,10 +1,10 @@
 <?php
 
-use FratellanzaMilitare\GestioneSoci\Socio;
-use FratellanzaMilitare\GestioneSoci\DatiAnagrafici;
-use FratellanzaMilitare\Enum\StatoIscrizione;
-use FratellanzaMilitare\Enum\StatoDocumento;
-use FratellanzaMilitare\GestioneSoci\ModuloIscrizione;
+use MCAG\GestioneSoci\Socio;
+use MCAG\GestioneSoci\DatiAnagrafici;
+use MCAG\Enum\StatoIscrizione;
+use MCAG\Enum\StatoDocumento;
+use MCAG\GestioneSoci\ModuloIscrizione;
 
 test('socio can be instantiated', function () {
     $socio = new Socio();

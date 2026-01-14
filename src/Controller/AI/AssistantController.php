@@ -114,11 +114,11 @@ class AssistantController
                     $socio = $this->socioRepo->findByCodiceFiscale($cf);
                     if ($socio) {
                         $smartContext .= "\n[CONTESTO UTENTE]: L'utente sta visualizzando la scheda del socio:\n";
-                        $smartContext .= "Nome: {$socio->getNome()} {$socio->getCognome()}\n";
-                        $smartContext .= "CF: {$socio->getCodiceFiscale()}\n";
-                        $smartContext .= "Email: {$socio->getEmail()}\n";
-                        $smartContext .= "Stato: {$socio->getStato()}\n";
-                        $smartContext .= "Moroso: " . ($socio->isMoroso() ? 'SÌ' : 'NO') . "\n";
+                        $smartContext .= "Nome: " . $socio->DatiPersonali->Nome . " " . $socio->DatiPersonali->Cognome . "\n";
+                        $smartContext .= "CF: " . $socio->CodiceFiscale . "\n";
+                        $smartContext .= "Email: " . $socio->DatiPersonali->Email . "\n";
+                        $smartContext .= "Stato: " . $socio->Stato->name . "\n";
+                        $smartContext .= "Moroso: " . ($socio->verificaMorosita() ? 'SÌ' : 'NO') . "\n";
                     }
                 } catch (\Throwable $e) {
                     $this->logger->warning("Smart Context failed lookup: " . $e->getMessage());
@@ -139,12 +139,29 @@ class AssistantController
         $systemPrompt .= "Hai accesso a documenti interni (Decision Log, Changelog, Benchmark).\n";
         $systemPrompt .= "IMPORTANTE: Rispondi SEMPRE in ITALIANO. Usa le INFORMAZIONI CONTESTUALI fornite qui sotto per rispondere. Se trovi la risposta nel contesto, usala. Non inventare.\n\n";
 
+        // RBAC: Check User Role for Context Sanitization
+        $userRole = $_SESSION['user_role'] ?? 'guest';
+        $isGodMode = ($userRole === 'Aj_GodMode' || $userRole === 'admin');
+
         if (!empty($smartContext)) {
+            // If NOT GodMode/Admin, sanitize technical details if present (basic security)
+            if (!$isGodMode) {
+                // Example: Hide internal IDs or sensitive debugging info if it were in the context
+                $smartContext = preg_replace('/ID Interno: \d+/', 'ID Interno: [RISERVATO]', $smartContext);
+            }
             $systemPrompt .= "### CONTESTO UTENTE (Pagina Corrente):\n$smartContext\n\n";
         }
 
         if (!empty($ragContext)) {
+            // RBAC for RAG: Some documents might be restricted (future proofing)
+            // For now, we trust the VectorStore retrieval, but we can filter here if needed.
             $systemPrompt .= "### DOCUMENTAZIONE INTERNA (Knowledge Base):\n$ragContext\n\n";
+        }
+
+        if ($isGodMode) {
+            $systemPrompt .= "[SISTEMA]: L'utente è un SUPER ADMIN/DEV (Aj_GodMode). Puoi fornire dettagli tecnici, stack trace, path di file e configurazioni.\n";
+        } else {
+            $systemPrompt .= "[SISTEMA]: L'utente è un operatore standard. NON fornire dettagli tecnici bassi (no stack trace, no percorsi file, no config server). Rispondi in modo funzionale.\n";
         }
 
         $systemPrompt .= "DOMANDA UTENTE: $userMessage";

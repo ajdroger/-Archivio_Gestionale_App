@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\Controller\Intelligence\StatsDashboardController;
-use FratellanzaMilitare\GestioneSoci\SocioRepository;
+use MCAG\Controller\Intelligence\StatsDashboardController;
+use MCAG\GestioneSoci\SocioRepository;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 
@@ -17,8 +17,8 @@ test('statistics view renders', function () {
         ->method('getStatistics')
         ->willReturn(['total' => 10]);
 
-    $resilience = $this->createMock(\FratellanzaMilitare\Debug\ResilienceMonitor::class);
-    $health = $this->createMock(\FratellanzaMilitare\Service\HealthCheckService::class);
+    $resilience = $this->createMock(\MCAG\Debug\ResilienceMonitor::class);
+    $health = $this->createMock(\MCAG\Service\HealthCheckService::class);
 
     $controller = new StatsDashboardController($mustache, $repo, $resilience, $health);
 

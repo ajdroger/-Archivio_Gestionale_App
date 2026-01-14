@@ -22,7 +22,7 @@ zend_extension="C:/Program Files/Ampps/php82/lib/php_xdebug.dll"
 xdebug.mode=coverage,develop,debug
 xdebug.client_port=9003
 xdebug.start_with_request=yes
-xdebug.log="C:/Program Files/Ampps/www/fratellanza-militare-archivio/logs/dev/xdebug.log"
+xdebug.log="C:/Program Files/Ampps/www/MCAG_Militare-Civile-Archivio-Gestionale/logs/dev/xdebug.log"
 xdebug.max_nesting_level=512
 xdebug.cli_color=1
 "@

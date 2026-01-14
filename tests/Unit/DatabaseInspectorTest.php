@@ -1,7 +1,7 @@
 <?php
 
-use FratellanzaMilitare\Debug\DatabaseInspector;
-use FratellanzaMilitare\InfrastrutturaIT\Persistence\DatabaseConnection;
+use MCAG\Debug\DatabaseInspector;
+use MCAG\InfrastrutturaIT\Persistence\DatabaseConnection;
 
 test('inspect returns connection status', function () {
     // Requires a mock PDO, which DatabaseConnection gets from singleton

@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Service\FileEmailService;
+use MCAG\Service\FileEmailService;
 
 test('email service writes to log file', function () {
     $logFile = sys_get_temp_dir() . '/test_email_log.txt';

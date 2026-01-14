@@ -798,6 +798,45 @@ L'AI Assistant v5.0 era limitato ai soli PDF e aveva un'interfaccia segregata. L
 
 **Decisione**:
 1.  **Pattern Factory**: Implementare `DocumentParserFactory` per selezione dinamica del parser (`WordParserService`, `ExcelParserService`, `CodeParserService`).
+2.  **Global Widget**: Integrazione `partials/ai_widget.mustache` nel footer globale (`layout_footer`).
+3.  **Smart Context**: Middleware che inietta metadati pagina (titolo, utente, ruolo) nel payload della chat.
+
+**Conseguenze**:
+- (+) UX Unificata: L'utente non deve "andare" dall'AI, l'AI è sempre lì.
+- (+) Supporto Formati Esteso: Copertura 99% casi d'uso ufficio.
+
+---
+
+## [ADR-030] Global Fluid Layout Strategy
+**Data**: 2026-01-14
+**Stato**: ✅ Attivo
+**Contesto**:
+L'uso di `container` (fixed width) su schermi moderni sprecava oltre il 40% dello spazio orizzontale, costringendo le tabelle dati (es. Lista Soci) a scroll orizzontali e comprimendo la navigazione.
+**Decisione**:
+Adottare **Global Fluid Layout** (`container-fluid`) come standard per l'intera applicazione.
+- **Padding Standard**: `px-4` per il contenuto principale, `px-5` per il footer (per bilanciamento visivo).
+- **Navbar**: Estesa a tutta larghezza per permettere spaziatura generosa (`gap-4`) tra gli elementi di navigazione.
+**Conseguenze**:
+- (+) Massimizzazione Density Dati: Le tabelle mostrano più colonne senza scroll.
+- (+) Look & Feel moderno ed "Enterprise".
+- (+) Allineamento visivo Header/Body/Footer perfetto.
+
+---
+
+## [ADR-031] Navbar Symmetry & Centralization
+**Data**: 2026-01-14
+**Stato**: ✅ Attivo
+**Contesto**:
+La navigazione precedente vedeva elementi sparsi: badge a sinistra, link al centro, controlli a destra, con separatori verticali che creavano "rumore visivo".
+**Decisione**:
+**Centralizzazione Radicale**:
+1.  Il "Mission-Critical Status Badge" non è più un elemento decorativo isolato, ma il **primo elemento** della lista di navigazione centrale.
+2.  Rimozione di tutti i separatori verticali (`vr`).
+3.  Uso di `mx-auto` sul contenitore `ul.navbar-nav` per garantire che l'intero blocco (Badge + Link) sia matematicamente centrato nella viewport.
+**Conseguenze**:
+- (+) Simmetria visiva immediata.
+- (+) Gerarchia chiara: Status -> Azione 1 -> Azione 2.
+- (+) Estetica pulita e professionale ("Less is More").
 2.  **Smart Context**: Iniettare dati di contesto (URL parsing) nel System Prompt (es. "L'utente sta guardando Mario Rossi").
 3.  **Widget Globale**: Sostituire la dashboard dedicata con una Floating Chat (`ai_widget.mustache`) presente in tutte le pagine (`layout.mustache`).
 4.  **Vocale**: Integrare Web Speech API per input vocale diretto.
@@ -894,7 +933,8 @@ Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa 
 
 
 
-## [ADR-030] Rebranding "Cuore Aperto" (MCAG)
+
+## [ADR-031] Rebranding "Cuore Aperto" (MCAG)
 **Data**: 2026-01-13
 **Stato**: ✅ Completato
 **Contesto**:
@@ -914,3 +954,81 @@ Eseguire un refactoring "Surgical Precision" (Piano Cuore Aperto):
 - (-) **Deploy**: Richiede downtime per migrazione DB e update config.
 
 ---
+
+## [ADR-032] Commercial Strategy & Pricing Model
+**Data**: 2026-01-13
+**Stato**: Accettato
+**Contesto**: Il progetto MCAG ha raggiunto un livello di maturità "Enterprise" (v5.3.0). È necessario definire un modello di pricing che rifletta il valore reale del software (181 test, security score 97.2/100, 2.140 ore di sviluppo) e le metriche di mercato attuali.
+**Decisione**:
+1.  **Modello Value-Based**: Pricing non basato sulle ore ma sul valore fornito (Security, Compliance, Reliability).
+2.  **Tiering**:
+    *   *Standard*: €115.000 (Core features).
+    *   *Professional*: €135.000 (Full suite + Analytics).
+    *   *Enterprise*: €175.000 + (Custom SLA, Dedicated Support).
+3.  **ROI Calculation**: Basato su metriche ROTI (Return on Time Investment) aggiornate (€63.08/h).
+**Conseguenze**: Posizionamento premium sul mercato, giustificazione degli alti standard di sicurezza richiesti.
+
+## [ADR-033] Toolkit Console Architecture v2
+**Data**: 2026-01-13
+**Stato**: Accettato
+**Contesto**: La console di debug (`terminal.php`) presentava problemi di encoding JSON su ambienti Windows/Powershell e instabilità nell'output buffering, causando crash del frontend DevTools.
+**Decisione**:
+1.  **JSON Response Enforcement**: Forzatura header `Content-Type: application/json` e pulizia preventiva dei buffer di output PHP.
+2.  **Cross-Platform Shell Wrapper**: Astrazione dell'esecuzione comandi per gestire differenze tra `bash` e `powershell` (es. escaping caratteri).
+3.  **Error Handling**: Catch globale delle eccezioni durante l'esecuzione comandi per garantire sempre una risposta JSON valida, anche in caso di errore fatale dello script chiamato.
+**Conseguenze**: Maggiore stabilità degli strumenti di diagnostica e possibilità di eseguire test suite complete da interfaccia web senza timeout o errori di parsing.
+
+## [ADR-034] Cookie Policy & Compliance Banner Implementation
+**Data**: 2026-01-13
+**Stato**: Implementato
+**Contesto**: In fase di rilascio v5.3.0, è emersa la necessità di adeguare la piattaforma alle normative GDPR/ePrivacy per quanto riguarda la gestione dei cookie e l'informativa privacy, specificatamente per un contesto "Militare-Civile".
+**Decisione**:
+1.  **Banner Informativo "Zero-Block"**: Implementazione di un banner non intrusivo (bottom-fixed) in `cookie_banner.mustache` che informa l'utente senza bloccare l'operatività critica (essendo un gestionale interno).
+2.  **Policy Controller Refactoring**: Aggiornamento di `PolicyController` per servire contenuti HTML statici ma "rich" (con formattazione Bootstrap) invece di placeholder vuoti.
+3.  **Local Storage Consent**: Utilizzo di `localStorage` (chiave `cookieConsented`) lato client per memorizzare la scelta dell'utente, evitando cookie server-side aggiuntivi per la gestione del consenso stesso.
+4.  **Privacy Policy "Hardened"**: Redazione di una Privacy Policy che specifica chiaramente la natura dei dati trattati (solo tecnici/funzionali, niente profilazione marketing) per rassicurare l'utenza istituzionale.
+**Conseguenze**: Piena conformità normativa (GDPR Art. 13-14) senza degradare l'esperienza d'uso operativa mission-critical.
+
+---
+
+# ADR-035: Adoption of Fluid Layout for Data-Intensive Views
+
+## Status
+ACCEPTED
+
+## Context
+The 'Registro Unico Anagrafiche' (Members List) view contains a wide data table with multiple columns (Identity, Matricola, CF, Contacts, Status, etc.).
+On standard displays, the default Bootstrap .container class constrains the width, causing the table to be cut off or requiring a double scrollbar (one for the table responsive div, one for the browser if the card is too wide).
+This negatively impacts user experience and 'Mission-Critical' usability standards.
+
+## Decision
+We have decided to implement a dynamic layout system in layout_header.mustache.
+- A new Mustache variable {{container_fluid}} will be introduced.
+- If this variable is true, the main content wrapper will use the .container-fluid class (100% width with padding).
+- If false or unset, it defaults to the standard .container (fixed max-width steps).
+
+This allows us to selectively enable full-width layouts for data-heavy pages (like the Members List or Statistics Dashboard) while keeping text-heavy pages (like Landing or Settings) centered and constrained for readability.
+
+## Consequences
+### Positive
+- **Improved Usability**: Data tables can expand to fill the screen, reducing horizontal scrolling.
+- **Flexibility**: Developers can opt-in to fluid layouts per-controller.
+- **Backward Compatibility**: Existing pages remain unchanged by default.
+
+### Negative
+- **Inconsistent Visuals**: Users navigating between fluid and fixed pages might notice the layout 'jump' in width. This is considered acceptable for the utility gained.
+
+## References
+- templates/layout/layout_header.mustache
+- src/Controller/Anagrafica/Soci/ListController.php
+- User feedback regarding truncated UI.
+
+## [ADR-036] Professional Footer Redesign
+**Data**: 2026-01-14
+**Stato**: Implementato
+**Contesto**: Il footer precedente era minimale e puramente funzionale, giudicato 'rozzo' e non in linea con il restyling 'Mission-Critical' e 'Premium' del resto dell'applicazione (v5.3). Mancava di gerarchia visiva e spazio per link legali e di supporto.
+**Decisione**:
+1. **Fat Footer Architecture**: Adozione di un layout a 4 colonne (Brand, Navigazione, Legal, Sviluppo) per massimizzare la discoverability delle risorse e conferire autorevolezza.
+2. **Visual Hierarchy**: Separazione netta tra footer di navigazione (percorsi utili) e 'bottom bar' (Copyright, Versione, Crediti tecnici).
+3. **Compliance Visibility**: Sezione dedicata per Privacy, Cookie Policy e Termini, rendendo esplicita la conformità normativa.
+**Conseguenze**: Migliore esperienza utente, percezione di prodotto 'Enterprise' e maggiore facilità di accesso alle informazioni legali e di supporto.

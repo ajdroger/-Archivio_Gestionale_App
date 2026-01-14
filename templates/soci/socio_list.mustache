@@ -3,11 +3,18 @@
     <div class="card-header border-bottom border-secondary bg-transparent py-4">
         <div class="row g-3 align-items-center justify-content-between">
             <div class="col-12 col-md-auto">
-                <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-users me-2 text-primary"></i>Gestione Anagrafica</h4>
+                <h4 class="mb-0 text-white fw-bold"><i class="fa-solid fa-users me-2 text-primary"></i>Registro Unico Anagrafiche</h4>
             </div>
             <div class="col-12 col-md pt-2 pt-md-0">
                 <div class="d-flex flex-wrap gap-3 justify-content-md-end align-items-center">
                     
+                    <!-- Smart Narrative Summary (Hidden for UI, Visible for TTS/AI) -->
+                    <div class="ta-smart-summary visually-hidden">
+                        Stai consultando il Registro Unico Anagrafiche.
+                        Attualmente sono visualizzati {{soci.length}} soci.
+                        Usa la barra di ricerca per filtrare per nome o matricola.
+                    </div>
+
                     <!-- Server Side Search Form -->
                     <form action="{{base_url}}/soci" method="GET" class="d-flex gap-2">
                         <select name="tipo" class="form-select form-select-sm bg-dark text-white border-secondary fw-bold" style="width: 140px;">
@@ -24,7 +31,7 @@
                         </div>
                     </form>
 
-                    <a href="{{base_url}}/soci/nuovo" class="btn btn-primary px-4 shadow shadow-primary"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a>
+                    <a href="{{base_url}}/soci/nuovo" class="btn btn-primary px-4 shadow shadow-primary"><i class="fa-solid fa-user-plus me-2"></i>Nuova Registrazione</a>
                 </div>
             </div>
         </div>
@@ -35,22 +42,22 @@
             <table class="smart-table table table-dark table-hover align-middle mb-0" style="background: transparent;">
                 <thead class="text-secondary text-uppercase small" style="background: rgba(15, 23, 42, 0.5);">
                     <tr>
-                        <th class="ps-4 py-3 border-secondary" style="width: 25%;">Identità</th>
+                        <th class="ps-4 py-3 border-secondary" style="width: 25%;">Soggetto Interessato</th>
                         <th class="border-secondary" style="width: 10%;">Matricola</th>
                         <th class="border-secondary" style="width: 15%;">Codice Fiscale</th>
-                        <th class="border-secondary" style="width: 20%;">Contatti App</th>
-                        <th class="text-center border-secondary" style="width: 10%;">Status</th>
-                        <th class="text-center border-secondary" style="width: 10%;">Morosità</th>
-                        <th class="text-end pe-4 border-secondary" style="width: 10%;">Controllo</th>
+                        <th class="border-secondary" style="width: 20%;">Recapiti Registrati</th>
+                        <th class="text-center border-secondary" style="width: 10%;">Stato Amministrativo</th>
+                        <th class="text-center border-secondary" style="width: 10%;">Regolarità Contributiva</th>
+                        <th class="text-end pe-4 border-secondary" style="width: 10%;">Azioni di Audit</th>
                     </tr>
                     <!-- Filter Row -->
                     <tr class="filter-row" style="background: rgba(15, 23, 42, 0.8);">
-                        <th class="ps-4 pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Cerca Nome/Nascita..."></th>
-                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Matricola"></th>
-                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Codice Fiscale"></th>
-                        <th class="pb-2 border-secondary"><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Email/Tel"></th>
+                        <th class="ps-4 pb-2 border-secondary"><input type="text" id="filter_input_name" name="filter_nome" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Cerca Nome/Nascita..."></th>
+                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_matricola" name="filter_matricola" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Matricola"></th>
+                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_cf" name="filter_cf" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Codice Fiscale"></th>
+                        <th class="pb-2 border-secondary"><input type="text" id="filter_input_contact" name="filter_contatti" class="form-control form-control-sm bg-dark text-white border-secondary small" placeholder="Email/Tel"></th>
                         <th class="pb-2 text-center border-secondary">
-                            <select class="form-select form-select-sm bg-dark text-white border-secondary small">
+                            <select id="filter_select_status" name="filter_status" class="form-select form-select-sm bg-dark text-white border-secondary small">
                                 <option value="">Tutti</option>
                                 <option value="ATTIVO">ATTIVO</option>
                                 <option value="SOSPESO">SOSPESO</option>
@@ -59,7 +66,7 @@
                             </select>
                         </th>
                         <th class="pb-2 text-center border-secondary">
-                            <select class="form-select form-select-sm bg-dark text-white border-secondary small">
+                            <select id="filter_select_compliance" name="filter_compliance" class="form-select form-select-sm bg-dark text-white border-secondary small">
                                 <option value="">Tutti</option>
                                 <option value="MOROSO">MOROSO</option>
                                 <option value="OK">OK</option>
@@ -151,7 +158,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark border-danger border-opacity-25 shadow-lg">
                 <div class="modal-header border-bottom border-secondary">
-                    <h5 class="modal-title text-danger fw-bold"><i class="fa-solid fa-circle-exclamation me-2"></i>ELIMINAZIONE IRREVERSIBILE</h5>
+                    <h5 class="modal-title text-danger fw-bold"><i class="fa-solid fa-circle-exclamation me-2"></i>CANCELLAZIONE DEFINITIVA (Diritto all'Oblio)</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-start">

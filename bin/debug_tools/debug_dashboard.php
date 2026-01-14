@@ -35,8 +35,9 @@ $logs = $logViewer->listLogs();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Debug Dashboard - Fratellanza Militare</title>
     <!-- Cache Buster -->
-    <link rel="stylesheet" href="/fratellanza-militare-archivio/public/css/premium.css?v=<?php echo time(); ?>">
-    <script src="/fratellanza-militare-archivio/public/script/app.js" defer></script>
+    <link rel="stylesheet"
+        href="/MCAG_Militare-Civile-Archivio-Gestionale/public/css/premium.css?v=<?php echo time(); ?>">
+    <script src="/MCAG_Militare-Civile-Archivio-Gestionale/public/script/app.js" defer></script>
     <style>
         .horizontal-wrapper {
             display: flex;

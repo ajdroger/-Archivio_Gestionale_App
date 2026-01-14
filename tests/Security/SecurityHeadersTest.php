@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Middleware\SecurityHeadersMiddleware;
+use MCAG\Middleware\SecurityHeadersMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

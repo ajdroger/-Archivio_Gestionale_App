@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Controller\HomeController;
+use MCAG\Controller\HomeController;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Psr7\Factory\ServerRequestFactory;
 
@@ -12,7 +12,7 @@ test('home dashboard renders correctly', function () {
         ->method('render')
         ->willReturn('<html>Dashboard</html>');
     // Mock Repository
-    $repo = $this->createMock(\FratellanzaMilitare\GestioneSoci\SocioRepository::class);
+    $repo = $this->createMock(\MCAG\GestioneSoci\SocioRepository::class);
     $repo->expects($this->once())
         ->method('getStatistics')
         ->willReturn(['totale' => 10, 'attivi' => 5, 'morosi' => 5]);

@@ -65,7 +65,14 @@ class ListController
             'search_query' => $query,
             'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
             'username' => $_SESSION['username'] ?? 'Utente',
-            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1))
+            'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
+            'container_fluid' => true,
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })(),
+            'ai_context' => "L'utente è sul Registro Soci. Sono visualizzati " . count($soci) . " soci. È possibile cercare o filtrare.",
+            'count' => count($soci)
         ];
 
         $html = $this->mustache->render('socio_list', $viewData);

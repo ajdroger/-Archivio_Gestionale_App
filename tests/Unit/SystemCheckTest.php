@@ -1,6 +1,6 @@
 <?php
 
-use FratellanzaMilitare\Debug\SystemCheck;
+use MCAG\Debug\SystemCheck;
 
 test('check returns system status', function () {
     $check = new SystemCheck();
