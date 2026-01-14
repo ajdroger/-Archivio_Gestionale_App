@@ -192,11 +192,11 @@ window.addEventListener('load', function () {
 
     // Command Definitions
     const commands = [
-        { icon: 'fa-user-plus', title: 'Nuovo Socio', desc: 'Registra una nuova anagrafica', action: () => window.location.href = 'soci/nuovo' },
-        { icon: 'fa-users', title: 'Lista Soci', desc: 'Vai al registro completo', action: () => window.location.href = 'soci' },
-        { icon: 'fa-chart-pie', title: 'Statistiche', desc: 'Analisi demografica e finanziaria', action: () => window.location.href = 'statistiche' },
-        { icon: 'fa-house', title: 'Dashboard', desc: 'Torna alla home', action: () => window.location.href = 'dashboard' },
-        { icon: 'fa-terminal', title: 'DevTools', desc: 'Console di sviluppo', action: () => window.location.href = 'devtools' },
+        { icon: 'fa-user-plus', title: 'Nuovo Socio', desc: 'Registra una nuova anagrafica', action: () => window.location.href = window.BASE_URL + '/soci/nuovo' },
+        { icon: 'fa-users', title: 'Lista Soci', desc: 'Vai al registro completo', action: () => window.location.href = window.BASE_URL + '/soci' },
+        { icon: 'fa-chart-pie', title: 'Statistiche', desc: 'Analisi demografica e finanziaria', action: () => window.location.href = window.BASE_URL + '/statistiche' },
+        { icon: 'fa-house', title: 'Dashboard', desc: 'Torna alla home', action: () => window.location.href = window.BASE_URL + '/' },
+        { icon: 'fa-terminal', title: 'DevTools', desc: 'Console di sviluppo', action: () => window.location.href = window.BASE_URL + '/devtools' },
         { icon: 'fa-lock', title: 'Toggle Maintenance', desc: 'Attiva/Disattiva manutenzione globale', action: () => document.getElementById('toggleMaintenance').click() },
         { icon: 'fa-notes-medical', title: 'Add Sticky Note', desc: 'Focus su note rapide', action: () => { cmdModal.hide(); setTimeout(() => document.getElementById('notes-area').focus(), 500); } }
     ];
