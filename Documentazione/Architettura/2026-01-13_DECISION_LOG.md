@@ -21,6 +21,27 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+---
+
+## [ADR-031] Strict Documentation & Release Versioning
+**Data**: 2026-01-14
+**Stato**: ✅ Attivo
+**Contesto**:
+La documentazione delle modifiche era spesso sommaria. Inoltre, la cronologia dei rilasci Git non rifletteva accuratamente l'evoluzione commerciale dichiarata nel listino prezzi.
+**Decisione**:
+1.  **Fundamental Documentation Rule**: Ogni merge su `develop`/`main` DEVE essere seguito da un aggiornamento di `CHANGELOG` e `DECISION_LOG` che includa:
+    - Spiegazione "Ultra-Dettagliata" (Cosa/Perché).
+    - **Snippet di Codice** reali obbligatori.
+2.  **Historical Alignment**: Creazione forzata di branch di release per tutte le versioni storiche (`v0.1.0` - `v2.4.0`) per garantire corrispondenza 1:1 tra Git e Commercial Docs.
+3.  **Milestone Protocol**: Trigger automatico di Branch/Tag per ogni major/minor milestone numerica (es. 5.5.5, 6.0.0).
+
+**Conseguenze**:
+- (+) Tracciabilità assoluta tra Modifica Codice e Documentazione.
+- (+) Auditabilità completa per clienti Enterprise.
+- (+) Conformità processi di vendita.
+
+---
+
 ## [ADR-016] Zero-Dependency Asynchronous Queue
 **Data**: 2026-01-13
 **Stato**: ✅ Implementato

@@ -19,6 +19,33 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.4.1] - 2026-01-14 "**UI Perfection & Strict Workflow**"
+### Corretto [UI/UX]
+- **Scroll Navigator Alignment**: Risolto conflitto visivo con il widget AI "Archivio Parlante".
+    - **Dettaglio**: Il pulsante Scroll Navigator si sovrapponeva al widget.
+    - **Fix**: Spostato verticalmente a `bottom: 110px` e allineato orizzontalmente a `right: 16px`.
+    - **Codice**:
+        ```css
+        /* public/css/components/scroll_navigator.css */
+        .scroll-navigator-container {
+            bottom: 110px; /* Was 30px */
+            right: 16px;   /* Was 30px */
+        }
+        ```
+- **Stop Button Icon**: Centratura geometrica dell'icona "Stop" nel player TTS.
+    - **Fix**: Aggiunte classi utility Flexbox e rimozione padding superfluo per centratura perfetta.
+    - **Codice**:
+        ```html
+        <!-- templates/layout/layout_header.mustache -->
+        <button id="ta-stop" class="... d-flex align-items-center justify-content-center p-0">
+        ```
+- **DevTools Text**: Corretto warning "Code Reactor".
+    - **Fix**: "irreversibili" -> "IRREVERSIBILI" (Uppercase) per enfasi visiva.
+
+### Aggiunto [WORKFLOW]
+- **Regole Fondamentali Documentazione**: Aggiunta sezione "Documentation & Logging Rules" in `feature_development.md` che impone snippet di codice obbligatori.
+- **Historical Releases**: Creati branch di release retroattivi (`v0.1.0` - `v2.4.0`) per conformità con il listino prezzi commerciale.
+
 ## [5.3.2] - 2026-01-13 "**Platinum Grade Reliability**"
 ### Aggiunto
 - **Commercial Pricing Tiers**: Definizione formale dei livelli di licenza basata sul Report Benchmark 2026.
@@ -166,7 +193,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Git Workflow**: Branch di test perenni.
 - **Documentazione**: Refactoring guide.
 
-## [2.4.4] - 2026-01-110 - Enterprise Perfection
+## [2.4.4] - 2026-01-10 - Enterprise Perfection
 ### Aggiunto
 - **DevTools Ultimate v4.0**: Aggiornamento massivo della dashboard per sviluppatori con focus su stabilità e features "Mission-Critical".
     - **Pro Terminal**: Nuova sezione integrata *in-page* (bottom dashboard) per evitare shift del layout, con altezza fissa e supporto completo (Web Shell).
