@@ -174,63 +174,160 @@ HTML;
 
     public function cookie(Request $request, Response $response): Response
     {
-        $cookieContent = '
+        $baseUrl = (function () {
+            $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+            return $scriptDir === '/' ? '' : $scriptDir;
+        })();
+
+        $cookieContent = <<<HTML
             <div class="card bg-dark text-white border-secondary shadow-lg">
                 <div class="card-body p-5">
                     <h1 class="mb-4 text-info"><i class="fa-solid fa-cookie-bite me-2"></i>Cookie Policy</h1>
-                    <p class="lead text-white-50">Informativa estesa sull\'utilizzo dei Cookie e tecnologie similari.</p>
-                    <hr class="my-4">
+                    <p class="lead text-white-50">Informativa estesa sull'utilizzo dei Cookie e tecnologie similari.</p>
+                    <hr class="my-4 border-secondary">
                     
-                    <h4>1. Cosa sono i Cookie?</h4>
-                    <p>I cookie sono piccoli file di testo che i siti visitati inviano al terminale dell\'utente, dove vengono memorizzati, per poi essere ritrasmessi agli stessi siti alla visita successiva.</p>
+                    <section class="mb-5">
+                        <h4 class="text-info">1. Cosa sono i Cookie?</h4>
+                        <p class="text-white-50">I cookie sono piccoli file di testo che i siti visitati inviano al terminale dell'utente, dove vengono memorizzati, per poi essere ritrasmessi agli stessi siti alla visita successiva.</p>
+                    </section>
                     
-                    <h4>2. Tipologie di Cookie utilizzate</h4>
-                    <table class="table table-bordered table-dark mt-3 border-secondary">
-                        <thead class="table-secondary text-dark">
-                            <tr>
-                                <th>Tipologia</th>
-                                <th>Descrizione</th>
-                                <th>Durata</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Cookie Tecnici (Sessione)</strong></td>
-                                <td>Necessari per l\'autenticazione e la navigazione sicura (es. PHPSESSID).</td>
-                                <td>Sessione</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Cookie di Sicurezza</strong></td>
-                                <td>Utilizzati per prevenire attacchi CSRF e garantire l\'integrità.</td>
-                                <td>Sessione</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Preferenze (LocalStorage)</strong></td>
-                                <td>Salviamo la scelta sul banner dei cookie (chiave: <code>cookieConsented</code>).</td>
-                                <td>Persistente</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <section class="mb-5">
+                        <h4 class="text-info">2. Tipologie di Cookie utilizzate</h4>
+                        <table class="table table-bordered table-dark mt-3 border-secondary">
+                            <thead class="table-secondary text-dark">
+                                <tr>
+                                    <th>Tipologia</th>
+                                    <th>Descrizione</th>
+                                    <th>Durata</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Cookie Tecnici (Sessione)</strong></td>
+                                    <td>Necessari per l'autenticazione e la navigazione sicura (es. PHPSESSID).</td>
+                                    <td>Sessione</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cookie di Sicurezza</strong></td>
+                                    <td>Utilizzati per prevenire attacchi CSRF e garantire l'integrità.</td>
+                                    <td>Sessione</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Preferenze (LocalStorage)</strong></td>
+                                    <td>Salviamo la scelta sul banner dei cookie (chiave: <code>cookieConsented</code>).</td>
+                                    <td>Persistente</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
                     
-                    <div class="alert alert-success mt-4">
+                    <div class="alert alert-success mt-4 border-success bg-success bg-opacity-10 text-success">
                         <i class="fa-solid fa-check-circle me-2"></i>
                         <strong>Nessun Tracciamento Pubblicitario</strong><br>
                         Questo sito NON utilizza cookie di profilazione o cookie di terze parti per finalità di marketing.
                     </div>
                     
-                    <h4>3. Gestione del Consenso</h4>
-                    <p>L\'utente può gestire le preferenze sui cookie direttamente dalle impostazioni del proprio browser o cliccando sul pulsante nel banner informativo.</p>
+                    <section class="mt-5">
+                        <h4 class="text-info">3. Gestione del Consenso</h4>
+                        <p class="text-white-50">L'utente può gestire le preferenze sui cookie direttamente dalle impostazioni del proprio browser o cliccando sul pulsante nel banner informativo.</p>
+                    </section>
                 </div>
             </div>
-        ';
+HTML;
 
         $html = $this->engine->render('layout/layout', [
             'content' => $cookieContent,
             'title' => 'Cookie Policy - MCAG',
-            'base_url' => (function () {
-                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-                return $scriptDir === '/' ? '' : $scriptDir;
-            })()
+            'base_url' => $baseUrl
+        ]);
+        $response->getBody()->write($html);
+        return $response;
+    }
+
+    public function terms(Request $request, Response $response): Response
+    {
+        $baseUrl = (function () {
+            $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+            return $scriptDir === '/' ? '' : $scriptDir;
+        })();
+
+        $termsContent = <<<HTML
+            <div class="card bg-dark text-white border-secondary shadow-lg">
+                <div class="card-body p-5">
+                    <h1 class="mb-4 text-warning"><i class="fa-solid fa-file-contract me-2"></i>Termini di Servizio (EULA)</h1>
+                    <p class="lead text-white-50">Contratto di Licenza con l'Utente Finale e Condizioni d'Uso.</p>
+                    <hr class="my-4 border-secondary">
+                    
+                    <section class="mb-5">
+                        <h4 class="text-info">1. Premessa e Definizioni</h4>
+                        <p class="text-white-50">Il presente Contratto di Licenza con l'Utente Finale ("EULA") costituisce un accordo legale vincolante tra l'Utente ("Licenziatario") e <strong>MCAG System</strong> ("Licenziante") per l'uso del software.</p>
+                        <ul class="text-white-50">
+                            <li><strong>"Software"</strong>: Il codice oggetto, il codice sorgente (se incluso), le librerie e la documentazione.</li>
+                            <li><strong>"Istanza"</strong>: Una singola installazione del Software.</li>
+                            <li><strong>"Utenti Autorizzati"</strong>: Dipendenti o collaboratori autorizzati.</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h4 class="text-info">2. Concessione di Licenza</h4>
+                        <p class="text-white-50">Il Licenziante concede una licenza:</p>
+                        <ul class="text-white-50">
+                            <li>Perpetua (salvo risoluzione).</li>
+                            <li>Non esclusiva e Non trasferibile.</li>
+                            <li>Territorialmente illimitata.</li>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h4 class="text-info">3. Restrizioni d'Uso</h4>
+                        <p class="text-white-50">È fatto espresso divieto di:</p>
+                        <ol class="text-white-50">
+                            <li>Vendere, affittare o ridistribuire il Software a terzi.</li>
+                            <li>Utilizzare il Software per fornire servizi gestiti (SaaS) a terzi non autorizzati.</li>
+                            <li>Rimuovere o alterare avvisi di copyright o marchi.</li>
+                            <li>Effettuare Reverse Engineering su parti binarie/offuscate.</li>
+                        </ol>
+                    </section>
+
+                    <section class="mb-5">
+                        <h4 class="text-info">4. Proprietà Intellettuale</h4>
+                        <p class="text-white-50">Il Software è concesso in licenza, non venduto. Tutti i diritti di proprietà intellettuale rimangono di esclusiva proprietà del Licenziante.</p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h4 class="text-info">5. Garanzia Limitata (AS-IS)</h4>
+                        <div class="alert alert-warning bg-warning bg-opacity-10 border-warning text-warning">
+                             <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                             <strong>DISCLAIMER</strong>: IL SOFTWARE È FORNITO "COSÌ COM'È". IL LICENZIANTE DECLINA OGNI ALTRA GARANZIA, ESPLICITA O IMPLICITA, INCLUSE LE GARANZIE DI COMMERCIABILITÀ.
+                        </div>
+                    </section>
+
+                    <section class="mb-5">
+                        <h4 class="text-info">6. Limitazione di Responsabilità</h4>
+                        <p class="text-white-50">In nessun caso il Licenziante sarà responsabile per danni indiretti, incidentali o perdita di dati derivanti dall'uso del software.</p>
+                    </section>
+                    
+                    <section class="mb-5">
+                        <h4 class="text-info">7. Protezione Dati e GDPR</h4>
+                        <p class="text-white-50">Il Software assiste nella conformità GDPR, ma il Licenziatario rimane l'unico "Titolare del Trattamento". Il Licenziante non accede ai dati salvo per supporto tecnico documentato.</p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h4 class="text-info">8. Legge Applicabile</h4>
+                        <p class="text-white-50">Il presente Contratto è regolato dalla legge italiana.</p>
+                    </section>
+
+                    <div class="alert alert-dark border-secondary text-center">
+                        <small class="text-muted">INSTALLANDO O UTILIZZANDO IL SOFTWARE, IL LICENZIATARIO DICHIARA DI AVER LETTO E ACCETTATO I TERMINI.</small>
+                    </div>
+                </div>
+            </div>
+HTML;
+
+        $html = $this->engine->render('layout/layout', [
+            'content' => $termsContent,
+            'title' => 'Termini di Servizio - MCAG',
+            'base_url' => $baseUrl
         ]);
         $response->getBody()->write($html);
         return $response;

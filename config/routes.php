@@ -79,6 +79,7 @@ return function (App $app) {
     // Compliance & Privacy
     $app->get('/privacy-policy', \MCAG\Controller\PolicyController::class . ':privacy')->setName('privacy_policy');
     $app->get('/cookie-policy', \MCAG\Controller\PolicyController::class . ':cookie')->setName('cookie_policy');
+    $app->get('/terms-of-service', \MCAG\Controller\PolicyController::class . ':terms')->setName('terms_of_service');
 
     // Intelligence (Stats & Reports)
     $statsRole = new RoleMiddleware(['admin', 'presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
@@ -110,9 +111,9 @@ return function (App $app) {
         $group->post('/soci', \MCAG\Controller\SociApiController::class . ':create');
     })
         ->add(new \MCAG\Middleware\ApiKeyMiddleware(
-            $container->get(PDO::class),
-            $container->get(\MCAG\SecurityLayer\AuditTrail::class)
-        ))
+                $container->get(PDO::class),
+                $container->get(\MCAG\SecurityLayer\AuditTrail::class)
+            ))
         ->add($apiLimit);
     // ->add(new \MCAG\Middleware\JwtAuthMiddleware()); // TODO: Enable when Auth0 is ready
 
