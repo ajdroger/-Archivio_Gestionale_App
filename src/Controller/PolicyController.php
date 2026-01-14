@@ -29,6 +29,7 @@ class PolicyController
                     <p class="lead text-white-50">Ultimo aggiornamento: 25 Dicembre 2025</p>
                     <hr class="my-4 border-secondary">
                     
+                <div id="readable-content">
                     <section class="mb-5">
                         <h4 class="text-info">1. Titolare del Trattamento</h4>
                         <p class="text-white-50"><strong>MCAG - Militare Civile Archivio Gestionale</strong><br>
@@ -160,13 +161,16 @@ class PolicyController
                          <p class="text-white-50">Hai il diritto di presentare reclamo al Garante Privacy (<a href="https://www.garanteprivacy.it" target="_blank" class="link-light">www.garanteprivacy.it</a>).</p>
                     </section>
                 </div>
+                </div>
             </div>
+        </div>
 HTML;
 
         $html = $this->engine->render('layout/layout', [
             'content' => $policyContent,
             'title' => 'Privacy Policy - MCAG',
-            'base_url' => $baseUrl
+            'base_url' => $baseUrl,
+            'ai_context' => 'L\'utente sta visualizzando la Privacy Policy ufficiale. Se chiede informazioni sulla privacy, fai riferimento a questo contenuto.'
         ]);
         $response->getBody()->write($html);
         return $response;
@@ -258,76 +262,78 @@ HTML;
                     <p class="lead text-white-50">Contratto di Licenza con l'Utente Finale e Condizioni d'Uso.</p>
                     <hr class="my-4 border-secondary">
                     
-                    <section class="mb-5">
-                        <h4 class="text-info">1. Premessa e Definizioni</h4>
-                        <p class="text-white-50">Il presente Contratto di Licenza con l'Utente Finale ("EULA") costituisce un accordo legale vincolante tra l'Utente ("Licenziatario") e <strong>MCAG System</strong> ("Licenziante") per l'uso del software.</p>
-                        <ul class="text-white-50">
-                            <li><strong>"Software"</strong>: Il codice oggetto, il codice sorgente (se incluso), le librerie e la documentazione.</li>
-                            <li><strong>"Istanza"</strong>: Una singola installazione del Software.</li>
-                            <li><strong>"Utenti Autorizzati"</strong>: Dipendenti o collaboratori autorizzati.</li>
-                        </ul>
-                    </section>
-
-                    <section class="mb-5">
-                        <h4 class="text-info">2. Concessione di Licenza</h4>
-                        <p class="text-white-50">Il Licenziante concede una licenza:</p>
-                        <ul class="text-white-50">
-                            <li>Perpetua (salvo risoluzione).</li>
-                            <li>Non esclusiva e Non trasferibile.</li>
-                            <li>Territorialmente illimitata.</li>
-                        </ul>
-                    </section>
-
-                    <section class="mb-5">
-                        <h4 class="text-info">3. Restrizioni d'Uso</h4>
-                        <p class="text-white-50">È fatto espresso divieto di:</p>
-                        <ol class="text-white-50">
-                            <li>Vendere, affittare o ridistribuire il Software a terzi.</li>
-                            <li>Utilizzare il Software per fornire servizi gestiti (SaaS) a terzi non autorizzati.</li>
-                            <li>Rimuovere o alterare avvisi di copyright o marchi.</li>
-                            <li>Effettuare Reverse Engineering su parti binarie/offuscate.</li>
-                        </ol>
-                    </section>
-
-                    <section class="mb-5">
-                        <h4 class="text-info">4. Proprietà Intellettuale</h4>
-                        <p class="text-white-50">Il Software è concesso in licenza, non venduto. Tutti i diritti di proprietà intellettuale rimangono di esclusiva proprietà del Licenziante.</p>
-                    </section>
-
-                    <section class="mb-5">
-                        <h4 class="text-info">5. Garanzia Limitata (AS-IS)</h4>
-                        <div class="alert alert-warning bg-warning bg-opacity-10 border-warning text-warning">
-                             <i class="fa-solid fa-triangle-exclamation me-2"></i>
-                             <strong>DISCLAIMER</strong>: IL SOFTWARE È FORNITO "COSÌ COM'È". IL LICENZIANTE DECLINA OGNI ALTRA GARANZIA, ESPLICITA O IMPLICITA, INCLUSE LE GARANZIE DI COMMERCIABILITÀ.
-                        </div>
-                    </section>
-
-                    <section class="mb-5">
-                        <h4 class="text-info">6. Limitazione di Responsabilità</h4>
-                        <p class="text-white-50">In nessun caso il Licenziante sarà responsabile per danni indiretti, incidentali o perdita di dati derivanti dall'uso del software.</p>
-                    </section>
-                    
-                    <section class="mb-5">
-                        <h4 class="text-info">7. Protezione Dati e GDPR</h4>
-                        <p class="text-white-50">Il Software assiste nella conformità GDPR, ma il Licenziatario rimane l'unico "Titolare del Trattamento". Il Licenziante non accede ai dati salvo per supporto tecnico documentato.</p>
-                    </section>
-
-                    <section class="mb-5">
-                        <h4 class="text-info">8. Legge Applicabile</h4>
-                        <p class="text-white-50">Il presente Contratto è regolato dalla legge italiana.</p>
-                    </section>
+                    <div id="readable-content">
+                        <section class="mb-5">
+                            <h4 class="text-info">1. Premessa e Definizioni</h4>
+                            <p class="text-white-50">Il presente Contratto di Licenza con l'Utente Finale ("EULA") costituisce un accordo legale vincolante tra l'Utente ("Licenziatario") e <strong>MCAG System</strong> ("Licenziante") per l'uso del software.</p>
+                            <ul class="text-white-50">
+                                <li><strong>"Software"</strong>: Il codice oggetto, il codice sorgente (se incluso), le librerie e la documentazione.</li>
+                                <li><strong>"Istanza"</strong>: Una singola installazione del Software.</li>
+                                <li><strong>"Utenti Autorizzati"</strong>: Dipendenti o collaboratori autorizzati.</li>
+                            </ul>
+                        </section>
+    
+                        <section class="mb-5">
+                            <h4 class="text-info">2. Concessione di Licenza</h4>
+                            <p class="text-white-50">Il Licenziante concede una licenza:</p>
+                            <ul class="text-white-50">
+                                <li>Perpetua (salvo risoluzione).</li>
+                                <li>Non esclusiva e Non trasferibile.</li>
+                                <li>Territorialmente illimitata.</li>
+                            </ul>
+                        </section>
+    
+                        <section class="mb-5">
+                            <h4 class="text-info">3. Restrizioni d'Uso</h4>
+                            <p class="text-white-50">È fatto espresso divieto di:</p>
+                            <ol class="text-white-50">
+                                <li>Vendere, affittare o ridistribuire il Software a terzi.</li>
+                                <li>Utilizzare il Software per fornire servizi gestiti (SaaS) a terzi non autorizzati.</li>
+                                <li>Rimuovere o alterare avvisi di copyright o marchi.</li>
+                                <li>Effettuare Reverse Engineering su parti binarie/offuscate.</li>
+                            </ol>
+                        </section>
+    
+                        <section class="mb-5">
+                            <h4 class="text-info">4. Proprietà Intellettuale</h4>
+                            <p class="text-white-50">Il Software è concesso in licenza, non venduto. Tutti i diritti di proprietà intellettuale rimangono di esclusiva proprietà del Licenziante.</p>
+                        </section>
+    
+                        <section class="mb-5">
+                            <h4 class="text-info">5. Garanzia Limitata (AS-IS)</h4>
+                            <div class="alert alert-warning bg-warning bg-opacity-10 border-warning text-warning">
+                                 <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                                 <strong>DISCLAIMER</strong>: IL SOFTWARE È FORNITO "COSÌ COM'È". IL LICENZIANTE DECLINA OGNI ALTRA GARANZIA, ESPLICITA O IMPLICITA, INCLUSE LE GARANZIE DI COMMERCIABILITÀ.
+                            </div>
+                        </section>
+    
+                        <section class="mb-5">
+                            <h4 class="text-info">6. Limitazione di Responsabilità</h4>
+                            <p class="text-white-50">In nessun caso il Licenziante sarà responsabile per danni indiretti, incidentali o perdita di dati derivanti dall'uso del software.</p>
+                        </section>
+                        
+                        <section class="mb-5">
+                            <h4 class="text-info">7. Protezione Dati e GDPR</h4>
+                            <p class="text-white-50">Il Software assiste nella conformità GDPR, ma il Licenziatario rimane l'unico "Titolare del Trattamento". Il Licenziante non accede ai dati salvo per supporto tecnico documentato.</p>
+                        </section>
+    
+                        <section class="mb-5">
+                            <h4 class="text-info">8. Legge Applicabile</h4>
+                            <p class="text-white-50">Il presente Contratto è regolato dalla legge italiana.</p>
+                        </section>
+                    </div>
 
                     <div class="alert alert-dark border-secondary text-center">
                         <small class="text-muted">INSTALLANDO O UTILIZZANDO IL SOFTWARE, IL LICENZIATARIO DICHIARA DI AVER LETTO E ACCETTATO I TERMINI.</small>
                     </div>
                 </div>
-            </div>
 HTML;
 
         $html = $this->engine->render('layout/layout', [
             'content' => $termsContent,
             'title' => 'Termini di Servizio - MCAG',
-            'base_url' => $baseUrl
+            'base_url' => $baseUrl,
+            'ai_context' => 'L\'utente sta visualizzando i Termini di Servizio (EULA) del software MCAG. Il contratto specifica che la licenza è perpetua ma non trasferibile.'
         ]);
         $response->getBody()->write($html);
         return $response;

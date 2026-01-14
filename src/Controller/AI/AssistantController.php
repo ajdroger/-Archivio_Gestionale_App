@@ -139,12 +139,29 @@ class AssistantController
         $systemPrompt .= "Hai accesso a documenti interni (Decision Log, Changelog, Benchmark).\n";
         $systemPrompt .= "IMPORTANTE: Rispondi SEMPRE in ITALIANO. Usa le INFORMAZIONI CONTESTUALI fornite qui sotto per rispondere. Se trovi la risposta nel contesto, usala. Non inventare.\n\n";
 
+        // RBAC: Check User Role for Context Sanitization
+        $userRole = $_SESSION['user_role'] ?? 'guest';
+        $isGodMode = ($userRole === 'Aj_GodMode' || $userRole === 'admin');
+
         if (!empty($smartContext)) {
+            // If NOT GodMode/Admin, sanitize technical details if present (basic security)
+            if (!$isGodMode) {
+                // Example: Hide internal IDs or sensitive debugging info if it were in the context
+                $smartContext = preg_replace('/ID Interno: \d+/', 'ID Interno: [RISERVATO]', $smartContext);
+            }
             $systemPrompt .= "### CONTESTO UTENTE (Pagina Corrente):\n$smartContext\n\n";
         }
 
         if (!empty($ragContext)) {
+            // RBAC for RAG: Some documents might be restricted (future proofing)
+            // For now, we trust the VectorStore retrieval, but we can filter here if needed.
             $systemPrompt .= "### DOCUMENTAZIONE INTERNA (Knowledge Base):\n$ragContext\n\n";
+        }
+
+        if ($isGodMode) {
+            $systemPrompt .= "[SISTEMA]: L'utente è un SUPER ADMIN/DEV (Aj_GodMode). Puoi fornire dettagli tecnici, stack trace, path di file e configurazioni.\n";
+        } else {
+            $systemPrompt .= "[SISTEMA]: L'utente è un operatore standard. NON fornire dettagli tecnici bassi (no stack trace, no percorsi file, no config server). Rispondi in modo funzionale.\n";
         }
 
         $systemPrompt .= "DOMANDA UTENTE: $userMessage";

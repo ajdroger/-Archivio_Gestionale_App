@@ -53,6 +53,10 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Policy Sync**: Aggiornato `PolicyController` per riflettere l'intero contenuto (11 sezioni) del documento statico `privacy-policy.html`, includendo Base Giuridica, Data Retention, Sicurezza e Cookie details.
 - **Bugfix**: Risolto link "Leggi Cookie Policy" non funzionante nelle pagine policy; sostituito placeholder Mustache `{{base_url}}` (non processato) con interpolazione variabile PHP `$baseUrl`.
 - **Policy Pages**: Implementata pagina `terms-of-service` (route dinamica + file statico `public/terms-of-service.html` per compatibilità) con contenuto EULA completo.
+- **Talking Archive**: Creato motore TTS `public/js/talking_archive.js` con supporto SpeechSynthesis API, smart parsing dei contenuti e gestione stato riproduzione (Play/Pause/Stop).
+    - **Integrazione UI**: Aggiunti controlli audio in `layout_header.mustache`.
+    - **Smart Narratives**: Completata integrazione "Narrativa" in Dashboard, Statistiche e Lista Soci (riassunti nascosti per AI/TTS).
+    - **AI Context-Aware**: Implementato RBAC in `AssistantController` per sanitizzare il contesto in base al ruolo utente (`Aj_GodMode` vs Admin vs Standard).
 - **Informativa**: Contenuti aggiornati e specifici per l'ambito gestionale (Cookie tecnici e di sessione).
     - **Meccanismo "Zero-Block"**: Banner non intrusivo con memorizzazione consenso in LocalStorage per evitare cookie di profilazione server-side.
 - **Privacy Policy**: Aggiornamento informativa Art. 13-14 GDPR con specifica Titolare e finalità trattamento (Log sicurezza e gestione soci).

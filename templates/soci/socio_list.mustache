@@ -8,6 +8,13 @@
             <div class="col-12 col-md pt-2 pt-md-0">
                 <div class="d-flex flex-wrap gap-3 justify-content-md-end align-items-center">
                     
+                    <!-- Smart Narrative Summary (Hidden for UI, Visible for TTS/AI) -->
+                    <div class="ta-smart-summary visually-hidden">
+                        Stai consultando il Registro Unico Anagrafiche.
+                        Attualmente sono visualizzati {{soci.length}} soci.
+                        Usa la barra di ricerca per filtrare per nome o matricola.
+                    </div>
+
                     <!-- Server Side Search Form -->
                     <form action="{{base_url}}/soci" method="GET" class="d-flex gap-2">
                         <select name="tipo" class="form-select form-select-sm bg-dark text-white border-secondary fw-bold" style="width: 140px;">

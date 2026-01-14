@@ -26,6 +26,15 @@
 </div>
 
 
+
+    <!-- Smart Narrative Summary (Hidden for UI, Visible for TTS/AI) -->
+    <div class="ta-smart-summary visually-hidden">
+        Benvenuto sulla Dashboard di Mission Control. 
+        Attualmente ci sono {{stats.totale}} soci registrati.
+        Il sistema è operativo.
+        {{#is_demo_mode}}La modalità demo è attiva con funzionalità limitate.{{/is_demo_mode}}
+    </div>
+
 <!-- Visual Intelligence Section -->
 <div class="row g-4 mb-5">
     <!-- Chart 1: Status Distribution -->
