@@ -60,8 +60,11 @@ class HomeController
 
         // Effective Render State
         $effectiveIsAdmin = $realIsAdmin;
+        $effectiveIsGodMode = $isGodMode;
+
         if ($realIsAdmin && $requestedView === 'user') {
             $effectiveIsAdmin = false;
+            $effectiveIsGodMode = false; // Hide God Mode in User View
         }
 
         // Advanced Data Loading (Only if effectively admin)
@@ -80,7 +83,7 @@ class HomeController
             'real_is_admin' => $realIsAdmin, // Keeps the toggles visible
             'is_admin' => $effectiveIsAdmin, // Controls the view
             'view_mode' => $requestedView, // For button styling
-            'is_god_mode' => $isGodMode,
+            'is_god_mode' => $effectiveIsGodMode,
             'system_health' => $systemHealth,
             'resilience_metrics' => $resilienceData,
             'is_demo_mode' => $_SESSION['is_demo_mode'] ?? false,
