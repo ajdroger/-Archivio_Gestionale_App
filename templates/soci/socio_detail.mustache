@@ -1,38 +1,159 @@
 {{> layout_header }}
 <div class="row">
     <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
-            <div class="card-header bg-transparent py-4 border-bottom border-secondary text-center">
-                <div class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 80px; height: 80px; font-size: 2rem; border: 2px solid rgba(56, 189, 248, 0.2);">
-                    {{user_initial}}
-                </div>
-                <h5 class="mb-0 text-white fw-bold">PROFILO SOCIO</h5>
+        <!-- IDENTITY CARD DOSSIER -->
+        <div class="card border-0 shadow-lg h-100 bg-dark text-white overflow-hidden position-relative">
+            <!-- BACKGROUND WATERMARK -->
+            <div class="position-absolute top-50 start-50 translate-middle opacity-10" style="font-size: 10rem; color: rgba(255,255,255,0.05); pointer-events: none;">
+                <i class="fa-solid fa-user-shield"></i>
             </div>
-            <div class="card-body">
-                <div class="mb-4">
-                    <label class="mc-label">NOME E COGNOME</label>
-                    <div class="fs-4 fw-bold text-white">{{socio.nome}} {{socio.cognome}}</div>
-                </div>
-                <div class="mb-4">
-                    <label class="mc-label">IDENTIFICATIVO FISCALE</label>
-                    <div class="mc-code-box">{{socio.cf}}</div>
-                </div>
-                <div class="mb-4">
-                    <label class="mc-label">STATO OPERATIVO</label>
-                    <div class="mt-1">
-                        {{#is_attivo}}
-                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">CERTIFICATO ATTIVO</span>
-                        {{/is_attivo}}
+            
+            <!-- CLASSIFIED STAMP -->
+            <div class="position-absolute top-0 end-0 p-3" style="opacity: 0.7; transform: rotate(15deg); pointer-events: none;">
+               <span class="border border-danger text-danger px-3 py-1 fw-bold font-monospace text-uppercase" style="letter-spacing: 2px;">Classified</span>
+            </div>
+
+            <div class="card-header bg-transparent py-4 border-bottom border-secondary text-center position-relative z-1">
+                <div class="avatar-initial rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3 d-flex align-items-center justify-content-center fw-bold shadow-lg position-relative" style="width: 100px; height: 100px; font-size: 2.5rem; border: 4px solid rgba(56, 189, 248, 0.3);">
+                    {{socio.nome.0}}{{socio.cognome.0}}
+                    <div class="position-absolute bottom-0 end-0 bg-dark rounded-circle p-1 border border-secondary">
+                        <i class="fa-solid fa-check-circle text-success fs-5"></i>
                     </div>
                 </div>
-                <div class="d-grid mt-5">
-                    <a href="{{base_url}}/soci/{{socio.cf}}/modifica" class="btn btn-warning fw-bold shadow-sm"><i class="fa-solid fa-user-pen me-2"></i>REVISIONA DATI</a>
+                <h4 class="mb-0 fw-bold">{{socio.nome}} {{socio.cognome}}</h4>
+                <div class="font-monospace text-info small mt-1">{{socio.matricola}}</div>
+                
+                <!-- RIBBON RACK (GAMIFICATION) -->
+                <div class="d-flex justify-content-center gap-2 mt-3 flex-wrap">
+                    {{#intelligence.awards}}
+                    <div class="ribbon-badge p-1 bg-dark bg-opacity-50 rounded border border-secondary border-opacity-50" title="{{name}}: {{desc}}" data-bs-toggle="tooltip">
+                        <i class="fa-solid {{icon}}" style="color: {{color}};"></i>
+                    </div>
+                    {{/intelligence.awards}}
                 </div>
+            </div>
+
+            <div class="card-body position-relative z-1">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <small class="text-secondary text-uppercase x-small fw-bold tracking-wider">Grado & Qualifica</small>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                             <span class="badge bg-secondary bg-opacity-25 border border-secondary border-opacity-25 text-white">{{socio.grado}}</span>
+                             <span class="text-white small text-uppercase opacity-75">{{socio.corpo}}</span>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-secondary text-uppercase x-small fw-bold tracking-wider">Contatti Operativi</small>
+                        <div class="bg-black bg-opacity-25 p-3 rounded border border-secondary border-opacity-25 mt-1">
+                            <div class="d-flex align-items-center gap-2 text-white small mb-2">
+                                <i class="fa-solid fa-envelope text-primary opacity-50" style="width: 20px;"></i> {{socio.email}}
+                            </div>
+                            <div class="d-flex align-items-center gap-2 text-white small">
+                                <i class="fa-solid fa-phone text-success opacity-50" style="width: 20px;"></i> {{socio.telefono}}
+                            </div>
+                        </div>
+                    </div>
+                     <div class="col-12">
+                        <small class="text-secondary text-uppercase x-small fw-bold tracking-wider">Stato di Servizio</small>
+                        <div class="mt-1">
+                            {{#socio.is_attivo}}
+                            <div class="alert alert-success bg-opacity-10 border-success border-opacity-25 py-2 mb-0 d-flex align-items-center">
+                                <i class="fa-solid fa-circle-check me-2"></i> SERVIZIO ATTIVO
+                            </div>
+                            {{/socio.is_attivo}}
+                            {{^socio.is_attivo}}
+                             <div class="alert alert-secondary bg-opacity-10 border-secondary border-opacity-25 py-2 mb-0 d-flex align-items-center">
+                                <i class="fa-solid fa-box-archive me-2"></i> CONGEDO / ARCHIVIO
+                            </div>
+                            {{/socio.is_attivo}}
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-secondary opacity-25 my-4">
+
+                <!-- OPERATION BUTTONS -->
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-light d-flex justify-content-between align-items-center" onclick="window.print()">
+                        <span><i class="fa-solid fa-id-card me-2"></i>Stampa Badge</span>
+                        <i class="fa-solid fa-chevron-right small opacity-50"></i>
+                    </button>
+                    <a href="{{base_url}}/soci/{{socio.cf}}/modifica" class="btn btn-warning d-flex justify-content-between align-items-center fw-bold text-dark shadow-warning">
+                         <span><i class="fa-solid fa-pen-to-square me-2"></i>Modifica Dati</span>
+                         <i class="fa-solid fa-chevron-right small opacity-50"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-footer bg-black bg-opacity-25 border-top border-secondary text-center small text-secondary py-3">
+                 <i class="fa-solid fa-calendar-check me-1"></i> Iscritto dal: <span class="text-white">{{socio.data_iscrizione}}</span>
             </div>
         </div>
     </div>
 
     <div class="col-md-8 mb-4">
+        <!-- INTELLIGENCE ROW -->
+        <div class="row g-4 mb-4">
+            <!-- SERVICE TIMELINE -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow bg-dark h-100">
+                    <div class="card-header bg-transparent border-bottom border-secondary">
+                        <small class="text-secondary fw-bold text-uppercase tracking-wider"><i class="fa-solid fa-timeline me-2 text-info"></i>Service Timeline</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline-simple">
+                            {{#intelligence.service_history}}
+                            <div class="d-flex gap-3 mb-3">
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="rounded-circle bg-{{color}} bg-opacity-25 text-{{color}} border border-{{color}} border-opacity-50 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 35px; height: 35px;">
+                                        <i class="fa-solid {{icon}} small"></i>
+                                    </div>
+                                    <div class="h-100 border-start border-secondary border-opacity-25 my-1" style="width: 1px;"></div>
+                                </div>
+                                <div class="pb-3">
+                                    <h6 class="text-white mb-0 fw-bold small">{{title}}</h6>
+                                    <p class="text-secondary x-small mb-1 opacity-75">{{desc}}</p>
+                                    <span class="badge bg-black border border-secondary text-secondary rounded-pill x-small font-monospace">{{date}}</span>
+                                </div>
+                            </div>
+                            {{/intelligence.service_history}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ACCESS LOG -->
+            <div class="col-lg-6">
+                 <div class="card border-0 shadow bg-dark h-100">
+                    <div class="card-header bg-transparent border-bottom border-secondary d-flex justify-content-between">
+                        <small class="text-secondary fw-bold text-uppercase tracking-wider"><i class="fa-solid fa-shoe-prints me-2 text-warning"></i>Digital Footprint</small>
+                        <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-10 rounded-pill x-small">Last 5</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover table-sm mb-0 small checkbox-table-cells">
+                                <thead class="text-secondary opacity-50 bg-black bg-opacity-25">
+                                    <tr>
+                                        <th class="ps-3 py-2">Timestamp</th>
+                                        <th class="py-2">Evento Audit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#intelligence.access_log}}
+                                    <tr>
+                                        <td class="ps-3 text-secondary font-monospace border-secondary border-opacity-10">{{date}}</td>
+                                        <td class="text-white border-secondary border-opacity-10">
+                                            <i class="fa-solid fa-circle text-{{status}} x-small me-2 opacity-75"></i> {{action}}
+                                        </td>
+                                    </tr>
+                                    {{/intelligence.access_log}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
             <div class="card-header bg-transparent py-4 border-bottom border-secondary d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 text-white fw-bold"><i class="fa-solid fa-vault me-2 text-primary"></i>VAULT DOCUMENTI</h5>

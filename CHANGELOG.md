@@ -19,6 +19,15 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.7.0] - 2026-01-15 "**Classified Dossier**"
+### Aggiunto
+- **Dossier Intelligence System**: Nuova vista dettaglio socio trasformata in "Fascicolo Classificato".
+    - **Identity Card**: Card olografica con watermark e timbri "Classified".
+    - **Service Timeline**: Cronologia verticale degli eventi di servizio (Arruolamento, Promozioni).
+    - **Digital Footprint**: Log accessi e azioni audit per monitorare la sicurezza del fascicolo.
+    - **Ribbon Rack**: Sistema di gamification con nastrini e medaglie (Servizio Attivo, ID Verificato).
+- **Backend Mocking**: Iniezione di dati di intelligence (simulati) nel `DetailController` per popolare la nuova UI.
+
 ## [5.6.1] - 2026-01-15 "**Hotfix**"
 ### Risolto
 - **Syntax Error**: Corretta parentesi ridondante in `socio_list_admin.mustache` che bloccava l'inizializzazione JS.
