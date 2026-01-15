@@ -60,8 +60,8 @@
         </div>
         {{#is_admin}}
         <div class="d-flex gap-2">
-            <button class="btn btn-outline-info rounded-pill"><i class="fa-solid fa-download me-2"></i>Export Report</button>
-            <button class="btn btn-outline-light rounded-pill"><i class="fa-solid fa-print me-2"></i>Print</button>
+            <button class="btn btn-outline-info rounded-pill" onclick="exportToCSV()"><i class="fa-solid fa-download me-2"></i>Export Report</button>
+            <button class="btn btn-outline-light rounded-pill" onclick="window.print()"><i class="fa-solid fa-print me-2"></i>Print</button>
         </div>
         {{/is_admin}}
     </div>
@@ -688,6 +688,59 @@
 
 <!-- Chart.js (Required for Admin View) -->
 {{#is_admin}}
+<script>
+function exportToCSV() {
+    // 1. Try Exporting the Table if it exists
+    const table = document.getElementById("example");
+    if (table) {
+        let csv = [];
+        const rows = document.querySelectorAll("table tr");
+        for (const row of rows) {
+            const cols = row.querySelectorAll("td, th");
+            const rowData = [];
+            for (const col of cols) rowData.push('"' + col.innerText + '"');
+            csv.push(rowData.join(","));
+        }
+        downloadCSV(csv.join("\n"), "transazioni_report_" + new Date().toISOString().slice(0,10) + ".csv");
+    } else {
+        // 2. Fallback: Export Financial Summary
+        const data = [
+             ["Report Finanziario", new Date().toLocaleDateString()],
+             ["Totale Asset", "{{financials.asset_value}}"],
+             ["Revenue Proiettata", "{{financials.projected_revenue}}"],
+             ["Growth Rate", "{{financials.growth_rate}}"],
+             [],
+             ["Simbolo", "Valore", "Trend"],
+             {{#market_ticker}}
+             ["{{symbol}}", "{{value}}", "{{change}}"],
+             {{/market_ticker}}
+        ];
+        let csvContent = data.map(e => e.join(",")).join("\n");
+        downloadCSV(csvContent, "financial_summary.csv");
+    }
+}
+
+function downloadCSV(csv, filename) {
+    const csvFile = new Blob([csv], {type: "text/csv"});
+    const downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
+</script>
+<style>
+@media print {
+    .navbar, .btn, footer, .financial-ticker-wrap, .dataTables_filter, .dataTables_length, .dataTables_info, .dataTables_paginate { display: none !important; }
+    .card { border: 1px solid #000 !important; box-shadow: none !important; background: white !important; color: black !important; }
+    body { background: white !important; color: black !important; }
+    .text-white, .text-secondary { color: black !important; }
+    a { text-decoration: none !important; color: black !important; }
+    canvas { max-width: 100% !important; }
+}
+</style>
 <script src="{{base_url}}/js/lib/chart.min.js?v=5.5.2"></script>
 <script src="{{base_url}}/js/pages/statistics.js?v=5.5.2"></script>
 {{/is_admin}}
