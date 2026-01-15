@@ -1,9 +1,9 @@
 <?php
 /**
- * MCAG HYPER-GRID TOOLKIT v7.0
+ * MCAG HYPER-GRID TOOLKIT v7.1
  * "QUANTUM ENGINEERING DECK"
  * 
- * @version 7.0.0-hypergrid
+ * @version 7.1.0-hypergrid-live
  */
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -12,8 +12,7 @@ date_default_timezone_set('Europe/Rome');
 // --- BACKEND LOGIC ---
 
 // 1. GIT INFO
-function getGitInfo()
-{
+function getGitInfo() {
     $root = __DIR__ . '/../../';
     $branch = trim(shell_exec("cd \"$root\" && git rev-parse --abbrev-ref HEAD"));
     $hash = trim(shell_exec("cd \"$root\" && git rev-parse --short HEAD"));
@@ -22,24 +21,19 @@ function getGitInfo()
 }
 
 // 2. LOG READER (Tail)
-function getLogTail($lines = 50)
-{
+function getLogTail($lines = 50) {
     $logFile = __DIR__ . '/../../storage/logs/app.log';
-    if (!file_exists($logFile))
-        return ["Log file not found."];
-    // Efficient tail for large files
+    if (!file_exists($logFile)) return ["Log file not found."];
     $data = file($logFile);
     return array_slice($data, -$lines);
 }
 
 // 3. CACHE PURGE
-function purgeCache()
-{
+function purgeCache() {
     $dirs = [__DIR__ . '/../../var/cache', __DIR__ . '/../../tmp'];
     $results = [];
     foreach ($dirs as $dir) {
-        if (!is_dir($dir))
-            continue;
+        if (!is_dir($dir)) continue;
         $files = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
@@ -53,6 +47,66 @@ function purgeCache()
     return $results;
 }
 
+// 4. PRECISE TEST COUNTING
+function countTestsInFile($path) {
+    if (!file_exists($path)) return 0;
+    $content = file_get_contents($path);
+    
+    // PHPUnit: "public function testMethods()"
+    $phpunit = preg_match_all('/public\s+function\s+test\w+/i', $content);
+    
+    // Pest: "test('description', ...)" or "it('description', ...)"
+    // Matches start of line or after space, followed by test/it, open paren, quote
+    $pest = preg_match_all('/(?:^|\s)(?:test|it)\s*\([\'"]/', $content);
+    
+    // Attributes: "#[Test]" (PHPUnit 10+)
+    $attrs = preg_match_all('/#\[Test\]/i', $content);
+
+    return $phpunit + $pest + $attrs;
+}
+
+function scanTestsRecursive($dir) {
+    if (!is_dir($dir)) return [];
+    
+    $iter = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::SELF_FIRST
+    );
+    
+    $files = [];
+    $projectRoot = str_replace('\\', '/', realpath(__DIR__ . '/../../'));
+    $totalCount = 0;
+
+    foreach ($iter as $f) {
+        if ($f->isFile() && str_ends_with($f->getFilename(), 'Test.php')) {
+            $path = str_replace('\\', '/', $f->getRealPath());
+            if (str_contains($path, '/vendor/') || str_contains($path, '/Archived/')) continue;
+
+            $testCount = countTestsInFile($path);
+            if ($testCount === 0) continue; // Skip files with no actual tests
+
+            $totalCount += $testCount;
+
+            $rel = str_replace($projectRoot . '/', '', $path);
+            $relFromTests = str_replace($projectRoot . '/tests/', '', $path);
+            $category = dirname($relFromTests);
+            if ($category === '.') $category = 'Root';
+            $category = str_replace('\\', '/', $category);
+
+            $files[] = [
+                'name' => $f->getFilename(), 
+                'path' => $rel, 
+                'cat' => $category,
+                'count' => $testCount
+            ];
+        }
+    }
+    
+    usort($files, fn($a, $b) => $a['cat'] <=> $b['cat'] ?: $a['name'] <=> $b['name']);
+    
+    return ['files' => $files, 'total' => $totalCount];
+}
+
 // ACTION HANDLER
 if (isset($_GET['action'])) {
     header('Content-Type: application/json');
@@ -61,19 +115,26 @@ if (isset($_GET['action'])) {
 
     try {
         switch ($act) {
+            case 'refresh_stats':
+                $scan = scanTestsRecursive(__DIR__ . '/../../tests');
+                $res['data'] = [
+                    'total' => $scan['total'],
+                    'timestamp' => date('H:i:s')
+                ];
+                break;
+                
             case 'run_cmd':
                 $input = json_decode(file_get_contents('php://input'), true);
                 $cmd = $input['cmd'] ?? '';
-                // [Security Placeholder: In prod, strictly validate allowlist]
                 $root = realpath(__DIR__ . '/../../');
                 chdir($root);
                 $res['output'] = shell_exec($cmd . " 2>&1");
                 break;
-
+            
             case 'git_status':
                 $res['data'] = getGitInfo();
                 break;
-
+                
             case 'read_logs':
                 $res['data'] = getLogTail();
                 break;
@@ -83,19 +144,18 @@ if (isset($_GET['action'])) {
                 break;
 
             case 'run_test':
-                $file = $_GET['file'] ?? '';
-                // Simple Runner wrapper
-                $target = realpath(__DIR__ . '/../../' . $file);
-                if ($target && file_exists($target)) {
-                    $ext = pathinfo($target, PATHINFO_EXTENSION);
-                    $cmd = ($ext === 'php') ? "php \"$target\"" : "\"$target\"";
-                    $root = realpath(__DIR__ . '/../../');
-                    chdir($root);
-                    $res['output'] = shell_exec($cmd . " 2>&1");
-                } else {
-                    $res['output'] = "Error: File not found.";
-                }
-                break;
+                 $file = $_GET['file'] ?? '';
+                 $target = realpath(__DIR__ . '/../../' . $file);
+                 if ($target && file_exists($target)) {
+                     $ext = pathinfo($target, PATHINFO_EXTENSION);
+                     $cmd = ($ext === 'php') ? "php \"$target\"" : "\"$target\"";
+                     $root = realpath(__DIR__ . '/../../');
+                     chdir($root);
+                     $res['output'] = shell_exec($cmd . " 2>&1");
+                 } else {
+                     $res['output'] = "Error: File not found.";
+                 }
+                 break;
         }
     } catch (Exception $e) {
         $res['status'] = 'error';
@@ -105,56 +165,10 @@ if (isset($_GET['action'])) {
     exit;
 }
 
-// --- DATA PREP ---
-function scanTests($dir) {
-    if (!is_dir($dir)) return [];
-    
-    // Use RecursiveDirectoryIterator directly
-    $iter = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
-        RecursiveIteratorIterator::SELF_FIRST
-    );
-    
-    $files = [];
-    $projectRoot = str_replace('\\', '/', realpath(__DIR__ . '/../../'));
-
-    foreach ($iter as $f) {
-        // Only PHP Test files
-        if ($f->isFile() && str_ends_with($f->getFilename(), 'Test.php')) {
-            $path = str_replace('\\', '/', $f->getRealPath());
-            
-            // Exclude archived/vendor
-            if (str_contains($path, '/vendor/') || str_contains($path, '/Archived/')) continue;
-
-            $rel = str_replace($projectRoot . '/', '', $path);
-            
-            // Category: Relative path from tests/ (e.g. "Feature/Admin")
-            // Assuming tests are in $projectRoot/tests/
-            $relFromTests = str_replace($projectRoot . '/tests/', '', $path);
-            $category = dirname($relFromTests);
-            if ($category === '.') $category = 'Root';
-
-            // Sanitize path separators in category
-            $category = str_replace('\\', '/', $category);
-
-            $files[] = [
-                'name' => $f->getFilename(), 
-                'path' => $rel, 
-                'cat' => $category
-            ];
-        }
-    }
-    
-    // Sort modules by Category then Name
-    usort($files, fn($a, $b) => $a['cat'] <=> $b['cat'] ?: $a['name'] <=> $b['name']);
-    
-    return $files;
-}
-
-$tests = scanTests(__DIR__ . '/../../tests');
-$totalTests = count($tests);
-
-// Grouping for sidebar
+// INITIAL LOAD
+$scan = scanTestsRecursive(__DIR__ . '/../../tests');
+$tests = $scan['files'];
+$totalTests = $scan['total'];
 $groupedTests = [];
 foreach ($tests as $t) {
     $groupedTests[$t['cat']][] = $t;
@@ -162,16 +176,14 @@ foreach ($tests as $t) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HYPER-GRID // MCAG TOOLKIT</title>
     <!-- FONTS -->
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../public/css/all.min.css">
-
+    
     <style>
         :root {
             --neon-blue: #00f3ff;
@@ -191,7 +203,7 @@ foreach ($tests as $t) {
             overflow: hidden;
             height: 100vh;
             display: flex;
-            background-image:
+            background-image: 
                 linear-gradient(var(--grid-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 50px 50px;
@@ -204,10 +216,7 @@ foreach ($tests as $t) {
             content: " ";
             display: block;
             position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
+            top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
@@ -251,15 +260,8 @@ foreach ($tests as $t) {
             overflow-y: auto;
             padding: 10px;
         }
-
-        .module-list::-webkit-scrollbar {
-            width: 4px;
-            background: #000;
-        }
-
-        .module-list::-webkit-scrollbar-thumb {
-            background: var(--neon-blue);
-        }
+        .module-list::-webkit-scrollbar { width: 4px; background: #000; }
+        .module-list::-webkit-scrollbar-thumb { background: var(--neon-blue); }
 
         .module-group-title {
             color: var(--neon-pink);
@@ -268,6 +270,8 @@ foreach ($tests as $t) {
             margin: 15px 5px 5px;
             letter-spacing: 1px;
             text-shadow: 0 0 5px var(--neon-pink);
+            display: flex;
+            justify-content: space-between;
         }
 
         .module-item {
@@ -291,9 +295,8 @@ foreach ($tests as $t) {
             box-shadow: -5px 0 10px var(--neon-blue);
         }
 
-        .module-item i {
-            width: 20px;
-        }
+        .module-item i { width: 20px; }
+        .badge-count { font-size: 10px; opacity: 0.7; }
 
         /* --- TOP BAR (New Tools) --- */
         .top-bar {
@@ -304,7 +307,7 @@ foreach ($tests as $t) {
             border: 1px solid var(--neon-blue);
             border-radius: 4px;
         }
-
+        
         .tool-btn {
             background: transparent;
             border: 1px solid var(--neon-blue);
@@ -319,7 +322,6 @@ foreach ($tests as $t) {
             align-items: center;
             gap: 8px;
         }
-
         .tool-btn:hover {
             background: var(--neon-blue);
             color: #000;
@@ -330,7 +332,6 @@ foreach ($tests as $t) {
             border-color: var(--neon-pink);
             color: var(--neon-pink);
         }
-
         .tool-btn.danger:hover {
             background: var(--neon-pink);
             color: #000;
@@ -363,7 +364,7 @@ foreach ($tests as $t) {
             border-top: 1px solid #333;
             padding-top: 10px;
         }
-
+        
         .terminal-input {
             background: transparent;
             border: none;
@@ -377,54 +378,53 @@ foreach ($tests as $t) {
 
         /* --- GLITCH ANIMATION --- */
         @keyframes glitch {
-            0% {
-                transform: translate(0)
-            }
-
-            20% {
-                transform: translate(-2px, 2px)
-            }
-
-            40% {
-                transform: translate(-2px, -2px)
-            }
-
-            60% {
-                transform: translate(2px, 2px)
-            }
-
-            80% {
-                transform: translate(2px, -2px)
-            }
-
-            100% {
-                transform: translate(0)
-            }
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
         }
+        .glitch:hover { animation: glitch 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; }
 
-        .glitch:hover {
-            animation: glitch 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-        }
     </style>
 </head>
-
 <body>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="brand glitch">
             <i class="fa-solid fa-microchip"></i> HYPER-GRID
+            <div style="font-size: 10px; color: var(--neon-blue); letter-spacing: 1px; margin-top: 5px;">
+                DIAGNOSTIC SYSTEM v7.1
+            </div>
         </div>
+        
         <div class="module-list">
-            <div class="module-group-title">Diagnostic Modules</div>
-            <?php foreach ($tests as $test): ?>
-                <div class="module-item" onclick="runTest('<?= $test['path'] ?>')">
-                    <i class="fa-solid fa-vial"></i>
-                    <span><?= $test['name'] ?></span>
-                </div>
-            <?php endforeach; ?>
+            <div class="module-group-title">
+                <span>TOTAL TESTS:</span>
+                <span id="live-count" style="color: var(--neon-green)"><?= $totalTests ?></span>
+            </div>
 
-            <div class="module-group-title">System Core</div>
+            <?php foreach ($groupedTests as $category => $modules): ?>
+                <div class="module-group-title" style="margin-top: 15px; border-bottom: 1px solid rgba(0,243,255,0.1); padding-bottom: 2px;">
+                    <?= htmlspecialchars($category) ?>
+                    <span style="font-size: 10px; opacity: 0.5">
+                        [<?= array_sum(array_column($modules, 'count')) ?>]
+                    </span>
+                </div>
+                <?php foreach ($modules as $test): ?>
+                    <div class="module-item" onclick="runTest('<?= $test['path'] ?>')">
+                        <div style="display:flex; align-items:center; gap:8px">
+                            <i class="fa-solid fa-vial"></i>
+                            <span><?= str_replace('Test.php', '', $test['name']) ?></span>
+                        </div>
+                        <span class="badge-count"><?= $test['count'] ?>t</span>
+                    </div>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+            
+            <div class="module-group-title" style="margin-top: 30px; border-top: 1px dashed var(--neon-pink); padding-top: 10px;">System Core</div>
             <div class="module-item" onclick="fetchGitStatus()">
                 <i class="fa-brands fa-git-alt"></i> GIT STATUS
             </div>
@@ -438,20 +438,18 @@ foreach ($tests as $t) {
     <div class="main-deck">
         <!-- TOOLBAR (New Features) -->
         <div class="top-bar">
-            <button class="tool-btn" onclick="fetchGitStatus()"><i class="fa-solid fa-code-branch"></i> Git
-                Check</button>
+            <button class="tool-btn" onclick="fetchGitStatus()"><i class="fa-solid fa-code-branch"></i> Git Check</button>
             <button class="tool-btn" onclick="fetchLogs()"><i class="fa-solid fa-align-left"></i> Tail Logs</button>
-            <button class="tool-btn" onclick="window.location.reload()"><i class="fa-solid fa-rotate"></i>
-                Reboot</button>
+            <button class="tool-btn" onclick="window.location.reload()"><i class="fa-solid fa-rotate"></i> Reboot</button>
             <div style="flex-grow: 1"></div>
-            <button class="tool-btn danger" onclick="purgeCache()"><i class="fa-solid fa-trash-can"></i> PURGE
-                CACHE</button>
+            <button class="tool-btn danger" onclick="purgeCache()"><i class="fa-solid fa-trash-can"></i> PURGE CACHE</button>
         </div>
 
         <!-- TERMINAL -->
         <div class="terminal-container" id="terminal">
             <div class="terminal-output" id="output">
                 > HYPER-GRID SYSTEM INITIALIZED...
+                > SCANNING FOR TESTS... DETECTED [<?= $totalTests ?>].
                 > READY FOR INPUT.
                 > _
             </div>
@@ -465,35 +463,35 @@ foreach ($tests as $t) {
     <script>
         const outputEl = document.getElementById('output');
         const cmdInput = document.getElementById('cmdInput');
+        const countEl = document.getElementById('live-count');
 
         function log(text, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
             let prefix = `[${timestamp}] `;
             if (type === 'error') prefix += '[ERR] ';
             if (type === 'success') prefix += '[OK] ';
-
+            
             outputEl.innerText += '\n' + prefix + text;
-            // Scroll to bottom
             document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
         }
 
         async function apiCall(action, data = {}) {
-            log(`EXECUTING: ${action}...`);
             try {
                 let url = `?action=${action}`;
                 if (action === 'run_test') url += `&file=${data.file}`;
-
+                
                 const opts = { method: 'POST', body: JSON.stringify(data) };
-                if (action === 'run_test' || action === 'git_status' || action === 'read_logs' || action === 'purge_cache') {
-                    // these use GET or don't need body for minimal impl, but fetch handles it.
-                    // Actually, my PHP expects GET for action, but POST body for run_cmd. 
-                    // Let's standardise on query param for action.
-                }
-
+                
                 const res = await fetch(url, action === 'run_cmd' ? opts : undefined);
                 const json = await res.json();
-
+                
                 if (json.data) {
+                    if (action === 'refresh_stats') {
+                        countEl.innerText = json.data.total;
+                        // Only log if changed? Nah excessive logging is cool.
+                        // Actually, let's NOT log stats refresh to keep terminal clean.
+                        return; 
+                    }
                     log(JSON.stringify(json.data, null, 2), 'success');
                 } else if (json.output) {
                     log(json.output);
@@ -503,20 +501,31 @@ foreach ($tests as $t) {
             }
         }
 
+        // Live Count Update (Poll every 5s)
+        setInterval(() => {
+            apiCall('refresh_stats');
+        }, 5000);
+
         function runTest(file) {
+            log(`INITIATING TEST MODULE: ${file}...`);
             apiCall('run_test', { file });
         }
 
         function fetchGitStatus() {
+            log('QUERYING GIT REPOSITORY...');
             apiCall('git_status');
         }
 
         function fetchLogs() {
+            log('INTERCEPTING SYSTEM LOGS...');
             apiCall('read_logs');
         }
 
         function purgeCache() {
-            if (confirm('CONFIRM PURGE?')) apiCall('purge_cache');
+            if(confirm('WARNING: THIS WILL NUKE SYSTEM CACHE. PROCEED?')) {
+                log('INITIATING CACHE PURGE PROTOCOL...');
+                apiCall('purge_cache');
+            }
         }
 
         // CMD Input
@@ -524,20 +533,13 @@ foreach ($tests as $t) {
             if (e.key === 'Enter') {
                 const cmd = cmdInput.value;
                 if (!cmd) return;
-
+                
                 log(`> ${cmd}`);
                 apiCall('run_cmd', { cmd });
                 cmdInput.value = '';
             }
         });
 
-        // Intro Effect
-        setTimeout(() => {
-            log("ESTABLISHING UPLINK...", "success");
-            log("ACCESS GRANTED.", "success");
-        }, 500);
-
     </script>
 </body>
-
 </html>
