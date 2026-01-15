@@ -66,6 +66,7 @@ function initDraggableConsole() {
     if (!drawer || !handle) return;
 
     let isDragging = false;
+    let initialHeight = 0;
 
     const start = (e) => {
         // Fix: Allow interacting with buttons inside the handle
@@ -94,7 +95,7 @@ function initDraggableConsole() {
         // Auto-mark open if dragged up
         if (newHeight > 60) {
             drawer.classList.add('open');
-            document.querySelector('.cmd-input').focus();
+            // document.querySelector('.cmd-input').focus(); // Don't spam focus during drag
         } else {
             drawer.classList.remove('open');
         }
@@ -105,8 +106,10 @@ function initDraggableConsole() {
         isDragging = false;
         drawer.style.transition = ''; // Restore CSS transition
 
-        // Snap logic if desired (Optional - keeping "Freedom" requested by user)
-        // If < 100px, maybe close it?
+        // CRITICAL FIX: Clear transform so CSS class .open controls visibility
+        drawer.style.transform = '';
+
+        // Snap logic
         const currentHeight = parseInt(drawer.style.height);
         if (currentHeight < 100) {
             drawer.style.height = ''; // Reset to CSS default
@@ -255,7 +258,13 @@ window.clearLog = function () {
 
 window.toggleConsole = function () {
     const drawer = document.getElementById('console-drawer');
+
+    // CRITICAL FIX: Force Clear Inline Styles that prevent closing
+    drawer.style.transform = '';
+    drawer.style.height = ''; // Reset height to default CSS
+
     drawer.classList.toggle('open');
+
     // Also reset maximize if closing
     if (!drawer.classList.contains('open')) {
         drawer.classList.remove('maximized');
