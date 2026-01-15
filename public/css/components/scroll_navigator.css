@@ -1,11 +1,21 @@
-/* Scroll Navigator Component style */
+/* Scroll Navigator Component style - UNIFORM 50px STACK */
 .scroll-navigator-container {
     position: fixed;
-    bottom: 110px;
+    /* Calculated: 16px (Widget Pad) + 60px (Widget Height) + 20px (Gap) = 96px */
+    bottom: 96px;
     right: 16px;
-    /* Bootstrap p-3 = 16px, aligning center with AI Widget */
     z-index: 9998;
-    /* Below Widget (9999) if overlap, but physically above */
+
+    /* Layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    /* Uniform spacing */
+    width: 60px;
+    /* Aligns with 60px widget */
+
+    /* Animation State */
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
@@ -20,64 +30,81 @@
     pointer-events: auto;
 }
 
+/* Base FAB Style - ALL BUTTONS INDENTICAL SIZE */
 .scroll-fab {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+
+    /* Dark Slate Scheme */
+    background: #0f172a;
+
+    /* Subtle Glass Border */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    /* Deep Shadow */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease, background 0.3s ease;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .scroll-fab:hover {
     transform: scale(1.1);
-    background: rgba(15, 23, 42, 0.8);
-    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    background: #1e293b;
+    /* Lighter Slate 800 */
+    border-color: #38bdf8;
+    /* Sky Blue 400 */
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    z-index: 10;
 }
 
 .scroll-fab:active {
     transform: scale(0.95);
 }
 
-.scroll-icon {
-    font-size: 1.2rem;
+/* Icon Styling */
+.scroll-icon,
+.scroll-fab i {
+    font-size: 1.1rem;
     color: #38bdf8;
+    /* Sky Blue 400 */
+    transition: color 0.2s;
     z-index: 2;
-    transition: color 0.3s ease;
 }
 
+.scroll-fab:hover i,
 .scroll-fab:hover .scroll-icon {
-    color: #fff;
-    animation: bounceUp 1s infinite;
+    color: white;
 }
 
-/* Circular Progress Ring */
+/* Progress Ring (Specific to Top Button) */
+/* SVG size must match button size + clearance */
 .progress-ring {
     position: absolute;
     top: -2px;
     left: -2px;
-    width: 64px;
-    height: 64px;
+    width: 54px;
+    /* 50px + 2px border + 2px spacing */
+    height: 54px;
     transform: rotate(-90deg);
     pointer-events: none;
 }
 
 .progress-ring__circle-bg {
-    stroke: rgba(255, 255, 255, 0.05);
+    stroke: rgba(255, 255, 255, 0.1);
 }
 
 .progress-ring__circle {
     stroke: #38bdf8;
-    transition: stroke-dashoffset 0.1s linear;
+    stroke-width: 2px;
     stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
     filter: drop-shadow(0 0 2px #38bdf8);
 }
 
@@ -93,23 +120,14 @@
     }
 }
 
-/* Mobile adjustments */
+.scroll-fab:hover .scroll-icon {
+    animation: bounceUp 1s infinite;
+}
+
+/* Mobile Adjustments */
 @media (max-width: 768px) {
     .scroll-navigator-container {
-        bottom: 90px;
         right: 16px;
-        /* Align matching desktop/widget padding */
-    }
-
-    .scroll-fab {
-        width: 50px;
-        height: 50px;
-    }
-
-    .progress-ring {
-        width: 54px;
-        height: 54px;
-        top: -2px;
-        left: -2px;
+        bottom: 96px;
     }
 }

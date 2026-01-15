@@ -15,6 +15,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Initialize Console Input
     initConsoleInput();
 
+    // 5. Initialize Scroll Navigator for Console
+    // Wait slightly to ensure DOM is fully ready and ScrollNavigator class is loaded
+    setTimeout(() => {
+        if (typeof window.ScrollNavigator === 'function') {
+            const drawer = document.getElementById('console-drawer');
+            const content = document.getElementById('console-content');
+
+            if (drawer && content) {
+                new window.ScrollNavigator({
+                    container: drawer,        // Inject inside drawer
+                    scrollTarget: content,    // Listen to content scroll
+                    positionType: 'absolute', // Absolute to drawer
+                    bottomOffset: '30px',     // Slightly above bottom edge
+                    rightOffset: '25px',      // Right aligned
+                    threshold: 50             // Show earlier in small container
+                });
+            }
+        }
+    }, 500);
+
     logSystem("MCAG Enterprise Toolkit loaded successfully.");
 });
 

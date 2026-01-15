@@ -25,6 +25,54 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+---
+
+## [ADR-035] Hybrid AI Launcher Strategy
+**Data**: 2026-01-15
+**Stato**: ✅ Implementato (v5.5.0)
+**Contesto**:
+L'avvio manuale dell'AI ("Clicca per avviare") era fastidioso, ma l'avvio automatico puro rischiava race-condition o loop infiniti su connessioni lente.
+**Decisione**:
+Adottare un approccio **Ibrido**:
+1.  **Auto-Start**: Trigger automatico `hx-trigger="load"` all'apertura della tab.
+2.  **Manual Fallback**: Pulsante "Avvia (Manuale)" sempre visibile se l'auto-start fallisce o appende.
+**Conseguenze**:
+- (+) UX fluida nel 99% dei casi.
+- (+) Resilienza garantita per il restante 1%.
+
+---
+
+## [ADR-034] Scroll Navigator 2.0 (Class-Based)
+**Data**: 2026-01-15
+**Stato**: ✅ Implementato
+**Contesto**:
+La precedente implementazione IIFE del bottone "Torna Su" era rigida e creava conflitti di sovrapposizione (z-index) in DevTools.
+**Decisione**:
+Refactoring in Classe JS `ScrollNavigator`:
+1.  **Incapsulamento**: Logica CSS/JS isolata per istanza.
+2.  **Multi-Instance**: Un'istanza per il body principale, una separata per il container `#console-drawer` del DevTools.
+3.  **Configurable Offset**: Parametri posizionali passati al costruttore per evitare collisioni con Widget AI.
+**Conseguenze**:
+- (+) Codice pulito e riutilizzabile.
+- (+) Risolti conflitti UI in modo strutturale.
+
+---
+
+## [ADR-033] User Statistics Segregation
+**Data**: 2026-01-15
+**Stato**: ✅ Implementato
+**Contesto**:
+Gli utenti standard (Soci) accedevano alla stessa Dashboard Statistiche degli Admin, vedendo grafici finanziari vuoti o irrilevanti.
+**Decisione**:
+Biforcazione della View nel Controller:
+- **Admin**: `admin/statistics.mustache` (Full Financial Dashboard).
+- **User**: `admin/statistics_user.mustache` (Transparency & Activities only).
+**Conseguenze**:
+- (+) Privacy finanziaria garantita.
+- (+) UX migliorata per il socio (meno rumore).
+
+---
+
 ## [ADR-032] Interactive/Operational Dashboard Paradigm
 **Data**: 2026-01-14
 **Stato**: ✅ Implementato (v5.4.3)

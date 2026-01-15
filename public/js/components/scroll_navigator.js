@@ -3,18 +3,35 @@
  * Inject a "Back to Top" button with circular progress indicator.
  * Usage: Automatically initializes when included.
  */
-(function() {
+(function () {
     'use strict';
 
     // HTML Template for the component
+    // HTML Template for the component - Stacked Vertical Navigation
     const SCROLL_NAV_HTML = `
         <div id="scrollNavigator" class="scroll-navigator-container">
-            <div class="scroll-fab" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <svg class="progress-ring" width="64" height="64">
-                    <circle class="progress-ring__circle-bg" stroke-width="2" fill="transparent" r="28" cx="32" cy="32"/>
-                    <circle class="progress-ring__circle" stroke-width="2" fill="transparent" r="28" cx="32" cy="32"/>
+            <!-- Top / Progress (Main) -->
+            <div class="scroll-fab main-fab" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Torna su">
+                <svg class="progress-ring" width="54" height="54">
+                    <circle class="progress-ring__circle-bg" stroke-width="2" fill="transparent" r="24" cx="27" cy="27"/>
+                    <circle class="progress-ring__circle" stroke-width="2" fill="transparent" r="24" cx="27" cy="27"/>
                 </svg>
                 <i class="fa-solid fa-arrow-up scroll-icon"></i>
+            </div>
+            
+            <!-- Page Up -->
+            <div class="scroll-fab mini-fab" onclick="window.scrollBy({top: -window.innerHeight * 0.8, behavior: 'smooth'})" title="Pagina Su">
+                <i class="fa-solid fa-chevron-up text-white small"></i>
+            </div>
+
+            <!-- Page Down -->
+            <div class="scroll-fab mini-fab" onclick="window.scrollBy({top: window.innerHeight * 0.8, behavior: 'smooth'})" title="Pagina Giu">
+                <i class="fa-solid fa-chevron-down text-white small"></i>
+            </div>
+
+            <!-- Bottom -->
+            <div class="scroll-fab mini-fab" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" title="Vai in fondo">
+                <i class="fa-solid fa-arrow-down text-white small"></i>
             </div>
         </div>
     `;
@@ -30,7 +47,7 @@
 
         const container = document.getElementById('scrollNavigator');
         const circle = container.querySelector('.progress-ring__circle');
-        
+
         // Progress Ring Configuration
         const radius = circle.r.baseVal.value;
         const circumference = radius * 2 * Math.PI;
@@ -47,9 +64,9 @@
         window.addEventListener('scroll', () => {
             const scrollTop = window.scrollY;
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            
-            // Toggle Visibility (Show after 300px)
-            if (scrollTop > 300) {
+
+            // Toggle Visibility (Show after 100px)
+            if (scrollTop > 100) {
                 container.classList.add('visible');
             } else {
                 container.classList.remove('visible');

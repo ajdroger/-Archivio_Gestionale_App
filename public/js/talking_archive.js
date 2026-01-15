@@ -59,6 +59,9 @@ class TalkingArchive {
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = () => this.loadVoices();
         }
+
+        // Pre-load widget for instant response
+        this.createWidget();
     }
 
     createWidget() {
@@ -103,12 +106,9 @@ class TalkingArchive {
     }
 
     bindEvents() {
-        // Launcher Click -> Create (if needed) & Open
+        // Launcher Click -> Open (Widget is already created in init)
         if (this.launcher) {
             this.launcher.addEventListener('click', () => {
-                if (!this.container) {
-                    this.createWidget();
-                }
                 this.openWidget();
             });
         }

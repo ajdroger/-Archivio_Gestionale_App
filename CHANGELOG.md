@@ -19,6 +19,22 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.5.0] - 2026-01-15 "**System Stabilization A1**"
+### Aggiunto
+- **DevTools Toolkit Shortcut**: Aggiunto pulsante "Toolkit Avanzato" nell'header del Mission Control per accesso rapido ai test.
+- **AI Assistant Hybrid Launcher**: Implementato sistema di avvio automatico (via HTMX trigger) con pulsante manuale di fallback in caso di network lag.
+
+### Modificato [CORE REFACTOR]
+- **Scroll Navigator 2.0**: Refactoring completo da IIFE a `class ScrollNavigator`.
+    - **Reusability**: Ora istanziabile multiplamente (Main Window + DevTools Drawer).
+    - **Isolation**: Stili e logica incapsulati per non interferire con il DOM globale.
+    - **Integration**: Inserito nativamente sia nel layout pubblico che nel container `#console-drawer` del DevTools.
+- **User Statistics View**: Ripristinata la view semplificata "Trasparenza Comunità" per gli utenti base (non-admin) in `StatsDashboardController`, mantenendo la dashboard finanziaria per gli admin.
+
+### Risolto
+- **Legacy Cleanup**: Rimossi vecchi script "back-to-top" ridondanti in `layout_footer` e `app.js`.
+- **Z-Index Conflicts**: Risolti conflitti di sovrapposizione tra Chat AI e Scroll Navigator (`bottom: 110px`).
+
 ## [5.4.1] - 2026-01-14 "**UI Perfection & Strict Workflow**"
 ### Corretto [UI/UX]
 - **Scroll Navigator Alignment**: Risolto conflitto visivo con il widget AI "Archivio Parlante".

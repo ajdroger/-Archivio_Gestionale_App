@@ -65,7 +65,7 @@ return function (App $app) {
         $group->post('/calcola-cf', SocioAction::class . ':calculateFiscalCode')->setName('socio_calc_cf')->add(new RateLimitMiddleware(10, 60));
 
         // ROUTES GENERICHE DOPO
-        $group->get('/{cf}/modifica', SocioPersistence::class . ':edit')->setName('socio_edit');
+        $group->get('/{cf}/edit', SocioPersistence::class . ':edit')->setName('socio_edit');
         $group->get('/{cf}/impostazioni', SocioSettings::class . ':view')->setName('socio_settings'); // [NEW] Page Settings
         $group->post('/{cf}/aggiorna', SocioPersistence::class . ':update')->setName('socio_update');
         $group->post('/{cf}/elimina', SocioPersistence::class . ':delete')->setName('socio_delete');

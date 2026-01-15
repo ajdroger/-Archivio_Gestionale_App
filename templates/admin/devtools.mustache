@@ -187,6 +187,9 @@
             </div>
             <div class="d-flex gap-2">
                  <!-- Quick Links -->
+                 <a href="{{base_url}}/../bin/debug_tools/test_dashboard.php" class="btn btn-outline-success d-flex align-items-center px-3 py-2 fw-bold">
+                     <i class="fa-solid fa-toolbox me-2"></i>Toolkit Avanzato
+                 </a>
                  <a href="{{base_url}}/statistiche" class="btn btn-outline-info d-flex align-items-center px-3 py-2 fw-bold">
                      <i class="fa-solid fa-chart-pie me-2"></i>Statistiche
                  </a>
@@ -1135,15 +1138,22 @@
                 RAG Engine Chat Interface.
             -->
             <div class="tab-pane fade" id="v-pills-ai" role="tabpanel">
-                <div class="d-flex flex-column h-100 gap-4" id="v-pills-ai-content">
-                    <!-- HTMX will load 'assistant.mustache' here -->
+                <div class="d-flex flex-column h-100 gap-4" id="v-pills-ai-content"
+                     hx-get="{{base_url}}/ai/assistant"
+                     hx-target="#v-pills-ai-content"
+                     hx-swap="innerHTML"
+                     hx-trigger="click from:#v-pills-ai-tab once">
+                    <!-- HTMX will load 'assistant.mustache' here automatically -->
                     <div class="d-flex flex-column justify-content-center align-items-center h-100 text-center">
                         <div class="spinner-border text-info mb-3" role="status" style="width: 3rem; height: 3rem;">
                             <span class="visually-hidden">Loading AI...</span>
                         </div>
-                        <h5 class="text-white mb-3">Caricamento Modulo AI...</h5>
-                        <button class="btn btn-outline-info" hx-get="{{base_url}}/ai/assistant" hx-target="#v-pills-ai-content" hx-swap="innerHTML">
-                            <i class="fa-solid fa-power-off me-2"></i>AVVIA ARCHIVIO PARLANTE
+                        <h5 class="text-white mb-3">Inizializzazione Sistema RAG...</h5>
+                        <p class="text-muted">Connessione al cervello archivio in corso...</p>
+                        
+                        <!-- Fallback Manual Start -->
+                        <button class="btn btn-outline-info mt-3" hx-get="{{base_url}}/ai/assistant" hx-target="#v-pills-ai-content" hx-swap="innerHTML">
+                            <i class="fa-solid fa-power-off me-2"></i>AVVIA (MANUALE)
                         </button>
                     </div>
                 </div>

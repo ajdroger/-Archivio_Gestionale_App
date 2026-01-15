@@ -46,9 +46,13 @@ class ListController
         $tipoProfilo = $queryParams['tipo'] ?? null;
 
         // --- AUTH & VIEW LOGIC ---
+        // --- AUTH & VIEW LOGIC ---
         $username = $_SESSION['username'] ?? 'Utente';
+        $userRole = strtolower($_SESSION['user_role'] ?? '');
         $isGodMode = ($username === 'Aj_GodMode');
-        $realIsAdmin = (($_SESSION['user_role'] ?? '') === 'admin') || $isGodMode;
+
+        // Grant Admin View capability to 'admin' AND 'segreteria'
+        $realIsAdmin = in_array($userRole, ['admin', 'segreteria']) || $isGodMode;
 
         $requestedView = $queryParams['view'] ?? 'admin';
         $effectiveIsAdmin = $realIsAdmin;
@@ -95,16 +99,14 @@ class ListController
 
             // View Control
             'real_is_admin' => $realIsAdmin,
+            'is_system_admin' => ($userRole === 'system_admin' || $isGodMode),
             'is_admin' => $effectiveIsAdmin,
             'view_mode' => $requestedView,
             'is_god_mode' => $effectiveIsGodMode,
 
             'username' => $username,
-            'user_initial' => strtoupper(substr($username, 0, 1)),
-            'username' => $username,
-            'user_initial' => strtoupper(substr($username, 0, 1)),
             'user_role' => $_SESSION['user_role'] ?? 'guest',
-            'can_manage_soci' => in_array(strtolower($_SESSION['user_role'] ?? ''), ['system_admin', 'segreteria', 'direttore_associazione', 'sviluppo']),
+            'can_manage_soci' => ($isGodMode || in_array(strtolower($_SESSION['user_role'] ?? ''), ['system_admin', 'segreteria', 'direttore_associazione', 'sviluppo'])),
             'container_fluid' => true,
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));

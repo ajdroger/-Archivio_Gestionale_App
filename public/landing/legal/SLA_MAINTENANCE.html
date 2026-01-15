@@ -17,12 +17,23 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-3"
         style="background: rgba(9, 10, 12, 0.95); backdrop-filter: blur(10px);">
         <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="../index.html">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="../../">
                 <i class="fas fa-shield-alt text-info"></i> MCAG <span class="text-white-50">System v5.4</span>
             </a>
-            <a href="../index.html" class="btn btn-outline-light btn-sm rounded-pill ms-auto">Torna alla Home</a>
+            <a id="smart-home-btn" href="../../" class="btn btn-outline-light btn-sm rounded-pill ms-auto">Torna alla
+                Dashboard</a>
         </div>
     </nav>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('smart-home-btn');
+            // Check if user came from Landing Page
+            if (document.referrer.includes('/landing/') || window.location.search.includes('from=landing')) {
+                btn.href = "../index.html";
+                btn.innerText = "Torna alla Landing";
+            }
+        });
+    </script>
 
     <div class="container py-5 mt-5">
         <div class="row justify-content-center">

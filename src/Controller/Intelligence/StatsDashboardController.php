@@ -122,7 +122,7 @@ class StatsDashboardController
             $sociFilters['moroso'] = ($params['payment_status'] === 'moroso');
 
         // Select Template (Unified Logic Container)
-        $template = 'admin/statistics';
+        $template = $effectiveIsAdmin ? 'admin/statistics' : 'admin/statistics_user';
 
         // 4. Rendering
         $html = $this->mustache->render($template, [
