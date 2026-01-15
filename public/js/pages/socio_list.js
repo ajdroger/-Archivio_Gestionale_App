@@ -115,13 +115,19 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Helper: Card Template Builder (Matches Mustache Template)
-const role = (window.USER_ROLE || '').toLowerCase();
-const authorizedRoles = ['system_admin', 'segreteria', 'direttore_associazione', 'sviluppo'];
-const showGestione = authorizedRoles.includes(role);
+function createSocioCard(socio) {
+    const initial = socio.nome.charAt(0) + socio.cognome.charAt(0);
+    const badge = socio.stato === 'ATTIVO'
+        ? '<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>'
+        : '<span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>';
 
-let gestioneButton = '';
-if (showGestione) {
-    gestioneButton = `
+    const role = (window.USER_ROLE || '').toLowerCase();
+    const authorizedRoles = ['system_admin', 'segreteria', 'direttore_associazione', 'sviluppo'];
+    const showGestione = authorizedRoles.includes(role);
+
+    let gestioneButton = '';
+    if (showGestione) {
+        gestioneButton = `
             <div class="mt-2 text-center"> <!-- Added wrapper for spacing -->
                 <div class="dropdown d-inline-block w-100">
                     <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -141,9 +147,9 @@ if (showGestione) {
                 </div>
             </div>
         `;
-}
+    }
 
-return `
+    return `
         <div class="col-md-6 col-lg-4 col-xl-3">
             <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
                 <div class="card-body text-center p-4">
