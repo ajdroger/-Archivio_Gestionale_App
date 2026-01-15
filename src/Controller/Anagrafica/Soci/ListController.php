@@ -96,7 +96,9 @@ class ListController
             'count' => count($soci)
         ];
 
-        $html = $this->mustache->render('socio_list', $viewData);
+        // Select Template (Unified Logic Container)
+        $template = 'soci/socio_list';
+        $html = $this->mustache->render($template, $viewData);
         $response->getBody()->write($html);
         return $response;
     }

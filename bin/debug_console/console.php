@@ -15,7 +15,7 @@ foreach ((require __DIR__ . '/../../config/container.php') as $definitions) {
 $container = $containerBuilder->build();
 
 echo "================================================\n";
-echo "   APP_VER: 2.0 Mission-Critical Enterprise\n";
+echo "   APP_VER: 5.0 Mission-Critical Enterprise\n";
 echo "================================================\n";
 
 function printUsage()

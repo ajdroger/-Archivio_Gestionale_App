@@ -1,0 +1,68 @@
+{{> layout_header }}
+
+<div class="container-fluid px-4" id="readable-content">
+    <!-- Smart Summary for Talking Archive -->
+    <div class="d-none ta-smart-summary">
+        Benvenuto nella Directory Soci. Questa pagina mostra l'elenco pubblico degli associati MCAG, incluse le schede di contatto e lo stato dell'iscrizione.
+    </div>
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold text-white mb-0">
+                Directory Soci
+            </h1>
+            <p class="text-secondary lead mb-0">Elenco pubblico degli associati MCAG</p>
+        </div>
+        
+        <!-- SEARCH BAR (Common) -->
+        <div class="d-flex gap-2">
+            <form action="" method="GET" class="d-flex">
+                <input type="hidden" name="view" value="user">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="q" class="form-control bg-dark border-secondary text-white" placeholder="Cerca socio..." value="{{search_query}}">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- USER VIEW: CARD GRID -->
+    <div id="user-directory-grid" class="row g-4">
+        {{#soci}}
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
+                <div class="card-body text-center p-4">
+                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
+                    <p class="text-secondary small mb-3">Membro Associato</p>
+                    
+                    {{#is_attivo}}
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>
+                    {{/is_attivo}}
+                    {{^is_attivo}}
+                         <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>
+                    {{/is_attivo}}
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/soci}}
+    </div>
+    
+    <!-- Sentinel for Infinite Scroll (Observer Target) -->
+    <div id="scroll-sentinel" class="text-center py-5 mt-4"></div>
+
+    <style>
+        .hover-translate-y:hover { transform: translateY(-5px); }
+        .transition-all { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+    <script src="{{base_url}}/js/pages/socio_list.js?v=20260115"></script>
+
+</div>
+
+{{> layout_footer }}

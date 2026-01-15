@@ -61,6 +61,44 @@ class PersistenceController
     }
 
     /**
+     * Mostra il modulo di iscrizione pubblico (Esterno).
+     */
+    public function publicForm(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $viewData = [
+            'csrf' => ['name' => $request->getAttribute('csrf_name'), 'value' => $request->getAttribute('csrf_value')],
+            'base_url' => (function () {
+                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                return $scriptDir === '/' ? '' : $scriptDir;
+            })()
+        ];
+        // Uses the restored 'modulo_iscrizione.mustache' -> 'soci/modulo_iscrizione'
+        $html = $this->mustache->render('soci/modulo_iscrizione', $viewData);
+        $response->getBody()->write($html);
+        return $response;
+    }
+
+    /**
+     * Gestisce l'iscrizione pubblica.
+     */
+    public function publicStore(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        // Simple store logic without Auth checks for now (or basic validation)
+        $data = $request->getParsedBody();
+        try {
+            $this->registrationService->registerNewMember($data);
+        } catch (\Exception $e) {
+            $this->auditLogger->error("Errore iscrizione pubblica: " . $e->getMessage());
+            $response->getBody()->write("Errore durante l'iscrizione: " . $e->getMessage());
+            return $response->withStatus(400);
+        }
+
+        // Redirect to Home with success message
+        $routeParser = RouteContext::fromRequest($request)->getRouteParser();
+        return $response->withHeader('Location', $routeParser->urlFor('dashboard'))->withStatus(302);
+    }
+
+    /**
      * Salva un nuovo socio (Store).
      * 
      * Utilizza RegistrationService per gestire la logica complessa di iscrizione.

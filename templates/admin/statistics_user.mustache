@@ -1,0 +1,48 @@
+{{> layout_header }}
+
+<div class="container-fluid px-4">
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold text-white mb-0">Trasparenza Comunità</h1>
+            <p class="text-secondary lead mb-0">Statistiche pubbliche dell'associazione</p>
+        </div>
+    </div>
+
+    <!-- USER VIEW: COMMUNITY STATS -->
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow bg-dark text-white text-center p-5">
+                <div class="mb-3">
+                    <i class="fa-solid fa-users fa-3x text-primary"></i>
+                </div>
+                <h2 class="display-3 fw-bold mb-2">{{stats.totale}}</h2>
+                <p class="text-secondary text-uppercase tracking-wider">Membri della Comunità</p>
+            </div>
+        </div>
+         <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow bg-dark text-white text-center p-5">
+                <div class="mb-3">
+                    <i class="fa-solid fa-handshake fa-3x text-success"></i>
+                </div>
+                <h2 class="display-3 fw-bold mb-2">{{stats.attivi}}</h2>
+                <p class="text-secondary text-uppercase tracking-wider">Soci Sostenitori Attivi</p>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-8 mx-auto text-center">
+            <p class="lead text-secondary">
+                "La trasparenza è il fondamento della nostra associazione. Questi dati sono aggiornati in tempo reale per garantire la massima chiarezza verso tutti i nostri associati."
+            </p>
+             <div class="mt-4">
+                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-2">
+                    <i class="fa-solid fa-server me-2"></i>Dati certificati dal sistema MCAG
+                </span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{{> layout_footer }}

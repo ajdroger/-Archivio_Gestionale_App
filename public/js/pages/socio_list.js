@@ -10,7 +10,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Check if we are in User View locally by checking for the grid container
     const gridContainer = document.getElementById('user-directory-grid');
-    if (!gridContainer) return; // Exit if not in User View
+
+    // Check if we are in Admin View (Table)
+    const adminTable = document.getElementById('table-soci');
+
+    if (adminTable) {
+        // Initialize DataTables for Admin
+        $(adminTable).DataTable({
+            language: {
+                processing: "Elaborazione...",
+                search: "Cerca:",
+                lengthMenu: "Visualizza _MENU_ elementi",
+                info: "Vista da _START_ a _END_ di _TOTAL_ elementi",
+                infoEmpty: "Vista da 0 a 0 di 0 elementi",
+                infoFiltered: "(filtrati da _MAX_ elementi totali)",
+                infoPostFix: "",
+                loadingRecords: "Caricamento...",
+                zeroRecords: "La ricerca non ha portato alcun risultato.",
+                emptyTable: "Nessun dato presente nella tabella",
+                paginate: {
+                    first: "Inizio",
+                    previous: "Precedente",
+                    next: "Successivo",
+                    last: "Fine"
+                },
+                aria: {
+                    sortAscending: ": attiva per ordinare la colonna in ordine crescente",
+                    sortDescending: ": attiva per ordinare la colonna in ordine decrescente"
+                }
+            },
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            lengthChange: false, // Keep layout clean
+            pageLength: 10,
+            columnDefs: [
+                { orderable: false, targets: 5 } // Disable sorting on Action column
+            ]
+        });
+        return; // Exit, no need for infinite scroll logic
+    }
+
+    if (!gridContainer) return; // Exit if not in User View or Admin View (shouldn't happen)
 
     let page = 1;
     let loading = false;

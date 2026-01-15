@@ -1,0 +1,112 @@
+{{> layout_header }}
+
+                <div>
+                    <h2 class="h3 fw-bold text-white mb-2">Sistema Archivio Certificato</h2>
+                    <p class="text-secondary mb-0 fs-5">{{content}}</p>
+                    <div class="mt-3">
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">
+                           <i class="fa-solid fa-lock me-2"></i>Accesso Protetto 2FA
+                        </span>
+                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3 py-2 ms-2">
+                           <i class="fa-solid fa-database me-2"></i>Integrità ACID Attiva
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- HERO CARD -->
+    <div class="col-12">
+        <div class="card border-0 shadow-lg overflow-hidden h-100 position-relative" 
+             style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1) !important;">
+            <!-- Decorators -->
+            <div class="position-absolute top-0 end-0 p-5 opacity-10 pointer-events-none">
+                <i class="fa-solid fa-network-wired fa-10x text-primary"></i>
+            </div>
+            
+            <div class="card-body p-5 d-flex flex-column justify-content-between position-relative z-1">
+                <div>
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill">
+                            <i class="fa-solid fa-circle-nodes me-2"></i>v5.4.2 STABLE
+                        </span>
+                        <span class="ms-3 text-secondary small font-monospace"><i class="fa-regular fa-clock me-1"></i>{{current_date}}</span>
+                    </div>
+                    <h1 class="display-5 fw-bold text-white mb-2">Benvenuto, {{username}}</h1>
+                    <p class="lead text-secondary opacity-75" style="max-width: 600px;">
+                        Il sistema MCAG è operativo. I protocolli di sicurezza ACID e GDPR sono attivi.
+                    </p>
+                </div>
+                
+                <div class="row mt-5 g-4">
+                    <div class="col-auto">
+                        <div class="d-flex align-items-center">
+                            <h2 class="display-6 fw-bold text-white mb-0 me-3">{{stats.totale}}</h2>
+                            <div class="border-start border-secondary border-opacity-25 ps-3">
+                                <div class="text-uppercase text-secondary x-small fw-bold">Soci Totali</div>
+                                <div class="text-success small"><i class="fa-solid fa-arrow-up me-1"></i>Attivi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DYNAMIC WIDGETS GRID (USER VIEW) -->
+<div class="d-flex align-items-center mb-4">
+    <h3 class="h5 fw-bold text-uppercase tracking-wider text-secondary mb-0">
+        <i class="fa-solid fa-cubes-stacked me-2 text-info"></i>Area Operativa
+    </h3>
+    <div class="flex-grow-1 ms-3 border-bottom border-secondary opacity-25"></div>
+</div>
+
+<div class="row g-4">
+    <!-- MODULE: SOCI -->
+    <div class="col-md-6 col-xl-4">
+        <a href="{{base_url}}/soci" class="text-decoration-none group-hover">
+            <div class="card h-100 border-0 shadow-sm transition-all hover-translate-y" 
+                 style="background: rgba(30, 41, 59, 0.4); border-top: 3px solid #3b82f6 !important;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="p-3 rounded-circle bg-primary bg-opacity-10 text-primary">
+                            <i class="fa-solid fa-users fa-xl"></i>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-secondary opacity-50"></i>
+                    </div>
+                    <h5 class="fw-bold text-white mb-1">Directory Soci</h5>
+                    <p class="text-secondary x-small mb-0">Elenco pubblico degli associati.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- MODULE: ANALYTICS -->
+    <div class="col-md-6 col-xl-4">
+        <a href="{{base_url}}/statistiche" class="text-decoration-none group-hover">
+             <div class="card h-100 border-0 shadow-sm transition-all hover-translate-y" 
+                 style="background: rgba(30, 41, 59, 0.4); border-top: 3px solid #8b5cf6 !important;">
+                <div class="card-body p-4">
+                     <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="p-3 rounded-circle bg-info bg-opacity-10 text-info">
+                            <i class="fa-solid fa-chart-pie fa-xl"></i>
+                        </div>
+                         <i class="fa-solid fa-magnifying-glass-chart text-secondary opacity-50"></i>
+                    </div>
+                    <h5 class="fw-bold text-white mb-1">Trasparenza</h5>
+                    <p class="text-secondary x-small mb-0">Statistiche pubbliche dell'associazione.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+.hover-translate-y:hover { transform: translateY(-5px); }
+</style>
+
+{{> layout_footer }}

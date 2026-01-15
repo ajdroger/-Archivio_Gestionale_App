@@ -6,19 +6,19 @@
     <title>{{title}} - MCAG | Militare Civile Archivio Gestionale</title>
     
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- DataTables CSS -->
-    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/3.0.0/css/responsive.bootstrap5.css" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="{{base_url}}/css/components/scroll_navigator.css" rel="stylesheet">
-    <link href="{{base_url}}/css/style.css" rel="stylesheet">
+    <link href="{{base_url}}/css/style.css?v=20260115_FIX_CSS" rel="stylesheet">
 </head>
 <body class="d-flex flex-column h-100">
     {{#is_demo_mode}}
@@ -58,24 +58,12 @@
                 </ul>
                 
                 <div class="ms-auto d-flex align-items-center gap-3">
-                    <!-- Talking Archive Controls (Hidden by default) -->
-                    <div id="talking-archive-controls" class="d-none d-flex align-items-center bg-dark bg-opacity-50 rounded-pill px-3 py-1 border border-secondary border-opacity-25" style="z-index: 9999; position: relative;">
-                        <span id="ta-status" class="badge bg-secondary me-2 animate__animated animate__fadeIn"></span>
-                        
-                        <button id="ta-play" class="btn btn-sm btn-link text-info text-decoration-none p-0" title="Ascolta Pagina">
-                            <i class="fa-solid fa-headphones me-2"></i>Ascolta
-                        </button>
-                        
-                        <button id="ta-pause" class="btn btn-sm btn-link text-warning text-decoration-none p-0 d-none" title="Pausa">
-                            <i class="fa-solid fa-pause me-2"></i>Pausa
-                        </button>
-                        
-                        <div class="vr mx-2 text-secondary"></div>
-                        
-                        <button id="ta-stop" class="btn btn-sm btn-link text-danger text-decoration-none p-0" title="Stop">
-                            <i class="fa-solid fa-stop"></i>
-                        </button>
-                    </div>
+                    <!-- Talking Archive Launcher -->
+                    <button id="ta-launcher" class="btn btn-sm btn-outline-info rounded-circle d-none" title="Attiva Lettura Vocale" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-headphones"></i>
+                    </button>
+
+
 
                     {{#is_public_policy}}
                     <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{{base_url}}/landing/index.html">
@@ -111,17 +99,17 @@
     </footer>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <!-- HTMX & Alpine.js (Future-Proof Stack) -->
     <script src="{{base_url}}/js/lib/htmx.min.js"></script>
     <script src="{{base_url}}/js/lib/alpine.min.js" defer></script>
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.0/js/dataTables.responsive.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.0/js/responsive.bootstrap5.js"></script>
     
     <script>
         $(document).ready(function() {
@@ -129,7 +117,26 @@
             $('.smart-table').DataTable({
                 responsive: true,
                 language: {
-                   url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/it-IT.json'
+                    processing:     "Elaborazione...",
+                    search:         "Cerca:",
+                    lengthMenu:     "Visualizza _MENU_ elementi",
+                    info:           "Vista da _START_ a _END_ di _TOTAL_ elementi",
+                    infoEmpty:      "Vista da 0 a 0 di 0 elementi",
+                    infoFiltered:   "(filtrati da _MAX_ elementi totali)",
+                    infoPostFix:    "",
+                    loadingRecords: "Caricamento...",
+                    zeroRecords:    "La ricerca non ha portato alcun risultato.",
+                    emptyTable:     "Nessun dato presente nella tabella",
+                    paginate: {
+                        first:      "Inizio",
+                        previous:   "Precedente",
+                        next:       "Successivo",
+                        last:       "Fine"
+                    },
+                    aria: {
+                        sortAscending:  ": attiva per ordinare la colonna in ordine crescente",
+                        sortDescending: ": attiva per ordinare la colonna in ordine decrescente"
+                    }
                 },
                 pageLength: 25
             });
@@ -139,7 +146,7 @@
     {{> partials/ai_widget}}
     
     <!-- Talking Archive Engine (Forced Load) -->
-    <script src="{{base_url}}/js/talking_archive.js?v=2"></script>
+    <script src="{{base_url}}/js/talking_archive.js?v=20260115_FIX_INJECT"></script>
     
     {{> compliance/cookie_banner}}
     <script src="{{base_url}}/js/components/scroll_navigator.js"></script>

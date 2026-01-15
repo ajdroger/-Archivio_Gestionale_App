@@ -48,11 +48,15 @@ return function (App $app) {
     // Main
     $app->get('/', HomeController::class . ':dashboard')->setName('dashboard');
 
+    // Public Registration (Modulo Iscrizione Esterno)
+    $app->get('/iscrizione', SocioPersistence::class . ':publicForm')->setName('public_registration_form');
+    $app->post('/iscrizione', SocioPersistence::class . ':publicStore')->setName('public_registration_store');
+
     // Anagrafica - Soci (Read-Only - SOLO LISTA, detail dopo le route specifiche)
     $app->get('/soci', SocioList::class . ':list')->setName('socio_list');
 
     // Anagrafica - Soci (Write) - SPECIFICHE PRIMA DI {cf}
-    $writeRole = new RoleMiddleware(['segreteria', 'direttore_associazione']);
+    $writeRole = new RoleMiddleware(['segreteria', 'segreteria_soci', 'direttore_associazione']);
     $app->group('/soci', function ($group) {
         // ROUTES SPECIFICHE PRIMA
         $group->get('/nuovo', SocioPersistence::class . ':create')->setName('socio_create');
@@ -82,7 +86,7 @@ return function (App $app) {
     $app->get('/terms-of-service', \MCAG\Controller\PolicyController::class . ':terms')->setName('terms_of_service');
 
     // Intelligence (Stats & Reports)
-    $statsRole = new RoleMiddleware(['admin', 'presidente', 'segreteria', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico']);
+    $statsRole = new RoleMiddleware(['admin', 'presidente', 'segreteria', 'segreteria_soci', 'Segreteria_Soci', 'direttore_associazione', 'collegio_sindacale', 'ente_universita', 'ente_sanitario', 'ente_pubblico', 'user']);
     $exportLimit = new RateLimitMiddleware(30, 60);
 
     // AI Assistant (Placed here to access $statsRole)
@@ -111,9 +115,9 @@ return function (App $app) {
         $group->post('/soci', \MCAG\Controller\SociApiController::class . ':create');
     })
         ->add(new \MCAG\Middleware\ApiKeyMiddleware(
-                $container->get(PDO::class),
-                $container->get(\MCAG\SecurityLayer\AuditTrail::class)
-            ))
+            $container->get(PDO::class),
+            $container->get(\MCAG\SecurityLayer\AuditTrail::class)
+        ))
         ->add($apiLimit);
     // ->add(new \MCAG\Middleware\JwtAuthMiddleware()); // TODO: Enable when Auth0 is ready
 

@@ -18,7 +18,7 @@ return function (App $app) {
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {
         ini_set('session.cookie_httponly', 1);
-        ini_set('session.cookie_samesite', 'Strict'); // Mission-critical: high-level security compliant
+        ini_set('session.cookie_samesite', 'Lax'); // Relaxed for better browser compatibility
         ini_set('session.cookie_path', '/');
         ini_set('session.gc_maxlifetime', 3600); // 1 ora di validità
 
@@ -54,8 +54,8 @@ return function (App $app) {
     // Filter CSRF for Public APIs
     $app->add(function (Request $request, RequestHandler $handler) use ($guard) {
         $path = $request->getUri()->getPath();
-        // Skip CSRF for public API endpoints (e.g. Landing Page Form)
-        if (str_starts_with($path, '/api/public/')) {
+        // Skip CSRF for public API endpoints and AI Assistant (internal logic handles validation)
+        if (str_contains($path, '/api/public/') || str_contains($path, '/ai/')) {
             return $handler->handle($request);
         }
         return $guard->process($request, $handler);

@@ -75,7 +75,10 @@ class HomeController
         $appConfig = $this->config->getAll();
         $adminNotes = $this->config->get('admin_notes', '');
 
-        $html = $this->mustache->render('dashboard', [
+        // Render Template (Unified Logic Container)
+        $template = 'admin/dashboard';
+
+        $html = $this->mustache->render($template, [
             'title' => 'Dashboard Archivio',
             'content' => 'Benvenuto nel sistema di digitalizzazione archivio.',
             'stats' => $stats,

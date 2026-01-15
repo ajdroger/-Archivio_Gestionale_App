@@ -141,27 +141,38 @@ class AssistantController
 
         // RBAC: Check User Role for Context Sanitization
         $userRole = $_SESSION['user_role'] ?? 'guest';
-        $isGodMode = ($userRole === 'Aj_GodMode' || $userRole === 'admin');
+
+        // Normalize Role
+        $userRoleLower = strtolower($userRole);
+        $isAdmin = in_array($userRoleLower, ['admin', 'aj_godmode']);
+        $isSegreteria = in_array($userRoleLower, ['segreteria', 'segreteria_soci']);
+        $isDirettivo = in_array($userRoleLower, ['presidente', 'direttore_associazione', 'collegio_sindacale']);
 
         if (!empty($smartContext)) {
-            // If NOT GodMode/Admin, sanitize technical details if present (basic security)
-            if (!$isGodMode) {
-                // Example: Hide internal IDs or sensitive debugging info if it were in the context
+            // Context Sanitization Logic
+            if (!$isAdmin && !$isSegreteria && !$isDirettivo) {
+                // Standard users might not need to see specific internal flags
                 $smartContext = preg_replace('/ID Interno: \d+/', 'ID Interno: [RISERVATO]', $smartContext);
             }
             $systemPrompt .= "### CONTESTO UTENTE (Pagina Corrente):\n$smartContext\n\n";
         }
 
         if (!empty($ragContext)) {
-            // RBAC for RAG: Some documents might be restricted (future proofing)
-            // For now, we trust the VectorStore retrieval, but we can filter here if needed.
             $systemPrompt .= "### DOCUMENTAZIONE INTERNA (Knowledge Base):\n$ragContext\n\n";
         }
 
-        if ($isGodMode) {
-            $systemPrompt .= "[SISTEMA]: L'utente è un SUPER ADMIN/DEV (Aj_GodMode). Puoi fornire dettagli tecnici, stack trace, path di file e configurazioni.\n";
+        // Role-Based Instructions for the AI
+        $systemPrompt .= "### PROFILO UTENTE E PERMESSI:\n";
+        $systemPrompt .= "Ruolo Utente: " . strtoupper($userRole) . "\n";
+
+        if ($isAdmin) {
+            $systemPrompt .= "[LIVELLO: SUPER ADMIN]. L'utente ha accesso COMPLETO. Puoi fornire dettagli tecnici, stack trace, percorsi server, dati finanziari riservati e dati sensibili dei soci.\n";
+        } elseif ($isSegreteria) {
+            $systemPrompt .= "[LIVELLO: SEGRETERIA]. L'utente gestisce i soci. PUOI fornire dati anagrafici, stato pagamenti e dettagli operativi. NON fornire dettagli tecnici su server, database o percorsi file. NON fornire dati finanziari globali dell'associazione se non strettamente pertinenti.\n";
+        } elseif ($isDirettivo) {
+            $systemPrompt .= "[LIVELLO: DIRETTIVO]. L'utente ha accesso a statistiche e report aggregati. PUOI discutere di trend e dati generali. NON fornire dettagli tecnici.\n";
         } else {
-            $systemPrompt .= "[SISTEMA]: L'utente è un operatore standard. NON fornire dettagli tecnici bassi (no stack trace, no percorsi file, no config server). Rispondi in modo funzionale.\n";
+            $systemPrompt .= "[LIVELLO: OPERATORE BASE]. Rispondi solo a domande funzionali sull'uso del software. NON rivelare dati personali di altri soci, né dettagli tecnici, né dati finanziari.\n";
         }
 
         $systemPrompt .= "DOMANDA UTENTE: $userMessage";

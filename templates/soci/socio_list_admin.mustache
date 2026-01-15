@@ -1,0 +1,163 @@
+{{> layout_header }}
+
+<!-- VIEW MODE TOGGLES (Only for Real Admins) -->
+{{#real_is_admin}}
+<div class="d-flex justify-content-end mb-4 gap-2">
+    <a href="?view=admin" class="btn btn-sm {{^is_admin}}btn-outline-secondary{{/is_admin}}{{#is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-gauge-high me-2"></i>Mission Control
+    </a>
+    <a href="?view=user" class="btn btn-sm {{#is_admin}}btn-outline-secondary{{/is_admin}}{{^is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-user me-2"></i>Vista Utente
+    </a>
+</div>
+{{/real_is_admin}}
+
+<div class="container-fluid px-4">
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold text-white mb-0">
+                {{#is_admin}}Gestione Anagrafica{{/is_admin}}
+                {{^is_admin}}Directory Soci{{/is_admin}}
+            </h1>
+            <p class="text-secondary lead mb-0">
+                {{#is_admin}}DB Master • {{count}} Records • Accesso Completo{{/is_admin}}
+                {{^is_admin}}Elenco pubblico degli associati MCAG{{/is_admin}}
+            </p>
+        </div>
+        
+        <!-- SEARCH BAR (Common) -->
+        <div class="d-flex gap-2">
+            <form action="" method="GET" class="d-flex">
+                 {{#view_mode}}<input type="hidden" name="view" value="{{view_mode}}">{{/view_mode}}
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="q" class="form-control bg-dark border-secondary text-white" placeholder="Cerca socio..." value="{{search_query}}">
+                </div>
+            </form>
+             {{#is_admin}}
+             <a href="{{base_url}}/soci/nuovo" class="btn btn-success d-flex align-items-center gap-2 rounded-pill px-4">
+                 <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline">Nuovo</span>
+             </a>
+             {{/is_admin}}
+        </div>
+    </div>
+
+    <!-- ADMIN VIEW: DATA DENSE TABLE -->
+    {{#is_admin}}
+    <div class="card border-0 shadow-lg bg-dark text-white overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0 align-middle" id="table-soci">
+                <thead class="bg-black bg-opacity-25 text-secondary text-uppercase x-small">
+                    <tr>
+                        <th class="ps-4">Socio</th>
+                        <th>Matricola</th>
+                        <th>Codice Fiscale</th>
+                        <th>Stato</th>
+                        <th>Contatti</th>
+                        <th class="text-end pe-4">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#soci}}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px;">
+                                    <i class="fa-solid fa-user text-white-50"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-white">{{nome}} {{cognome}}</div>
+                                    <small class="text-secondary">{{data_nascita}}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="font-monospace text-info">{{matricola}}</td>
+                        <td class="font-monospace text-white-50">{{cf}}</td>
+                        <td>
+                            {{#is_attivo}}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">ATTIVO</span>
+                            {{/is_attivo}}
+                            {{^is_attivo}}
+                                <span class="badge bg-secondary bg-opacity-25 text-secondary">INATTIVO</span>
+                            {{/is_attivo}}
+                            {{#is_moroso}}
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1">MOROSO</span>
+                            {{/is_moroso}}
+                        </td>
+                        <td>
+                             <a href="mailto:{{email}}" class="text-decoration-none text-secondary hover-white me-2"><i class="fa-solid fa-envelope"></i></a>
+                             <span class="text-secondary">{{telefono}}</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group">
+                                <a href="{{base_url}}/soci/{{cf}}" class="btn btn-sm btn-outline-light" title="Dettaglio"><i class="fa-solid fa-eye"></i></a>
+                                <a href="{{base_url}}/soci/{{cf}}/edit" class="btn btn-sm btn-outline-info" title="Modifica"><i class="fa-solid fa-pen"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/soci}}
+                    {{^soci}}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-secondary">
+                            <i class="fa-solid fa-ghost fa-2x mb-3 opacity-50"></i><br>
+                            Nessun socio trovato.
+                        </td>
+                    </tr>
+                    {{/soci}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{/is_admin}}
+
+    <!-- USER VIEW: CARD GRID -->
+    {{^is_admin}}
+    <div id="user-directory-grid" class="row g-4">
+        {{#soci}}
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
+                <div class="card-body text-center p-4">
+                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
+                    <p class="text-secondary small mb-3">Membro dal 2024</p> <!-- Placeholder, need join date in VM -->
+                    
+                    {{#is_attivo}}
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>
+                    {{/is_attivo}}
+                    {{^is_attivo}}
+                         <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>
+                    {{/is_attivo}}
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/soci}}
+    </div>
+    
+    <!-- Sentinel for Infinite Scroll (Observer Target) -->
+    <div id="scroll-sentinel" class="text-center py-5 mt-4"></div>
+
+    <style>
+        .hover-translate-y:hover { transform: translateY(-5px); }
+        .transition-all { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .duration-500 { transition-duration: 500ms; }
+        .ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+        
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+        
+        .translate-y-4 { transform: translateY(1rem); }
+        .translate-y-0 { transform: translateY(0); }
+    </style>
+    {{/is_admin}}
+
+    <script src="{{base_url}}/js/pages/socio_list.js?v=20260115"></script>
+</div>
+
+{{> layout_footer }}

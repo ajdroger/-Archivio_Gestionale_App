@@ -6,21 +6,30 @@
     <title>{{title}} - MCAG | Archivio Mission-Critical</title>
     
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{base_url}}/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="{{base_url}}/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{base_url}}/css/premium.css">
     
     <!-- Custom CSS (Consolidated) -->
-    <link rel="stylesheet" href="{{base_url}}/css/style.css">
-    <link href="{{base_url}}/css/components/scroll_navigator.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{base_url}}/css/style.css?v=20260115_FIX_CSS">
+    <link href="{{base_url}}/css/components/scroll_navigator.css?v=20260115" rel="stylesheet">
+    
+    <!-- DataTables Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
 
     <script>
         window.BASE_URL = "{{base_url}}";
     </script>
+    
+    <!-- jQuery (Required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS (Updated to v2.0.0 to match CSS family) -->
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.min.js"></script>
 </head>
 <body class="d-flex flex-column h-100 {{body_class}}">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-mc sticky-top mb-0">
@@ -52,28 +61,12 @@
                 </ul>
                 
                 <div class="d-flex align-items-center gap-3">
-                    <!-- Talking Archive Controls -->
-                    <div id="talking-archive-controls" class="d-none d-flex align-items-center gap-2" style="z-index: 9999; position: relative;">
-                        <!-- Status Badge (Minimal) -->
-                        <span id="ta-status" class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 rounded-pill animate__animated animate__fadeIn" style="font-size: 0.7em;"></span>
-                        
-                        <!-- Play Button (Premium) -->
-                        <button id="ta-play" class="btn btn-sm btn-outline-info rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm" title="Ascolta questa pagina">
-                            <i class="fa-solid fa-headphones"></i>
-                            <span class="small fw-bold">Ascolta</span>
-                        </button>
-                        
-                        <!-- Pause Button -->
-                        <button id="ta-pause" class="btn btn-sm btn-outline-warning rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm d-none" title="Pausa lettura">
-                            <i class="fa-solid fa-pause"></i>
-                            <span class="small fw-bold">Pausa</span>
-                        </button>
-                        
-                        <!-- Stop Button (Icon Only) -->
-                        <button id="ta-stop" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm d-flex align-items-center justify-content-center p-0" style="width: 32px; height: 32px;" title="Interrompi">
-                            <i class="fa-solid fa-stop"></i>
-                        </button>
-                    </div>
+                    <!-- Talking Archive Launcher -->
+                    <button id="ta-launcher" class="btn btn-sm btn-outline-info rounded-circle d-none" title="Attiva Lettura Vocale" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-headphones"></i>
+                    </button>
+
+
 
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 bg-dark rounded-pill border border-secondary" id="userDropdown" data-bs-toggle="dropdown">

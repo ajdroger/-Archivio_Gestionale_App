@@ -361,3 +361,26 @@ body.devtools-page {
 .devtools-page ::-webkit-scrollbar-thumb:hover {
     background: #64748b;
 }
+
+/* --- Talking Archive Hotfix --- */
+#talking-archive-controls {
+    display: none !important;
+}
+
+#talking-archive-controls.ta-open {
+    display: flex !important;
+}
+
+/* REFRACTOR WIDGET FIX */
+#talking-archive-widget {
+    display: none !important;
+}
+
+#talking-archive-widget.ta-open {
+    display: flex !important;
+}
+
+/* Alpine.js Anti-Flash */
+[x-cloak] {
+    display: none !important;
+}

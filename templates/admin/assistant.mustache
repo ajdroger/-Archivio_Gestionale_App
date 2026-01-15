@@ -49,7 +49,12 @@
                 <div class="input-group">
                     <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
                     <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
-                    <input type="text" name="message" class="form-control bg-black text-white border-secondary" placeholder="Chiedi qualcosa o carica un documento..." aria-label="Messaggio" required autocomplete="off">
+                    <input type="text" id="ai-message-input" name="message" class="form-control bg-black text-white border-secondary" placeholder="Chiedi qualcosa..." aria-label="Messaggio" required autocomplete="off">
+                    
+                    <button class="btn btn-outline-secondary text-white" type="button" id="ai-mic-btn" data-bs-toggle="tooltip" title="Parlami">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    
                     <button class="btn btn-info text-white" type="submit">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
@@ -57,5 +62,48 @@
             </form>
         </div>
     </div>
+    
+    <script>
+    (function() {
+        const micBtn = document.getElementById('ai-mic-btn');
+        const input = document.getElementById('ai-message-input');
+        
+        if (!('webkitSpeechRecognition' in window)) {
+            micBtn.style.display = 'none'; // Not supported
+            return;
+        }
+
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'it-IT';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        micBtn.addEventListener('click', () => {
+            if (micBtn.classList.contains('listening')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+                micBtn.classList.add('listening', 'text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+            }
+        });
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            input.value = transcript;
+            micBtn.classList.remove('listening', 'text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+            // Optional: Auto-submit? No, let user confirm.
+            input.focus();
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech Recognition Error:', event.error);
+            micBtn.classList.remove('listening', 'text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+        };
+
+        recognition.onend = () => {
+            micBtn.classList.remove('listening', 'text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+        };
+    })();
+    </script>
 </div>
 

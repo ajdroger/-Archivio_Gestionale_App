@@ -55,82 +55,119 @@
 <!-- CSS has been moved to public/css/components/devtools.css -->
 <!-- ######################################################################################## -->
 <!-- LAYOUT PRINCIPALE -->
-<div class="d-flex min-vh-100 bg-black">
+<!-- LAYOUT PRINCIPALE -->
+<div class="d-flex min-vh-100 bg-slate-950 bg-gradient-to-br from-slate-950 via-slate-900 to-black">
     
     <!-- 
         ========================================
-        1. SIDEBAR DI NAVIGAZIONE
-        Menù laterale fisso con profilo utente.
-        AUMENTATA LARGHEZZA E CONTRASTO
+        1. SIDEBAR DI NAVIGAZIONE (Last 10 Hours Generation)
+        Fixed, Glassmorphic, Single Page Scroll
         ========================================
     -->
-    <div class="d-flex flex-column flex-shrink-0 p-3 border-end border-secondary" style="width: 280px; background-color: #0a0a0a;">
+    <!-- 
+        ========================================
+        1. SIDEBAR DI NAVIGAZIONE (Last 10 Hours Generation)
+        Fixed, Glassmorphic, Single Page Scroll
+        [REFACTORED TO BOOTSTRAP 5]
+        ========================================
+    -->
+    <div class="d-flex flex-column p-3 text-white bg-dark border-end border-secondary position-sticky top-0 vh-100 shadow-lg" style="width: 280px; z-index: 1000; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);">
         
         <!-- Intestazione Sidebar -->
-        <div class="d-flex align-items-center mb-5 text-decoration-none">
-            <div class="bg-primary p-3 rounded me-3 shadow-lg">
-                <i class="fa-solid fa-layer-group text-white fs-3"></i>
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none p-2">
+            <div class="rounded-3 bg-primary bg-opacity-25 p-2 me-3 shadow-sm border border-primary border-opacity-50">
+                <i class="fa-solid fa-layer-group text-primary fs-4"></i>
             </div>
-            <div>
-                <span class="fs-5 fw-bold text-white tracking-widest">MISSION CONTROL</span><br>
-                <small class="text-white opacity-75 code-font" style="font-size: 0.85rem;">SYSTEM V4.04</small>
+            <div class="lh-1">
+                <span class="fs-5 fw-bold tracking-widest font-monospace">MISSION<br>CONTROL</span>
+                <div class="small text-info opacity-75 font-monospace mt-1" style="font-size: 0.7rem;">SYSTEM V5.4.5</div>
             </div>
-        </div>
+        </a>
         
-        <!-- Elementi di Navigazione (Tabs) -->
-        <div class="nav flex-column nav-pills gap-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            <!-- Tab: Dashboard -->
-            <button class="nav-link sidebar-link text-start active" id="v-pills-dash-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dash" type="button" role="tab">
-                <i class="fa-solid fa-gauge-high w-30px me-3 text-center"></i>Dashboard
-            </button>
+        <hr class="border-secondary opacity-50 my-4">
+        
+        <!-- Elementi di Navigazione (Anchor Links) -->
+        <ul class="nav nav-pills flex-column mb-auto gap-2" id="devtools-nav" role="tablist">
+            <!-- Dashboard -->
+            <li class="nav-item" role="presentation">
+                <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10 active" 
+                   id="v-pills-dash-tab" data-bs-toggle="pill" data-bs-target="#v-pills-dash" type="button" role="tab" aria-controls="v-pills-dash" aria-selected="true">
+                    <i class="fa-solid fa-gauge-high w-25 text-primary"></i>
+                    <span class="fw-medium tracking-wide">Dashboard</span>
+                </a>
+            </li>
             
-            <!-- Tab: Security Center -->
-            <button class="nav-link sidebar-link text-start" id="v-pills-security-tab" data-bs-toggle="pill" data-bs-target="#v-pills-security" type="button" role="tab">
-                <i class="fa-solid fa-shield-halved w-30px me-3 text-center"></i>Security Center
-            </button>
+            <!-- Security Center -->
+            <li class="nav-item" role="presentation">
+                <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10"
+                   id="v-pills-security-tab" data-bs-toggle="pill" data-bs-target="#v-pills-security" type="button" role="tab" aria-controls="v-pills-security" aria-selected="false">
+                    <i class="fa-solid fa-shield-halved w-25 text-danger"></i>
+                    <span class="fw-medium tracking-wide">Security Center</span>
+                </a>
+            </li>
             
-            <!-- Tab: Audit & Logs -->
-            <button class="nav-link sidebar-link text-start" id="v-pills-audit-tab" data-bs-toggle="pill" data-bs-target="#v-pills-audit" type="button" role="tab">
-                <i class="fa-solid fa-file-contract w-30px me-3 text-center"></i>Audit & Logs
-            </button>
+            <!-- Audit & Logs -->
+            <li class="nav-item" role="presentation">
+                <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10"
+                   id="v-pills-audit-tab" data-bs-toggle="pill" data-bs-target="#v-pills-audit" type="button" role="tab" aria-controls="v-pills-audit" aria-selected="false">
+                    <i class="fa-solid fa-file-contract w-25 text-warning"></i>
+                    <span class="fw-medium tracking-wide">Audit & Logs</span>
+                </a>
+            </li>
             
-            <!-- Tab: Toolkit -->
-            <button class="nav-link sidebar-link text-start" id="v-pills-tools-tab" data-bs-toggle="pill" data-bs-target="#v-pills-tools" type="button" role="tab">
-                <i class="fa-solid fa-toolbox w-30px me-3 text-center"></i>Toolkit
-            </button>
+            <!-- Toolkit -->
+            <li class="nav-item" role="presentation">
+                <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10"
+                   id="v-pills-tools-tab" data-bs-toggle="pill" data-bs-target="#v-pills-tools" type="button" role="tab" aria-controls="v-pills-tools" aria-selected="false">
+                    <i class="fa-solid fa-toolbox w-25 text-success"></i>
+                    <span class="fw-medium tracking-wide">Toolkit</span>
+                </a>
+            </li>
 
-            <!-- Tab: AI Assistant (New) -->
-            <button class="nav-link sidebar-link text-start" id="v-pills-ai-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ai" type="button" role="tab" hx-get="{{base_url}}/ai/assistant" hx-target="#v-pills-ai-content" hx-swap="innerHTML" hx-trigger="click">
-                <i class="fa-solid fa-brain w-30px me-3 text-center"></i>AI Assistant
-            </button>
-            
-            <!-- Tab: Database -->
-            <button class="nav-link sidebar-link text-start" id="v-pills-db-tab" data-bs-toggle="pill" data-bs-target="#v-pills-db" type="button" role="tab">
-                <i class="fa-solid fa-database w-30px me-3 text-center"></i>Database
-            </button>
-            
-            <!-- Tab: Code Reactor -->
-            <button class="nav-link sidebar-link text-start" id="v-pills-editor-tab" data-bs-toggle="pill" data-bs-target="#v-pills-editor" type="button" role="tab">
-                <i class="fa-solid fa-code w-30px me-3 text-center"></i>Code Reactor
-            </button>
-            
+            <!-- AI Assistant -->
+             <li class="nav-item" role="presentation">
+                <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10"
+                   id="v-pills-ai-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ai" type="button" role="tab" aria-controls="v-pills-ai" aria-selected="false">
+                    <i class="fa-solid fa-brain w-25 text-info"></i>
+                    <span class="fw-medium tracking-wide">AI Assistant</span>
+                </a>
+            </li>
 
-        </div>
+             <!-- Database -->
+            <li class="nav-item" role="presentation">
+                <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10"
+                   id="v-pills-db-tab" data-bs-toggle="pill" data-bs-target="#v-pills-db" type="button" role="tab" aria-controls="v-pills-db" aria-selected="false">
+                    <i class="fa-solid fa-database w-25 text-info"></i>
+                    <span class="fw-medium tracking-wide">Database Master</span>
+                </a>
+            </li>
 
-        <!-- Profilo Utente (Bottom) -->
-        <div class="mt-auto pt-4 border-top border-secondary">
-            <div class="d-flex align-items-center p-3 rounded" style="background-color: #1a1a1a;">
-                <div class="rounded-circle bg-white d-flex align-items-center justify-content-center text-black fw-bold me-3 border border-secondary" style="width: 48px; height: 48px; font-size: 1.2rem;">
+             <!-- Code Reactor -->
+            <li class="nav-item" role="presentation">
+                <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10"
+                   id="v-pills-editor-tab" data-bs-toggle="pill" data-bs-target="#v-pills-editor" type="button" role="tab" aria-controls="v-pills-editor" aria-selected="false">
+                    <i class="fa-solid fa-code w-25 text-danger"></i>
+                    <span class="fw-medium tracking-wide">Code Reactor</span>
+                </a>
+            </li>
+        </ul>
+        
+        <hr class="border-secondary opacity-50 my-3">
+        
+        <!-- User Profile -->
+        <div class="mt-auto">
+            <div class="d-flex align-items-center gap-3 p-2 rounded hover-bg-light-5">
+                <div class="rounded-circle bg-gradient-primary d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #a855f7);">
                     {{user_initial}}
                 </div>
-                <div class="flex-grow-1 overflow-hidden">
-                    <div class="text-white fs-6 fw-bold text-truncate">{{username}}</div>
-                    <div class="text-success text-truncate small fw-bold">● Online</div>
+                <div class="overflow-hidden">
+                     <div class="small fw-bold text-white text-truncate">{{username}}</div>
+                     <div class="x-small text-success d-flex align-items-center gap-1"><i class="fa-solid fa-circle" style="font-size: 6px;"></i> Online</div>
                 </div>
-                <a href="{{base_url}}/logout" class="btn btn-lg text-danger ms-2" title="Disconnetti">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </a>
             </div>
+            <a href="{{base_url}}/" class="btn btn-outline-light btn-sm w-100 mt-3 d-flex align-items-center justify-content-center gap-2 opacity-75 hover-opacity-100">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>Exit Support
+            </a>
         </div>
     </div>
 
@@ -148,7 +185,37 @@
             <div class="d-flex align-items-center">
                 <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO v4.04</h4>
             </div>
-            <div class="d-flex gap-3">
+            <div class="d-flex gap-2">
+                 <!-- Quick Links -->
+                 <a href="{{base_url}}/statistiche" class="btn btn-outline-info d-flex align-items-center px-3 py-2 fw-bold">
+                     <i class="fa-solid fa-chart-pie me-2"></i>Statistiche
+                 </a>
+                 <a href="{{base_url}}/soci" class="btn btn-outline-primary d-flex align-items-center px-3 py-2 fw-bold">
+                     <i class="fa-solid fa-users me-2"></i>Soci
+                 </a>
+
+                 <!-- Emergency Dropdown -->
+                 <div class="dropdown">
+                    <button class="btn btn-danger dropdown-toggle d-flex align-items-center px-3 py-2 fw-bold shadow-danger-glow" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-triangle-exclamation me-2"></i>EMERGENCY
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg border border-danger border-opacity-50">
+                        <li><h6 class="dropdown-header text-danger fw-bold uppercase-tracking"><i class="fa-solid fa-biohazard me-2"></i>DANGER ZONE</h6></li>
+                        <li><a class="dropdown-item text-danger fw-bold hover-bg-danger-10" href="#" onclick="if(confirm('SEI SICURO? QUESTA AZIONE SVUOTERA\' TUTTE LE CACHE.')) { window.location.href='{{base_url}}/bin/maintenance/clear_cache.php'; }"><i class="fa-solid fa-bomb me-2"></i>NUKE CACHE</a></li>
+                        <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                        
+                        <li><h6 class="dropdown-header text-warning fw-bold uppercase-tracking"><i class="fa-solid fa-robot me-2"></i>AUTOMATION</h6></li>
+                        <!-- Placeholder for automation actions -->
+                         <li><a class="dropdown-item text-warning hover-bg-warning-10" href="#"><i class="fa-solid fa-play me-2"></i>Force Run Jobs</a></li>
+                        <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+                        
+                        <li><h6 class="dropdown-header text-secondary fw-bold uppercase-tracking"><i class="fa-solid fa-lock me-2"></i>LOCKDOWN</h6></li>
+                        <li><a class="dropdown-item text-secondary hover-text-white" href="#"><i class="fa-solid fa-key me-2"></i>System Lock</a></li>
+                    </ul>
+                 </div>
+
+                 <div class="vr bg-secondary opacity-50 mx-2"></div>
+
                  <!-- Pulsante Toggle Terminale -->
                  <button class="btn btn-dark border-secondary text-white d-flex align-items-center px-4 py-2" onclick="toggleTerminal()">
                      <i class="fa-solid fa-terminal me-2"></i>Console

@@ -1,6 +1,7 @@
 <?php
 /**
  * MCAG System - Test & Automation Dashboard (Compact Grid Edition)
+ * @version 5.4.5
  */
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -120,7 +121,7 @@ ksort($grouped);
     <meta charset="UTF-8">
     <title>Toolkit Compact - MCAG System</title>
     <link rel="stylesheet" href="../../public/css/premium.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../public/css/all.min.css">
 
     <link rel="stylesheet" href="../../public/css/components/toolkit.css?v=<?php echo time(); ?>">
 </head>
@@ -371,7 +372,7 @@ ksort($grouped);
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../public/js/lib/bootstrap.bundle.min.js"></script>
     <script src="../../public/js/components/toolkit.js?v=<?php echo time(); ?>"></script>
 </body>
 

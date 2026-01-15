@@ -17,12 +17,9 @@ class TalkingArchive {
         this.contentSelector = '#readable-content';
         this.voiceLang = 'it-IT';
 
-        // UI Elements
-        this.btnPlay = document.getElementById('ta-play');
-        this.btnPause = document.getElementById('ta-pause');
-        this.btnStop = document.getElementById('ta-stop');
-        this.statusBadge = document.getElementById('ta-status');
-        this.container = document.getElementById('talking-archive-controls');
+        // Only Launcher is guaranteed to exist on load
+        this.launcher = document.getElementById('ta-launcher');
+        this.container = null; // Will be created on demand
 
         this.init();
     }
@@ -31,7 +28,6 @@ class TalkingArchive {
         // Check browser support
         if (!('speechSynthesis' in window)) {
             console.warn('MCAG Talking Archive: TTS not supported in this browser.');
-            if (this.container) this.container.style.display = 'none';
             return;
         }
 
@@ -39,30 +35,109 @@ class TalkingArchive {
         const summary = document.querySelector('.ta-smart-summary');
         const content = document.querySelector(this.contentSelector);
 
+        this.launcher = document.getElementById('ta-launcher');
+
         if (!content && !summary) {
-            // No content to read, hide controls
-            if (this.container) this.container.classList.add('d-none');
-            return;
+            // No content to read
+            if (this.launcher) this.launcher.classList.add('d-none');
         } else {
-            // Show controls
-            if (this.container) this.container.classList.remove('d-none');
+            // Content available: Show LAUNCHER, keep CONTROLS hidden
+            if (this.launcher) this.launcher.classList.remove('d-none');
+            // Ensure controls are hidden initially and NOT flex
+            if (this.container) {
+                // FORCE CLOSED STATE via Hotfix Class & Inline Override
+                this.container.classList.remove('ta-open');
+                this.container.classList.remove('d-flex');
+                this.container.classList.add('d-none');
+                this.container.style.display = 'none'; // Enforce strict hiding
+                this.container.style.setProperty('display', 'none', 'important');
+            }
         }
 
         this.bindEvents();
 
-        // Load voices (some browsers load async)
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = () => this.loadVoices();
         }
     }
 
-    bindEvents() {
+    createWidget() {
+        if (document.getElementById('talking-archive-widget')) return;
+
+        const widgetHtml = `
+            <div id="talking-archive-widget" class="d-none align-items-center gap-2" style="display: none !important; z-index: 9999; position: relative;">
+                <span id="ta-status" class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 rounded-pill animate__animated animate__fadeIn" style="font-size: 0.7em;"></span>
+                
+                <button id="ta-play" class="btn btn-sm btn-outline-info rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm" title="Ascolta questa pagina">
+                    <i class="fa-solid fa-play"></i>
+                    <span class="small fw-bold">Ascolta</span>
+                </button>
+                
+                <button id="ta-pause" class="btn btn-sm btn-outline-warning rounded-pill px-3 d-flex align-items-center gap-2 shadow-sm d-none" title="Pausa lettura">
+                    <i class="fa-solid fa-pause"></i>
+                    <span class="small fw-bold">Pausa</span>
+                </button>
+                
+                <button id="ta-stop" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm d-flex align-items-center justify-content-center p-0" style="width: 32px; height: 32px;" title="Interrompi">
+                    <i class="fa-solid fa-stop"></i>
+                </button>
+            </div>
+        `;
+
+        // Inject after Launcher
+        if (this.launcher && this.launcher.parentElement) {
+            this.launcher.insertAdjacentHTML('afterend', widgetHtml);
+        }
+
+        // Bind references
+        this.container = document.getElementById('talking-archive-widget');
+        this.btnPlay = document.getElementById('ta-play');
+        this.btnPause = document.getElementById('ta-pause');
+        this.btnStop = document.getElementById('ta-stop');
+        this.statusBadge = document.getElementById('ta-status');
+
+        // Bind Events for new elements
         if (this.btnPlay) this.btnPlay.addEventListener('click', () => this.play());
         if (this.btnPause) this.btnPause.addEventListener('click', () => this.pause());
-        if (this.btnStop) this.btnStop.addEventListener('click', () => this.stop());
+        if (this.btnStop) this.btnStop.addEventListener('click', () => this.stopAndClose());
+    }
 
-        // Stop audio when navigating away (SPA / Turbolinks support if needed)
+    bindEvents() {
+        // Launcher Click -> Create (if needed) & Open
+        if (this.launcher) {
+            this.launcher.addEventListener('click', () => {
+                if (!this.container) {
+                    this.createWidget();
+                }
+                this.openWidget();
+            });
+        }
+
+        // Stop audio when navigating away
         window.addEventListener('beforeunload', () => this.stop());
+    }
+
+    openWidget() {
+        this.launcher.classList.add('d-none');
+        if (this.container) {
+            this.container.classList.add('ta-open');
+            this.container.style.display = 'flex';
+            this.container.style.setProperty('display', 'flex', 'important');
+            this.container.classList.add('animate__animated', 'animate__fadeInRight');
+        }
+    }
+
+    stopAndClose() {
+        this.stop();
+        if (this.container) {
+            this.container.classList.remove('ta-open');
+            this.container.style.display = 'none';
+            this.container.style.setProperty('display', 'none', 'important');
+        }
+        if (this.launcher) {
+            this.launcher.classList.remove('d-none');
+            this.launcher.classList.add('animate__animated', 'animate__fadeIn');
+        }
     }
 
     loadVoices() {

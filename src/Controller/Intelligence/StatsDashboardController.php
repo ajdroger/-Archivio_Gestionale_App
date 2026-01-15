@@ -87,6 +87,7 @@ class StatsDashboardController
         $monitoring = null;
         $health = null;
         $financials = null;
+        $transactions = []; // Initialize empty array to avoid undefined variable warning
 
         if ($effectiveIsAdmin) {
             $monitoring = $this->resilienceMonitor->monitorHealth();
@@ -97,6 +98,20 @@ class StatsDashboardController
                 'projected_revenue' => '€ 24.500',
                 'growth_rate' => '+12.5%'
             ];
+
+            // Mocking Recent Transactions for DataTable
+            $types = ['Quota Annuale', 'Donazione', 'Iscrizione Evento', 'Acquisto Gadget'];
+            $statuses = ['Completato', 'In Attesa', 'Fallito'];
+            for ($i = 0; $i < 50; $i++) {
+                $transactions[] = [
+                    'id' => 1000 + $i,
+                    'date' => date('Y-m-d', strtotime("-{$i} days")),
+                    'socio' => 'Socio ' . ($i + 1),
+                    'type' => $types[array_rand($types)],
+                    'amount' => '€ ' . rand(20, 500),
+                    'status' => $statuses[array_rand($statuses)]
+                ];
+            }
         }
 
         // 3. Soci Filters (Used for User Directory view or Admin List view context)
@@ -106,10 +121,14 @@ class StatsDashboardController
         if (!empty($params['payment_status']))
             $sociFilters['moroso'] = ($params['payment_status'] === 'moroso');
 
+        // Select Template (Unified Logic Container)
+        $template = 'admin/statistics';
+
         // 4. Rendering
-        $html = $this->mustache->render('statistics', [
+        $html = $this->mustache->render($template, [
             'stats' => $stats,
             'financials' => $financials, // ONLY available if Admin
+            'transactions' => $transactions, // Mock Data for Table
 
             // View Control
             'real_is_admin' => $realIsAdmin,

@@ -26,7 +26,7 @@ session_name('FRATELLANZA_SESS_V2'); // Force fresh session to clear any corrupt
 ini_set('memory_limit', '256M');
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_samesite', 'Strict'); // Mission-critical security requirement
+ini_set('session.cookie_samesite', 'Lax'); // Relaxed for better browser compatibility (Tracking Prevention fix)
 if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
     ini_set('session.cookie_secure', 1);
 }

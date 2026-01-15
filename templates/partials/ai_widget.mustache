@@ -1,75 +1,24 @@
-<!-- AI Assistant Floating Widget -->
-<div x-data="{ 
-    open: false, 
-    minimized: false,
-    listening: false,
-    toggleVoice() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert('Il tuo browser non supporta il riconoscimento vocale.');
-            return;
-        }
-        
-        if (this.listening) {
-            this.recognition.stop();
-            this.listening = false;
-            return;
-        }
-
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        this.recognition = new Speech();
-        this.recognition.lang = 'it-IT';
-        this.recognition.interimResults = false;
-
-        this.recognition.onstart = () => {
-            this.listening = true;
-        };
-
-        this.recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            const input = document.querySelector('input[name=message]');
-            input.value = transcript;
-            // Optional: Auto-submit
-            // htmx.trigger(input.form, 'submit'); 
-        };
-
-        this.recognition.onend = () => {
-            this.listening = false;
-        };
-        
-        this.recognition.onerror = (event) => {
-            console.error('Speech error:', event.error);
-            this.listening = false;
-        };
-
-        this.recognition.start();
-    }
-}" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+<!-- AI Assistant Floating Widget (Vanilla JS Version - Robust) -->
+<div id="ai-widget-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
     
     <!-- Trigger Button -->
-    <button x-show="!open" 
-            @click="open = true" 
+    <button id="ai-widget-trigger-btn"
             class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center p-0 ai-widget-trigger"
             style="width: 60px; height: 60px; transition: transform 0.2s;">
         <i class="fa-solid fa-brain fs-3"></i>
     </button>
 
     <!-- Chat Window -->
-    <div x-show="open" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-full"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 translate-y-full"
-         class="card bg-black border border-secondary shadow-lg"
+    <div id="ai-widget-window" 
+         class="card bg-black border border-secondary shadow-lg d-flex flex-column d-none animate__animated animate__fadeInUp"
          style="width: 380px; height: 500px; max-height: 80vh;">
          
         <!-- Header -->
         <div class="card-header bg-dark border-bottom border-secondary d-flex justify-content-between align-items-center py-2">
-            <span class="fw-bold text-white small"><i class="fa-solid fa-robot text-info me-2"></i>Archivio Parlante</span>
+            <span class="fw-bold text-white small"><i class="fa-solid fa-robot text-info me-2"></i>Assistente Virtuale</span>
             <div>
-                <button @click="document.getElementById('ai-widget-response').innerHTML = ''" class="btn btn-sm text-secondary p-0 me-2" title="Pulisci"><i class="fa-solid fa-eraser"></i></button>
-                <button @click="open = false" class="btn btn-sm text-secondary p-0"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="document.getElementById('ai-widget-response').innerHTML = ''" class="btn btn-sm text-secondary p-0 me-2" title="Pulisci"><i class="fa-solid fa-eraser"></i></button>
+                <button id="ai-widget-close-btn" class="btn btn-sm text-secondary p-0"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </div>
         
@@ -115,11 +64,11 @@
                     <input type="hidden" name="context_title" value="{{title}}">
                     
                     <div class="input-group input-group-sm">
-                        <input type="text" name="message" class="form-control bg-black text-white border-secondary" placeholder="Scrivi o parla..." required autocomplete="off">
+                        <input type="text" id="ai-widget-message" name="message" class="form-control bg-black text-white border-secondary" placeholder="Scrivi o parla..." required autocomplete="off">
                         
                         <!-- Mic Button -->
-                        <button class="btn btn-secondary text-white" type="button" @click="toggleVoice()" :class="{'btn-danger': listening, 'btn-secondary': !listening}">
-                             <i class="fa-solid" :class="{'fa-microphone-slash': listening, 'fa-microphone': !listening}"></i>
+                        <button class="btn btn-outline-secondary text-white" type="button" id="ai-widget-mic-btn" data-bs-toggle="tooltip" title="Parlami">
+                             <i class="fa-solid fa-microphone"></i>
                         </button>
 
                         <button class="btn btn-info text-white" type="submit">
@@ -130,6 +79,71 @@
             </div>
         </div>
     </div>
+
+    <!-- Vanilla JS Logic for Widget State & Speech -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Widget Toggle Logic ---
+        const container = document.getElementById('ai-widget-container');
+        const triggerBtn = document.getElementById('ai-widget-trigger-btn');
+        const closeBtn = document.getElementById('ai-widget-close-btn');
+        const windowEl = document.getElementById('ai-widget-window');
+
+        // Initial State: Ensure Closed
+        windowEl.classList.add('d-none');
+        triggerBtn.classList.remove('d-none');
+
+        triggerBtn.addEventListener('click', () => {
+            windowEl.classList.remove('d-none');
+            triggerBtn.classList.add('d-none');
+            // Auto Focus
+            setTimeout(() => document.getElementById('ai-widget-message').focus(), 100);
+        });
+
+        closeBtn.addEventListener('click', () => {
+            windowEl.classList.add('d-none');
+            triggerBtn.classList.remove('d-none');
+        });
+
+        // --- Speech Logic ---
+        const micBtn = document.getElementById('ai-widget-mic-btn');
+        const input = document.getElementById('ai-widget-message');
+        
+        if (micBtn && input && ('webkitSpeechRecognition' in window)) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'it-IT';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            micBtn.addEventListener('click', () => {
+                if (micBtn.classList.contains('text-danger')) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                    micBtn.classList.add('text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+                }
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                input.value = transcript;
+                micBtn.classList.remove('text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+                input.focus();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech Recognition Error:', event.error);
+                micBtn.classList.remove('text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('text-danger', 'animate__animated', 'animate__pulse', 'animate__infinite');
+            };
+        } else if (micBtn) {
+            micBtn.style.display = 'none';
+        }
+    });
+    </script>
 </div>
 
 <style>

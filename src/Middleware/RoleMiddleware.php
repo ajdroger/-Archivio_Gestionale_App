@@ -26,22 +26,26 @@ class RoleMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        if (!in_array($userRole, $this->allowedRoles)) {
+        // Normalize for check
+        $checkRole = strtolower($userRole);
+        $allowedLower = array_map('strtolower', $this->allowedRoles);
+
+        if (!in_array($checkRole, $allowedLower)) {
+            $msg = "Role Denial: Session Role uses '$userRole' (Normalized: '$checkRole'). Allowed: " . json_encode($this->allowedRoles);
+            error_log($msg); // Use standard error log as custom file failed
+
             $response = new SlimResponse();
 
-            // JSON for AJAX
-            if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+            // JSON for AJAX or HTMX
+            if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest' || $request->getHeaderLine('HX-Request') === 'true') {
                 $response->getBody()->write(json_encode([
-                    'error' => 'Accesso negato: Ruolo non autorizzato (' . $userRole . ').',
+                    'error' => "Accesso negato. Ruolo rilevato: '$userRole'. Contatta l'amministratore.",
+                    'debug_role' => $userRole
                 ]));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
             }
 
             // Redirect for standard request
-            // If user is logged in but unauthorized -> Dashboard with error? Or separate error page?
-            // For now, redirect to Flash error logic or simple 403.
-            // Let's us 403 page if possible, or redirect home.
-            // Simplified: Redirect to Dashboard.
             return $response->withHeader('Location', '/MCAG_Militare-Civile-Archivio-Gestionale/public/')->withStatus(302);
         }
 

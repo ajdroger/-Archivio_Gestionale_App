@@ -85,11 +85,9 @@ const api = async (endpoint, data = {}) => {
 
 /**
  * Mostra o Nascondi il drawer del terminale.
+ * Legacy wrapper replaced by generic event, kept for compatibility if needed.
  */
 window.toggleTerminal = function () {
-    const t = document.getElementById('terminal-drawer');
-    if (!t) return console.error("Terminal drawer not found!");
-
     const currentDisplay = t.style.display || window.getComputedStyle(t).display;
 
     if (currentDisplay === 'none') {
