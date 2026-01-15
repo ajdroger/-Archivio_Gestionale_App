@@ -34,34 +34,46 @@ if (isset($_GET['action'])) {
         $cmd = trim($input['cmd'] ?? '');
         $response = ['output' => ''];
 
-        switch (strtolower($cmd)) {
-            case 'help':
-                $response['output'] = "Available commands:\n  run all       - Run complete test suite\n  run <file>    - Run specific test file\n  list          - List available test suites\n  cls/clear     - Clear console\n  whoami        - Display current user";
+        // Check for built-in text commands
+        $lowerCmd = strtolower($cmd);
+
+        switch (true) {
+            case $lowerCmd === 'help':
+                $response['output'] = "Available Commands:\n - run [file]: Execute specific test/script\n - list: List all tests\n - clear: Clear console\n - [any shell command]: Executed in project root";
                 break;
-            case 'cls':
-            case 'clear':
+            case $lowerCmd === 'cls':
+            case $lowerCmd === 'clear':
                 $response['output'] = '__CLEAR__';
                 break;
-            case 'list':
+            case $lowerCmd === 'list':
                 $files = getTestFiles(__DIR__ . '/../../tests');
                 $list = array_map(fn($f) => " - " . $f['name'] . " (" . $f['category'] . ")", $files['files']);
                 $response['output'] = "Available Tests:\n" . implode("\n", array_slice($list, 0, 20)) . (count($list) > 20 ? "\n...and " . (count($list) - 20) . " more." : "");
                 break;
-            case 'run all':
-                // Trigger full run via passthru to capture streaming output?
-                // For JSON response, we use exec/shell_exec.
+            case $lowerCmd === 'run all':
                 $response['output'] = "Initiating full test suite...\nWarning: This may take a while.\n[EXECUTION STARTED]";
                 break;
-            case 'whoami':
-                $response['output'] = "User: " . get_current_user() . "\nRole: Administrator (Simulated)";
+            case str_starts_with($lowerCmd, 'run '):
+                // Handled by frontend usually, but if sent here:
+                $response['output'] = "Executing custom run: " . substr($cmd, 4);
                 break;
             default:
-                if (str_starts_with($cmd, 'run ')) {
-                    // Handled by frontend usually, but if sent here:
-                    $response['output'] = "Executing custom run: " . substr($cmd, 4);
-                } else {
-                    $response['output'] = "Command not recognized: '$cmd'. Type 'help' for instructions.";
+                // General Shell Execution
+                // Move to project root
+                $cwd = realpath(__DIR__ . '/../../');
+                if ($cwd)
+                    chdir($cwd);
+
+                $output = [];
+                $returnVar = 0;
+                // Capture both stdout and stderr
+                exec($cmd . " 2>&1", $output, $returnVar);
+
+                $res = implode("\n", $output);
+                if (empty($res) && $returnVar !== 0) {
+                    $res = "Error: Command failed with exit code $returnVar";
                 }
+                $response['output'] = $res;
         }
         echo json_encode($response);
         exit;
@@ -131,8 +143,8 @@ if (isset($_GET['action'])) {
                 $cmd = "bash \"$target\""; // Windows Git Bash or WSL assumption
                 break;
             default:
-                echo "Error: Unsupported file type '.$ext'";
-                exit;
+                // Fallback: Try to execute directly (let OS decide based on association or shebang)
+                $cmd = "\"$target\"";
         }
 
         // Execute and capture output
