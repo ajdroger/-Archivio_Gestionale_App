@@ -5,7 +5,7 @@
     <div class="d-none ta-smart-summary">
         Benvenuto nella Directory Soci. Questa pagina mostra l'elenco pubblico degli associati MCAG, incluse le schede di contatto e lo stato dell'iscrizione.
     </div>
-    <!-- PAGE HEADER -->
+    <!-- PAGE HEADER & TOGGLES -->
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
             <h1 class="display-5 fw-bold text-white mb-0">
@@ -14,7 +14,7 @@
             <p class="text-secondary lead mb-0">Elenco pubblico degli associati MCAG</p>
         </div>
         
-        <!-- VIEW TOGGLE BUTTONS -->
+        <!-- View Toggle Buttons -->
         <div class="d-flex gap-2">
             <div class="btn-group bg-dark border border-secondary rounded-pill p-1">
                 <button id="btn-view-cards" class="btn btn-sm btn-primary rounded-pill px-3 transition-all" onclick="toggleView('cards')">
@@ -27,67 +27,11 @@
         </div>
     </div>
 
-    <!-- USER VIEW: CARD GRID (Default) -->
-    <div id="user-directory-grid" class="row g-4 mb-5">
-        {{#soci}}
-        <div class="col-md-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
-                <div class="card-body text-center p-4">
-                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
-                    </div>
-                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
-                    <p class="text-secondary small mb-3">Membro Associato MCAG</p>
-                    
-                    {{#is_attivo}}
-                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>
-                    {{/is_attivo}}
-                    {{^is_attivo}}
-                         <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>
-                    {{/is_attivo}}
-
-                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex flex-column gap-2">
-                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
-                         
-                         {{#can_manage_soci}}
-                         <div class="dropdown w-100">
-                            <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                <i class="fa-solid fa-bars me-1"></i> Gestione
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100" style="z-index: 9999;">
-                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Azioni Rapide</h6></li>
-                                <li><a class="dropdown-item text-success fw-bold" href="{{base_url}}/soci/nuovo"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a></li>
-                                <li><hr class="dropdown-divider border-secondary"></li>
-                                
-                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Anagrafica</h6></li>
-                                <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
-                                <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
-                                <li><hr class="dropdown-divider border-secondary"></li>
-                                
-                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Amministrazione</h6></li>
-                                <li><a class="dropdown-item text-white" href="#"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
-                                <li>
-                                    <form action="{{base_url}}/soci/{{cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler procedere?');">
-                                        <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                        {{/can_manage_soci}}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{/soci}}
-    </div>
-    
-    <!-- Sentinel for Infinite Scroll (Visible mainly in Grid Mode) -->
-    <div id="scroll-sentinel" class="text-center py-5 mt-4"></div>
-
-    <!-- USER VIEW: PUBLIC TABLE (DataTables) - Hidden by default -->
-    <div id="user-directory-table-container" class="card border-0 shadow-lg bg-dark text-white overflow-hidden d-none">
+    <!-- USER VIEW: SINGLE DATATABLE WITH CSS GRID TRANSFORM -->
+    <div id="user-directory-container" class="card border-0 shadow-lg bg-dark text-white overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0 align-middle" id="table-soci-user">
+            <!-- Table starts with 'view-grid' class to default to Grid View -->
+            <table class="table table-dark mb-0 align-middle w-100 view-grid" id="table-soci-user">
                 <thead class="bg-black bg-opacity-25 text-secondary text-uppercase x-small">
                     <tr>
                         <th class="ps-4">Socio</th>
@@ -98,18 +42,18 @@
                 <tbody>
                     {{#soci}}
                     <tr>
-                        <td class="ps-4">
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <td class="ps-4" data-grid-label="Socio">
+                            <div class="d-flex align-items-center justify-content-start grid-centered">
+                                <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3 grid-avatar" style="width: 40px; height: 40px;">
                                     <span class="fw-bold fs-5 text-primary">{{nome.0}}{{cognome.0}}</span>
                                 </div>
-                                <div>
+                                <div class="text-start grid-text-center">
                                     <div class="fw-bold text-white">{{nome}} {{cognome}}</div>
                                     <small class="text-secondary">Membro Associato MCAG</small>
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td class="text-start grid-text-center" data-grid-label="Stato">
                             {{#is_attivo}}
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">ATTIVO</span>
                             {{/is_attivo}}
@@ -117,7 +61,7 @@
                                  <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">INATTIVO</span>
                             {{/is_attivo}}
                         </td>
-                        <td class="text-end pe-4">
+                        <td class="text-end pe-4 grid-w-100" data-grid-label="Azioni">
                              <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm rounded-pill me-2">Visualizza Profilo</a>
                              
                              {{#can_manage_soci}}
@@ -133,10 +77,10 @@
                                     <li><h6 class="dropdown-header text-uppercase small opacity-50">Anagrafica</h6></li>
                                     <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
                                     <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
+                                    <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
                                     <li><hr class="dropdown-divider border-secondary"></li>
                                     
                                     <li><h6 class="dropdown-header text-uppercase small opacity-50">Amministrazione</h6></li>
-                                    <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
                                     <li>
                                         <form action="{{base_url}}/soci/{{cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler procedere?');">
                                             <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
@@ -153,29 +97,114 @@
         </div>
     </div>
 
+    <!-- CSS Toggle Logic (Shared logic should be in a common SCSS, but inline for now) -->
+    <style>
+        /* Grid View Transforms */
+        .table.view-grid, 
+        .table.view-grid tbody, 
+        .table.view-grid tr, 
+        .table.view-grid td {
+            display: block; 
+            width: 100%;
+        }
+
+        .table.view-grid thead {
+            display: none;
+        }
+
+        .table.view-grid tbody {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 1.5rem;
+            justify-content: center;
+            background: transparent !important;
+            padding: 0;
+            border: none;
+        }
+
+        .table.view-grid tr {
+            position: relative;
+            width: 100%;
+            max-width: 320px; /* Card Width */
+            flex: 0 0 320px;
+            background: #212529 !important; /* Bootstrap Dark Card Color */
+            border: 1px solid #495057 !important;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+            margin-bottom: 0;
+        }
+        
+        .table.view-grid td {
+            border: none !important;
+            padding: 0.25rem 0 !important;
+            background: transparent !important;
+            text-align: center;
+        }
+
+        /* Hover Effect for Cards */
+        .table.view-grid tr:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 1rem 3rem rgba(0,0,0,0.25);
+            border-color: var(--bs-primary) !important;
+        }
+
+        /* Specialized Transforms */
+        .table.view-grid .grid-centered {
+            flex-direction: column;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .table.view-grid .grid-avatar {
+            width: 80px !important;
+            height: 80px !important;
+            margin-right: 0 !important;
+            margin-bottom: 1rem;
+            font-size: 2.5rem !important;
+        }
+        .table.view-grid .grid-text-center {
+            text-align: center !important;
+        }
+        .table.view-grid .text-start {
+            text-align: center !important;
+        }
+        
+        /* Hide Labels in Grid */
+        .table.view-grid td::before {
+             display: none;
+        }
+
+        /* Action Column Formatting */
+        .table.view-grid td[data-grid-label="Azioni"] {
+            margin-top: 1.5rem;
+            padding-top: 1rem !important;
+            border-top: 1px solid rgba(255,255,255,0.1) !important;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+
     <!-- View Toggling & Init Logic -->
     <script>
         function toggleView(mode) {
-            const grid = document.getElementById('user-directory-grid');
-            const table = document.getElementById('user-directory-table-container');
-            const sentinel = document.getElementById('scroll-sentinel');
+            const table = document.getElementById('table-soci-user');
             const btnCards = document.getElementById('btn-view-cards');
             const btnTable = document.getElementById('btn-view-table');
 
             if (mode === 'cards') {
-                grid.classList.remove('d-none');
-                sentinel.classList.remove('d-none'); // Enable Infinite Scroll
-                table.classList.add('d-none');
+                $(table).addClass('view-grid');
+                $(table).removeClass('table-hover');
                 
-                btnCards.classList.remove('text-secondary', 'btn-sm');
+                btnCards.classList.remove('text-secondary');
                 btnCards.classList.add('btn-primary');
                 
                 btnTable.classList.remove('btn-primary');
                 btnTable.classList.add('text-secondary');
             } else {
-                grid.classList.add('d-none');
-                sentinel.classList.add('d-none'); // Disable Infinite Scroll
-                table.classList.remove('d-none');
+                $(table).removeClass('view-grid');
+                $(table).addClass('table-hover');
                 
                 btnTable.classList.remove('text-secondary');
                 btnTable.classList.add('btn-primary');

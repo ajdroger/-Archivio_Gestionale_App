@@ -129,39 +129,57 @@
     <!-- CSS Toggle Logic -->
     <style>
         /* Grid View Transforms */
+        .table.view-grid, 
+        .table.view-grid tbody, 
+        .table.view-grid tr, 
+        .table.view-grid td {
+            display: block; 
+            width: 100%;
+        }
+
         .table.view-grid thead {
             display: none;
         }
+
         .table.view-grid tbody {
-            display: flex;
-            flex-wrap: wrap;
+            display: flex !important;
+            flex-wrap: wrap !important;
             gap: 1.5rem;
             justify-content: center;
-            padding: 1.5rem;
-            background: #2b3035; /* Match card bg */
+            background: transparent !important;
+            padding: 0;
+            border: none;
         }
+
         .table.view-grid tr {
-            display: flex;
-            flex-direction: column;
+            position: relative;
             width: 100%;
-            max-width: 350px; /* Card size */
-            background: #212529;
-            border: 1px solid #495057;
+            max-width: 320px; /* Card Width */
+            flex: 0 0 320px;
+            background: #212529 !important; /* Bootstrap Dark Card Color */
+            border: 1px solid #495057 !important;
             border-radius: 1rem;
             padding: 1.5rem;
             box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-            align-items: center;
-            text-align: center;
+            margin-bottom: 0; /* Remove table row spacing */
         }
+        
         .table.view-grid td {
-            display: block;
-            width: 100%;
             border: none !important;
-            padding: 0.5rem 0;
+            padding: 0.25rem 0 !important;
             background: transparent !important;
             text-align: center;
         }
-        /* Specialized Transforms for consistency */
+
+        /* Hover Effect for Cards */
+        .table.view-grid tr:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 1rem 3rem rgba(0,0,0,0.25);
+            border-color: var(--bs-primary) !important;
+        }
+
+        /* Specialized Transforms */
         .table.view-grid .grid-centered {
             flex-direction: column;
             align-items: center !important;
@@ -172,7 +190,7 @@
             height: 80px !important;
             margin-right: 0 !important;
             margin-bottom: 1rem;
-            font-size: 2rem;
+            font-size: 2.5rem !important;
         }
         .table.view-grid .grid-text-center {
             text-align: center !important;
@@ -180,18 +198,26 @@
         .table.view-grid .text-start {
             text-align: center !important;
         }
-        .table.view-grid .ps-4, .table.view-grid .pe-4 {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
+        
+        /* Hide Labels in Grid (Use clean design) */
+        .table.view-grid td::before {
+             display: none;
         }
-        /* Hide less relevant columns in grid if needed, or style them nicely */
+
+        /* Action Column Formatting */
         .table.view-grid td[data-grid-label="Azioni"] {
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             padding-top: 1rem !important;
             border-top: 1px solid rgba(255,255,255,0.1) !important;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
+        
+        /* Dropdown fix in overflow hidden cards */
         .table.view-grid .dropdown-menu {
-             position: absolute !important; /* Fix popup in grid */
+             position: absolute !important;
+             z-index: 10000 !important;
         }
     </style>
 
@@ -200,10 +226,12 @@
             const table = document.getElementById('table-soci');
             const btnCards = document.getElementById('btn-admin-cards');
             const btnTable = document.getElementById('btn-admin-table');
-            const tableContainer = document.getElementById('admin-directory-table');
-
+            
+            // Note: We don't hide the container anymore, we just toggle CSS class
+            
             if (mode === 'cards') {
                 $(table).addClass('view-grid');
+                $(table).removeClass('table-hover'); // Remove hover overlap
                 
                 btnCards.classList.remove('text-secondary');
                 btnCards.classList.add('btn-primary');
@@ -212,6 +240,7 @@
                 btnTable.classList.add('text-secondary');
             } else {
                 $(table).removeClass('view-grid');
+                $(table).addClass('table-hover');
                 
                 btnTable.classList.remove('text-secondary');
                 btnTable.classList.add('btn-primary');
