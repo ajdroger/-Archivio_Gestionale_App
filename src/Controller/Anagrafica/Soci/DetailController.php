@@ -54,14 +54,47 @@ class DetailController
         $csrfValue = $request->getAttribute('csrf_value');
 
         $docs = array_map(function ($doc) use ($socio, $csrfName, $csrfValue) {
+            $tipo = $doc->TipoDocumento ?? 'GENERICO'; // Fallback
+            $color = 'secondary';
+            $icon = 'fa-file';
+
+            // Color Coding Logic
+            if (in_array($tipo, ['CARTA_IDENTITA', 'PASSAPORTO', 'TESSERINO_MILITARE', 'TESSERA_SANITARIA', 'PATENTE_GUIDA', 'PERMESSO_SOGGIORNO', 'CERTIFICATO_RESIDENZA'])) {
+                $color = 'info';
+                $icon = 'fa-id-card';
+            } elseif (in_array($tipo, ['FOGLIO_MATRICOLARE', 'STATO_DI_SERVIZIO', 'DECRETO_NOMINA', 'DIPLOMA_ONORIFICENZA', 'ELOGIO_SCRITTO', 'SANZIONE_DISCIPLINARE', 'CONGEDO_ILLIMITATO'])) {
+                $color = 'warning';
+                $icon = 'fa-file-shield';
+            } elseif (in_array($tipo, ['CERTIFICATO_IDONEITA', 'GRUPPO_SANGUIGNO', 'LIBRETTO_VACCINAZIONI', 'VERBALE_CMO', 'INVALIDITA_CIVILE'])) {
+                $color = 'danger';
+                $icon = 'fa-notes-medical';
+            } elseif (in_array($tipo, ['MODULO_ISCRIZIONE', 'RICEVUTA_QUOTA', 'INFORMATIVA_PRIVACY', 'DELEGA_ATTI', 'IBAN_SDD', 'DOCUMENTO_FISCALE'])) {
+                $color = 'primary';
+                $icon = 'fa-file-invoice-dollar';
+            } elseif (in_array($tipo, ['TITOLO_STUDIO', 'ATTESTATO_CORSO', 'ABILITAZIONE_PROFESSIONALE'])) {
+                $color = 'success';
+                $icon = 'fa-graduation-cap';
+            } elseif (in_array($tipo, ['PORTO_ARMI', 'BREVETTO_SPECIALITA', 'PATENTE_NAUTICA'])) {
+                $color = 'success';
+                $icon = 'fa-person-rifle';
+            } elseif (in_array($tipo, ['CASELLARIO_GIUDIZIALE', 'PROCURA_LEGALE', 'DICHIARAZIONE_SOSTITUTIVA'])) {
+                $color = 'secondary border-warning'; // Special Legal style
+                $icon = 'fa-scale-balanced';
+            } elseif ($tipo === 'FOTO_PROFILO') {
+                $color = 'light';
+                $icon = 'fa-image';
+            }
+
             return [
                 'id' => $doc->IdUnivoco,
-                'tipo' => (new \ReflectionClass($doc))->getShortName(),
+                'tipo' => $tipo,
                 'nome_file' => $doc->NomeFile,
                 'stato' => $doc->Stato->name,
                 'socio_cf' => $socio->CodiceFiscale,
                 'csrf_name' => $csrfName,
-                'csrf_value' => $csrfValue
+                'csrf_value' => $csrfValue,
+                'type_color' => $color,
+                'type_icon' => $icon
             ];
         }, $socio->DocumentiAssociati);
 
@@ -112,7 +145,8 @@ class DetailController
                 'generate_date' => date('d M Y H:i:s')
             ],
             'csrf' => ['name' => $csrfName, 'value' => $csrfValue],
-            'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod'),
+            'real_is_admin' => (in_array(($_SESSION['user_role'] ?? ''), ['admin', 'segreteria', 'segreteria_soci', 'direttore_associazione'])) || (($_SESSION['username'] ?? '') === 'Aj_GodMode'),
+            'can_manage_soci' => (in_array(strtolower($_SESSION['user_role'] ?? ''), ['admin', 'segreteria', 'segreteria_soci', 'direttore_associazione', 'system_admin'])) || (($_SESSION['username'] ?? '') === 'Aj_GodMode'),
             'username' => $_SESSION['username'] ?? 'Utente',
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
             'base_url' => (function () {

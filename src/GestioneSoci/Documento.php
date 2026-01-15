@@ -18,6 +18,7 @@ abstract class Documento
     public string $HashSHA256; // Hash per verifica integrità (anti-tampering)
     public StatoDocumento $Stato; // Enum stato (VALIDATO, IN_ATTESA, etc.)
     public DateTime $DataCaricamento;
+    public string $TipoDocumento = 'GENERICO'; // Added to support generic document types
 
     /**
      * Restituisce i metadati essenziali in formato JSON.

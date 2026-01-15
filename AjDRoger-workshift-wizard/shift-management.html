@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Turni - WorkShift Wizard</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        .shift-card {
+            transition: all 0.2s ease;
+        }
+        .shift-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar (same as index.html) -->
+        <div class="sidebar bg-indigo-800 text-white w-64 flex-shrink-0">
+            <!-- Sidebar content from index.html -->
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Shift Management</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i data-feather="bell" class="text-gray-500"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
+                        <i data-feather="plus" class="inline mr-1"></i> Create Shift
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6">
+                <!-- Week Navigation -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 rounded-full hover:bg-gray-200">
+                            <i data-feather="chevron-left"></i>
+                        </button>
+                        <h2 class="text-xl font-semibold">Week of June 12 - June 18, 2023</h2>
+                        <button class="p-2 rounded-full hover:bg-gray-200">
+                            <i data-feather="chevron-right"></i>
+                        </button>
+                        <button class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm">
+                            Today
+                        </button>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-sm">Week</button>
+                        <button class="px-3 py-1 bg-white text-gray-700 rounded-lg text-sm">Month</button>
+                        <button class="px-3 py-1 bg-white text-gray-700 rounded-lg text-sm">Day</button>
+                    </div>
+                </div>
+
+                <!-- Week Schedule -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="grid grid-cols-7 border-b border-gray-200">
+                        <div class="p-3 text-center font-medium text-gray-500">Sunday</div>
+                        <div class="p-3 text-center font-medium text-gray-500">Monday</div>
+                        <div class="p-3 text-center font-medium text-gray-500">Tuesday</div>
+                        <div class="p-3 text-center font-medium text-gray-500">Wednesday</div>
+                        <div class="p-3 text-center font-medium text-gray-500">Thursday</div>
+                        <div class="p-3 text-center font-medium text-gray-500">Friday</div>
+                        <div class="p-3 text-center font-medium text-gray-500">Saturday</div>
+                    </div>
+                    <div class="grid grid-cols-7 divide-x divide-gray-200 min-h-96">
+                        <!-- Sunday -->
+                        <div class="p-2 space-y-2">
+                            <div class="shift-card bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-blue-800">Morning Shift</p>
+                                        <p class="text-sm text-blue-600">8:00 AM - 4:00 PM</p>
+                                    </div>
+                                    <button class="text-blue-500 hover:text-blue-700">
+                                        <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-2 flex items-center">
+                                    <img src="http://static.photos/people/200x200/1" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                    <img src="http://static.photos/people/200x200/2" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                    <span class="text-xs text-gray-500">+2 more</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Monday -->
+                        <div class="p-2 space-y-2">
+                            <div class="shift-card bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-indigo-800">Day Shift</p>
+                                        <p class="text-sm text-indigo-600">9:00 AM - 5:00 PM</p>
+                                    </div>
+                                    <button class="text-indigo-500 hover:text-indigo-700">
+                                        <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-2 flex items-center">
+                                    <img src="http://static.photos/people/200x200/3" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                    <img src="http://static.photos/people/200x200/4" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                    <img src="http://static.photos/people/200x200/5" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                </div>
+                            </div>
+                            <div class="shift-card bg-purple-50 border border-purple-200 rounded-lg p-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-purple-800">Evening Shift</p>
+                                        <p class="text-sm text-purple-600">4:00 PM - 12:00 AM</p>
+                                    </div>
+                                    <button class="text-purple-500 hover:text-purple-700">
+                                        <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-2 flex items-center">
+                                    <img src="http://static.photos/people/200x200/6" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                    <span class="text-xs text-gray-500">+1 more</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tuesday -->
+                        <div class="p-2 space-y-2">
+                            <div class="shift-card bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-blue-800">Morning Shift</p>
+                                        <p class="text-sm text-blue-600">8:00 AM - 4:00 PM</p>
+                                    </div>
+                                    <button class="text-blue-500 hover:text-blue-700">
+                                        <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-2 flex items-center">
+                                    <img src="http://static.photos/people/200x200/7" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                    <img src="http://static.photos/people/200x200/8" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                </div>
+                            </div>
+                            <div class="shift-card bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-yellow-800">Night Shift</p>
+                                        <p class="text-sm text-yellow-600">12:00 AM - 8:00 AM</p>
+                                    </div>
+                                    <button class="text-yellow-500 hover:text-yellow-700">
+                                        <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-2 flex items-center">
+                                    <img src="http://static.photos/people/200x200/9" alt="Employee" class="w-6 h-6 rounded-full mr-1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Wednesday to Saturday (similar structure) -->
+                        <!-- Content would be similar to above days -->
+                    </div>
+                </div>
+
+                <!-- Shift Templates -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Shift Templates</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium">Morning Shift</p>
+                                    <p class="text-sm text-gray-500">8:00 AM - 4:00 PM</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i data-feather="edit-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="mt-3 flex justify-between items-center">
+                                <span class="text-sm text-gray-500">4 employees</span>
+                                <button class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200">
+                                    Assign
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium">Day Shift</p>
+                                    <p class="text-sm text-gray-500">9:00 AM - 5:00 PM</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i data-feather="edit-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="mt-3 flex justify-between items-center">
+                                <span class="text-sm text-gray-500">3 employees</span>
+                                <button class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200">
+                                    Assign
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium">Evening Shift</p>
+                                    <p class="text-sm text-gray-500">4:00 PM - 12:00 AM</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i data-feather="edit-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="mt-3 flex justify-between items-center">
+                                <span class="text-sm text-gray-500">2 employees</span>
+                                <button class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200">
+                                    Assign
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium">Night Shift</p>
+                                    <p class="text-sm text-gray-500">12:00 AM - 8:00 AM</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i data-feather="edit-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="mt-3 flex justify-between items-center">
+                                <span class="text-sm text-gray-500">1 employee</span>
+                                <button class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-200">
+                                    Assign
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shift Assignments -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-semibold">Shift Assignments</h3>
+                        <button class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                            <i data-feather="download" class="w-4 h-4 mr-1"></i> Export
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Employee
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Position
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Monday
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tuesday
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Wednesday
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Thursday
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Friday
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Saturday
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Sunday
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                <img class="h-10 w-10 rounded-full" src="http://static.photos/people/200x200/10" alt="">
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Alex Johnson</div>
+                                                <div class="text-sm text-gray-500">alex@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">Manager</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            9-5
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            9-5
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            9-5
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            9-5
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            9-5
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Off
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Off
+                                        </span>
+                                    </td>
+                                </tr>
+                                <!-- More employee rows would go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

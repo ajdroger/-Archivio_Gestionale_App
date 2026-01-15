@@ -35,7 +35,7 @@ class PDODocumentoRepository implements DocumentoRepository
      */
     public function save(Documento $documento, string $socioCf): void
     {
-        $tipo = 'GENERICO';
+        $tipo = $documento->TipoDocumento ?? 'GENERICO';
         $anno = null;
         $quota = null;
         $metodo = null;
@@ -180,6 +180,7 @@ class PDODocumentoRepository implements DocumentoRepository
         $doc->NomeFile = $row['nome_file'];
         $doc->HashSHA256 = $row['hash_file'] ?? '';
         $doc->DataCaricamento = new DateTime($row['data_caricamento']);
+        $doc->TipoDocumento = $row['tipo_documento'] ?? 'GENERICO';
 
         // Handle Stato (enum) with fallback for invalid values
         try {

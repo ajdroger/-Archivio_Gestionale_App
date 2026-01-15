@@ -95,6 +95,7 @@ class HomeController
             'current_date' => date('d M Y'),
             'app_config' => $appConfig,
             'admin_notes' => $adminNotes,
+            'can_manage_soci' => (in_array(strtolower($_SESSION['user_role'] ?? ''), ['admin', 'segreteria', 'segreteria_soci', 'direttore_associazione', 'system_admin'])) || $isGodMode,
 
             // --- GENIUS MODE DATA INJECTION ---
             'defcon_level' => 5, // 5=Blue(Peace), 4=Green, 3=Yellow, 2=Orange, 1=Red(War)

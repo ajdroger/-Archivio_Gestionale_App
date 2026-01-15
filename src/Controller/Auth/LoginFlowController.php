@@ -39,7 +39,8 @@ class LoginFlowController
      */
     public function form(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('login', []);
+        $viewData = $this->getGlobalViewData($request);
+        $html = $this->mustache->render('login_v2', $viewData);
         $response->getBody()->write($this->wrapLayout($html, "Login"));
         return $response;
     }
@@ -55,7 +56,10 @@ class LoginFlowController
         ]);
 
         if (!empty($validationErrors)) {
-            $html = $this->mustache->render('login', ['error' => "Dati non validi: controlla i campi."]);
+            $viewData = $this->getGlobalViewData($request);
+            $viewData['error'] = "Dati non validi: controlla i campi.";
+
+            $html = $this->mustache->render('login_v2', $viewData);
             $response->getBody()->write($this->wrapLayout($html, "Login"));
             return $response;
         }
@@ -96,9 +100,35 @@ class LoginFlowController
         }
 
         // Errore credenziali
-        $html = $this->mustache->render('login', ['error' => "Credenziali non valide."]);
+        $viewData = $this->getGlobalViewData($request);
+        $viewData['error'] = "Credenziali non valide.";
+
+        $html = $this->mustache->render('login_v2', $viewData);
         $response->getBody()->write($this->wrapLayout($html, "Login"));
         return $response;
+    }
+
+    private function getGlobalViewData(ServerRequestInterface $request): array
+    {
+        $csrfName = $request->getAttribute('csrf_name');
+        $csrfValue = $request->getAttribute('csrf_value');
+
+        $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        $baseUrl = $scriptDir === '/' ? '' : $scriptDir;
+
+        // Robust URL Generation using Slim Router
+        $routeContext = RouteContext::fromRequest($request);
+        $routeParser = $routeContext->getRouteParser();
+        $loginActionUrl = $routeParser->urlFor('login_verify');
+
+        return [
+            'base_url' => $baseUrl,
+            'login_action_url' => $loginActionUrl,
+            'csrf' => [
+                'name' => $csrfName,
+                'value' => $csrfValue
+            ]
+        ];
     }
 
     /**

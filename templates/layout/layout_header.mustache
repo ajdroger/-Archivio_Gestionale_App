@@ -83,6 +83,15 @@
                             <li><a class="dropdown-item text-success" href="{{base_url}}/auth/start-demo"><i class="fa-solid fa-gamepad me-2"></i>Avvia Demo Mode</a></li>
                             <li><hr class="dropdown-divider border-secondary"></li>
                             {{/real_is_admin}}
+                            
+                            {{#can_manage_soci}}
+                            <li><span class="dropdown-header text-uppercase x-small text-secondary fw-bold">Operatività</span></li>
+                            <li><a class="dropdown-item text-info" href="{{base_url}}/soci/nuovo"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a></li>
+                            <li><a class="dropdown-item text-white" href="{{base_url}}/soci"><i class="fa-solid fa-address-book me-2"></i>Elenco Soci</a></li>
+                            <li><a class="dropdown-item text-danger" href="{{base_url}}/soci?payment_status=moroso"><i class="fa-solid fa-triangle-exclamation me-2"></i>Quote Scadute</a></li>
+                            <li><hr class="dropdown-divider border-secondary"></li>
+                            {{/can_manage_soci}}
+
                             <li><a class="dropdown-item text-danger" href="{{base_url}}/logout"><i class="fa-solid fa-power-off me-2"></i>Esci dal sistema</a></li>
                         </ul>
                     </div>

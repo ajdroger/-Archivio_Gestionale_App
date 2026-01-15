@@ -78,7 +78,7 @@
                         <span><i class="fa-solid fa-id-card me-2"></i>Stampa Badge</span>
                         <i class="fa-solid fa-chevron-right small opacity-50"></i>
                     </button>
-                    <a href="{{base_url}}/soci/{{socio.cf}}/modifica" class="btn btn-warning d-flex justify-content-between align-items-center fw-bold text-dark shadow-warning">
+                    <a href="{{base_url}}/soci/{{socio.cf}}/edit" class="btn btn-warning d-flex justify-content-between align-items-center fw-bold text-dark shadow-warning">
                          <span><i class="fa-solid fa-pen-to-square me-2"></i>Modifica Dati</span>
                          <i class="fa-solid fa-chevron-right small opacity-50"></i>
                     </a>
@@ -154,13 +154,13 @@
             </div>
         </div>
 
-        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
+        <div class="card border-0 shadow-lg" style="min-height: 750px; background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
             <div class="card-header bg-transparent py-4 border-bottom border-secondary d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 text-white fw-bold"><i class="fa-solid fa-vault me-2 text-primary"></i>VAULT DOCUMENTI</h5>
                 <span class="badge bg-dark text-info border border-info border-opacity-25 px-3 py-2"><i class="fa-solid fa-file-shield me-2"></i>{{documenti.length}} FILES</span>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
+                <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
                     <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
                         <thead class="text-uppercase small text-secondary" style="background: rgba(15, 23, 42, 0.5);">
                             <tr>
@@ -172,9 +172,11 @@
                         </thead>
                         <tbody class="border-top-0">
                             {{#documenti}}
-                            <tr style="transition: all 0.2s;">
+                            <tr style="transition: all 0.2s; border-left: 2px solid var(--bs-{{type_color}});">
                                 <td class="ps-4">
-                                    <span class="badge bg-dark text-secondary border border-secondary border-opacity-50 small fw-bold"><i class="fa-regular fa-file-code me-2"></i>{{tipo}}</span>
+                                    <span class="badge bg-{{type_color}} bg-opacity-10 text-{{type_color}} border border-{{type_color}} border-opacity-25 small fw-bold">
+                                        <i class="fa-solid {{type_icon}} me-2"></i>{{tipo}}
+                                    </span>
                                 </td>
                                 <td>
                                     <div class="fw-bold text-white small">{{nome_file}}</div>
@@ -230,35 +232,105 @@
                     </table>
                 </div>
             </div>
-             <div class="card-footer bg-black bg-opacity-20 border-top border-secondary py-4 px-4 text-end">
-                <form action="{{base_url}}/soci/{{socio.cf}}/upload" method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-4 align-items-end w-100">
+            <!-- Compact Footer with Bottom Spacing -->
+            <div class="card-footer bg-transparent border-top border-secondary border-opacity-25 py-4 px-4">
+                <form action="{{base_url}}/soci/{{socio.cf}}/upload" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_name" value="{{csrf.name}}">
                     <input type="hidden" name="csrf_value" value="{{csrf.value}}">
                     
-                    <div class="d-flex gap-3 w-100 justify-content-end align-items-center flex-wrap">
-                        <div class="form-group flex-grow-1" style="max-width: 300px;">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                             <label class="small text-secondary fw-bold text-uppercase mb-2">Tipo Asset</label>
                              <select name="tipo_documento" id="tipoDocumento" class="form-select bg-dark text-white border-secondary shadow-sm" onchange="toggleExtraFields()">
-                                <option value="GENERICO">Asset Generico</option>
-                                <option value="MODULO_ISCRIZIONE">Modulo Iscrizione (Audit Enabled)</option>
+                                <option value="GENERICO" selected>Seleziona Tipologia Asset...</option>
+                                
+                                <optgroup label="IDENTITÀ & ANAGRAFICA">
+                                    <option value="CARTA_IDENTITA">Carta d'Identità (CIE/Cartacea)</option>
+                                    <option value="PASSAPORTO">Passaporto Ordinario/Diplomatico</option>
+                                    <option value="TESSERA_SANITARIA">Tessera Sanitaria / Codice Fiscale</option>
+                                    <option value="PATENTE_GUIDA">Patente di Guida (Civile/Militare)</option>
+                                    <option value="PERMESSO_SOGGIORNO">Permesso di Soggiorno</option>
+                                    <option value="CERTIFICATO_RESIDENZA">Certificato di Residenza / Stato di Famiglia</option>
+                                </optgroup>
+
+                                <optgroup label="STATO DI SERVIZIO & CARRIERA">
+                                    <option value="TESSERINO_MILITARE">Tesserino Militare (MD4 / AT)</option>
+                                    <option value="FOGLIO_MATRICOLARE">Foglio Matricolare / Stato di Servizio</option>
+                                    <option value="DECRETO_NOMINA">Decreto di Nomina / Avanzamento Grado</option>
+                                    <option value="DIPLOMA_ONORIFICENZA">Diploma Onorificenza / Nastrino</option>
+                                    <option value="ELOGIO_SCRITTO">Elogio Scritto / Encomio Solenne</option>
+                                    <option value="SANZIONE_DISCIPLINARE">Provvedimento Disciplinare / Sanzione</option>
+                                    <option value="CONGEDO_ILLIMITATO">Foglio di Congedo Illimitato</option>
+                                </optgroup>
+                                
+                                <optgroup label="FORMAZIONE & ABILITAZIONI">
+                                    <option value="TITOLO_STUDIO">Titolo di Studio (Diploma/Laurea)</option>
+                                    <option value="ATTESTATO_CORSO">Attestato di Frequenza Corso</option>
+                                    <option value="ABILITAZIONE_PROFESSIONALE">Abilitazione Professionale (Albo)</option>
+                                    <option value="PORTO_ARMI">Porto d'Armi (Difesa/Sportivo)</option>
+                                    <option value="BREVETTO_SPECIALITA">Brevetto Specialità (Parà/Sub/Volo)</option>
+                                    <option value="PATENTE_NAUTICA">Patente Nautica</option>
+                                </optgroup>
+
+                                <optgroup label="SANITARIO & SICUREZZA">
+                                    <option value="CERTIFICATO_IDONEITA">Certificato Idoneità Fisica / Sportiva</option>
+                                    <option value="GRUPPO_SANGUIGNO">Certificato Gruppo Sanguigno</option>
+                                    <option value="LIBRETTO_VACCINAZIONI">Libretto Vaccinazioni / Profilassi</option>
+                                    <option value="VERBALE_CMO">Verbale Commissione Medica (CMO)</option>
+                                    <option value="INVALIDITA_CIVILE">Verbale Invalidità Civile / L.104</option>
+                                </optgroup>
+
+                                <optgroup label="AMMINISTRAZIONE & FISCALE">
+                                    <option value="MODULO_ISCRIZIONE">Modulo Iscrizione (Annuale)</option>
+                                    <option value="RICEVUTA_QUOTA">Ricevuta Versamento Quota</option>
+                                    <option value="INFORMATIVA_PRIVACY">Informativa Privacy (GDPR)</option>
+                                    <option value="DELEGA_ATTI">Delega Ritiro Atti / Rappresentanza</option>
+                                    <option value="IBAN_SDD">Mandato SDD / Coordinate Bancarie</option>
+                                    <option value="DOCUMENTO_FISCALE">Documentazione Fiscale (CU / 730)</option>
+                                </optgroup>
+
+                                <optgroup label="LEGALE & GIURIDICO">
+                                    <option value="CASELLARIO_GIUDIZIALE">Casellario Giudiziale / Carichi Pendenti</option>
+                                    <option value="PROCURA_LEGALE">Procura Legale / Notarile</option>
+                                    <option value="DICHIARAZIONE_SOSTITUTIVA">Autocertificazione / Dich. Sostitutiva</option>
+                                </optgroup>
+                                
+                                <optgroup label="ALTRO">
+                                    <option value="FOTO_PROFILO">Foto Profilo Ufficiale</option>
+                                    <option value="CORRISPONDENZA">Corrispondenza / Lettera</option>
+                                    <option value="GENERICO">Allegato Generico</option>
+                                </optgroup>
                             </select>
                         </div>
-                        <div class="form-group flex-grow-1" style="max-width: 400px;">
+
+                        <div class="col-md-6">
+                             <label class="small text-secondary fw-bold text-uppercase mb-2">File Source</label>
                             <input type="file" name="documento" class="form-control bg-dark text-white border-secondary shadow-sm" required>
                         </div>
-                    </div>
 
-                    <div id="extraFields" class="d-none gap-3 w-100 justify-content-end align-items-center bg-dark bg-opacity-50 p-3 rounded" style="border: 1px dashed rgba(255,255,255,0.1) !important;">
-                        <div class="input-group w-auto shadow-sm">
-                            <span class="input-group-text bg-secondary border-secondary text-white small">Periodo</span>
-                            <input type="number" name="anno" class="form-control bg-dark text-white border-secondary" value="2025" min="2000" max="2100" style="max-width: 90px;">
-                        </div>
-                        <div class="input-group w-auto shadow-sm">
-                            <span class="input-group-text bg-secondary border-secondary text-white small">Quota Versata €</span>
-                            <input type="number" name="quota" class="form-control bg-dark text-white border-secondary" value="50.00" step="0.01" min="0" style="max-width: 110px;">
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary shadow-primary px-4 fw-bold w-100">
+                                <i class="fa-solid fa-cloud-arrow-up me-2"></i>UPLOAD
+                            </button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg shadow-primary px-5 fw-bold"><i class="fa-solid fa-cloud-arrow-up me-2"></i>ESEGUI SECURE UPLOAD</button>
+                    <!-- EXTRA FIELDS ROW -->
+                    <div id="extraFields" class="row mt-3 d-none">
+                        <div class="col-12">
+                            <div class="p-3 rounded border border-secondary border-opacity-25 bg-black bg-opacity-25 d-flex gap-3 align-items-center">
+                                <div class="text-info fw-bold me-2"><i class="fa-solid fa-circle-info me-2"></i>Dati Audit:</div>
+                                <div class="input-group w-auto">
+                                    <span class="input-group-text bg-secondary border-secondary text-white">Anno</span>
+                                    <input type="number" name="anno" class="form-control bg-dark text-white border-secondary" value="2025" style="max-width: 100px;">
+                                </div>
+                                <div class="input-group w-auto">
+                                    <span class="input-group-text bg-secondary border-secondary text-white">Quota €</span>
+                                    <input type="number" name="quota" class="form-control bg-dark text-white border-secondary" value="50.00" step="0.01" style="max-width: 120px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
 
                 <script>
@@ -267,19 +339,20 @@
                     const extras = document.getElementById('extraFields');
                     if (type === 'MODULO_ISCRIZIONE') {
                         extras.classList.remove('d-none');
-                        extras.classList.add('d-flex');
                     } else {
                         extras.classList.add('d-none');
-                        extras.classList.remove('d-flex');
                     }
                 }
                 </script>
             </div>
         </div>
+        </div>
+        
+        <!-- FORCE SCROLL SPACER (Extended Downwards) -->
+        <div style="height: 250px; width: 100%; clear: both;"></div>
     </div>
 </div>
 
 <!-- Styles moved to style.css -->
 {{> layout_footer }}
-
 

@@ -140,6 +140,7 @@ class StatsDashboardController
             'filters' => $params,
             'monitoring' => $monitoring,
             'health' => $health,
+            'can_manage_soci' => (in_array(strtolower($_SESSION['user_role'] ?? ''), ['admin', 'segreteria', 'segreteria_soci', 'direttore_associazione', 'system_admin'])) || $isGodMode,
 
             // --- FINANCIAL INTELLIGENCE UNIT ---
             'fin_projections' => $this->getFinancialProjections(),

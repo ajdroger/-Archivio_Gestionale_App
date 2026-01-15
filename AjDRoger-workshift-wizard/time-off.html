@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permessi - WorkShift Wizard</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-approved {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        .status-pending {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        .status-rejected {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar (same as index.html) -->
+        <div class="sidebar bg-indigo-800 text-white w-64 flex-shrink-0">
+            <!-- Sidebar content from index.html -->
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Time Off Requests</h1>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i data-feather="bell" class="text-gray-500"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
+                        <i data-feather="plus" class="inline mr-1"></i> New Request
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6">
+                <!-- Filters -->
+                <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                        <div class="flex items-center space-x-2">
+                            <h3 class="font-medium">Filters:</h3>
+                            <select class="bg-gray-100 border-0 rounded px-3 py-1 text-sm">
+                                <option>All Status</option>
+                                <option>Approved</option>
+                                <option>Pending</option>
+                                <option>Rejected</option>
+                            </select>
+                            <select class="bg-gray-100 border-0 rounded px-3 py-1 text-sm">
+                                <option>All Types</option>
+                                <option>Vacation</option>
+                                <option>Sick Leave</option>
+                                <option>Personal Day</option>
+                                <option>Bereavement</option>
+                            </select>
+                            <select class="bg-gray-100 border-0 rounded px-3 py-1 text-sm">
+                                <option>All Employees</option>
+                                <option>My Team</option>
+                                <option>Department</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="relative">
+                                <i data-feather="calendar" class="absolute left-2 top-2 text-gray-400"></i>
+                                <input type="text" placeholder="Date Range" class="bg-gray-100 border-0 rounded pl-8 pr-3 py-1 text-sm">
+                            </div>
+                            <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                                Clear Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Off Requests -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Recent Requests</h3>
+                        <div class="text-sm text-gray-500">
+                            Showing <span class="font-medium">1-8</span> of <span class="font-medium">24</span> requests
+                        </div>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <!-- Request Item -->
+                        <div class="p-4 hover:bg-gray-50">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <img src="http://static.photos/people/200x200/11" alt="Employee" class="w-12 h-12 rounded-full">
+                                    <div>
+                                        <p class="font-medium">Sarah Johnson</p>
+                                        <p class="text-sm text-gray-500">Vacation • Jun 15 - Jun 22, 2023</p>
+                                        <p class="text-sm mt-1">Planning a family trip to the mountains.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="status-badge status-approved">Approved</span>
+                                    <div class="flex space-x-2">
+                                        <button class="text-green-500 hover:text-green-700">
+                                            <i data-feather="check" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i data-feather="x" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Request Item -->
+                        <div class="p-4 hover:bg-gray-50">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <img src="http://static.photos/people/200x200/12" alt="Employee" class="w-12 h-12 rounded-full">
+                                    <div>
+                                        <p class="font-medium">Michael Chen</p>
+                                        <p class="text-sm text-gray-500">Sick Leave • Jun 18 - Jun 19, 2023</p>
+                                        <p class="text-sm mt-1">Doctor appointment for annual checkup.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="status-badge status-pending">Pending</span>
+                                    <div class="flex space-x-2">
+                                        <button class="text-green-500 hover:text-green-700">
+                                            <i data-feather="check" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i data-feather="x" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Request Item -->
+                        <div class="p-4 hover:bg-gray-50">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <img src="http://static.photos/people/200x200/13" alt="Employee" class="w-12 h-12 rounded-full">
+                                    <div>
+                                        <p class="font-medium">Emily Rodriguez</p>
+                                        <p class="text-sm text-gray-500">Personal Day • Jun 20, 2023</p>
+                                        <p class="text-sm mt-1">Need to handle some personal matters.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="status-badge status-approved">Approved</span>
+                                    <div class="flex space-x-2">
+                                        <button class="text-green-500 hover:text-green-700">
+                                            <i data-feather="check" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i data-feather="x" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="text-gray-400 hover:text-gray-600">
+                                            <i data-feather="more-vertical" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- More request items would go here -->
+                    </div>
+                    <div class="p-4 border-t border-gray-200 flex justify-between items-center">
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                            <i data-feather="chevron-left" class="inline mr-1"></i> Previous
+                        </button>
+                        <div class="flex space-x-1">
+                            <button class="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm">1</button>
+                            <button class="w-8 h-8 rounded-full hover:bg-gray-100 text-sm">2</button>
+                            <button class="w-8 h-8 rounded-full hover:bg-gray-100 text-sm">3</button>
+                            <span class="px-2 flex items-end">...</span>
+                            <button class="w-8 h-8 rounded-full hover:bg-gray-100 text-sm">8</button>
+                        </div>
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                            Next <i data-feather="chevron-right" class="inline ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Time Off Balances -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-3">Time Off Balances</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm text-gray-500">Vacation Days</p>
+                                    <h3 class="text-2xl font-bold">15 <span class="text-sm font-normal text-gray-500">/ 20 days</span></h3>
+                                </div>
+                                <div class="p-2 rounded-full bg-green-100 text-green-600">
+                                    <i data-feather="sun"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-green-500" style="width: 75%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">5 days remaining</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm text-gray-500">Sick Days</p>
+                                    <h3 class="text-2xl font-bold">4 <span class="text-sm font-normal text-gray-500">/ 10 days</span></h3>
+                                </div>
+                                <div class="p-2 rounded-full bg-blue-100 text-blue-600">
+                                    <i data-feather="thermometer"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-500" style="width: 40%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">6 days remaining</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm text-gray-500">Personal Days</p>
+                                    <h3 class="text-2xl font-bold">2 <span class="text-sm font-normal text-gray-500">/ 5 days</span></h3>
+                                </div>
+                                <div class="p-2 rounded-full bg-purple-100 text-purple-600">
+                                    <i data-feather="user"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-purple-500" style="width: 40%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">3 days remaining</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm text-gray-500">Floating Holidays</p>
+                                    <h3 class="text-2xl font-bold">0 <span class="text-sm font-normal text-gray-500">/ 2 days</span></h3>
+                                </div>
+                                <div class="p-2 rounded-full bg-yellow-100 text-yellow-600">
+                                    <i data-feather="gift"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-yellow-500" style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">2 days remaining</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

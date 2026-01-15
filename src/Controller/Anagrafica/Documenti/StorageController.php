@@ -94,6 +94,10 @@ class StorageController
             $doc->Stato = StatoDocumento::IN_ATTESA;
             $doc->DataCaricamento = new \DateTime();
 
+            // Capture specific document type from form (default to GENERICO)
+            $params = $request->getParsedBody();
+            $doc->TipoDocumento = $params['tipo_documento'] ?? 'GENERICO';
+
             $socio->aggiungiDocumento($doc);
             $this->socioRepo->save($socio);
             $this->auditLogger->info("Documento caricato per socio: {$args['cf']}");

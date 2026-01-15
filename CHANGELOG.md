@@ -13,6 +13,14 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.4.0-operational-command] - 2026-01-15 "**Operational Command**"
+### Stable Release
+- **Global Access Upgrade**: Estensione permessi operativi (`real_is_admin`) ai ruoli `Segreteria`, `Segreteria Soci` e `Direttore Associazione`.
+- **Contextual Workflows**: Popolamento dinamico della "Tendina Utente" con azioni rapide ("Nuovo Socio", "Quote Scadute") in base al ruolo.
+- **Dashboard Enhancement**: Nuovo widget "Nuova Iscrizione" nella Dashboard User per accesso immediato.
+- **UX Fixes**: Ripristino scroll navigation e fix pulsante login (`v2`).
+- **Layout Integrity**: Correzione frammentazione `socio_detail`.
+
 ## [v7.3.0-parrot-arsenal] - 2026-01-15 "**Parrot Arsenal**"
 ### New Features
 - **Legacy of the Hacker**: Integrated "Parrot OS" style menu system in Toolkit.

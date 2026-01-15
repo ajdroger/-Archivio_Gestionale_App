@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Team - WorkShift Wizard</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        .employee-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .status-active {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        .status-onleave {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        .status-inactive {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-indigo-800 text-white w-64 flex-shrink-0">
+            <div class="p-4 flex items-center justify-between border-b border-indigo-700">
+                <div class="flex items-center space-x-2">
+                    <i data-feather="clock" class="text-indigo-300"></i>
+                    <span class="text-xl font-bold">WorkShift Wizard</span>
+                </div>
+                <button id="sidebarToggle" class="md:hidden">
+                    <i data-feather="menu"></i>
+                </button>
+            </div>
+            <nav class="p-4">
+                <div class="space-y-2">
+                    <a href="index.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="shift-management.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="calendar"></i>
+                        <span>Shift Management</span>
+                    </a>
+                    <a href="team-management.html" class="flex items-center space-x-2 p-2 rounded-lg bg-indigo-700">
+                        <i data-feather="users"></i>
+                        <span>Gestione Team</span>
+                    </a>
+                    <a href="time-off.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="sun"></i>
+                        <span>Time Off Requests</span>
+                    </a>
+                    <a href="reports.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="file-text"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="settings.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="settings"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+        <div class="absolute bottom-0 w-full p-4 border-t border-indigo-700">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center text-indigo-300 hover:text-white">
+                    <i data-feather="arrow-left" class="w-4 h-4 mr-1"></i>
+                    <span class="text-xs">Indietro</span>
+                </a>
+                <div class="flex items-center space-x-2">
+                    <img src="http://static.photos/people/200x200/42" alt="User" class="w-8 h-8 rounded-full">
+                    <div>
+                        <p class="font-medium">John Doe</p>
+                    <p class="text-xs text-indigo-300">Admin</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-xs text-indigo-300 mt-2 text-center">
+                &copy; 2023 Aj D Roger - Tutti i diritti riservati
+            </div>
+        </div>
+</div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Team Management</h1>
+                    <p class="text-sm text-gray-500">Manage your team members and their details</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i data-feather="bell" class="text-gray-500"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <button id="addEmployeeBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                        <i data-feather="user-plus" class="inline mr-1"></i> Add Employee
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6">
+                <!-- Filters and Search -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <div class="relative mb-4 md:mb-0 md:w-64">
+                        <i data-feather="search" class="absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" placeholder="Search employees..." class="pl-10 pr-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>All Departments</option>
+                            <option>Sales</option>
+                            <option>Marketing</option>
+                            <option>Operations</option>
+                            <option>HR</option>
+                        </select>
+                        <select class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>On Leave</option>
+                            <option>Inactive</option>
+                        </select>
+                        <button class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200">
+                            <i data-feather="filter" class="text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Employee Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                    <!-- Employee Card 1 -->
+                    <div class="employee-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer" onclick="openEmployeeModal(1)">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="http://static.photos/people/200x200/101" alt="Employee" class="w-20 h-20 rounded-full mb-4">
+                            <h3 class="text-lg font-bold">Sarah Johnson</h3>
+                            <p class="text-sm text-gray-500 mb-2">Sales Manager</p>
+                            <span class="status-active px-2 py-1 rounded-full text-xs font-medium mb-4">Active</span>
+                            <div class="flex space-x-2">
+                                <a href="mailto:sarah@example.com" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="mail"></i>
+                                </a>
+                                <a href="tel:+15551234567" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="phone"></i>
+                                </a>
+                                <button class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="more-horizontal"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Card 2 -->
+                    <div class="employee-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer" onclick="openEmployeeModal(2)">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="http://static.photos/people/200x200/102" alt="Employee" class="w-20 h-20 rounded-full mb-4">
+                            <h3 class="text-lg font-bold">Michael Chen</h3>
+                            <p class="text-sm text-gray-500 mb-2">Marketing Specialist</p>
+                            <span class="status-onleave px-2 py-1 rounded-full text-xs font-medium mb-4">On Leave</span>
+                            <div class="flex space-x-2">
+                                <a href="mailto:michael@example.com" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="mail"></i>
+                                </a>
+                                <a href="tel:+15551234568" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="phone"></i>
+                                </a>
+                                <button class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="more-horizontal"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Card 3 -->
+                    <div class="employee-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer" onclick="openEmployeeModal(3)">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="http://static.photos/people/200x200/103" alt="Employee" class="w-20 h-20 rounded-full mb-4">
+                            <h3 class="text-lg font-bold">Emily Rodriguez</h3>
+                            <p class="text-sm text-gray-500 mb-2">HR Coordinator</p>
+                            <span class="status-active px-2 py-1 rounded-full text-xs font-medium mb-4">Active</span>
+                            <div class="flex space-x-2">
+                                <a href="mailto:emily@example.com" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="mail"></i>
+                                </a>
+                                <a href="tel:+15551234569" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="phone"></i>
+                                </a>
+                                <button class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="more-horizontal"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Card 4 -->
+                    <div class="employee-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer" onclick="openEmployeeModal(4)">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="http://static.photos/people/200x200/104" alt="Employee" class="w-20 h-20 rounded-full mb-4">
+                            <h3 class="text-lg font-bold">David Wilson</h3>
+                            <p class="text-sm text-gray-500 mb-2">Operations Lead</p>
+                            <span class="status-active px-2 py-1 rounded-full text-xs font-medium mb-4">Active</span>
+                            <div class="flex space-x-2">
+                                <a href="mailto:david@example.com" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="mail"></i>
+                                </a>
+                                <a href="tel:+15551234570" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="phone"></i>
+                                </a>
+                                <button class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="more-horizontal"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Card 5 -->
+                    <div class="employee-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer" onclick="openEmployeeModal(5)">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="http://static.photos/people/200x200/105" alt="Employee" class="w-20 h-20 rounded-full mb-4">
+                            <h3 class="text-lg font-bold">Jessica Lee</h3>
+                            <p class="text-sm text-gray-500 mb-2">Sales Associate</p>
+                            <span class="status-active px-2 py-1 rounded-full text-xs font-medium mb-4">Active</span>
+                            <div class="flex space-x-2">
+                                <a href="mailto:jessica@example.com" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="mail"></i>
+                                </a>
+                                <a href="tel:+15551234571" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="phone"></i>
+                                </a>
+                                <button class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="more-horizontal"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Card 6 -->
+                    <div class="employee-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer" onclick="openEmployeeModal(6)">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="http://static.photos/people/200x200/106" alt="Employee" class="w-20 h-20 rounded-full mb-4">
+                            <h3 class="text-lg font-bold">Robert Brown</h3>
+                            <p class="text-sm text-gray-500 mb-2">IT Specialist</p>
+                            <span class="status-inactive px-2 py-1 rounded-full text-xs font-medium mb-4">Inactive</span>
+                            <div class="flex space-x-2">
+                                <a href="mailto:robert@example.com" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="mail"></i>
+                                </a>
+                                <a href="tel:+15551234572" class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="phone"></i>
+                                </a>
+                                <button class="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    <i data-feather="more-horizontal"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add New Employee Card -->
+                    <div id="addEmployeeCard" class="bg-white rounded-xl shadow-md p-6 transition cursor-pointer flex flex-col items-center justify-center border-2 border-dashed border-gray-300 hover:border-indigo-500" onclick="document.getElementById('addEmployeeBtn').click()">
+                        <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mb-4">
+                            <i data-feather="plus" class="text-indigo-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-indigo-600">Add New Employee</h3>
+                    </div>
+                </div>
+
+                <!-- Employee Modal -->
+                <div id="employeeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start border-b pb-4">
+                                <div>
+                                    <h3 class="text-2xl font-bold" id="modalEmployeeName">Employee Name</h3>
+                                    <p class="text-gray-500" id="modalEmployeePosition">Position</p>
+                                </div>
+                                <button onclick="closeEmployeeModal()" class="text-gray-400 hover:text-gray-600">
+                                    <i data-feather="x" class="w-6 h-6"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="md:col-span-1 flex flex-col items-center">
+                                    <img id="modalEmployeeImage" src="http://static.photos/people/200x200/101" alt="Employee" class="w-32 h-32 rounded-full mb-4">
+                                    <div class="text-center">
+                                        <span id="modalEmployeeStatus" class="status-active px-3 py-1 rounded-full text-sm font-medium mb-2">Active</span>
+                                        <p class="text-gray-500 text-sm" id="modalEmployeeDepartment">Department</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <h4 class="font-bold text-lg mb-4">Employee Details</h4>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
+                                            <p id="modalEmployeeEmail" class="font-medium">email@example.com</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Phone</label>
+                                            <p id="modalEmployeePhone" class="font-medium">(555) 123-4567</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Hire Date</label>
+                                            <p id="modalEmployeeHireDate" class="font-medium">Jan 15, 2020</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-1">Employee ID</label>
+                                            <p id="modalEmployeeId" class="font-medium">EMP-001</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-6">
+                                        <label class="block text-sm font-medium text-gray-500 mb-2">About</label>
+                                        <p id="modalEmployeeAbout" class="text-gray-700">Employee description or bio goes here.</p>
+                                    </div>
+                                    
+                                    <div class="flex space-x-3">
+                                        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center">
+                                            <i data-feather="edit-2" class="w-4 h-4 mr-2"></i> Edit
+                                        </button>
+                                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center">
+                                            <i data-feather="trash-2" class="w-4 h-4 mr-2"></i> Delete
+                                        </button>
+                                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center">
+                                            <i data-feather="download" class="w-4 h-4 mr-2"></i> Export
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+
+        // Employee modal functionality
+        const employeeData = {
+            1: {
+                name: "Sarah Johnson",
+                position: "Sales Manager",
+                status: "active",
+                department: "Sales",
+                email: "sarah@example.com",
+                phone: "(555) 123-4567",
+                hireDate: "Mar 12, 2018",
+                id: "EMP-101",
+                about: "Sarah has been with the company for 5 years and leads our sales team with exceptional performance.",
+                image: "http://static.photos/people/200x200/101"
+            },
+            2: {
+                name: "Michael Chen",
+                position: "Marketing Specialist",
+                status: "onleave",
+                department: "Marketing",
+                email: "michael@example.com",
+                phone: "(555) 123-4568",
+                hireDate: "Jun 5, 2020",
+                id: "EMP-102",
+                about: "Michael handles all our digital marketing campaigns and social media presence.",
+                image: "http://static.photos/people/200x200/102"
+            },
+            3: {
+                name: "Emily Rodriguez",
+                position: "HR Coordinator",
+                status: "active",
+                department: "Human Resources",
+                email: "emily@example.com",
+                phone: "(555) 123-4569",
+                hireDate: "Jan 15, 2019",
+                id: "EMP-103",
+                about: "Emily manages all HR operations and employee relations.",
+                image: "http://static.photos/people/200x200/103"
+            },
+            4: {
+                name: "David Wilson",
+                position: "Operations Lead",
+                status: "active",
+                department: "Operations",
+                email: "david@example.com",
+                phone: "(555) 123-4570",
+                hireDate: "Sep 3, 2017",
+                id: "EMP-104",
+                about: "David oversees all operational processes and ensures smooth business operations.",
+                image: "http://static.photos/people/200x200/104"
+            },
+            5: {
+                name: "Jessica Lee",
+                position: "Sales Associate",
+                status: "active",
+                department: "Sales",
+                email: "jessica@example.com",
+                phone: "(555) 123-4571",
+                hireDate: "Apr 22, 2021",
+                id: "EMP-105",
+                about: "Jessica is a key member of our sales team with excellent customer relationship skills.",
+                image: "http://static.photos/people/200x200/105"
+            },
+            6: {
+                name: "Robert Brown",
+                position: "IT Specialist",
+                status: "inactive",
+                department: "IT",
+                email: "robert@example.com",
+                phone: "(555) 123-4572",
+                hireDate: "Nov 10, 2019",
+                id: "EMP-106",
+                about: "Robert managed all IT infrastructure before leaving the company.",
+                image: "http://static.photos/people/200x200/106"
+            }
+        };
+
+        function openEmployeeModal(id) {
+            const employee = employeeData[id];
+            if (!employee) return;
+            
+            document.getElementById('modalEmployeeName').textContent = employee.name;
+            document.getElementById('modalEmployeePosition').textContent = employee.position;
+            document.getElementById('modalEmployeeImage').src = employee.image;
+            
+            const statusElement = document.getElementById('modalEmployeeStatus');
+            statusElement.textContent = employee.status.charAt(0).toUpperCase() + employee.status.slice(1);
+            statusElement.className = `px-3 py-1 rounded-full text-sm font-medium mb-2 status-${employee.status}`;
+            
+            document.getElementById('modalEmployeeDepartment').textContent = employee.department;
+            document.getElementById('modalEmployeeEmail').textContent = employee.email;
+            document.getElementById('modalEmployeePhone').textContent = employee.phone;
+            document.getElementById('modalEmployeeHireDate').textContent = employee.hireDate;
+            document.getElementById('modalEmployeeId').textContent = employee.id;
+            document.getElementById('modalEmployeeAbout').textContent = employee.about;
+            
+            document.getElementById('employeeModal').classList.remove('hidden');
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.add('hidden');
+        }
+
+        // Add employee button functionality
+        document.getElementById('addEmployeeBtn').addEventListener('click', function() {
+            alert('Add new employee functionality would open a form here');
+            // In a real app, this would open a form to add a new employee
+        });
+    </script>
+</body>
+</html>

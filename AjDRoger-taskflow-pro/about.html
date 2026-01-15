@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - TaskFlow Pro</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a78bfa'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="animated-gradient min-h-screen">
+    <div id="particles-js" class="fixed inset-0 z-0"></div>
+    
+    <div class="relative z-10">
+        <taskflow-nav></taskflow-nav>
+        
+        <main class="container mx-auto px-4 py-8 max-w-4xl">
+            <header class="text-center mb-12 pt-8">
+                <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                    About TaskFlow Pro
+                    <span class="block text-2xl font-light text-violet-200 mt-2">Gestisci le tue attività con stile</span>
+                </h1>
+                <div class="w-24 h-1 bg-gradient-to-r from-violet-400 to-fuchsia-400 mx-auto rounded-full"></div>
+            </header>
+
+            <div class="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <section class="mb-8">
+                        <h2 class="text-3xl font-bold text-violet-100 mb-4 flex items-center gap-3">
+                            <i data-feather="info" class="w-8 h-8 text-violet-400"></i>
+                            Cos'è TaskFlow Pro?
+                        </h2>
+                        <p class="text-violet-200/90 text-lg leading-relaxed mb-4">
+                            TaskFlow Pro è un'applicazione web moderna e intuitiva per la gestione delle attività quotidiane. 
+                            Con un'interfaccia elegante e funzionalità potenti, ti aiuta a organizzare la tua vita in modo efficiente.
+                        </p>
+                        <p class="text-violet-200/90 text-lg leading-relaxed">
+                            Sviluppata con le tecnologie web più recenti, TaskFlow Pro offre un'esperienza fluida e reattiva 
+                            su tutti i dispositivi, dal desktop al mobile.
+                        </p>
+                    </section>
+
+                    <section class="mb-8">
+                        <h2 class="text-3xl font-bold text-violet-100 mb-4 flex items-center gap-3">
+                            <i data-feather="zap" class="w-8 h-8 text-violet-400"></i>
+                            Funzionalità Principali
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <feature-card 
+                                icon="check-square" 
+                                title="Gestione Attività" 
+                                description="Aggiungi, modifica e elimina le tue attività in modo semplice e veloce"
+                            ></feature-card>
+                            <feature-card 
+                                icon="filter" 
+                                title="Filtri Intelligenti" 
+                                description="Visualizza tutte le attività, solo quelle attive o completate con un click"
+                            ></feature-card>
+                            <feature-card 
+                                icon="trending-up" 
+                                title="Statistiche in Tempo Reale" 
+                                description="Monitora il tuo progresso con le statistiche aggiornate automaticamente"
+                            ></feature-card>
+                            <feature-card 
+                                icon="save" 
+                                title="Salvataggio Automatico" 
+                                description="Le tue attività sono salvate localmente nel browser per massima privacy"
+                            ></feature-card>
+                            <feature-card 
+                                icon="smartphone" 
+                                title="Design Responsivo" 
+                                description="Usa TaskFlow Pro su qualsiasi dispositivo, ovunque tu sia"
+                            ></feature-card>
+                            <feature-card 
+                                icon="gift" 
+                                title="Esempi Predefiniti" 
+                                description="Inizia subito con attività di esempio per scoprire tutte le funzionalità"
+                            ></feature-card>
+                        </div>
+                    </section>
+
+                    <section class="mb-8">
+                        <h2 class="text-3xl font-bold text-violet-100 mb-4 flex items-center gap-3">
+                            <i data-feather="heart" class="w-8 h-8 text-violet-400"></i>
+                            Tecnologie Utilizzate
+                        </h2>
+                        <div class="bg-white/5 rounded-2xl p-6 border border-violet-300/20">
+                            <ul class="space-y-3 text-violet-200/90">
+                                <li class="flex items-center gap-3">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                    <strong>HTML5</strong> - Struttura semantica e moderna
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                    <strong>Tailwind CSS</strong> - Styling utility-first per design rapido
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                    <strong>JavaScript ES6+</strong> - Logica applicativa potente
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                    <strong>Web Components</strong> - Componenti riutilizzabili e modulari
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                    <strong>LocalStorage API</strong> - Persistenza dati nel browser
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                    <strong>Particles.js</strong> - Effetti grafici avanzati
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section class="mb-8">
+                        <h2 class="text-3xl font-bold text-violet-100 mb-4 flex items-center gap-3">
+                            <i data-feather="shield" class="w-8 h-8 text-violet-400"></i>
+                            Privacy & Sicurezza
+                        </h2>
+                        <p class="text-violet-200/90 text-lg leading-relaxed">
+                            La tua privacy è fondamentale. Tutti i dati di TaskFlow Pro vengono salvati localmente 
+                            nel tuo browser <strong>senza alcun invio a server esterni</strong>. Le tue attività rimangono 
+                            tue e solo tue.
+                        </p>
+                    </section>
+
+                    <section class="text-center">
+                        <a href="index.html" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-semibold rounded-2xl hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 transform hover:scale-105 shadow-xl">
+                            <i data-feather="arrow-left" class="w-5 h-5"></i>
+                            Torna alla App
+                        </a>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <custom-footer></custom-footer>
+        <confirm-modal></confirm-modal>
+    </div>
+
+    <!-- Web Components -->
+    <script src="components/navbar.js"></script>
+    <script src="components/stats-card.js"></script>
+    <script src="components/confirm-modal.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="components/feature-card.js"></script>
+    
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- Main Script -->
+    <script src="script.js"></script>
+    <script>feather.replace();</script>
+<script src="https://huggingface.co/deepsite/deepsite-badge.js"></script>
+</body>
+</html>

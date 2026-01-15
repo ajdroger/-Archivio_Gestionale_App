@@ -301,6 +301,17 @@ async function saveFile() {
     apiCall('fs_op', { op: 'write', path: path, content: content });
 }
 
+function createNewFile(ext) {
+    document.getElementById('code-area').value = '';
+    const newName = `new_file_${Date.now()}.${ext}`;
+    const root = document.getElementById('editor-filename').value.substring(0, document.getElementById('editor-filename').value.lastIndexOf('/')) || '';
+
+    // Set default path, user can edit
+    document.getElementById('editor-filename').value = root ? `${root}/${newName}` : newName;
+    document.getElementById('editor-filename').focus();
+    log(`>>> NEW ${ext.toUpperCase()} TEMPLATE CREATED.`, 'info');
+}
+
 function runScript() {
     const path = document.getElementById('editor-filename').value;
     if (path.endsWith('.php')) {
@@ -343,3 +354,59 @@ cmdInput.addEventListener('keydown', (e) => {
         }
     }
 });
+
+// --- DRAGGABLE MODAL LOGIC ---
+setTimeout(() => {
+    const modal = document.getElementById('editor-modal');
+    const header = document.getElementById('editor-header');
+
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+
+    if (header) {
+        header.addEventListener("mousedown", dragStart);
+        document.addEventListener("mouseup", dragEnd);
+        document.addEventListener("mousemove", drag);
+        console.log("Draggable logic attached to header");
+    } else {
+        console.error("Editor Header not found for draggable logic");
+    }
+
+    function dragStart(e) {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+
+        if (e.target === header || e.target.parentNode === header) {
+            isDragging = true;
+        }
+    }
+
+    function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+
+            xOffset = currentX;
+            yOffset = currentY;
+
+            setTranslate(currentX, currentY, modal);
+        }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+        el.style.transform = `translate(calc(-50% + ${xPos}px), calc(-50% + ${yPos}px))`;
+    }
+}, 500); // Delay slightly to ensure DOM is ready
+

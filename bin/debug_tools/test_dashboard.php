@@ -606,37 +606,51 @@ foreach ($tests as $t) {
         </div>
 
         <!-- OMNI-EDITOR MODAL -->
-        <div id="editor-modal"
-            style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:rgba(0,0,0,0.95); border:1px solid #ffd700; z-index:9999; flex-direction:column; padding:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <div id="editor-modal">
+            <div id="editor-header">
                 <div style="color:#ffd700; font-family:'Courier New'; font-weight:bold;">
                     <i class="fa-solid fa-file-code"></i> OMNI-EDITOR v1.0
                 </div>
-                <div>
-                    <button onclick="saveFile()"
-                        style="background:#000; color:#0f0; border:1px solid #0f0; cursor:pointer;">SAVE
-                        [Ctrl+S]</button>
-                    <button onclick="runScript()"
-                        style="background:#000; color:#0ff; border:1px solid #0ff; cursor:pointer; margin-left:10px;">RUN
-                        [F5]</button>
-                    <button onclick="toggleEditor()"
-                        style="background:#000; color:#f00; border:1px solid #f00; cursor:pointer; margin-left:10px;">CLOSE</button>
+                <div style="display:flex; gap:10px;">
+                    <!-- NEW PAGE DROPDOWN -->
+                    <div class="dropdown" style="display:inline-block;">
+                        <button class="tool-btn new">
+                            <i class="fa-solid fa-plus"></i> NEW PAGE
+                        </button>
+                        <div class="dropdown-content" style="min-width:150px;">
+                            <a class="menu-item" onclick="createNewFile('php')"><i class="fa-brands fa-php"></i> PHP
+                                File</a>
+                            <a class="menu-item" onclick="createNewFile('html')"><i class="fa-brands fa-html5"></i> HTML
+                                File</a>
+                            <a class="menu-item" onclick="createNewFile('js')"><i class="fa-brands fa-js"></i> JS
+                                File</a>
+                            <a class="menu-item" onclick="createNewFile('css')"><i class="fa-brands fa-css3"></i> CSS
+                                File</a>
+                            <a class="menu-item" onclick="createNewFile('py')"><i class="fa-brands fa-python"></i>
+                                Python</a>
+                            <a class="menu-item" onclick="createNewFile('java')"><i class="fa-brands fa-java"></i>
+                                Java</a>
+                            <a class="menu-item" onclick="createNewFile('txt')"><i class="fa-solid fa-file-lines"></i>
+                                Text</a>
+                        </div>
+                    </div>
+
+                    <button onclick="saveFile()" class="tool-btn save">SAVE [Ctrl+S]</button>
+                    <button onclick="runScript()" class="tool-btn run">RUN [F5]</button>
+                    <button onclick="toggleEditor()" class="tool-btn danger">CLOSE</button>
                 </div>
             </div>
-            <div style="display:flex; gap:10px; flex-grow:1;">
+
+            <div id="editor-body">
                 <!-- File Browser -->
-                <div style="width:20%; border:1px solid #444; overflow-y:auto; color:#ccc; font-size:12px; padding:5px;"
-                    id="file-browser">
+                <div id="file-browser">
                     <div onclick="loadDir('')" style="cursor:pointer; color:#ffd700;">[ROOT]</div>
                     <div id="file-list"></div>
                 </div>
                 <!-- Editor Area -->
-                <div style="flex-grow:1; display:flex; flex-direction:column;">
-                    <input type="text" id="editor-filename" placeholder="/path/to/file.php"
-                        style="background:#111; color:#fff; border:1px solid #444; padding:5px; width:100%; font-family:monospace;">
-                    <textarea id="code-area"
-                        style="flex-grow:1; background:#0c0c0c; color:#dcdcdc; border:1px solid #444; font-family:'Consolas', monospace; font-size:14px; padding:10px; outline:none; resize:none;"
-                        spellcheck="false"></textarea>
+                <div id="editor-main">
+                    <input type="text" id="editor-filename" placeholder="/path/to/file.php">
+                    <textarea id="code-area" spellcheck="false"></textarea>
                 </div>
             </div>
         </div>
@@ -644,6 +658,7 @@ foreach ($tests as $t) {
         <!-- TERMINAL -->
         <div class="terminal-container" id="terminal">
             <div class="terminal-output" id="output">
+                SooBaDuR MoHaMmAd AjMeEr © AjDRoger © tutti diritti riservati.
                 > HYPER-GRID SYSTEM INITIALIZED...
                 > SCANNING FOR TESTS... DETECTED [
                 <?= $totalTests ?>].

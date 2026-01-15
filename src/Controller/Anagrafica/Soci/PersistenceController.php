@@ -212,7 +212,8 @@ class PersistenceController
         $this->auditLogger->info("Socio aggiornato: {$socio->CodiceFiscale}");
 
         $routeParser = RouteContext::fromRequest($request)->getRouteParser();
-        return $response->withHeader('Location', $routeParser->urlFor('socio_list'))->withStatus(302);
+        // Redirect back to the detail page (dossier) instead of the list
+        return $response->withHeader('Location', $routeParser->urlFor('socio_detail', ['cf' => $socio->CodiceFiscale]))->withStatus(302);
     }
 
     /**

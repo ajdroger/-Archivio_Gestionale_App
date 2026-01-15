@@ -31,7 +31,7 @@
                 <div>
                     <div class="d-flex align-items-center mb-4">
                         <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill">
-                            <i class="fa-solid fa-circle-nodes me-2"></i>v5.4.2 STABLE
+                            <i class="fa-solid fa-circle-nodes me-2"></i>v7.4.0 STABLE
                         </span>
                         <span class="ms-3 text-secondary small font-monospace"><i class="fa-regular fa-clock me-1"></i>{{current_date}}</span>
                     </div>
@@ -103,6 +103,27 @@
             </div>
         </a>
     </div>
+
+    <!-- MODULE: STAFF ACTION (Conditioned) -->
+    {{#can_manage_soci}}
+    <div class="col-md-6 col-xl-4">
+        <a href="{{base_url}}/soci/nuovo" class="text-decoration-none group-hover">
+             <div class="card h-100 border-0 shadow-sm transition-all hover-translate-y" 
+                 style="background: rgba(30, 41, 59, 0.4); border-top: 3px solid #10b981 !important;">
+                <div class="card-body p-4">
+                     <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="p-3 rounded-circle bg-success bg-opacity-10 text-success">
+                            <i class="fa-solid fa-user-plus fa-xl"></i>
+                        </div>
+                         <i class="fa-solid fa-feather-pointed text-secondary opacity-50"></i>
+                    </div>
+                    <h5 class="fw-bold text-white mb-1">Nuova Iscrizione</h5>
+                    <p class="text-secondary x-small mb-0">Registra un nuovo socio a sistema.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    {{/can_manage_soci}}
 </div>
 
 <style>

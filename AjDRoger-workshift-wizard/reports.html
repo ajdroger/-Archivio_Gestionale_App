@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report - WorkShift Wizard</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .report-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-indigo-800 text-white w-64 flex-shrink-0">
+            <div class="p-4 flex items-center justify-between border-b border-indigo-700">
+                <div class="flex items-center space-x-2">
+                    <i data-feather="clock" class="text-indigo-300"></i>
+                    <span class="text-xl font-bold">WorkShift Wizard</span>
+                </div>
+                <button id="sidebarToggle" class="md:hidden">
+                    <i data-feather="menu"></i>
+                </button>
+            </div>
+            <nav class="p-4">
+                <div class="space-y-2">
+                    <a href="index.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="shift-management.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="calendar"></i>
+                        <span>Shift Management</span>
+                    </a>
+                    <a href="team-management.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="users"></i>
+                        <span>Team Management</span>
+                    </a>
+                    <a href="time-off.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="sun"></i>
+                        <span>Time Off Requests</span>
+                    </a>
+                    <a href="reports.html" class="flex items-center space-x-2 p-2 rounded-lg bg-indigo-700">
+                        <i data-feather="file-text"></i>
+                        <span>Report</span>
+                    </a>
+                    <a href="settings.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="settings"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+        <div class="absolute bottom-0 w-full p-4 border-t border-indigo-700">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center text-indigo-300 hover:text-white">
+                    <i data-feather="arrow-left" class="w-4 h-4 mr-1"></i>
+                    <span class="text-xs">Indietro</span>
+                </a>
+                <div class="flex items-center space-x-2">
+                    <img src="http://static.photos/people/200x200/42" alt="User" class="w-8 h-8 rounded-full">
+                    <div>
+                        <p class="font-medium">John Doe</p>
+                    <p class="text-xs text-indigo-300">Admin</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-xs text-indigo-300 mt-2 text-center">
+                &copy; 2023 Aj D Roger - Tutti i diritti riservati
+            </div>
+        </div>
+</div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Reports</h1>
+                    <p class="text-sm text-gray-500">Generate and analyze workforce reports</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i data-feather="bell" class="text-gray-500"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
+                        <i data-feather="plus" class="inline mr-1"></i> New Report
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6">
+                <!-- Report Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Labor Cost Report -->
+                    <div class="report-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="bg-indigo-100 text-indigo-600 p-3 rounded-lg">
+                                <i data-feather="dollar-sign"></i>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="more-vertical"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Labor Cost Report</h3>
+                        <p class="text-sm text-gray-500 mb-4">Analyze labor costs by department, role, and time period.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Last run: 2 days ago</span>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                                Run Report <i data-feather="chevron-right" class="ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Report -->
+                    <div class="report-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="bg-green-100 text-green-600 p-3 rounded-lg">
+                                <i data-feather="check-circle"></i>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="more-vertical"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Attendance Report</h3>
+                        <p class="text-sm text-gray-500 mb-4">Track employee attendance, tardiness, and absenteeism.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Last run: 1 week ago</span>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                                Run Report <i data-feather="chevron-right" class="ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Overtime Report -->
+                    <div class="report-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="bg-yellow-100 text-yellow-600 p-3 rounded-lg">
+                                <i data-feather="clock"></i>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="more-vertical"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Overtime Report</h3>
+                        <p class="text-sm text-gray-500 mb-4">Monitor overtime hours and related costs.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Last run: 3 days ago</span>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                                Run Report <i data-feather="chevron-right" class="ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Time Off Usage -->
+                    <div class="report-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="bg-blue-100 text-blue-600 p-3 rounded-lg">
+                                <i data-feather="sun"></i>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="more-vertical"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Time Off Usage</h3>
+                        <p class="text-sm text-gray-500 mb-4">Track vacation, sick leave, and other time off usage.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Last run: 1 day ago</span>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                                Run Report <i data-feather="chevron-right" class="ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Shift Coverage -->
+                    <div class="report-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="bg-purple-100 text-purple-600 p-3 rounded-lg">
+                                <i data-feather="users"></i>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="more-vertical"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Shift Coverage</h3>
+                        <p class="text-sm text-gray-500 mb-4">Analyze shift coverage and identify gaps.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Last run: 5 days ago</span>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                                Run Report <i data-feather="chevron-right" class="ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Employee Productivity -->
+                    <div class="report-card bg-white rounded-xl shadow-md p-6 transition cursor-pointer">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="bg-pink-100 text-pink-600 p-3 rounded-lg">
+                                <i data-feather="activity"></i>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="more-vertical"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Employee Productivity</h3>
+                        <p class="text-sm text-gray-500 mb-4">Measure and compare employee productivity metrics.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Last run: 1 month ago</span>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                                Run Report <i data-feather="chevron-right" class="ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Labor Cost Breakdown -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-gray-800">Labor Cost Breakdown</h3>
+                            <select class="bg-gray-100 border-0 rounded px-3 py-1 text-sm">
+                                <option>Last 30 Days</option>
+                                <option>Last 90 Days</option>
+                                <option>Year to Date</option>
+                            </select>
+                        </div>
+                        <canvas id="laborCostChart" height="250"></canvas>
+                    </div>
+
+                    <!-- Overtime Trends -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-gray-800">Overtime Trends</h3>
+                            <select class="bg-gray-100 border-0 rounded px-3 py-1 text-sm">
+                                <option>By Week</option>
+                                <option>By Month</option>
+                                <option>By Quarter</option>
+                            </select>
+                        </div>
+                        <canvas id="overtimeChart" height="250"></canvas>
+                    </div>
+                </div>
+
+                <!-- Report History -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Recent Report Runs</h3>
+                        <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                            View All History
+                        </button>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <div class="p-4 hover:bg-gray-50 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium">Labor Cost Report</p>
+                                <p class="text-sm text-gray-500">Generated by John Doe</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">Jun 15, 2023</span>
+                                <button class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm">
+                                    <i data-feather="download" class="w-4 h-4 mr-1"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 hover:bg-gray-50 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium">Attendance Report</p>
+                                <p class="text-sm text-gray-500">Generated by System</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">Jun 10, 2023</span>
+                                <button class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm">
+                                    <i data-feather="download" class="w-4 h-4 mr-1"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 hover:bg-gray-50 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium">Time Off Usage</p>
+                                <p class="text-sm text-gray-500">Generated by Sarah Johnson</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">Jun 5, 2023</span>
+                                <button class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm">
+                                    <i data-feather="download" class="w-4 h-4 mr-1"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 hover:bg-gray-50 flex justify-between items-center">
+                            <div>
+                                <p class="font-medium">Shift Coverage</p>
+                                <p class="text-sm text-gray-500">Generated by System</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">May 28, 2023</span>
+                                <button class="text-indigo-600 hover:text-indigo-800 flex items-center text-sm">
+                                    <i data-feather="download" class="w-4 h-4 mr-1"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Labor Cost Chart
+            const laborCostCtx = document.getElementById('laborCostChart').getContext('2d');
+            const laborCostChart = new Chart(laborCostCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sales', 'Marketing', 'Operations', 'HR', 'IT'],
+                    datasets: [{
+                        data: [35, 20, 25, 10, 10],
+                        backgroundColor: [
+                            'rgba(99, 102, 241, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(139, 92, 246, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(99, 102, 241, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(139, 92, 246, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // Overtime Trends Chart
+            const overtimeCtx = document.getElementById('overtimeChart').getContext('2d');
+            const overtimeChart = new Chart(overtimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                    datasets: [{
+                        label: 'Overtime Hours',
+                        data: [12, 19, 15, 27, 18],
+                        backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+
+        // Report card click functionality
+        document.querySelectorAll('.report-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const reportName = this.querySelector('h3').textContent;
+                alert(`Running "${reportName}" - This would generate the report in a real application`);
+            });
+        });
+    </script>
+</body>
+</html>

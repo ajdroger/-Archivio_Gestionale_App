@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impostazioni - WorkShift Wizard</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        .settings-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .tab-button {
+            transition: all 0.2s ease;
+        }
+        .tab-button.active {
+            background-color: #EEF2FF;
+            color: #4F46E5;
+            border-left: 3px solid #4F46E5;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-indigo-800 text-white w-64 flex-shrink-0">
+            <div class="p-4 flex items-center justify-between border-b border-indigo-700">
+                <div class="flex items-center space-x-2">
+                    <i data-feather="clock" class="text-indigo-300"></i>
+                    <span class="text-xl font-bold">WorkShift Wizard</span>
+                </div>
+                <button id="sidebarToggle" class="md:hidden">
+                    <i data-feather="menu"></i>
+                </button>
+            </div>
+            <nav class="p-4">
+                <div class="space-y-2">
+                    <a href="index.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="shift-management.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="calendar"></i>
+                        <span>Shift Management</span>
+                    </a>
+                    <a href="team-management.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="users"></i>
+                        <span>Team Management</span>
+                    </a>
+                    <a href="time-off.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="sun"></i>
+                        <span>Time Off Requests</span>
+                    </a>
+                    <a href="reports.html" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-indigo-700">
+                        <i data-feather="file-text"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="settings.html" class="flex items-center space-x-2 p-2 rounded-lg bg-indigo-700">
+                        <i data-feather="settings"></i>
+                        <span>Impostazioni</span>
+                    </a>
+                </div>
+            </nav>
+        <div class="absolute bottom-0 w-full p-4 border-t border-indigo-700">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center text-indigo-300 hover:text-white">
+                    <i data-feather="arrow-left" class="w-4 h-4 mr-1"></i>
+                    <span class="text-xs">Indietro</span>
+                </a>
+                <div class="flex items-center space-x-2">
+                    <img src="http://static.photos/people/200x200/42" alt="User" class="w-8 h-8 rounded-full">
+                    <div>
+                        <p class="font-medium">John Doe</p>
+                    <p class="text-xs text-indigo-300">Admin</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-xs text-indigo-300 mt-2 text-center">
+                &copy; 2023 Aj D Roger - Tutti i diritti riservati
+            </div>
+        </div>
+</div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">Settings</h1>
+                    <p class="text-sm text-gray-500">Configure your WorkShift Wizard application</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i data-feather="bell" class="text-gray-500"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                        <i data-feather="save" class="inline mr-1"></i> Save Changes
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="flex flex-col md:flex-row">
+                <!-- Settings Sidebar -->
+                <div class="w-full md:w-64 bg-white shadow-sm p-4">
+                    <div class="space-y-1">
+                        <button class="tab-button w-full text-left p-3 rounded-lg active flex items-center" onclick="showTab('general')">
+                            <i data-feather="settings" class="w-4 h-4 mr-2"></i> General
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('company')">
+                            <i data-feather="home" class="w-4 h-4 mr-2"></i> Company
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('notifications')">
+                            <i data-feather="bell" class="w-4 h-4 mr-2"></i> Notifications
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('time-off')">
+                            <i data-feather="sun" class="w-4 h-4 mr-2"></i> Time Off Policies
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('shifts')">
+                            <i data-feather="clock" class="w-4 h-4 mr-2"></i> Shift Settings
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('integrations')">
+                            <i data-feather="zap" class="w-4 h-4 mr-2"></i> Integrations
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('security')">
+                            <i data-feather="lock" class="w-4 h-4 mr-2"></i> Security
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('users')">
+                            <i data-feather="users" class="w-4 h-4 mr-2"></i> User Management
+                        </button>
+                        <button class="tab-button w-full text-left p-3 rounded-lg flex items-center" onclick="showTab('billing')">
+                            <i data-feather="credit-card" class="w-4 h-4 mr-2"></i> Billing
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="flex-1 p-6">
+                    <!-- General Settings -->
+                    <div id="general-tab" class="settings-content">
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i data-feather="settings" class="w-5 h-5 mr-2"></i> Application Settings
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option selected>(UTC-05:00) Eastern Time (US & Canada)</option>
+                                        <option>(UTC-06:00) Central Time (US & Canada)</option>
+                                        <option>(UTC-07:00) Mountain Time (US & Canada)</option>
+                                        <option>(UTC-08:00) Pacific Time (US & Canada)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Date Format</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option selected>MM/DD/YYYY</option>
+                                        <option>DD/MM/YYYY</option>
+                                        <option>YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Time Format</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option selected>12-hour (3:30 PM)</option>
+                                        <option>24-hour (15:30)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Week Starts On</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option selected>Sunday</option>
+                                        <option>Monday</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i data-feather="eye" class="w-5 h-5 mr-2"></i> Display Settings
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Dark Mode</label>
+                                        <p class="text-sm text-gray-500">Enable dark color scheme</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" value="" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Compact View</label>
+                                        <p class="text-sm text-gray-500">Show more content with less spacing</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" value="" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    </label>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Show Avatars</label>
+                                        <p class="text-sm text-gray-500">Display profile pictures throughout the app</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" value="" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Settings -->
+                    <div id="company-tab" class="settings-content hidden">
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i data-feather="home" class="w-5 h-5 mr-2"></i> Company Information
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                                    <input type="text" value="Acme Corp" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Logo</label>
+                                    <div class="flex items-center mt-2">
+                                        <div class="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+                                            <img src="http://static.photos/office/200x200/1" alt="Company Logo" class="w-full h-full object-cover">
+                                        </div>
+                                        <button class="ml-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
+                                            Change Logo
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option selected>Retail</option>
+                                        <option>Healthcare</option>
+                                        <option>Hospitality</option>
+                                        <option>Manufacturing</option>
+                                        <option>Technology</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Size</label>
+                                    <select class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option selected>51-200 employees</option>
+                                        <option>1-10 employees</option>
+                                        <option>11-50 employees</option>
+                                        <option>201-500 employees</option>
+                                        <option>500+ employees</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i data-feather="map-pin" class="w-5 h-5 mr-2"></i> Locations
+                            </h3>
+                            <div class="space-y-4">
+                                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                                    <table class="min-w-full divide-y divide-gray-300">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Address</th>
+                                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Timezone</th>
+                                                <th scope="col" class="relative py-3.5 pl-3 pr-4">
+                                                    <span class="sr-only">Edit</span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200 bg-white">
+                                            <tr>
+                                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">Headquarters</td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">123 Main St, New York, NY</td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Eastern Time (ET)</td>
+                                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">West Coast Branch</td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">456 Ocean Ave, Los Angeles, CA</td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Pacific Time (PT)</td>
+                                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
+                                                    <button class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center">
+                                    <i data-feather="plus" class="w-4 h-4 mr-2"></i> Add Location
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other tabs would be implemented similarly -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Settings state management
+        const settingsState = {
+            general: {
+                timezone: '(UTC-05:00) Eastern Time (US & Canada)',
+                dateFormat: 'MM/DD/YYYY',
+                timeFormat: '12-hour (3:30 PM)',
+                weekStartsOn: 'Sunday',
+                darkMode: false,
+                compactView: false,
+                showAvatars: true
+            },
+            company: {
+                name: 'Acme Corp',
+                industry: 'Retail',
+                size: '51-200 employees',
+                locations: [
+                    { name: 'Headquarters', address: '123 Main St, New York, NY', timezone: 'Eastern Time (ET)' },
+                    { name: 'West Coast Branch', address: '456 Ocean Ave, Los Angeles, CA', timezone: 'Pacific Time (PT)' }
+                ]
+            },
+            notifications: {
+                emailNotifications: true,
+                pushNotifications: true,
+                shiftChangeAlerts: true,
+                timeOffApprovals: true,
+                reports: false
+            },
+            timeOff: {
+                vacationDays: 20,
+                sickDays: 10,
+                personalDays: 5,
+                floatingHolidays: 2
+            },
+            shifts: {
+                shiftDuration: 8,
+                breakDuration: 30,
+                overtimeThreshold: 40,
+                allowShiftSwaps: true,
+                requireApproval: true
+            },
+            integrations: {
+                googleCalendar: false,
+                slack: false,
+                microsoftTeams: false,
+                payrollSystem: false
+            },
+            security: {
+                twoFactorAuth: false,
+                sessionTimeout: 60,
+                passwordComplexity: true,
+                loginAttempts: 3
+            },
+            users: {
+                allowSelfRegistration: false,
+                requireApproval: true,
+                defaultRole: 'Employee'
+            },
+            billing: {
+                plan: 'Pro',
+                nextBillingDate: '2023-07-15',
+                paymentMethod: 'Credit Card',
+                billingEmail: 'billing@acmecorp.com'
+            }
+        };
+
+        // Save settings to localStorage
+        function saveSettings() {
+            try {
+                localStorage.setItem('workshiftWizard_settings', JSON.stringify(settingsState));
+            showNotification('Settings saved successfully!', 'success');
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            showNotification('Error saving settings', 'error');
+        }
+
+        // Load settings from localStorage
+        function loadSettings() {
+            try {
+                const savedSettings = localStorage.getItem('workshiftWizard_settings');
+                if (savedSettings) {
+                    const parsedSettings = JSON.parse(savedSettings);
+                    Object.assign(settingsState, parsedSettings);
+            updateUIFromState();
+        }
+
+        // Update UI from state
+        function updateUIFromState() {
+            // General settings
+            document.querySelector('#general-tab select:nth-child(1)').value = settingsState.general.timezone;
+            document.querySelector('#general-tab select:nth-child(2)').value = settingsState.general.dateFormat;
+            document.querySelector('#general-tab select:nth-child(3)').value = settingsState.general.timeFormat;
+            document.querySelector('#general-tab select:nth-child(4)').value = settingsState.general.weekStartsOn;
+            document.querySelector('#general-tab input:nth-child(1)').checked = settingsState.general.darkMode;
+            document.querySelector('#general-tab input:nth-child(2)').checked = settingsState.general.compactView;
+            document.querySelector('#general-tab input:nth-child(3)').checked = settingsState.general.showAvatars;
+            
+            // Company settings
+            document.querySelector('#company-tab input[type="text"]').value = settingsState.company.name;
+            document.querySelector('#company-tab select:nth-child(1)').value = settingsState.company.industry;
+            document.querySelector('#company-tab select:nth-child(2)').value = settingsState.company.size;
+            
+            // Time off settings
+            document.querySelector('#time-off-tab input:nth-child(1)').value = settingsState.timeOff.vacationDays;
+            document.querySelector('#time-off-tab input:nth-child(2)').value = settingsState.timeOff.sickDays;
+            document.querySelector('#time-off-tab input:nth-child(3)').value = settingsState.timeOff.personalDays;
+            document.querySelector('#time-off-tab input:nth-child(4)').value = settingsState.timeOff.floatingHolidays;
+            
+            // Shift settings
+            document.querySelector('#shifts-tab input:nth-child(1)').value = settingsState.timeOff.floatingHolidays;
+            
+            // Apply dark mode if enabled
+            if (settingsState.general.darkMode) {
+                document.documentElement.classList.add('dark');
+            document.body.classList.add('bg-gray-900', 'text-white');
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-indigo-500 text-white'}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i data-feather="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'} class="mr-2"></i>
+                <span>${message}</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-4">×</button>
+            `;
+            document.body.appendChild(notification);
+            
+            // Re-initialize feather icons
+            feather.replace();
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Reset to defaults
+        function resetToDefaults() {
+            if (confirm('Are you sure you want to reset all settings to default values?') {
+            settingsState.general = {
+                timezone: '(UTC-05:00) Eastern Time (US & Canada)',
+                dateFormat: 'MM/DD/YYYY',
+                timeFormat: '12-hour (3:30 PM)',
+                weekStartsOn: 'Sunday',
+                darkMode: false,
+                compactView: false,
+                showAvatars: true
+            };
+            settingsState.company = {
+                name: 'Acme Corp',
+                industry: 'Retail',
+                size: '51-200 employees',
+                locations: [
+                    { name: 'Headquarters', address: '123 Main St, New York, NY', timezone: 'Eastern Time (ET)' },
+                    { name: 'West Coast Branch', address: '456 Ocean Ave, Los Angeles, CA', timezone: 'Pacific Time (PT)' }
+                ]
+            };
+            updateUIFromState();
+            saveSettings();
+            showNotification('Settings reset to defaults', 'info');
+        }
+
+        // Export settings
+        function exportSettings() {
+            const dataStr = JSON.stringify(settingsState, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'workshift-wizard-settings.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showNotification('Settings exported successfully!', 'success');
+        }
+
+        // Import settings
+        function importSettings(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedSettings = JSON.parse(e.target.result);
+                    Object.assign(settingsState, importedSettings);
+                    updateUIFromState();
+                    saveSettings();
+                    showNotification('Settings imported successfully!', 'success');
+            };
+            reader.readAsText(file);
+        }
+
+        // Initialize settings
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved settings
+            loadSettings();
+            
+            // Set up event listeners for all form elements
+            setupEventListeners();
+            
+            // Initialize first tab
+            showTab('general');
+        });
+
+        // Set up event listeners for all form controls
+        function setupEventListeners() {
+            // General settings listeners
+            document.querySelector('#general-tab select:nth-child(1)').addEventListener('change', function(e) {
+                settingsState.general.timezone = e.target.value;
+                saveSettings();
+            });
+            
+            // Company settings listeners
+            document.querySelector('#company-tab input[type="text"]').addEventListener('change', function(e) {
+                settingsState.company.name = e.target.value;
+                saveSettings();
+            });
+            
+            // Dark mode toggle
+            document.querySelector('#general-tab input:nth-child(1)').addEventListener('change', function(e) {
+                settingsState.general.darkMode = e.target.checked;
+                if (settingsState.general.darkMode) {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.add('bg-gray-900', 'text-white');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.remove('bg-gray-900', 'text-white');
+                saveSettings();
+            });
+            
+            // Compact view toggle
+            document.querySelector('#general-tab input:nth-child(2)').addEventListener('change', function(e) {
+                settingsState.general.compactView = e.target.checked;
+                saveSettings();
+            });
+            
+            // Show avatars toggle
+            document.querySelector('#general-tab input:nth-child(3)').addEventListener('change', function(e) {
+                settingsState.general.showAvatars = e.target.checked;
+                saveSettings();
+            });
+            
+            // Save button
+            document.querySelector('header button:last-child').addEventListener('click', saveSettings);
+            
+            // Reset to defaults button
+            const resetButton = document.createElement('button');
+            resetButton.className = 'px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200');
+            resetButton.innerHTML = '<i data-feather="refresh-ccw" class="inline mr-1"></i> Reset to Defaults';
+            resetButton.addEventListener('click', resetToDefaults);
+            document.querySelector('header .flex').appendChild(resetButton);
+            
+            // Export settings button
+            const exportButton = document.createElement('button');
+            exportButton.className = 'px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200');
+            exportButton.addEventListener('click', exportSettings);
+            
+            // Import settings input
+            const importInput = document.createElement('input');
+            importInput.type = 'file';
+            importInput.accept = '.json';
+            importButton.addEventListener('change', importSettings);
+            
+            // Add import button to header
+            const importButton = document.createElement('button');
+            importButton.className = 'px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200');
+            importButton.innerHTML = '<i data-feather="upload" class="inline mr-1"></i> Import Settings';
+            importButton.addEventListener('click', () => importInput.click());
+            document.querySelector('header .flex').appendChild(importButton);
+        }
+
+        // Toggle sidebar on mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('hidden');
+        });
+
+        // Tab switching functionality
+        function showTab(tabId) {
+            // Hide all content
+            document.querySelectorAll('.settings-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show selected content
+            document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+            
+            // Update active tab styling
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
