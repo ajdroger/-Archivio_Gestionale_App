@@ -21,7 +21,7 @@
                 {{^is_admin}}Directory Soci{{/is_admin}}
             </h1>
             <p class="text-secondary lead mb-0">
-                {{#is_admin}}DB Master • {{count}} Records • Accesso Completo{{/is_admin}}
+                {{#is_admin}}DB Master • {{count}} Records • Accesso Completo <span class="badge bg-warning text-dark">DEBUG: ADMIN VIEW LOADED</span>{{/is_admin}}
                 {{^is_admin}}Elenco pubblico degli associati MCAG{{/is_admin}}
             </p>
         </div>
@@ -174,27 +174,32 @@
     <!-- DataTables Initialization -->
     <script>
         $(document).ready(function() {
-            // Check if table exists (only in Admin View)
-            if ($('#table-soci').length) {
-                const table = $('#table-soci').DataTable({
+            console.log("MCAG: DataTables Script Started");
+            const tableEl = $('#table-soci');
+            console.log("MCAG: Table Element Found?", tableEl.length);
+
+            if (tableEl.length) {
+                const table = tableEl.DataTable({
                     language: {
                         url: '//cdn.datatables.net/plug-ins/2.0.0/i18n/it-IT.json',
                     },
                     paging: true,
                     info: true,
                     ordering: true,
-                    searching: true, // Enable client-side search on the loaded dataset
+                    searching: true,
                     responsive: true,
                     columnDefs: [
-                        { orderable: false, targets: 5 } // Disable sorting on Action column
+                        { orderable: false, targets: 5 }
                     ],
                     dom: '<"d-flex justify-content-between align-items-center mb-3"f<"d-flex align-items-center"l>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
                     initComplete: function() {
-                        // Custom styling for DataTables elements
+                        console.log("MCAG: DataTables Initialized Successfully");
                         $('.dataTables_filter input').addClass('form-control bg-dark border-secondary text-white');
                         $('.dataTables_length select').addClass('form-select bg-dark border-secondary text-white');
                     }
                 });
+            } else {
+                console.error("MCAG: DataTables ERROR - #table-soci not found!");
             }
         });
     </script>
