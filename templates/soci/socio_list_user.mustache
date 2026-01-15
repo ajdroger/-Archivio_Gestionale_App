@@ -26,32 +26,45 @@
         </div>
     </div>
 
-    <!-- USER VIEW: CARD GRID -->
-    <div id="user-directory-grid" class="row g-4">
-        {{#soci}}
-        <div class="col-md-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
-                <div class="card-body text-center p-4">
-                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
-                    </div>
-                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
-                    <p class="text-secondary small mb-3">Membro Associato</p>
-                    
-                    {{#is_attivo}}
-                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>
-                    {{/is_attivo}}
-                    {{^is_attivo}}
-                         <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>
-                    {{/is_attivo}}
-
-                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
-                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill mb-1">Visualizza Profilo</a>
-                         
-                         {{#can_manage_soci}}
-                         <div class="mt-2 text-center">
-                            <div class="dropdown d-inline-block w-100">
-                                <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+    <!-- USER VIEW: PUBLIC TABLE (DataTables) -->
+    <div class="card border-0 shadow-lg bg-dark text-white overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0 align-middle" id="table-soci-user">
+                <thead class="bg-black bg-opacity-25 text-secondary text-uppercase x-small">
+                    <tr>
+                        <th class="ps-4">Socio</th>
+                        <th>Stato</th>
+                        <th class="text-end pe-4">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#soci}}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                    <span class="fw-bold fs-5 text-primary">{{nome.0}}{{cognome.0}}</span>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-white">{{nome}} {{cognome}}</div>
+                                    <small class="text-secondary">Membro Associato MCAG</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {{#is_attivo}}
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">ATTIVO</span>
+                            {{/is_attivo}}
+                            {{^is_attivo}}
+                                 <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">INATTIVO</span>
+                            {{/is_attivo}}
+                        </td>
+                        <td class="text-end pe-4">
+                             <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm rounded-pill me-2">Visualizza Profilo</a>
+                             
+                             {{#can_manage_soci}}
+                             <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                     <i class="fa-solid fa-bars me-1"></i> Gestione
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100" style="z-index: 9999;">
@@ -73,23 +86,46 @@
                                     </li>
                                 </ul>
                             </div>
-                        </div>
-                        {{/can_manage_soci}}
-                    </div>
-                </div>
-            </div>
+                            {{/can_manage_soci}}
+                        </td>
+                    </tr>
+                    {{/soci}}
+                </tbody>
+            </table>
         </div>
-        {{/soci}}
     </div>
-    
-    <!-- Sentinel for Infinite Scroll (Observer Target) -->
-    <div id="scroll-sentinel" class="text-center py-5 mt-4"></div>
 
-    <style>
-        .hover-translate-y:hover { transform: translateY(-5px); }
-        .transition-all { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-    </style>
-    <script src="{{base_url}}/js/pages/socio_list.js?v=20260115"></script>
+    <!-- DataTables Initialization for User View -->
+    <script>
+        $(document).ready(function() {
+            const tableId = '#table-soci-user';
+            const tableEl = $(tableId);
+
+            if (tableEl.length) {
+                if ($.fn.DataTable.isDataTable(tableId)) return;
+
+                tableEl.DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/2.0.0/i18n/it-IT.json',
+                    },
+                    paging: true,
+                    info: true,
+                    ordering: true,
+                    searching: true,
+                    responsive: true,
+                    destroy: true,
+                    columnDefs: [
+                        { orderable: false, targets: 2 } // Disable sorting on Actions
+                    ],
+                    dom: '<"d-flex justify-content-between align-items-center mb-3"f<"d-flex align-items-center"l>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+                    initComplete: function() {
+                        $('.dataTables_filter input').addClass('form-control bg-dark border-secondary text-white');
+                        $('.dataTables_length select').addClass('form-select bg-dark border-secondary text-white');
+                    }
+                });
+            }
+        });
+    </script>
 
 </div>
 
