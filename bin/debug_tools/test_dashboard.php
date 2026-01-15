@@ -67,11 +67,11 @@ if (isset($_GET['action'])) {
     if ($action === 'run_test') {
         $file = $_GET['file'] ?? '';
         $verbose = isset($_GET['verbose']) && $_GET['verbose'] === 'true';
-        
+
         // Security Sanity Check (Prevent ../ traversal outside project)
         $realBase = realpath(__DIR__ . '/../../');
         $target = realpath($realBase . '/' . $file);
-        
+
         if (!$target || !str_starts_with($target, $realBase)) {
             echo "Error: Invalid file path security violation.";
             exit;
@@ -86,10 +86,12 @@ if (isset($_GET['action'])) {
             } else {
                 // Test Execution (Pest)
                 $bin = $realBase . '/vendor/bin/pest';
-                if (!file_exists($bin)) $bin = $realBase . '/vendor/bin/phpunit'; // Fallback
-                
+                if (!file_exists($bin))
+                    $bin = $realBase . '/vendor/bin/phpunit'; // Fallback
+
                 $cmd = "\"$bin\" \"$target\"";
-                if ($verbose) $cmd .= " --testdox";
+                if ($verbose)
+                    $cmd .= " --testdox";
                 // Color output force
                 $cmd .= " --colors=always";
             }
@@ -116,74 +118,104 @@ function countTestsInFile($path)
     return $phpunitCount + $pestCount;
 }
 
+
 function getTestFiles($dir)
 {
     if (!is_dir($dir))
         return ['files' => [], 'total' => 0];
-    $it = new RecursiveDirectoryIterator($dir);
-    $display = [];
-    $totalTests = 0;
 
+    // Recursive Search
+    $files = [];
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
     $projectRoot = realpath(__DIR__ . '/../../');
 
-    foreach (new RecursiveIteratorIterator($it) as $file) {
-        if ($file->getExtension() === 'php' && strpos($file->getFilename(), 'Test') !== false) {
-            $path = str_replace('\\', '/', $file->getRealPath());
+    foreach ($iterator as $file) {
+        if ($file->isDir())
+            continue;
+        if ($file->getExtension() !== 'php')
+            continue;
 
-            // Skip archived or legacy directories
-            if (str_contains($path, '/Archived/') || str_contains($path, '/Archive/')) {
-                continue;
-            }
-
-            // Calculate relative path from project root
-            $relPathFromRoot = str_replace(str_replace('\\', '/', $projectRoot) . '/', '', $path);
-
-            $category = basename(dirname($path));
-            if ($category == 'tests')
-                $category = 'Root Suite';
-
-            $testCount = countTestsInFile($path);
-            $totalTests += $testCount;
-
-            $display[] = [
-                'name' => $file->getFilename(),
-                'rel_path' => $relPathFromRoot,
-                'category' => $category,
-                'count' => $testCount
-            ];
+        // Match Test Files (ends with Test.php or PEST convention)
+        if (!str_contains($file->getFilename(), 'Test.php') && !str_contains($file->getFilename(), 'test.php')) {
+            // Check content for Pest "it(" or "test(" if filename is vague? 
+            // Stick to filename convention for speed, assuming standard naming.
+            continue;
         }
+
+        $path = str_replace('\\', '/', $file->getRealPath());
+
+        // Exclusions
+        if (str_contains($path, '/vendor/') || str_contains($path, '/Archived/') || str_contains($path, '/Archive/')) {
+            continue;
+        }
+
+        $relPath = str_replace(str_replace('\\', '/', $projectRoot) . '/', '', $path);
+        $category = basename(dirname($path));
+
+        // Root suite fix
+        if ($category === 'tests')
+            $category = 'Root Suite';
+
+        $files[] = [
+            'name' => $file->getFilename(),
+            'rel_path' => $relPath,
+            'category' => $category,
+            'count' => countTestsInFile($path)
+        ];
     }
-    return ['files' => $display, 'total' => $totalTests];
+
+    // Check for Pest tests that might not have "Test" in filename but are in tests/
+    // (Optional: PEST often uses *Test.php anyway, but let's be safe)
+
+    $total = array_sum(array_column($files, 'count'));
+    return ['files' => $files, 'total' => $total];
 }
 
 function getBinScripts($dir)
 {
     if (!is_dir($dir))
         return [];
-    $files = array_merge(
-        glob($dir . '/*.{php,ps1}', GLOB_BRACE),
-        glob($dir . '/debug_tools/*.{php,ps1}', GLOB_BRACE),
-        glob($dir . '/restored/*.{php,ps1}', GLOB_BRACE)
-    );
-    return array_map(function ($f) use ($dir) {
-        $rel = str_replace(dirname($dir) . '/', '', $f); // bin/foo.php
-        // Fix backslashes for Windows consistency
-        $rel = str_replace('\\', '/', $rel);
-        // Ensure bin/ prefix if missing (relative path fix)
-        if (!str_starts_with($rel, 'bin/'))
-            $rel = 'bin/' . basename($f);
-        // Better: just use realpath relative to project root usually
-        // But for now, let's stick to simple relative format expected by run_test.php
-        $rel = str_replace(realpath($dir . '/..') . DIRECTORY_SEPARATOR, '', realpath($f));
-        $rel = str_replace('\\', '/', $rel);
 
-        return [
-            'name' => basename($f),
-            'rel_path' => $rel,
-            'type' => pathinfo($f, PATHINFO_EXTENSION),
-            'last_mod' => date('d/m H:i', filemtime($f)) // Compact date
+    $scripts = [];
+    // Recursive scan of bin/
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+
+    foreach ($iterator as $file) {
+        if ($file->isDir())
+            continue;
+        $ext = $file->getExtension();
+        if (!in_array($ext, ['php', 'ps1', 'sh', 'bat']))
+            continue;
+
+        $path = str_replace('\\', '/', $file->getRealPath());
+
+        // Exclusions (avoid listing the dashboard itself or vendor bins if any)
+        if (str_contains($path, 'test_dashboard.php'))
+            continue;
+        if (str_contains($path, 'safe_test_runner.php'))
+            continue; // Internal tool
+
+        $relPath = 'bin/' . str_replace(str_replace('\\', '/', $dir) . '/', '', $path);
+
+        // Nice Name
+        $name = $file->getFilename();
+        $parent = basename(dirname($path));
+        if ($parent !== 'bin') {
+            $name = "$parent/$name";
+        }
+
+        $scripts[] = [
+            'name' => $name,
+            'rel_path' => $relPath,
+            'type' => $ext,
+            'last_mod' => date('d/m H:i', $file->getMTime())
         ];
-    }, $files);
+    }
+
+    // Sort by modification time desc
+    usort($scripts, fn($a, $b) => strcmp($b['last_mod'], $a['last_mod']));
+
+    return $scripts;
 }
 
 $testData = getTestFiles(__DIR__ . '/../../tests');
