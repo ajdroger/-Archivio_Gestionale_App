@@ -1,205 +1,256 @@
-// --- CONSOLE & DRAGGING ---
+// --- MCAG ENTERPRISE TOOLKIT v5.5 ---
+// Logic Controller for Test Dashboard
+
 document.addEventListener('DOMContentLoaded', () => {
-    // FORCE MODAL CLOSED (Fix for auto-open issue)
-    const settingsModal = document.getElementById('modal-settings');
-    if (settingsModal) {
-        settingsModal.classList.remove('show');
-        settingsModal.style.display = 'none';
-        settingsModal.setAttribute('aria-hidden', 'true');
-        // Remove backdrop if exists
-        const backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) backdrop.remove();
-    }
+    // 1. Force Modal Cleanup
+    const modals = document.querySelectorAll('.modal-backdrop');
+    modals.forEach(m => m.remove());
 
-    const drawer = document.getElementById('terminal-drawer');
-    const handle = document.getElementById('terminal-drag-handle');
-    /* Robust Drag Logic */
-    let isDragging = false;
-    let offset = { x: 0, y: 0 };
+    // 2. Load Preferences
+    loadPreferences();
 
-    if (handle) {
-        handle.addEventListener('mousedown', (e) => {
-            // Ignore button clicks inside handle
-            if (e.target.closest('button')) return;
-            isDragging = true;
-            offset.x = e.clientX - drawer.offsetLeft;
-            offset.y = e.clientY - drawer.offsetTop;
-            handle.style.cursor = 'grabbing';
-        });
-    }
+    // 3. Initialize Console Dragging
+    initDraggableConsole();
 
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        drawer.style.left = (e.clientX - offset.x) + 'px';
-        drawer.style.top = (e.clientY - offset.y) + 'px';
-    });
+    // 4. Initialize Console Input
+    initConsoleInput();
 
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-        if (handle) handle.style.cursor = 'grab';
-    });
+    logSystem("MCAG Enterprise Toolkit loaded successfully.");
+});
 
-    // --- INTERACTIVE SHELL LOGIC ---
-    const termInput = document.getElementById('term-input');
-    const termContent = document.getElementById('terminal-content');
+// --- PREFERENCES MANAGEMENT ---
+const config = {
+    verbose: false,
+    stopOnFailure: false,
+    autoClear: true
+};
 
-    if (termInput) {
-        termInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = termInput.value.trim();
-                if (!cmd) return;
+function loadPreferences() {
+    config.verbose = localStorage.getItem('ent_verbose') === 'true';
+    config.stopOnFailure = localStorage.getItem('ent_stop_failure') === 'true';
+    config.autoClear = (localStorage.getItem('ent_auto_clear') || 'true') === 'true';
 
-                // Echo command
-                termContent.innerHTML += `<div class="text-white opacity-75 border-top border-secondary border-opacity-10 mt-1 pt-1"><span class="text-success me-2">PS ></span>${cmd}</div>`;
-                termContent.scrollTop = termContent.scrollHeight;
-                termInput.value = '';
-
-                // Execute
-                fetch('terminal.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cmd: cmd })
-                })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.output === '__CLEAR__') {
-                            termContent.innerHTML = '';
-                        } else {
-                            termContent.innerHTML += `<div class="text-info opacity-75 mb-2" style="white-space: pre-wrap;">${data.output}</div>`;
-                        }
-                        termContent.scrollTop = termContent.scrollHeight;
-                    })
-                    .catch(e => {
-                        termContent.innerHTML += `<div class="text-danger">Error: ${e}</div>`;
-                    });
-            }
-        });
-    }
-
-    // Load Settings from LocalStorage
-    const config = {
-        verbose: localStorage.getItem('tk_verbose') === 'true',
-        stopOnFailure: localStorage.getItem('tk_stop_failure') === 'true',
-        autoClear: (localStorage.getItem('tk_auto_clear') || 'true') === 'true'
-    };
-
-    // Sync UI switches
+    // Sync UI
     const elVerbose = document.getElementById('setting-verbose');
     const elStop = document.getElementById('setting-stop-failure');
     const elAuto = document.getElementById('setting-auto-clear');
 
-    if (elVerbose) elVerbose.checked = config.verbose;
-    if (elStop) elStop.checked = config.stopOnFailure;
-    if (elAuto) elAuto.checked = config.autoClear;
-
-    // Handle switch changes
-    const updateStatusBadge = () => {
-        let activeCount = 0;
-        if (elVerbose && elVerbose.checked) activeCount++;
-        if (elStop && elStop.checked) activeCount++;
-
-        const badge = document.getElementById('header-status-badge');
-        if (badge) {
-            if (activeCount > 0) {
-                badge.innerText = activeCount;
-                badge.style.display = 'inline-block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-    };
-
     if (elVerbose) {
+        elVerbose.checked = config.verbose;
         elVerbose.addEventListener('change', (e) => {
-            localStorage.setItem('tk_verbose', e.target.checked);
-            updateStatusBadge();
+            config.verbose = e.target.checked;
+            localStorage.setItem('ent_verbose', config.verbose);
         });
     }
     if (elStop) {
+        elStop.checked = config.stopOnFailure;
         elStop.addEventListener('change', (e) => {
-            localStorage.setItem('tk_stop_failure', e.target.checked);
-            updateStatusBadge();
+            config.stopOnFailure = e.target.checked;
+            localStorage.setItem('ent_stop_failure', config.stopOnFailure);
         });
     }
     if (elAuto) {
+        elAuto.checked = config.autoClear;
         elAuto.addEventListener('change', (e) => {
-            localStorage.setItem('tk_auto_clear', e.target.checked);
+            config.autoClear = e.target.checked;
+            localStorage.setItem('ent_auto_clear', config.autoClear);
         });
     }
-
-    // Initial badge update
-    updateStatusBadge();
-});
-
-window.toggleTerminal = function () {
-    const d = document.getElementById('terminal-drawer');
-    const isHidden = window.getComputedStyle(d).display === 'none';
-    d.style.display = isHidden ? 'flex' : 'none';
 }
 
-window.clearLog = () => document.getElementById('terminal-content').innerHTML = '';
+// --- CONSOLE DRAG PHYSICS ---
+function initDraggableConsole() {
+    const drawer = document.getElementById('console-drawer');
+    const handle = document.getElementById('console-handle');
+    if (!drawer || !handle) return;
 
-function log(msg, type = 'info') {
-    const term = document.getElementById('terminal-content');
-    const time = new Date().toLocaleTimeString('it-IT', { hour12: false });
-    let color = '#ccc';
-    if (type == 'error') color = '#ef4444';
-    if (type == 'success') color = '#22c55e';
-    if (type == 'warning') color = '#f59e0b';
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
 
-    term.innerHTML += `<div style="color:${color}; border-bottom:1px solid #222; padding:2px 0;">
-        <span style="opacity:0.5; font-size:0.7em; margin-right:5px;">${time}</span>${msg}
-    </div>`;
-    term.scrollTop = term.scrollHeight;
+    // Mobile/Desktop unification
+    const start = (y) => {
+        isDragging = true;
+        startY = y;
+        drawer.style.transition = 'none'; // Disable transition for instant follow
+    };
 
-    if (type == 'error' || type == 'warning') {
-        const d = document.getElementById('terminal-drawer');
-        if (window.getComputedStyle(d).display === 'none') d.style.display = 'flex';
+    const move = (y) => {
+        if (!isDragging) return;
+        const delta = startY - y; // Positive = Dragging Up
+        if (delta < 0) return; // Don't detach from bottom
+        // Logic for "following" finger not strictly needed if we just toggle, 
+        // but for "feel" we can slightly translate via transform if desired.
+    };
+
+    const end = (y) => {
+        if (!isDragging) return;
+        isDragging = false;
+        drawer.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'; // Restore physics
+        const delta = startY - y;
+
+        if (delta > 50) { // Dragged Up significantly
+            drawer.classList.add('open');
+            document.querySelector('.cmd-input').focus();
+        } else if (delta < -50) { // Dragged Down significantly
+            drawer.classList.remove('open');
+            document.querySelector('.cmd-input').blur();
+        }
+    };
+
+    handle.addEventListener('mousedown', e => start(e.clientY));
+    document.addEventListener('mousemove', e => move(e.clientY));
+    document.addEventListener('mouseup', e => end(e.clientY));
+
+    handle.addEventListener('touchstart', e => start(e.touches[0].clientY), { passive: true });
+    document.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true });
+    document.addEventListener('touchend', e => end(e.changedTouches[0].clientY));
+}
+
+// --- CONSOLE COMMANDS ---
+function initConsoleInput() {
+    const input = document.querySelector('.cmd-input');
+    if (!input) return;
+
+    input.disabled = false; // ENABLE INPUT
+    input.focus();
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const cmd = input.value.trim();
+            if (!cmd) return;
+
+            // 1. Echo Command
+            appendConsoleOutput(`<span class="text-success">ADMIN@MCAG:~#</span> ${cmd}`);
+            input.value = '';
+
+            // 2. Client-Side Quick Commands
+            if (cmd === 'cls' || cmd === 'clear') {
+                document.getElementById('console-content').innerHTML = '';
+                return;
+            }
+
+            // 3. Process Backend Command
+            processCommand(cmd);
+        }
+    });
+}
+
+function processCommand(cmd) {
+    appendConsoleOutput(`<span class="text-muted">...prossessing</span>`);
+
+    // Check if it's a specific 'run' alias
+    if (cmd.startsWith('run ')) {
+        const target = cmd.substring(4);
+        if (target === 'all') {
+            runAll();
+            return;
+        }
+        // Assume file path
+        runTest(target);
+        return;
     }
+
+    // Generic Backend Command
+    fetch('test_dashboard.php?action=run_cmd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cmd: cmd })
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (data.output === '__CLEAR__') {
+                document.getElementById('console-content').innerHTML = '';
+            } else {
+                appendConsoleOutput(data.output);
+            }
+        })
+        .catch(e => appendConsoleOutput(`Error: ${e}`, 'error'));
 }
 
-// --- RUNNER LOGIC ---
-function runTest(relPath) {
-    const isVerbose = localStorage.getItem('tk_verbose') === 'true';
-    const isStopOnFailure = localStorage.getItem('tk_stop_failure') === 'true';
-    const isAutoClear = (localStorage.getItem('tk_auto_clear') || 'true') === 'true';
+function appendConsoleOutput(html, type = 'info') {
+    const content = document.getElementById('console-content');
+    const div = document.createElement('div');
+    div.style.padding = "2px 0";
+    div.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+    if (type === 'error') div.style.color = '#ef4444';
 
-    if (isAutoClear) window.clearLog();
-    log(`Starting: ${relPath}${isVerbose ? ' [VERBOSE]' : ''}...`, 'info');
+    // Remove "...processing" placeholder if exists (last child)
+    if (content.lastChild && content.lastChild.textContent.includes('...prossessing')) {
+        content.lastChild.remove();
+    }
 
-    // Show Modal Loader
+    div.innerHTML = html;
+    content.appendChild(div);
+    content.scrollTop = content.scrollHeight;
+}
+
+function logSystem(msg) {
+    appendConsoleOutput(`<span style="color:var(--ent-accent-blue)">[SYSTEM]</span> ${msg}`);
+}
+
+// --- RUNNER FUNCTIONS ---
+window.runTest = function (relPath) {
+    if (config.autoClear) {
+        document.getElementById('console-content').innerHTML = '';
+        document.getElementById('termOutput').innerHTML = '';
+    }
+
+    // Open Console if closed
+    const drawer = document.getElementById('console-drawer');
+    if (!drawer.classList.contains('open')) {
+        drawer.classList.add('open');
+    }
+
+    appendConsoleOutput(`Executing: <span style="color:var(--ent-accent-amber)">${relPath}</span>...`);
+
+    // Open Detailed Modal
     const modal = document.getElementById('outputModal');
-    const out = document.getElementById('termOutput');
     modal.style.display = 'block';
-    out.innerHTML = '<div class="text-center mt-5"><i class="fa-solid fa-spinner fa-spin fs-1 text-primary"></i><br>Executing...</div>';
 
-    let url = 'run_test.php?file=' + encodeURIComponent(relPath);
-    if (isVerbose) url += '&verbose=true';
-    if (isStopOnFailure) url += '&stop-on-failure=true';
+    let url = `test_dashboard.php?action=run_test&file=${encodeURIComponent(relPath)}`;
+    if (config.verbose) url += '&verbose=true';
 
     fetch(url)
         .then(r => r.text())
         .then(text => {
-            out.innerHTML = text; // Show full output in modal
+            // Put in Modal
+            document.getElementById('termOutput').innerHTML = ansiToHtml(text);
 
-            // Parse for quick console summary
+            // Console Summary
             if (text.includes('FAIL') || text.includes('Error')) {
-                log(`${relPath}: FAILED`, 'error');
+                appendConsoleOutput(`Result: <span style="color:#ef4444; font-weight:bold;">FAILED</span>`, 'error');
             } else {
-                log(`${relPath}: PASSED`, 'success');
+                appendConsoleOutput(`Result: <span style="color:#10b981; font-weight:bold;">PASSED</span>`);
             }
         })
         .catch(e => {
-            out.innerHTML = "AJAX Error: " + e;
-            log("Network Error", 'error');
+            document.getElementById('termOutput').innerHTML = `CRITICAL ERROR:\n${e}`;
+            appendConsoleOutput(`Network Error during execution.`, 'error');
         });
 }
 
-window.closeModal = () => document.getElementById('outputModal').style.display = 'none';
-
-function runAll() {
-    if (!confirm("Eseguire TUTTE le suite con SAFE RUNNER?\nQuesto effettuerà un backup preventivo e verificherà 130+ test.")) return;
-    // Trigger Safe Test Runner
-    runTest('bin/debug_tools/safe_test_runner.php');
+window.runAll = function () {
+    if (!confirm("Execute FULL SUITE? This is intensive.")) return;
+    runTest('bin/debug_tools/safe_test_runner.php'); // Assuming this exists or map to a meta-runner
 }
+
+window.clearLog = function () {
+    document.getElementById('console-content').innerHTML = '';
+}
+
+window.closeModal = function () {
+    document.getElementById('outputModal').style.display = 'none';
+}
+
+// Helper: ANSI to HTML (Basic)
+function ansiToHtml(text) {
+    return text
+        .replace(/\n/g, '<br>')
+        .replace(/\[32m/g, '<span style="color:#10b981">') // Green
+        .replace(/\[31m/g, '<span style="color:#ef4444">') // Red
+        .replace(/\[33m/g, '<span style="color:#f59e0b">') // Yellow
+        .replace(/\[0m/g, '</span>')
+        .replace(/\[1m/g, '<span style="font-weight:bold">');
+}
+

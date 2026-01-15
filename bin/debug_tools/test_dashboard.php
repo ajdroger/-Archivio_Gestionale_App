@@ -21,7 +21,91 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// --- BACKEND LOGIC ---
+// --- ACTION HANDLING (AJAX) ---
+if (isset($_GET['action'])) {
+    header('Content-Type: application/json');
+    $action = $_GET['action'];
+
+    if ($action === 'run_cmd') {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $cmd = trim($input['cmd'] ?? '');
+        $response = ['output' => ''];
+
+        switch (strtolower($cmd)) {
+            case 'help':
+                $response['output'] = "Available commands:\n  run all       - Run complete test suite\n  run <file>    - Run specific test file\n  list          - List available test suites\n  cls/clear     - Clear console\n  whoami        - Display current user";
+                break;
+            case 'cls':
+            case 'clear':
+                $response['output'] = '__CLEAR__';
+                break;
+            case 'list':
+                $files = getTestFiles(__DIR__ . '/../../tests');
+                $list = array_map(fn($f) => " - " . $f['name'] . " (" . $f['category'] . ")", $files['files']);
+                $response['output'] = "Available Tests:\n" . implode("\n", array_slice($list, 0, 20)) . (count($list) > 20 ? "\n...and " . (count($list) - 20) . " more." : "");
+                break;
+            case 'run all':
+                // Trigger full run via passthru to capture streaming output?
+                // For JSON response, we use exec/shell_exec.
+                $response['output'] = "Initiating full test suite...\nWarning: This may take a while.\n[EXECUTION STARTED]";
+                break;
+            case 'whoami':
+                $response['output'] = "User: " . get_current_user() . "\nRole: Administrator (Simulated)";
+                break;
+            default:
+                if (str_starts_with($cmd, 'run ')) {
+                    // Handled by frontend usually, but if sent here:
+                    $response['output'] = "Executing custom run: " . substr($cmd, 4);
+                } else {
+                    $response['output'] = "Command not recognized: '$cmd'. Type 'help' for instructions.";
+                }
+        }
+        echo json_encode($response);
+        exit;
+    }
+
+    if ($action === 'run_test') {
+        $file = $_GET['file'] ?? '';
+        $verbose = isset($_GET['verbose']) && $_GET['verbose'] === 'true';
+        
+        // Security Sanity Check (Prevent ../ traversal outside project)
+        $realBase = realpath(__DIR__ . '/../../');
+        $target = realpath($realBase . '/' . $file);
+        
+        if (!$target || !str_starts_with($target, $realBase)) {
+            echo "Error: Invalid file path security violation.";
+            exit;
+        }
+
+        // Determine command (Pest or PHP script)
+        $cmd = '';
+        if (str_ends_with($target, '.php')) {
+            if (str_contains($file, 'bin/') || str_contains($file, 'debug_tools/')) {
+                // Direct script execution
+                $cmd = "php \"$target\"";
+            } else {
+                // Test Execution (Pest)
+                $bin = $realBase . '/vendor/bin/pest';
+                if (!file_exists($bin)) $bin = $realBase . '/vendor/bin/phpunit'; // Fallback
+                
+                $cmd = "\"$bin\" \"$target\"";
+                if ($verbose) $cmd .= " --testdox";
+                // Color output force
+                $cmd .= " --colors=always";
+            }
+        }
+
+        // Execute and capture output
+        // We want to capture stderr too 2>&1
+        $output = [];
+        $returnVar = 0;
+        exec($cmd . " 2>&1", $output, $returnVar);
+
+        // Convert ANSI colors to HTML if needed, or raw text wrapped in pre
+        echo implode("\n", $output);
+        exit;
+    }
+}
 function countTestsInFile($path)
 {
     if (!file_exists($path))
