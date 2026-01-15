@@ -68,6 +68,11 @@ function initDraggableConsole() {
     let isDragging = false;
 
     const start = (e) => {
+        // Fix: Allow interacting with buttons inside the handle
+        if (e.target.closest('button') || e.target.closest('.ent-btn-icon')) {
+            return;
+        }
+
         isDragging = true;
         drawer.style.transition = 'none'; // Disable transition for instant resize
         e.preventDefault(); // Prevent text selection
