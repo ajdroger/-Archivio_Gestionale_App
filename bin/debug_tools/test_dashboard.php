@@ -70,12 +70,33 @@ if (isset($_GET['action'])) {
                 exec($cmd . " 2>&1", $output, $returnVar);
 
                 $res = implode("\n", $output);
+
+                // FORCE UTF-8 Encoding (Fix for Windows Console CP850/1252)
+                // Windows 'dir' often outputs CP850 or CP437.
+                if (function_exists('mb_convert_encoding')) {
+                    // Try to detect or force convert
+                    $res = mb_convert_encoding($res, 'UTF-8', 'CP850,Windows-1252,ISO-8859-1');
+                }
+
                 if (empty($res) && $returnVar !== 0) {
                     $res = "Error: Command failed with exit code $returnVar";
+                } elseif (empty($res) && $returnVar === 0) {
+                    // Handle commands with no output but success (like cd via shell wrapper, though cd won't persist)
+                    $res = "[Command executed successfully, no output]";
                 }
+
                 $response['output'] = $res;
         }
-        echo json_encode($response);
+
+        $json = json_encode($response, JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+
+        if ($json === false) {
+            // Fallback if generic encoding fails
+            $response['output'] = "System Error: Output encoding failed. JSON Error: " . json_last_error_msg();
+            echo json_encode($response);
+        } else {
+            echo $json;
+        }
         exit;
     }
 
