@@ -87,7 +87,10 @@ class ListController
 
             'username' => $username,
             'user_initial' => strtoupper(substr($username, 0, 1)),
-            'user_role' => $_SESSION['user_role'] ?? 'guest', // Expose role for JS logic
+            'username' => $username,
+            'user_initial' => strtoupper(substr($username, 0, 1)),
+            'user_role' => $_SESSION['user_role'] ?? 'guest',
+            'can_manage_soci' => in_array(strtolower($_SESSION['user_role'] ?? ''), ['system_admin', 'segreteria', 'direttore_associazione', 'sviluppo']),
             'container_fluid' => true,
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
