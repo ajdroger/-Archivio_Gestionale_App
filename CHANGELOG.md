@@ -13,11 +13,32 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.2.0-god-mode] - 2026-01-15 "**God Mode**"
+### UX Revolution
+- **Neural Interface (Cortex OS)**: A radical new UX mode for the Toolkit.
+- **Dual-Core UI Engine**: Toggle between "Hyper-Grid" (Industrial/Tech) and "Neural" (Organic/Living).
+- **Synaptic Web Background**: Real-time particle network visualization on HTML5 Canvas.
+- **Living UI**: Breathing elements, organic shapes, and fluid transitions.
+
+## [v7.1.0-hypergrid] - 2026-01-15 "**Hyper-Grid**"
+### Added
+- **Quantum Engineering Deck**: Complete overhaul of the Toolkit UI.
+- **Precise Test Counting**: Recursive regex scanning for accurate metrics.
+- **Live Stats**: Autosync every 5 seconds.
+
 ### Pianificato
 - Redis-based caching per query frequenti
 - API versioning esplicito (`/api/v1/`)
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
+
+## [6.0.0-genius] - 2026-01-15 "**Genius Mode**"
+### Holographic Overhaul
+- **Dashboard UI**: Completa riscrittura in stile "Mission Control" con overlay olografico.
+- **Widgets**: Switchboard Operativa, Workflow Inbox, Field Notes integrati nel nuovo design.
+- **Live Data**: Ticker finanziario scorrevole, Neural Uplink Log, Threat Map (Placeholder).
+- **Interattività**: Command Palette (Ctrl+K), Voice Log Visualizer.
+- **Privacy**: Rimozione totale dipendenze CDN esterne per asset critici.
 
 ## [5.7.1] - 2026-01-15 "**Dossier Polish**"
 ### Migliorato
