@@ -59,52 +59,63 @@ function loadPreferences() {
 }
 
 // --- CONSOLE DRAG PHYSICS ---
+// --- CONSOLE DRAG PHYSICS (RESIZABLE) ---
 function initDraggableConsole() {
     const drawer = document.getElementById('console-drawer');
     const handle = document.getElementById('console-handle');
     if (!drawer || !handle) return;
 
-    let startY = 0;
-    let currentY = 0;
     let isDragging = false;
 
-    // Mobile/Desktop unification
-    const start = (y) => {
+    const start = (e) => {
         isDragging = true;
-        startY = y;
-        drawer.style.transition = 'none'; // Disable transition for instant follow
+        drawer.style.transition = 'none'; // Disable transition for instant resize
+        e.preventDefault(); // Prevent text selection
     };
 
-    const move = (y) => {
+    const move = (e) => {
         if (!isDragging) return;
-        const delta = startY - y; // Positive = Dragging Up
-        if (delta < 0) return; // Don't detach from bottom
-        // Logic for "following" finger not strictly needed if we just toggle, 
-        // but for "feel" we can slightly translate via transform if desired.
-    };
 
-    const end = (y) => {
-        if (!isDragging) return;
-        isDragging = false;
-        drawer.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'; // Restore physics
-        const delta = startY - y;
+        const clientY = e.clientY || e.touches[0].clientY;
+        const newHeight = window.innerHeight - clientY;
 
-        if (delta > 50) { // Dragged Up significantly
+        // Apply Constraints (Min 32px, Max Window Height)
+        if (newHeight < 32) return;
+        if (newHeight > window.innerHeight) return;
+
+        drawer.style.height = `${newHeight}px`;
+        drawer.style.transform = 'translateY(0)'; // Ensure it stays visible
+
+        // Auto-mark open if dragged up
+        if (newHeight > 60) {
             drawer.classList.add('open');
             document.querySelector('.cmd-input').focus();
-        } else if (delta < -50) { // Dragged Down significantly
+        } else {
             drawer.classList.remove('open');
-            document.querySelector('.cmd-input').blur();
         }
     };
 
-    handle.addEventListener('mousedown', e => start(e.clientY));
-    document.addEventListener('mousemove', e => move(e.clientY));
-    document.addEventListener('mouseup', e => end(e.clientY));
+    const end = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        drawer.style.transition = ''; // Restore CSS transition
 
-    handle.addEventListener('touchstart', e => start(e.touches[0].clientY), { passive: true });
-    document.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true });
-    document.addEventListener('touchend', e => end(e.changedTouches[0].clientY));
+        // Snap logic if desired (Optional - keeping "Freedom" requested by user)
+        // If < 100px, maybe close it?
+        const currentHeight = parseInt(drawer.style.height);
+        if (currentHeight < 100) {
+            drawer.style.height = ''; // Reset to CSS default
+            drawer.classList.remove('open');
+        }
+    };
+
+    handle.addEventListener('mousedown', start);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', end);
+
+    handle.addEventListener('touchstart', start, { passive: false });
+    document.addEventListener('touchmove', move, { passive: false });
+    document.addEventListener('touchend', end);
 }
 
 // --- CONSOLE COMMANDS ---
