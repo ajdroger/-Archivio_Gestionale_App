@@ -174,12 +174,18 @@
     <!-- DataTables Initialization -->
     <script>
         $(document).ready(function() {
-            console.log("MCAG: DataTables Script Started");
-            const tableEl = $('#table-soci');
-            console.log("MCAG: Table Element Found?", tableEl.length);
+            const tableId = '#table-soci';
+            const tableEl = $(tableId);
 
             if (tableEl.length) {
-                const table = tableEl.DataTable({
+                // Prevent re-initialization
+                if ($.fn.DataTable.isDataTable(tableId)) {
+                    console.log("MCAG: DataTable already initialized. Skipping.");
+                    return;
+                }
+
+                console.log("MCAG: Initializing DataTable...");
+                tableEl.DataTable({
                     language: {
                         url: '//cdn.datatables.net/plug-ins/2.0.0/i18n/it-IT.json',
                     },
@@ -188,6 +194,7 @@
                     ordering: true,
                     searching: true,
                     responsive: true,
+                    destroy: true, // Allow re-initialization if needed
                     columnDefs: [
                         { orderable: false, targets: 5 }
                     ],
@@ -198,8 +205,6 @@
                         $('.dataTables_length select').addClass('form-select bg-dark border-secondary text-white');
                     }
                 });
-            } else {
-                console.error("MCAG: DataTables ERROR - #table-soci not found!");
             }
         });
     </script>
