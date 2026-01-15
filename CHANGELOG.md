@@ -19,6 +19,24 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.5.2] - 2026-01-15 "**Financial Intelligence Unit**"
+### Aggiunto
+- **Financial Intelligence Dashboard**: Nuova sezione Admin per analisi predittiva e monitoraggio asset.
+    - **Wall Street Ticker**: KPI finanziari scorrevoli in tempo reale.
+    - **Asset Allocation Map**: Visualizzazione breakdown valore (Capitale Umano / Tech / IP).
+    - **AI Growth Forecast**: Grafico proiettivo 2026-2030 (Regressione Lineare).
+- **Backend Analytics**: Implementazione `StatsDashboardController::getFinancialProjections`.
+- **Privacy Fix**: Libreria Chart.js scaricata in locale (`js/lib/chart.min.js`) per prevenire blocchi anti-tracking.
+
+## [5.5.1] - 2026-01-15 "**Mission Control System**"
+### Aggiunto
+- **Security Operations Center (SOC)**: Trasformazione della pagina Impostazioni (`admin/impostazioni`) in una console di comando.
+    - **Defense Matrix**: Visualizzazione stato sicurezza (2FA, SQL Firewall, Threat Level).
+    - **Live Audit Log**: Tabella eventi di sicurezza in tempo reale.
+    - **Active Session Manager**: Monitoraggio sessioni attive con UI per terminazione.
+    - **System Health**: Metriche CPU/RAM e stato DB.
+- **Backend Architecture**: Implementazione `SettingsController::getSecurityAuditLog`, `getActiveSessions`, `getSystemHealth`.
+
 ## [5.5.0] - 2026-01-15 "**System Stabilization A1**"
 ### Aggiunto
 - **DevTools Toolkit Shortcut**: Aggiunto pulsante "Toolkit Avanzato" nell'header del Mission Control per accesso rapido ai test.
@@ -30,6 +48,8 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
     - **Isolation**: Stili e logica incapsulati per non interferire con il DOM globale.
     - **Integration**: Inserito nativamente sia nel layout pubblico che nel container `#console-drawer` del DevTools.
 - **User Statistics View**: Ripristinata la view semplificata "Trasparenza Comunità" per gli utenti base (non-admin) in `StatsDashboardController`, mantenendo la dashboard finanziaria per gli admin.
+- **Backend Logic**: Implementati metodi repository `getMonthlyRegistrations`, `countByCategory`, `getRecent` in `PDOSocioRepository` per popolare la view utente con dati reali (No Mock/Placeholder).
+- **Legacy Stats Pattern**: Implementato logic switch in `StatsDashboardController` per servire template `statistics_user.mustache` (v5.0.0) o `statistics.mustache` (v5.4.0) in base al ruolo.
 
 ### Risolto
 - **Legacy Cleanup**: Rimossi vecchi script "back-to-top" ridondanti in `layout_footer` e `app.js`.

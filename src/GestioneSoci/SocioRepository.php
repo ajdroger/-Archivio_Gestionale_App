@@ -50,6 +50,23 @@ interface SocioRepository
      * @return Socio[]
      */
     public function search(string $query): array;
+
+    /**
+     * Recupera le registrazioni mensili dell'anno corrente.
+     * @return array<int, int> [mese => conteggio]
+     */
+    public function getMonthlyRegistrations(): array;
+
+    /**
+     * Conta i soci per categoria (es. Militare, Civile, Familiare).
+     */
+    public function countByCategory(string $category): int;
+
+    /**
+     * Recupera gli ultimi N soci iscritti.
+     * @return array<string, mixed>[]
+     */
+    public function getRecent(int $limit = 5): array;
 }
 
 

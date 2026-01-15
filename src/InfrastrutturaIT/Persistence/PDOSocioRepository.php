@@ -535,6 +535,97 @@ class PDOSocioRepository implements SocioRepository
         return $soci;
     }
 
+    public function getMonthlyRegistrations(): array
+    {
+        $annoCorrente = (int) date('Y');
+        $sql = "SELECT MONTH(data_caricamento) as mese, COUNT(*) as count 
+                FROM documenti 
+                WHERE tipo_documento = 'MODULO_ISCRIZIONE' 
+                AND stato = 'VALIDATO' 
+                AND anno_solare = ?
+                GROUP BY mese 
+                ORDER BY mese";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$annoCorrente]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Array di 12 mesi inizializzato a 0
+        $data = array_fill(0, 12, 0); // User View Chart expects 0-indexed or mapped? Chart.js usually array.
+        // Charts usually expect array of values. 
+        // My previous logic in getStatistics returned 1-indexed.
+        // Let's return a simple array of 12 integers for the chart.
+
+        foreach ($rows as $row) {
+            // $row['mese'] is 1-12. Array index 0-11.
+            $index = (int) $row['mese'] - 1;
+            if (isset($data[$index])) {
+                $data[$index] = (int) $row['count'];
+            }
+        }
+        return $data;
+    }
+
+    public function countByCategory(string $category): int
+    {
+        $sql = "SELECT COUNT(*) FROM soci WHERE deleted_at IS NULL";
+
+        switch (strtoupper($category)) {
+            case 'MILITARE':
+                // Logica: Ha un grado definito
+                $sql .= " AND (grado IS NOT NULL AND grado != '')";
+                break;
+            case 'CIVILE':
+                // Logica: Non ha grado
+                $sql .= " AND (grado IS NULL OR grado = '')";
+                break;
+            case 'FAMILIARE':
+                // Logica Placeholder: Al momento non distinta nello schema attuale
+                // Se in futuro ci sarà 'tipo_socio', aggiornare qui.
+                // Per ora ritorniamo 0 o usiamo logica specifica se esiste.
+                return 0;
+            default:
+                return 0;
+        }
+
+        $stmt = $this->pdo->query($sql);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getRecent(int $limit = 5): array
+    {
+        // Recupera i soci più recenti basandosi sulla data del modulo di iscrizione
+        $sql = "SELECT s.nome, s.cognome, s.codice_fiscale, s.matricola, s.stato_iscrizione, 
+                       MAX(d.data_caricamento) as data_iscrizione
+                FROM soci s
+                JOIN documenti d ON s.codice_fiscale = d.socio_cf
+                WHERE s.deleted_at IS NULL 
+                AND d.tipo_documento = 'MODULO_ISCRIZIONE'
+                GROUP BY s.codice_fiscale
+                ORDER BY data_iscrizione DESC
+                LIMIT ?";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $results = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $results[] = [
+                'Nome' => $row['nome'],
+                'Cognome' => $row['cognome'],
+                'CodiceFiscale' => $row['codice_fiscale'],
+                'Matricola' => $row['matricola'],
+                'Categoria' => (!empty($row['grado'])) ? 'Militare' : 'Civile', // Dedotto
+                'Stato' => $row['stato_iscrizione'],
+                'DataIscrizione' => date('d/m/Y', strtotime($row['data_iscrizione'])),
+                'initials' => strtoupper(substr($row['nome'], 0, 1) . substr($row['cognome'], 0, 1))
+            ];
+        }
+
+        return $results;
+    }
+
     protected function getTableName(): string
     {
         return 'soci';

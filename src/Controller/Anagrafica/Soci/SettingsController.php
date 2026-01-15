@@ -58,10 +58,11 @@ class SettingsController
                 'cognome' => $socio->DatiPersonali->Cognome,
                 'cf' => $socio->CodiceFiscale,
                 'matricola' => $socio->Matricola,
-                'stato' => $socio->StatoIscrizione->name
+                'stato' => $socio->Stato->name
             ],
             'settings' => $settings,
             'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMock'),
+            'real_is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMock'),
             'username' => $_SESSION['username'] ?? 'Utente',
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'U', 0, 1)),
             'base_url' => (function () {

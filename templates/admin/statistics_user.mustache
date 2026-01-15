@@ -1,48 +1,325 @@
 {{> layout_header }}
 
-<div class="container-fluid px-4">
-    <!-- PAGE HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="display-5 fw-bold text-white mb-0">Trasparenza Comunità</h1>
-            <p class="text-secondary lead mb-0">Statistiche pubbliche dell'associazione</p>
+            <h1 class="h3 mb-0 text-gray-800 fw-bold">Trasparenza Comunità</h1>
+            <p class="text-muted small mb-0">Panoramica delle attività e stato del registro soci.</p>
+        </div>
+        <div>
+             <span class="badge bg-dark bg-opacity-75 p-2 rounded-bill shadow-sm border border-secondary border-opacity-25 text-white">
+                <i class="fa-solid fa-clock me-1 text-warning"></i> Ultimo Aggiornamento: {{generated_at}}
+            </span>
         </div>
     </div>
 
-    <!-- USER VIEW: COMMUNITY STATS -->
-    <div class="row g-4 justify-content-center">
-        <div class="col-md-6 col-xl-4">
-            <div class="card border-0 shadow bg-dark text-white text-center p-5">
-                <div class="mb-3">
-                    <i class="fa-solid fa-users fa-3x text-primary"></i>
+    <!-- Statistiche Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Totale Soci -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 bg-gradient-to-br from-primary-900 to-gray-900">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs fw-bold text-primary text-uppercase mb-1 tracking-wider">Totale Iscritti</div>
+                            <div class="h3 mb-0 fw-bold text-gray-800">{{stats.totale_soci}}</div>
+                        </div>
+                        <div class="col-auto">
+                           <div class="icon-circle bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
+                               <i class="fas fa-users fa-2x"></i>
+                           </div>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="display-3 fw-bold mb-2">{{stats.totale}}</h2>
-                <p class="text-secondary text-uppercase tracking-wider">Membri della Comunità</p>
             </div>
         </div>
-         <div class="col-md-6 col-xl-4">
-            <div class="card border-0 shadow bg-dark text-white text-center p-5">
-                <div class="mb-3">
-                    <i class="fa-solid fa-handshake fa-3x text-success"></i>
+
+        <!-- Soci Attivi -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs fw-bold text-success text-uppercase mb-1 tracking-wider">Soci Attivi</div>
+                            <div class="h3 mb-0 fw-bold text-gray-800">{{stats.attivi}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-success bg-opacity-10 text-success p-3 rounded-circle">
+                                <i class="fas fa-user-check fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="display-3 fw-bold mb-2">{{stats.attivi}}</h2>
-                <p class="text-secondary text-uppercase tracking-wider">Soci Sostenitori Attivi</p>
+            </div>
+        </div>
+        
+        <!-- Nuovi Iscritti (Mese) -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-info">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                             <div class="text-xs fw-bold text-info text-uppercase mb-1 tracking-wider">Nuovi (30gg)</div>
+                             <div class="h3 mb-0 fw-bold text-gray-800">{{stats.nuovi_iscritti_mese}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-info bg-opacity-10 text-info p-3 rounded-circle">
+                                <i class="fas fa-user-plus fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <!-- Documenti Caricati -->
+         <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                             <div class="text-xs fw-bold text-warning text-uppercase mb-1 tracking-wider">Archivio Digitale</div>
+                             <div class="h3 mb-0 fw-bold text-gray-800">{{stats.documenti_totali}} <span class="text-xs text-muted fw-normal">file</span></div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
+                                <i class="fas fa-file-alt fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4">
+        <!-- Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card border-0 shadow-lg h-100">
+                <div class="card-header border-0 bg-white py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-primary">Crescita Iscrizioni (Ultimi 12 Mesi)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area" style="position: relative; height: 320px;">
+                        <canvas id="myAreaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card border-0 shadow-lg h-100">
+                <div class="card-header border-0 bg-white py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-primary">Distribuzione Categorie</h6>
+                </div>
+                <div class="card-body">
+                     <div class="chart-pie pt-4 pb-2" style="position: relative; height: 260px;">
+                        <canvas id="myPieChart"></canvas>
+                    </div>
+                     <div class="mt-4 text-center small text-muted">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-primary"></i> Militari
+                        </span>
+                        <span class="mr-2 px-2">
+                            <i class="fas fa-circle text-success"></i> Civili
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-info"></i> Familiari
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row mt-5">
-        <div class="col-8 mx-auto text-center">
-            <p class="lead text-secondary">
-                "La trasparenza è il fondamento della nostra associazione. Questi dati sono aggiornati in tempo reale per garantire la massima chiarezza verso tutti i nostri associati."
-            </p>
-             <div class="mt-4">
-                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-2">
-                    <i class="fa-solid fa-server me-2"></i>Dati certificati dal sistema MCAG
-                </span>
+    
+    <!-- Recent Activity Row -->
+     <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header border-0 bg-white py-3">
+                     <h6 class="m-0 fw-bold text-primary"><i class="fa-solid fa-list-ol me-2"></i>Ultime Iscrizioni Registrate</h6>
+                </div>
+                 <div class="card-body p-0">
+                     <div class="table-responsive">
+                         <table class="table table-hover align-middle mb-0">
+                             <thead class="bg-light">
+                                 <tr>
+                                     <th class="border-0 py-3 ps-4 text-uppercase text-xs text-muted fw-bold">Nominativo</th>
+                                     <th class="border-0 py-3 text-uppercase text-xs text-muted fw-bold">Categoria</th>
+                                     <th class="border-0 py-3 text-uppercase text-xs text-muted fw-bold">Data Iscrizione</th>
+                                     <th class="border-0 py-3 text-uppercase text-xs text-muted fw-bold text-end pe-4">Status</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 {{#recent_soci}}
+                                 <tr>
+                                     <td class="ps-4">
+                                         <div class="d-flex align-items-center">
+                                             <div class="avatar-circle bg-primary bg-opacity-10 text-primary me-3 fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                                 {{initials}}
+                                             </div>
+                                             <div>
+                                                 <div class="fw-bold text-gray-800">{{Cognome}} {{Nome}}</div>
+                                                 <div class="small text-muted">{{CodiceFiscale}}</div>
+                                             </div>
+                                         </div>
+                                     </td>
+                                     <td>
+                                         <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">{{Categoria}}</span>
+                                     </td>
+                                     <td class="text-muted small">{{DataIscrizione}}</td>
+                                     <td class="text-end pe-4">
+                                         <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">ATTIVO</span>
+                                     </td>
+                                 </tr>
+                                 {{/recent_soci}}
+                                 {{^recent_soci}}
+                                 <tr>
+                                     <td colspan="4" class="text-center py-4 text-muted fst-italic">Nessuna iscrizione recente.</td>
+                                 </tr>
+                                 {{/recent_soci}}
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
+                 <div class="card-footer bg-white border-0 py-3 text-center">
+                     <a href="{{base_url}}/soci" class="text-primary fw-bold text-decoration-none small">Visualizza Elenco Completo <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                 </div>
             </div>
         </div>
     </div>
 
 </div>
+
+<!-- Scripts -->
+<script src="{{base_url}}/js/lib/chart.min.js?v=5.5.2"></script>
+<script>
+    // Set new default font family and font color to mimic Bootstrap's default styling
+    Chart.defaults.font.family = 'Inter, sans-serif';
+    Chart.defaults.font.color = '#858796';
+    
+    // Configurazione Dati dai Backend
+    // NOTA: In v5.0 questo era inline, ora dovremmo passarli via JSON, ma manteniamo compatibilità legacy
+    const chartData = {
+        months: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
+        earnings: [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550], // Placeholder
+        pie: [55, 30, 15] // Placeholder Militari/Civili/Familiari
+    };
+
+    // Area Chart Example
+    var ctx = document.getElementById("myAreaChart");
+    var myLineChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartData.months,
+        datasets: [{
+          label: "Nuovi Soci",
+          lineTension: 0.3,
+          backgroundColor: "rgba(78, 115, 223, 0.05)",
+          borderColor: "rgba(78, 115, 223, 1)",
+          pointRadius: 3,
+          pointBackgroundColor: "rgba(78, 115, 223, 1)",
+          pointBorderColor: "rgba(78, 115, 223, 1)",
+          pointHoverRadius: 3,
+          pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+          pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+          pointHitRadius: 10,
+          pointBorderWidth: 2,
+          data: {{chart_monthly_encoded}}, // Inject via Mustache
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            left: 10,
+            right: 25,
+            top: 25,
+            bottom: 0
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+              drawBorder: false
+            },
+            ticks: {
+              maxTicksLimit: 7
+            }
+          },
+          y: {
+            ticks: {
+              maxTicksLimit: 5,
+              padding: 10,
+            },
+            grid: {
+              color: "rgb(234, 236, 244)",
+              zeroLineColor: "rgb(234, 236, 244)",
+              drawBorder: false,
+              borderDash: [2],
+              zeroLineBorderDash: [2]
+            }
+          },
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: "rgb(255,255,255)",
+            bodyColor: "#858796",
+            titleMarginBottom: 10,
+            titleColor: '#6e707e',
+            titleFont: {
+              size: 14,
+            },
+            borderColor: '#dddfeb',
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            intersect: false,
+            mode: 'index',
+            caretPadding: 10,
+          }
+        }
+      }
+    });
+
+    // Pie Chart Example
+    var ctx = document.getElementById("myPieChart");
+    var myPieChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ["Militari", "Civili", "Familiari"],
+        datasets: [{
+          data: {{chart_categories_encoded}}, // Inject via Mustache
+          backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+          hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+          hoverBorderColor: "rgba(234, 236, 244, 1)",
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        tooltips: {
+          backgroundColor: "rgb(255,255,255)",
+          bodyFontColor: "#858796",
+          borderColor: '#dddfeb',
+          borderWidth: 1,
+          xPadding: 15,
+          yPadding: 15,
+          displayColors: false,
+          caretPadding: 10,
+        },
+        legend: {
+          display: false
+        },
+        cutoutPercentage: 80,
+      },
+    });
+</script>
 
 {{> layout_footer }}

@@ -1,16 +1,17 @@
 {{> layout_header }}
 
 <!-- VIEW MODE TOGGLES (Only for Real Admins) -->
-{{#real_is_admin}}
+<!-- VIEW MODE TOGGLES (Restricted to System Admin) -->
+{{#is_system_admin}}
 <div class="d-flex justify-content-end mb-4 gap-2">
-    <a href="?view=admin" class="btn btn-sm {{^is_admin}}btn-outline-secondary{{/is_admin}}{{#is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
-        <i class="fa-solid fa-gauge-high me-2"></i>Mission Control
+    <a href="{{base_url}}/devtools" class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3">
+        <i class="fa-solid fa-user-secret me-2"></i>Mission Control
     </a>
     <a href="?view=user" class="btn btn-sm {{#is_admin}}btn-outline-secondary{{/is_admin}}{{^is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
         <i class="fa-solid fa-user me-2"></i>Vista Utente
     </a>
 </div>
-{{/real_is_admin}}
+{{/is_system_admin}}
 
 <div class="container-fluid px-4">
     <!-- PAGE HEADER -->
@@ -21,7 +22,7 @@
                 {{^is_admin}}Directory Soci{{/is_admin}}
             </h1>
             <p class="text-secondary lead mb-0">
-                {{#is_admin}}DB Master • {{count}} Records • Accesso Completo <span class="badge bg-warning text-dark">DEBUG: ADMIN VIEW LOADED</span>{{/is_admin}}
+                {{#is_admin}}DB Master • {{count}} Records • Accesso Completo{{/is_admin}}
                 {{^is_admin}}Elenco pubblico degli associati MCAG{{/is_admin}}
             </p>
         </div>
@@ -131,6 +132,16 @@
 
     <!-- CSS Toggle Logic -->
     <style>
+        /* Force Overflow Sible when in Grid Mode to allow Dropdowns to popup */
+        .force-overflow-visible {
+            overflow: visible !important;
+        }
+
+        /* HIDE DEFAULT DATATABLES SEARCH (Redundant with Global Search) */
+        .dataTables_filter {
+            display: none !important;
+        }
+
         /* Grid View Transforms */
         .table.view-grid, 
         .table.view-grid tbody, 
@@ -145,26 +156,28 @@
         }
 
         .table.view-grid tbody {
-            display: flex !important;
-            flex-wrap: wrap !important;
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
-            justify-content: center;
             background: transparent !important;
-            padding: 0;
+            padding: 1.5rem;
             border: none;
         }
 
         .table.view-grid tr {
+            display: flex;
+            flex-direction: column;
             position: relative;
             width: 100%;
-            max-width: 320px; /* Card Width */
-            flex: 0 0 320px;
-            background: #212529 !important; /* Bootstrap Dark Card Color */
+            height: 100%;
+            background: #212529 !important;
             border: 1px solid #495057 !important;
             border-radius: 1rem;
             padding: 1.5rem;
             box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-            margin-bottom: 0; /* Remove table row spacing */
+            margin-bottom: 0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            z-index: 1; /* Base Z-Index */
         }
         
         .table.view-grid td {
@@ -174,11 +187,18 @@
             text-align: center;
         }
 
-        /* Hover Effect for Cards */
+        /* Hover Effect for Cards - High Z-Index prevents overlapping issues */
         .table.view-grid tr:hover {
             transform: translateY(-5px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 1rem 3rem rgba(0,0,0,0.25);
+            z-index: 100; /* Float above everything else */
+            box-shadow: 0 1rem 3rem rgba(0,0,0,0.5);
+            border-color: var(--bs-primary) !important;
+        }
+        
+        /* Keep Z-Index high if dropdown is active inside (using modern :has, fallback is JS click) */
+        .table.view-grid tr:has(.show) {
+            z-index: 1000 !important;
+            transform: translateY(-5px); /* Keep lifted */
             border-color: var(--bs-primary) !important;
         }
 
@@ -202,14 +222,14 @@
             text-align: center !important;
         }
         
-        /* Hide Labels in Grid (Use clean design) */
+        /* Hide Labels in Grid */
         .table.view-grid td::before {
              display: none;
         }
 
         /* Action Column Formatting */
         .table.view-grid td[data-grid-label="Azioni"] {
-            margin-top: 1.5rem;
+            margin-top: auto; /* Push to bottom */
             padding-top: 1rem !important;
             border-top: 1px solid rgba(255,255,255,0.1) !important;
             width: 100%;
@@ -217,10 +237,11 @@
             justify-content: center;
         }
         
-        /* Dropdown fix in overflow hidden cards */
+        /* Dropdown fix for Grid */
         .table.view-grid .dropdown-menu {
-             position: absolute !important;
-             z-index: 10000 !important;
+             /* Use standard positioning but ensure z-index wins */
+             margin-top: 0.5rem !important;
+             box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
         }
     </style>
 
@@ -229,12 +250,16 @@
             const table = document.getElementById('table-soci');
             const btnCards = document.getElementById('btn-admin-cards');
             const btnTable = document.getElementById('btn-admin-table');
-            
-            // Note: We don't hide the container anymore, we just toggle CSS class
+            const containerCard = document.getElementById('admin-directory-table');
+            const tableResponsive = containerCard.querySelector('.table-responsive');
             
             if (mode === 'cards') {
                 $(table).addClass('view-grid');
-                $(table).removeClass('table-hover'); // Remove hover overlap
+                $(table).removeClass('table-hover');
+                
+                // Disable overflow hiding to allow dropdowns to pop out of cards
+                $(containerCard).addClass('force-overflow-visible').removeClass('overflow-hidden');
+                $(tableResponsive).addClass('force-overflow-visible');
                 
                 btnCards.classList.remove('text-secondary');
                 btnCards.classList.add('btn-primary');
@@ -244,6 +269,10 @@
             } else {
                 $(table).removeClass('view-grid');
                 $(table).addClass('table-hover');
+                
+                // Restore standard table overflow safety
+                $(containerCard).removeClass('force-overflow-visible').addClass('overflow-hidden');
+                $(tableResponsive).removeClass('force-overflow-visible');
                 
                 btnTable.classList.remove('text-secondary');
                 btnTable.classList.add('btn-primary');

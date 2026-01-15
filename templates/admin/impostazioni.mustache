@@ -32,6 +32,113 @@
                     </div>
                 </div>
 
+                <!-- SOC PANEL START (Security Operations Center) -->
+                <div class="row g-4 mb-5">
+                    <!-- SYSTEM HEALTH -->
+                    <div class="col-md-4">
+                        <div class="p-3 rounded bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
+                             <h6 class="text-secondary small fw-bold mb-3"><i class="fa-solid fa-server me-2"></i>SYSTEM HEALTH</h6>
+                             <div class="mb-3">
+                                <div class="d-flex justify-content-between text-white small mb-1"><span>CPU LOAD</span><span>{{soc_metrics.cpu_load}}%</span></div>
+                                <div class="progress" style="height: 4px;"><div class="progress-bar bg-success" style="width: {{soc_metrics.cpu_load}}%"></div></div>
+                             </div>
+                             <div class="mb-3">
+                                <div class="d-flex justify-content-between text-white small mb-1"><span>MEMORY</span><span>{{soc_metrics.memory_usage}}%</span></div>
+                                <div class="progress" style="height: 4px;"><div class="progress-bar bg-warning" style="width: {{soc_metrics.memory_usage}}%"></div></div>
+                             </div>
+                             <div class="d-flex justify-content-between small">
+                                <span class="text-secondary">DB CONNECTION</span>
+                                <span class="text-success fw-bold">{{soc_metrics.db_connection}}</span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- DEFENSE MATRIX (Visual Toggles) -->
+                    <div class="col-md-4">
+                        <div class="p-3 rounded bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
+                             <h6 class="text-secondary small fw-bold mb-3"><i class="fa-solid fa-shield-virus me-2"></i>DEFENSE MATRIX</h6>
+                             <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-white small">2-FACTOR AUTH</span>
+                                <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-25">ACTIVE</span>
+                             </div>
+                             <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-white small">SQL FIREWALL</span>
+                                <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-25">ACTIVE</span>
+                             </div>
+                             <div class="d-flex align-items-center justify-content-between">
+                                <span class="text-white small">THREAT LEVEL</span>
+                                <span class="badge bg-info bg-opacity-20 text-info border border-info border-opacity-25">{{soc_metrics.threat_level}}</span>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVE SESSIONS SUMMARY -->
+                    <div class="col-md-4">
+                        <div class="p-3 rounded bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
+                            <h6 class="text-secondary small fw-bold mb-3"><i class="fa-solid fa-users-viewfinder me-2"></i>ACTIVE SYNC</h6>
+                            <div class="text-center py-2">
+                                <h2 class="display-5 fw-bold text-white mb-0"><i class="fa-solid fa-wifi me-2"></i></h2>
+                                <span class="text-secondary small">Session Monitoring Active</span>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm w-100 mt-2" onclick="alert('Funzione Kill-Switch simulata: Tutte le sessioni (eccetto la tua) verrebbero terminate.')"><i class="fa-solid fa-bomb me-2"></i>KILL ALL SESSIONS</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOC TABLES ROW -->
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-6">
+                        <h6 class="mc-section-title mb-3"><i class="fa-solid fa-clock-rotate-left me-2 text-info"></i>LIVE AUDIT LOG</h6>
+                        <div class="bg-black bg-opacity-40 rounded border border-secondary border-opacity-25 overflow-hidden">
+                            <table class="table table-dark table-sm table-hover mb-0 small">
+                                <thead>
+                                    <tr>
+                                        <th class="text-secondary ps-3">TIME</th>
+                                        <th class="text-secondary">EVENT</th>
+                                        <th class="text-secondary">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#security_log}}
+                                    <tr>
+                                        <td class="ps-3 font-monospace text-secondary">{{time}}</td>
+                                        <td class="text-white">{{event}}</td>
+                                        <td><span class="badge bg-{{level}} bg-opacity-20 text-{{level}} border border-{{level}} border-opacity-25">{{status}}</span></td>
+                                    </tr>
+                                    {{/security_log}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                         <h6 class="mc-section-title mb-3"><i class="fa-solid fa-network-wired me-2 text-warning"></i>SESSION MONITOR</h6>
+                         <div class="bg-black bg-opacity-40 rounded border border-secondary border-opacity-25 overflow-hidden">
+                            <table class="table table-dark table-sm table-hover mb-0 small">
+                                <thead>
+                                    <tr>
+                                        <th class="text-secondary ps-3">IP ADDR</th>
+                                        <th class="text-secondary">DEVICE</th>
+                                        <th class="text-secondary text-end pe-3">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#active_sessions}}
+                                    <tr>
+                                        <td class="ps-3 font-monospace text-info">{{ip}}</td>
+                                        <td class="text-secondary text-truncate" style="max-width: 150px;">{{device}}</td>
+                                        <td class="text-end pe-3">
+                                            {{#is_current}}<span class="badge bg-primary">YOU</span>{{/is_current}}
+                                            {{^is_current}}<button class="btn btn-xs btn-link text-danger p-0"><i class="fa-solid fa-circle-stop"></i></button>{{/is_current}}
+                                        </td>
+                                    </tr>
+                                    {{/active_sessions}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- SOC PANEL END -->
+
                 <form action="{{base_url}}/impostazioni" method="POST" class="mt-4">
                     <input type="hidden" name="{{csrf.name}}" value="{{csrf.value}}">
                     
