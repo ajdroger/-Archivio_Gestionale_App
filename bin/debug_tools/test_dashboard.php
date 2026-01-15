@@ -77,23 +77,54 @@ if (isset($_GET['action'])) {
             exit;
         }
 
-        // Determine command (Pest or PHP script)
+        // Determine command based on extension
         $cmd = '';
-        if (str_ends_with($target, '.php')) {
-            // Run as Script if in bin/ OR src/Debug/ OR debug_tools/
-            if (str_contains($file, 'bin/') || str_contains($file, 'debug_tools/') || str_contains($file, 'src/Debug/')) {
-                // Direct script execution
-                $cmd = "php \"$target\"";
-            } else {
-                // Test Execution (Pest)
-                $bin = $realBase . '/vendor/bin/pest';
-                if (!file_exists($bin)) $bin = $realBase . '/vendor/bin/phpunit'; // Fallback
-                
-                $cmd = "\"$bin\" \"$target\"";
-                if ($verbose) $cmd .= " --testdox";
-                // Color output force
-                $cmd .= " --colors=always";
-            }
+        $ext = strtolower(pathinfo($target, PATHINFO_EXTENSION));
+
+        switch ($ext) {
+            case 'php':
+                if (str_contains($file, 'bin/') || str_contains($file, 'debug_tools/') || str_contains($file, 'src/Debug/')) {
+                    $cmd = "php \"$target\"";
+                } else {
+                    // Test Logic (Pest/PHPUnit) stays same
+                    $bin = $realBase . '/vendor/bin/pest';
+                    if (!file_exists($bin))
+                        $bin = $realBase . '/vendor/bin/phpunit';
+                    $cmd = "\"$bin\" \"$target\"" . ($verbose ? " --testdox" : "") . " --colors=always";
+                }
+                break;
+            case 'py':
+                $cmd = "python \"$target\"";
+                break;
+            case 'js':
+                $cmd = "node \"$target\"";
+                break;
+            case 'ts':
+                $cmd = "ts-node \"$target\"";
+                break;
+            case 'java':
+                // Java 11+ Single-File Source Code Support
+                $cmd = "java \"$target\"";
+                break;
+            case 'go':
+                $cmd = "go run \"$target\"";
+                break;
+            case 'rb':
+                $cmd = "ruby \"$target\"";
+                break;
+            case 'ps1':
+                $cmd = "powershell -ExecutionPolicy Bypass -File \"$target\"";
+                break;
+            case 'bat':
+            case 'cmd':
+                $cmd = "\"$target\"";
+                break;
+            case 'sh':
+                $cmd = "bash \"$target\""; // Windows Git Bash or WSL assumption
+                break;
+            default:
+                echo "Error: Unsupported file type '.$ext'";
+                exit;
         }
 
         // Execute and capture output
@@ -180,11 +211,12 @@ function getBinScripts($ignoredDir = null)
         $projectRoot . '/bin',
         $projectRoot . '/src/Debug'
     ];
-    
+
     $scripts = [];
-    
+
     foreach ($scanTargets as $dir) {
-        if (!is_dir($dir)) continue;
+        if (!is_dir($dir))
+            continue;
 
         try {
             $iterator = new RecursiveIteratorIterator(
@@ -194,30 +226,34 @@ function getBinScripts($ignoredDir = null)
             );
 
             foreach ($iterator as $file) {
-                if ($file->isDir()) continue;
-                
+                if ($file->isDir())
+                    continue;
+
                 $ext = $file->getExtension();
-                if (!in_array($ext, ['php', 'ps1', 'sh', 'bat'])) continue;
+                if (!in_array($ext, ['php', 'ps1', 'sh', 'bat']))
+                    continue;
 
                 $path = str_replace('\\', '/', $file->getRealPath());
-                
+
                 // Exclusions
-                if (str_contains($path, 'test_dashboard.php')) continue;
-                if (str_contains($path, 'safe_test_runner.php')) continue; 
-                
+                if (str_contains($path, 'test_dashboard.php'))
+                    continue;
+                if (str_contains($path, 'safe_test_runner.php'))
+                    continue;
+
                 // Relative path logic
                 $relPath = str_replace(str_replace('\\', '/', $projectRoot) . '/', '', $path);
-                
+
                 // Display Name logic (simplify)
                 $name = $file->getFilename();
                 $relDir = dirname($relPath);
-                
+
                 // If deep in structure, show folder context
                 if ($relDir !== 'bin' && $relDir !== 'src/Debug') {
-                     // e.g. bin/tools -> tools/script.php
-                     // src/Debug/Auth -> Auth/script.php
-                     $shortDir = basename($relDir);
-                     $name = "$shortDir/$name";
+                    // e.g. bin/tools -> tools/script.php
+                    // src/Debug/Auth -> Auth/script.php
+                    $shortDir = basename($relDir);
+                    $name = "$shortDir/$name";
                 }
 
                 $scripts[] = [
@@ -231,11 +267,12 @@ function getBinScripts($ignoredDir = null)
             // Fallback for this dir
             $fallback = glob($dir . '/*.php');
             if ($fallback) {
-                foreach($fallback as $f) {
-                     if (str_contains($f, 'test_dashboard.php')) continue;
-                     $scripts[] = [
+                foreach ($fallback as $f) {
+                    if (str_contains($f, 'test_dashboard.php'))
+                        continue;
+                    $scripts[] = [
                         'name' => basename($f),
-                        'rel_path' => str_replace($projectRoot.'/', '', str_replace('\\', '/', $f)),
+                        'rel_path' => str_replace($projectRoot . '/', '', str_replace('\\', '/', $f)),
                         'type' => 'php',
                         'last_mod' => date('d/m H:i', filemtime($f))
                     ];
@@ -243,10 +280,10 @@ function getBinScripts($ignoredDir = null)
             }
         }
     }
-    
+
     // Sort by modification time desc
     usort($scripts, fn($a, $b) => strcmp($b['last_mod'], $a['last_mod']));
-    
+
     return $scripts;
 }
 
