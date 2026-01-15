@@ -80,18 +80,17 @@ if (isset($_GET['action'])) {
         // Determine command (Pest or PHP script)
         $cmd = '';
         if (str_ends_with($target, '.php')) {
-            if (str_contains($file, 'bin/') || str_contains($file, 'debug_tools/')) {
+            // Run as Script if in bin/ OR src/Debug/ OR debug_tools/
+            if (str_contains($file, 'bin/') || str_contains($file, 'debug_tools/') || str_contains($file, 'src/Debug/')) {
                 // Direct script execution
                 $cmd = "php \"$target\"";
             } else {
                 // Test Execution (Pest)
                 $bin = $realBase . '/vendor/bin/pest';
-                if (!file_exists($bin))
-                    $bin = $realBase . '/vendor/bin/phpunit'; // Fallback
-
+                if (!file_exists($bin)) $bin = $realBase . '/vendor/bin/phpunit'; // Fallback
+                
                 $cmd = "\"$bin\" \"$target\"";
-                if ($verbose)
-                    $cmd .= " --testdox";
+                if ($verbose) $cmd .= " --testdox";
                 // Color output force
                 $cmd .= " --colors=always";
             }
@@ -173,61 +172,74 @@ function getTestFiles($dir)
     return ['files' => $files, 'total' => $total];
 }
 
-function getBinScripts($dir)
+function getBinScripts($ignoredDir = null)
 {
-    if (!is_dir($dir)) return [];
+    $projectRoot = realpath(__DIR__ . '/../../');
+    // Define folders to scan for runnable scripts
+    $scanTargets = [
+        $projectRoot . '/bin',
+        $projectRoot . '/src/Debug'
+    ];
     
     $scripts = [];
     
-    try {
-        // Recursive scan of bin/
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::SELF_FIRST,
-            RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore permission errors
-        );
+    foreach ($scanTargets as $dir) {
+        if (!is_dir($dir)) continue;
 
-        foreach ($iterator as $file) {
-            if ($file->isDir()) continue;
-            
-            $ext = $file->getExtension();
-            if (!in_array($ext, ['php', 'ps1', 'sh', 'bat'])) continue;
+        try {
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::SELF_FIRST,
+                RecursiveIteratorIterator::CATCH_GET_CHILD
+            );
 
-            $path = str_replace('\\', '/', $file->getRealPath());
-            
-            // Exclusions
-            if (str_contains($path, 'test_dashboard.php')) continue;
-            if (str_contains($path, 'safe_test_runner.php')) continue; 
-            
-            $relPath = 'bin/' . str_replace(str_replace('\\', '/', $dir) . '/', '', $path);
-            
-            // Nice Name
-            $name = $file->getFilename();
-            $parent = basename(dirname($path));
-            if ($parent !== 'bin') {
-                $name = "$parent/$name";
-            }
+            foreach ($iterator as $file) {
+                if ($file->isDir()) continue;
+                
+                $ext = $file->getExtension();
+                if (!in_array($ext, ['php', 'ps1', 'sh', 'bat'])) continue;
 
-            $scripts[] = [
-                'name' => $name,
-                'rel_path' => $relPath,
-                'type' => $ext,
-                'last_mod' => date('d/m H:i', $file->getMTime())
-            ];
-        }
-    } catch (Exception $e) {
-        // Fallback or just return what we have
-        // Let's manually glob the top level at least
-        $fallback = glob($dir . '/*.php');
-        if ($fallback) {
-            foreach($fallback as $f) {
-                 if (str_contains($f, 'test_dashboard.php')) continue;
-                 $scripts[] = [
-                    'name' => basename($f),
-                    'rel_path' => 'bin/' . basename($f),
-                    'type' => 'php',
-                    'last_mod' => date('d/m H:i', filemtime($f))
+                $path = str_replace('\\', '/', $file->getRealPath());
+                
+                // Exclusions
+                if (str_contains($path, 'test_dashboard.php')) continue;
+                if (str_contains($path, 'safe_test_runner.php')) continue; 
+                
+                // Relative path logic
+                $relPath = str_replace(str_replace('\\', '/', $projectRoot) . '/', '', $path);
+                
+                // Display Name logic (simplify)
+                $name = $file->getFilename();
+                $relDir = dirname($relPath);
+                
+                // If deep in structure, show folder context
+                if ($relDir !== 'bin' && $relDir !== 'src/Debug') {
+                     // e.g. bin/tools -> tools/script.php
+                     // src/Debug/Auth -> Auth/script.php
+                     $shortDir = basename($relDir);
+                     $name = "$shortDir/$name";
+                }
+
+                $scripts[] = [
+                    'name' => $name,
+                    'rel_path' => $relPath,
+                    'type' => $ext,
+                    'last_mod' => date('d/m H:i', $file->getMTime())
                 ];
+            }
+        } catch (Exception $e) {
+            // Fallback for this dir
+            $fallback = glob($dir . '/*.php');
+            if ($fallback) {
+                foreach($fallback as $f) {
+                     if (str_contains($f, 'test_dashboard.php')) continue;
+                     $scripts[] = [
+                        'name' => basename($f),
+                        'rel_path' => str_replace($projectRoot.'/', '', str_replace('\\', '/', $f)),
+                        'type' => 'php',
+                        'last_mod' => date('d/m H:i', filemtime($f))
+                    ];
+                }
             }
         }
     }
