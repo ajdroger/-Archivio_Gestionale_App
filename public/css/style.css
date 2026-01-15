@@ -384,3 +384,9 @@ body.devtools-page {
 [x-cloak] {
     display: none !important;
 }
+/* Timeline Simple */
+.timeline-simple .rounded-circle { position: relative; z-index: 10; }
+/* Form Upload Refinement */
+.form-upload-grid { display: grid; grid-template-columns: 1fr auto; gap: 1rem; }
+@media (max-width: 768px) { .form-upload-grid { grid-template-columns: 1fr; } }
+

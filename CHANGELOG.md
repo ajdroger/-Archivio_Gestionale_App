@@ -19,6 +19,30 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.7.0] - 2026-01-15 "**Classified Dossier**"
+### Aggiunto
+- **Dossier Intelligence System**: Nuova vista dettaglio socio trasformata in "Fascicolo Classificato".
+    - **Identity Card**: Card olografica con watermark e timbri "Classified".
+    - **Service Timeline**: Cronologia verticale degli eventi di servizio (Arruolamento, Promozioni).
+    - **Digital Footprint**: Log accessi e azioni audit per monitorare la sicurezza del fascicolo.
+    - **Ribbon Rack**: Sistema di gamification con nastrini e medaglie (Servizio Attivo, ID Verificato).
+- **Backend Mocking**: Iniezione di dati di intelligence (simulati) nel `DetailController` per popolare la nuova UI.
+
+## [5.6.1] - 2026-01-15 "**Hotfix**"
+### Risolto
+- **Syntax Error**: Corretta parentesi ridondante in `socio_list_admin.mustache` che bloccava l'inizializzazione JS.
+
+## [5.6.0] - 2026-01-15 "**Personnel Command Center**"
+### Aggiunto
+- **Personnel Intelligence HUD**: Dashboard tattica nell'elenco soci con KPI in tempo reale (Totale, Attivi, Ufficiali, Congedo).
+- **Interactive Data Grid**: Sostituzione della tabella statica con una Griglia Operativa interattiva.
+    - **Visual Filters**: Filtri istantanei (Attivi, Morosi, Tutti) senza ricaricamento di pagina.
+    - **Row Interactivity**: Ogni riga è cliccabile e apre un Dossier Rapido.
+- **Quick View Dossier**: Pannello laterale (Offcanvas) per consultazione rapida profilo socio.
+    - **Dati Chiave**: Foto, Matricola, Grado, Reparto.
+    - **Azioni Rapide**: Collegamenti diretti a Modifica/Dettaglio e funzione Stampa.
+- **Backend Optimization**: `ListController` ora calcola statistiche aggregate on-the-fly e inietta payload JSON (`data-json`) per performance frontend istantanee.
+
 ## [5.5.2] - 2026-01-15 "**Financial Intelligence Unit**"
 ### Aggiunto
 - **Financial Intelligence Dashboard**: Nuova sezione Admin per analisi predittiva e monitoraggio asset.
