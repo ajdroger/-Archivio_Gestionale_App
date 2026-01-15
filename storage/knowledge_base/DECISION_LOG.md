@@ -1092,21 +1092,16 @@ La policy Gitflow standard prevede la cancellazione dei branch feature dopo il m
 **Decisione**:
 1.  **Branch Retention**: I branch `feature/*` non devono MAI essere cancellati dal remote origin, anche dopo il merge.
 2.  **Stato "Chiuso"**: I branch mergiati vengono considerati "chiusi" (archiviati) semplicemente spostando l'HEAD su `develop` o `main`, ma rimangono nel reflog/repo.
+3.  **Logging Sincrono**: È vietato chiudere un branch senza aver aggiornato `CHANGELOG.md` e `DECISION_LOG.md`.
 
 **Conseguenze**:
-- (+) Auditability totale (ogni riga di codice ha un branch di origine tracciabile).
+- (+) **Auditabilità Totale**: Possibile ricostruire intera storia di sviluppo.
+- (+) **Non-Repudiation**: Chi ha fatto cosa e quando (inclusi i test) è scolpito nella pietra.
 - (+) Hotfix facilitati (si può ripartire dal branch feature originale).
 - (-) Polluzione della lista branch (mitigabile con filtri IDE).
-2.  **Global Widget**: Trasformare l'interfaccia Chat in un Partial (`templates/partials/ai_widget.mustache`) iniettato nel layout principale, gestito da Alpine.js per lo stato (open/close).
-3.  **Smart Context**: Iniettare dati di contesto (URL parsing) nel System Prompt (es. "L'utente sta guardando il socio X").
-
-**Conseguenze**:
-- (+) **Estensibilità**: Aggiungere nuovi formati (es. PPTX) richiede solo una nuova classe Service.
-- (+) **UX**: L'utente può interrogare l'AI senza lasciare la pagina di lavoro.
-- (+) **Code-Aware**: Il supporto esplicito ai blocchi di codice migliora drasticamente le risposte tecniche.
+- (-) **Dimensioni Repo**: Aumento numero references (gestibile con `git gc` se necessario).
 
 ---
-
 
 ### ADR-027: AI Assistant Hotfix Strategy
 **Date:** 2026-01-13
@@ -1120,12 +1115,6 @@ La policy Gitflow standard prevede la cancellazione dei branch feature dopo il m
 - Infinite Spinner fixed (HTMX init).
 - 403 Forbidden fixed (CSRF).
 - Background Jobs fixed (DI Container).
-3.  **Logging Sincrono**: È vietato chiudere un branch senza aver aggiornato `CHANGELOG.md` e `DECISION_LOG.md`.
-
-**Conseguenze**:
-- (+) **Auditabilità Totale**: Possibile ricostruire intera storia di sviluppo.
-- (+) **Non-Repudiation**: Chi ha fatto cosa e quando (inclusi i test) è scolpito nella pietra.
-- (-) **Dimensioni Repo**: Aumento numero references (gestibile con `git gc` se necessario).
 
 ## [ADR-028] Strict Polyglot Separation & Clean Code
 **Data**: 2026-01-11
