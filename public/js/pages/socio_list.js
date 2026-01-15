@@ -144,7 +144,7 @@ function createSocioCard(socio) {
                         <li><hr class="dropdown-divider border-secondary"></li>
 
                         <li><h6 class="dropdown-header text-uppercase small opacity-50">Amministrazione</h6></li>
-                        <li><a class="dropdown-item text-white" href="#"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
+                        <li><a class="dropdown-item text-white" href="${window.BASE_URL}/soci/${socio.cf}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
                         <li>
                             <form action="${window.BASE_URL}/soci/${socio.cf}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\\n\\nQuesta azione è IRREVERSIBILE.\\n\\nSei sicuro di voler procedere?');">
                                 <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>

@@ -1,0 +1,165 @@
+{{> layout_header }}
+
+<div class="container-fluid px-4">
+    <!-- Breadcrumb & Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{{base_url}}/soci" class="text-decoration-none text-secondary">Directory</a></li>
+                    <li class="breadcrumb-item"><a href="{{base_url}}/soci/{{socio.cf}}" class="text-decoration-none text-secondary">{{socio.nome}} {{socio.cognome}}</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Impostazioni</li>
+                </ol>
+            </nav>
+            <h1 class="h3 text-white fw-bold mb-0">Impostazioni Account Socio</h1>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-3">
+            <div class="card bg-dark border-0 shadow-lg mb-4">
+                <div class="card-body text-center p-4">
+                    <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="display-6 fw-bold text-primary">{{socio.nome.0}}{{socio.cognome.0}}</span>
+                    </div>
+                    <h5 class="fw-bold text-white mb-1">{{socio.nome}} {{socio.cognome}}</h5>
+                    <p class="text-secondary small mb-3">{{socio.matricola}}</p>
+                    <a href="{{base_url}}/soci/{{socio.cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Torna al Profilo</a>
+                </div>
+            </div>
+
+            <div class="list-group bg-dark border-0 shadow-lg rounded-3 overflow-hidden">
+                <a href="#privacy" class="list-group-item list-group-item-action bg-dark text-white border-secondary active" data-bs-toggle="list">
+                    <i class="fa-solid fa-shield-halved me-3"></i> Privacy & Sicurezza
+                </a>
+                <a href="#notifications" class="list-group-item list-group-item-action bg-dark text-white border-secondary" data-bs-toggle="list">
+                    <i class="fa-solid fa-bell me-3"></i> Notifiche
+                </a>
+                <a href="#danger" class="list-group-item list-group-item-action bg-dark text-danger border-secondary" data-bs-toggle="list">
+                    <i class="fa-solid fa-triangle-exclamation me-3"></i> Zona Pericolosa
+                </a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="col-lg-9">
+            <div class="tab-content">
+                
+                <!-- PRIVACY TAB -->
+                <div class="tab-pane fade show active" id="privacy">
+                    <div class="card bg-dark border-0 shadow-lg">
+                        <div class="card-header bg-transparent border-secondary py-3">
+                            <h5 class="mb-0 text-white"><i class="fa-solid fa-shield-halved me-2 text-primary"></i> Privacy & Visibilità</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="{{base_url}}/soci/{{socio.cf}}/impostazioni/privacy" method="POST">
+                                <div class="mb-4">
+                                    <h6 class="text-white fw-bold mb-3">Directory Pubblica</h6>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="publicProfile" name="public_profile" {{#settings.privacy.public_profile}}checked{{/settings.privacy.public_profile}}>
+                                        <label class="form-check-label text-secondary" for="publicProfile">Mostra profilo nella ricerca pubblica</label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="showEmail" name="show_email" {{#settings.privacy.show_email}}checked{{/settings.privacy.show_email}}>
+                                        <label class="form-check-label text-secondary" for="showEmail">Mostra indirizzo email agli altri soci</label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="showPhone" name="show_phone" {{#settings.privacy.show_phone}}checked{{/settings.privacy.show_phone}}>
+                                        <label class="form-check-label text-secondary" for="showPhone">Mostra numero di telefono agli altri soci</label>
+                                    </div>
+                                </div>
+                                <hr class="border-secondary opacity-25">
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary rounded-pill px-4">Salva Modifiche</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTIFICATIONS TAB -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="card bg-dark border-0 shadow-lg">
+                        <div class="card-header bg-transparent border-secondary py-3">
+                            <h5 class="mb-0 text-white"><i class="fa-solid fa-bell me-2 text-warning"></i> Preferenze Notifiche</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="{{base_url}}/soci/{{socio.cf}}/impostazioni/notifiche" method="POST">
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div>
+                                            <h6 class="text-white fw-bold mb-0">Newsletter MCAG</h6>
+                                            <small class="text-secondary">Aggiornamenti mensili su attività e iniziative.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter" {{#settings.notifications.newsletter}}checked{{/settings.notifications.newsletter}}>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div>
+                                            <h6 class="text-white fw-bold mb-0">Inviti Eventi</h6>
+                                            <small class="text-secondary">Notifiche per assemblee, cene e raduni.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="events" name="events" {{#settings.notifications.events}}checked{{/settings.notifications.events}}>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h6 class="text-white fw-bold mb-0">Comunicazioni Cartacee</h6>
+                                            <small class="text-secondary">Ricevi la rivista associativa via posta ordinaria.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="paperMail" name="paper_mail" {{#settings.notifications.paper_mail}}checked{{/settings.notifications.paper_mail}}>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="border-secondary opacity-25">
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary rounded-pill px-4">Salva Preferenze</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DANGER ZONE TAB -->
+                <div class="tab-pane fade" id="danger">
+                    <div class="card bg-dark border-0 shadow-lg border-danger border-opacity-25">
+                        <div class="card-header bg-danger bg-opacity-10 border-danger border-opacity-25 py-3">
+                            <h5 class="mb-0 text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i> Zona Pericolosa</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div>
+                                    <h6 class="text-white fw-bold mb-1">Archiviazione Socio</h6>
+                                    <p class="text-secondary small mb-0">Il profilo verrà nascosto ma i dati storici verranno mantenuti.</p>
+                                </div>
+                                <button class="btn btn-outline-warning rounded-pill px-3">Archivia</button>
+                            </div>
+
+                            <hr class="border-secondary opacity-25">
+
+                            <div class="d-flex align-items-center justify-content-between mt-4">
+                                <div>
+                                    <h6 class="text-danger fw-bold mb-1">Eliminazione Definitiva</h6>
+                                    <p class="text-secondary small mb-0">Rimuove permanentemente tutti i dati. Azione irreversibile.</p>
+                                </div>
+                                <form action="{{base_url}}/soci/{{socio.cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Questa azione è IRREVERSIBILE e determinerà la perdita PERMANENTE di tutti i dati storici del socio.\n\nSei ASSOLUTAMENTE sicuro?');">
+                                    <button type="submit" class="btn btn-danger rounded-pill px-3">Elimina Socio</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout_footer }}

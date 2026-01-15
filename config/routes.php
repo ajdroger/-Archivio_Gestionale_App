@@ -13,6 +13,7 @@ use MCAG\Controller\Anagrafica\Soci\ListController as SocioList;
 use MCAG\Controller\Anagrafica\Soci\DetailController as SocioDetail;
 use MCAG\Controller\Anagrafica\Soci\PersistenceController as SocioPersistence;
 use MCAG\Controller\Anagrafica\Soci\ActionController as SocioAction;
+use MCAG\Controller\Anagrafica\Soci\SettingsController as SocioSettings;
 use MCAG\Controller\Anagrafica\Documenti\StorageController as SocioStorage;
 use MCAG\Controller\Anagrafica\Servizi\SocioExportController as SocioExport;
 use MCAG\Controller\Intelligence\StatsDashboardController as StatsDashboard;
@@ -65,6 +66,7 @@ return function (App $app) {
 
         // ROUTES GENERICHE DOPO
         $group->get('/{cf}/modifica', SocioPersistence::class . ':edit')->setName('socio_edit');
+        $group->get('/{cf}/impostazioni', SocioSettings::class . ':view')->setName('socio_settings'); // [NEW] Page Settings
         $group->post('/{cf}/aggiorna', SocioPersistence::class . ':update')->setName('socio_update');
         $group->post('/{cf}/elimina', SocioPersistence::class . ':delete')->setName('socio_delete');
 
