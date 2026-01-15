@@ -28,6 +28,16 @@
         
         <!-- SEARCH BAR (Common) -->
         <div class="d-flex gap-2">
+            <!-- Grid/List Toggle -->
+            <div class="btn-group bg-dark border border-secondary rounded-pill p-1">
+                <button id="btn-admin-cards" class="btn btn-sm text-secondary rounded-pill px-3 transition-all" onclick="toggleAdminView('cards')">
+                    <i class="fa-solid fa-border-all me-2"></i> Griglia
+                </button>
+                <button id="btn-admin-table" class="btn btn-sm btn-primary rounded-pill px-3 transition-all" onclick="toggleAdminView('table')">
+                    <i class="fa-solid fa-list-ul me-2"></i> Lista
+                </button>
+            </div>
+
             <form action="" method="GET" class="d-flex">
                  {{#view_mode}}<input type="hidden" name="view" value="{{view_mode}}">{{/view_mode}}
                 <div class="input-group">
@@ -45,7 +55,7 @@
 
     <!-- ADMIN VIEW: DATA DENSE TABLE -->
     {{#is_admin}}
-    <div class="card border-0 shadow-lg bg-dark text-white overflow-hidden">
+    <div id="admin-directory-table" class="card border-0 shadow-lg bg-dark text-white overflow-hidden transition-all">
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0 align-middle" id="table-soci">
                 <thead class="bg-black bg-opacity-25 text-secondary text-uppercase x-small">
@@ -121,7 +131,89 @@
             </table>
         </div>
     </div>
+
+    <!-- ADMIN VIEW: CARD GRID (Hidden by default) -->
+    <div id="admin-directory-grid" class="row g-4 d-none transition-all">
+        {{#soci}}
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
+                <div class="card-body text-center p-4">
+                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
+                    <div class="mb-3">
+                         <span class="badge bg-dark border border-secondary text-secondary font-monospace">{{matricola}}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center gap-2 mb-3">
+                        {{#is_attivo}}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">ATTIVO</span>
+                        {{/is_attivo}}
+                        {{^is_attivo}}
+                                <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">INATTIVO</span>
+                        {{/is_attivo}}
+                        {{#is_moroso}}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1">MOROSO</span>
+                        {{/is_moroso}}
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex flex-column gap-2">
+                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
+                         
+                         <div class="dropdown w-100">
+                            <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                <i class="fa-solid fa-bars me-1"></i> Gestione
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100" style="z-index: 9999;">
+                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Azioni Rapide</h6></li>
+                                <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
+                                <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
+                                <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                <li>
+                                    <form action="{{base_url}}/soci/{{cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler procedere?');">
+                                        <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/soci}}
+    </div>
     {{/is_admin}}
+
+    <script>
+        function toggleAdminView(mode) {
+            const grid = document.getElementById('admin-directory-grid');
+            const table = document.getElementById('admin-directory-table');
+            const btnCards = document.getElementById('btn-admin-cards');
+            const btnTable = document.getElementById('btn-admin-table');
+
+            if (mode === 'cards') {
+                grid.classList.remove('d-none');
+                table.classList.add('d-none');
+                
+                btnCards.classList.remove('text-secondary');
+                btnCards.classList.add('btn-primary');
+                
+                btnTable.classList.remove('btn-primary');
+                btnTable.classList.add('text-secondary');
+            } else {
+                grid.classList.add('d-none');
+                table.classList.remove('d-none');
+                
+                btnTable.classList.remove('text-secondary');
+                btnTable.classList.add('btn-primary');
+                
+                btnCards.classList.remove('btn-primary');
+                btnCards.classList.add('text-secondary');
+            }
+        }
+    </script>
 
     <!-- USER VIEW: CARD GRID -->
     {{^is_admin}}
