@@ -175,48 +175,66 @@ function getTestFiles($dir)
 
 function getBinScripts($dir)
 {
-    if (!is_dir($dir))
-        return [];
-
+    if (!is_dir($dir)) return [];
+    
     $scripts = [];
-    // Recursive scan of bin/
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+    
+    try {
+        // Recursive scan of bin/
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST,
+            RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore permission errors
+        );
 
-    foreach ($iterator as $file) {
-        if ($file->isDir())
-            continue;
-        $ext = $file->getExtension();
-        if (!in_array($ext, ['php', 'ps1', 'sh', 'bat']))
-            continue;
+        foreach ($iterator as $file) {
+            if ($file->isDir()) continue;
+            
+            $ext = $file->getExtension();
+            if (!in_array($ext, ['php', 'ps1', 'sh', 'bat'])) continue;
 
-        $path = str_replace('\\', '/', $file->getRealPath());
+            $path = str_replace('\\', '/', $file->getRealPath());
+            
+            // Exclusions
+            if (str_contains($path, 'test_dashboard.php')) continue;
+            if (str_contains($path, 'safe_test_runner.php')) continue; 
+            
+            $relPath = 'bin/' . str_replace(str_replace('\\', '/', $dir) . '/', '', $path);
+            
+            // Nice Name
+            $name = $file->getFilename();
+            $parent = basename(dirname($path));
+            if ($parent !== 'bin') {
+                $name = "$parent/$name";
+            }
 
-        // Exclusions (avoid listing the dashboard itself or vendor bins if any)
-        if (str_contains($path, 'test_dashboard.php'))
-            continue;
-        if (str_contains($path, 'safe_test_runner.php'))
-            continue; // Internal tool
-
-        $relPath = 'bin/' . str_replace(str_replace('\\', '/', $dir) . '/', '', $path);
-
-        // Nice Name
-        $name = $file->getFilename();
-        $parent = basename(dirname($path));
-        if ($parent !== 'bin') {
-            $name = "$parent/$name";
+            $scripts[] = [
+                'name' => $name,
+                'rel_path' => $relPath,
+                'type' => $ext,
+                'last_mod' => date('d/m H:i', $file->getMTime())
+            ];
         }
-
-        $scripts[] = [
-            'name' => $name,
-            'rel_path' => $relPath,
-            'type' => $ext,
-            'last_mod' => date('d/m H:i', $file->getMTime())
-        ];
+    } catch (Exception $e) {
+        // Fallback or just return what we have
+        // Let's manually glob the top level at least
+        $fallback = glob($dir . '/*.php');
+        if ($fallback) {
+            foreach($fallback as $f) {
+                 if (str_contains($f, 'test_dashboard.php')) continue;
+                 $scripts[] = [
+                    'name' => basename($f),
+                    'rel_path' => 'bin/' . basename($f),
+                    'type' => 'php',
+                    'last_mod' => date('d/m H:i', filemtime($f))
+                ];
+            }
+        }
     }
-
+    
     // Sort by modification time desc
     usort($scripts, fn($a, $b) => strcmp($b['last_mod'], $a['last_mod']));
-
+    
     return $scripts;
 }
 
