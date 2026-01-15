@@ -19,6 +19,12 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - Background jobs system con queue
 - Monitoring con Prometheus + Grafana
 
+## [5.7.1] - 2026-01-15 "**Dossier Polish**"
+### Migliorato
+- **UX Dossier**: Redirect automatico al fascicolo completo al click sulla riga (bypass QuickView).
+- **UI Tweaks**: Corretta visualizzazione "Archivio/Attivo" e stili Timeline mancanti.
+- **Privacy**: Sostituita CDN SweetAlert2 con versione locale.
+
 ## [5.7.0] - 2026-01-15 "**Classified Dossier**"
 ### Aggiunto
 - **Dossier Intelligence System**: Nuova vista dettaglio socio trasformata in "Fascicolo Classificato".

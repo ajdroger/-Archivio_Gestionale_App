@@ -83,9 +83,9 @@ class HomeController
             'content' => 'Benvenuto nel sistema di digitalizzazione archivio.',
             'stats' => $stats,
             'stats_json' => json_encode($stats),
-            'real_is_admin' => $realIsAdmin, // Keeps the toggles visible
-            'is_admin' => $effectiveIsAdmin, // Controls the view
-            'view_mode' => $requestedView, // For button styling
+            'real_is_admin' => $realIsAdmin,
+            'is_admin' => $effectiveIsAdmin,
+            'view_mode' => $requestedView,
             'is_god_mode' => $effectiveIsGodMode,
             'system_health' => $systemHealth,
             'resilience_metrics' => $resilienceData,
@@ -93,8 +93,33 @@ class HomeController
             'username' => $username,
             'user_initial' => strtoupper(substr($username, 0, 1)),
             'current_date' => date('d M Y'),
-            'app_config' => $appConfig, // Pass full config
+            'app_config' => $appConfig,
             'admin_notes' => $adminNotes,
+
+            // --- GENIUS MODE DATA INJECTION ---
+            'defcon_level' => 5, // 5=Blue(Peace), 4=Green, 3=Yellow, 2=Orange, 1=Red(War)
+            'threat_map' => json_encode([
+                ['lat' => 41.9028, 'lon' => 12.4964, 'type' => 'ddos', 'intensity' => 'low'],  // Rome
+                ['lat' => 45.4642, 'lon' => 9.1900, 'type' => 'sql_injection', 'intensity' => 'medium'], // Milan
+                ['lat' => 37.5079, 'lon' => 15.0830, 'type' => 'brute_force', 'intensity' => 'high'], // Catania
+            ]),
+            'neural_logs' => [
+                ['time' => date('H:i:s'), 'module' => 'CORTEX', 'msg' => 'Neural patterns nominal. Thinking...'],
+                ['time' => date('H:i:s', strtotime('-2 sec')), 'module' => 'MEMORY', 'msg' => 'Garbage collection predicted efficiency: 98%'],
+                ['time' => date('H:i:s', strtotime('-5 sec')), 'module' => 'SENTINEL', 'msg' => 'Scanning inbound packets on port 443...'],
+                ['time' => date('H:i:s', strtotime('-12 sec')), 'module' => 'PRECOGNITION', 'msg' => 'Anomaly detected in sector 7G. Resolving...'],
+            ],
+            'financial_tickers' => [
+                ['symbol' => 'MCAG.AS', 'value' => '175,420 €', 'trend' => 'up', 'change' => '+2.4%'],
+                ['symbol' => 'LIQUID', 'value' => '42,000 €', 'trend' => 'flat', 'change' => '0.0%'],
+                ['symbol' => 'RESERVES', 'value' => '85,000 €', 'trend' => 'up', 'change' => '+1.1%'],
+                ['symbol' => 'DEBT', 'value' => '0 €', 'trend' => 'down', 'change' => '-100%']
+            ],
+            'voice_logs' => json_encode([
+                ['cmd' => 'System Check', 'accuracy' => 98],
+                ['cmd' => 'Open Vault', 'accuracy' => 95]
+            ]),
+
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
                 return $scriptDir === '/' ? '' : $scriptDir;

@@ -1,217 +1,144 @@
 {{> layout_header }}
 
-<!-- VIEW MODE TOGGLES (Only for Real Admins) -->
-{{#real_is_admin}}
-<div class="d-flex justify-content-end mb-3 gap-2">
-    <a href="?view=admin" class="btn btn-sm {{^is_admin}}btn-outline-secondary{{/is_admin}}{{#is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
-        <i class="fa-solid fa-gauge-high me-2"></i>Mission Control
-    </a>
-    <a href="?view=user" class="btn btn-sm {{#is_admin}}btn-outline-secondary{{/is_admin}}{{^is_admin}}btn-primary{{/is_admin}} fw-bold rounded-pill px-3">
-        <i class="fa-solid fa-user me-2"></i>Vista Utente
-    </a>
-</div>
-{{/real_is_admin}}
+<!-- GENIUS MODE DASHBOARD (v6.0 PREVIEW) -->
+<!-- Global Container for Holographic Effect -->
+<div class="holographic-overlay"></div>
 
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card border-0 shadow-lg overflow-hidden" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(30, 41, 59, 0.8)); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05) !important;">
-            <div class="card-body p-4 p-md-5 d-flex align-items-center">
-                <div class="flex-shrink-0 d-none d-md-block me-4">
-                    <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fa-solid fa-user-shield text-primary fa-3x"></i>
-                    </div>
-                </div>
-                <div>
-                    <h2 class="h3 fw-bold text-white mb-2 border-0 pb-0">Sistema Archivio Certificato</h2>
-                    <p class="text-secondary mb-0 fs-5">{{content}}</p>
-                    <div class="mt-3">
-                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">
-                           <i class="fa-solid fa-lock me-2"></i>Accesso Protetto 2FA
-                        </span>
-                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3 py-2 ms-2">
-                           <i class="fa-solid fa-database me-2"></i>Integrità ACID Attiva
-                        </span>
-                    </div>
-                </div>
+<!-- TOP BAR: DEFCON & STATUS -->
+<div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-black bg-opacity-50 border-bottom border-secondary border-opacity-50 rounded shadow-lg backdrop-blur">
+    <div class="d-flex align-items-center gap-4">
+        <!-- DEFCON SELECTOR -->
+        <div class="defcon-selector d-flex align-items-center gap-2">
+            <span class="text-secondary small fw-bold tracking-widest">DEFCON</span>
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-danger {{#defcon_level_1}}active{{/defcon_level_1}} fw-bold">1</button>
+                <button type="button" class="btn btn-outline-warning {{#defcon_level_2}}active{{/defcon_level_2}} fw-bold">2</button>
+                <button type="button" class="btn btn-outline-warning {{#defcon_level_3}}active{{/defcon_level_3}} fw-bold">3</button>
+                <button type="button" class="btn btn-outline-success {{#defcon_level_4}}active{{/defcon_level_4}} fw-bold">4</button>
+                <button type="button" class="btn btn-primary fw-bold active shadow-primary">5</button>
             </div>
         </div>
+        
+        <!-- WEATHER / TIME -->
+        <div class="text-white small font-monospace">
+            <i class="fa-solid fa-cloud-moon me-2 text-info"></i> MILANO: 12°C | {{current_date}} <span id="clock-live">12:00:00</span>
+        </div>
+    </div>
+    
+    <div class="d-flex align-items-center gap-3">
+        <a href="?view=user" class="btn btn-outline-secondary btn-sm rounded-pill px-3"><i class="fa-solid fa-user me-2"></i>User View</a>
+        <div class="d-flex align-items-center text-success small fw-bold animate-pulse">
+            <i class="fa-solid fa-satellite-dish me-2"></i>UPLINK STABLE
+        </div>
     </div>
 </div>
 
-
-
-    <!-- Smart Narrative Summary (Hidden for UI, Visible for TTS/AI) -->
-    <div class="ta-smart-summary visually-hidden">
-        Benvenuto sulla Dashboard di Mission Control. 
-        Attualmente ci sono {{stats.totale}} soci registrati.
-        Il sistema è operativo.
-        {{#is_demo_mode}}La modalità demo è attiva con funzionalità limitate.{{/is_demo_mode}}
-    </div>
-
-<!-- Visual Intelligence Section -->
-<!-- GOD MODE OVERLAY -->
-{{#is_god_mode}}
-<div class="alert border-0 shadow-lg text-white mb-5 d-flex align-items-center justify-content-between" 
-     style="background: linear-gradient(90deg, #b91c1c 0%, #000000 100%); border-left: 5px solid #f59e0b !important;">
-    <div class="d-flex align-items-center">
-        <div class="p-3 bg-white bg-opacity-10 rounded-circle me-3">
-            <i class="fa-solid fa-dragon fa-2x text-warning"></i>
-        </div>
-        <div>
-            <h4 class="fw-bold text-uppercase mb-0 tracking-widest text-warning">Aj_GodMode Active</h4>
-            <small class="opacity-75">Full System Override • Omni-Level Access Granted</small>
-        </div>
-    </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-outline-warning text-uppercase fw-bold"><i class="fa-solid fa-skull me-2"></i>Nuke Cache</button>
-        <button class="btn btn-sm btn-outline-danger text-uppercase fw-bold"><i class="fa-solid fa-ban me-2"></i>Lockdown</button>
-    </div>
-</div>
-{{/is_god_mode}}
-
-<!-- MAIN MISSION CONTROL -->
-<div class="row g-4 mb-5">
-    <!-- HERO CARD -->
-    <div class="col-12 col-xl-8">
-        <div class="card border-0 shadow-lg overflow-hidden h-100 position-relative" 
-             style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1) !important;">
-            <!-- Decorators -->
-            <div class="position-absolute top-0 end-0 p-5 opacity-10 pointer-events-none">
-                <i class="fa-solid fa-network-wired fa-10x text-primary"></i>
+<div class="row g-4 mb-4">
+    <!-- COL 1: THREAT INTELLIGENCE (MAP) -->
+    <div class="col-lg-8">
+        <div class="card h-100 border-0 shadow-lg bg-dark overflow-hidden position-relative">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-3 px-4">
+                <h6 class="text-uppercase text-secondary fw-bold tracking-widest mb-0"><i class="fa-solid fa-globe me-2 text-primary"></i>Global Threat Vector</h6>
+                <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-25 animate-pulse">LIVE FEED</span>
             </div>
-            
-            <div class="card-body p-5 d-flex flex-column justify-content-between position-relative z-1">
-                <div>
-                    <div class="d-flex align-items-center mb-4">
-                        <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill">
-                            <i class="fa-solid fa-circle-nodes me-2"></i>v5.4.2 ADVANCED
-                        </span>
-                        <span class="ms-3 text-secondary small font-monospace"><i class="fa-regular fa-clock me-1"></i>{{current_date}}</span>
-                    </div>
-                    <h1 class="display-5 fw-bold text-white mb-2">Benvenuto, {{username}}</h1>
-                    <p class="lead text-secondary opacity-75" style="max-width: 600px;">
-                        Il sistema MCAG è operativo al 100%. I protocolli di sicurezza ACID e GDPR sono attivi.
-                        {{#is_god_mode}}<br><strong class="text-warning">ATTENZIONE: Stai operando con privilegi illimitati.</strong>{{/is_god_mode}}
-                    </p>
+            <div class="card-body p-0 position-relative" style="min-height: 400px; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);">
+                <!-- GEO MAP PLACEHOLDER (Canvas would go here) -->
+                <div id="threat-map-canvas" class="w-100 h-100 position-absolute top-0 start-0 opacity-50" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg'); background-size: cover; background-position: center; filter: invert(1) opacity(0.2);"></div>
+                
+                <!-- THREAT BLIPS (Dynamic JS) -->
+                <div id="threat-container">
+                    <!-- Injected via JS -->
                 </div>
                 
-                <div class="row mt-5 g-4">
-                    <div class="col-auto">
-                        <div class="d-flex align-items-center">
-                            <h2 class="display-6 fw-bold text-white mb-0 me-3">{{stats.totale}}</h2>
-                            <div class="border-start border-secondary border-opacity-25 ps-3">
-                                <div class="text-uppercase text-secondary x-small fw-bold">Soci Totali</div>
-                                <div class="text-success small"><i class="fa-solid fa-arrow-up me-1"></i>Attivi</div>
-                            </div>
+                <!-- OVERLAY METRICS -->
+                <div class="position-absolute bottom-0 start-0 p-3">
+                    <div class="bg-black bg-opacity-75 p-2 rounded border border-secondary border-opacity-25 text-white x-small font-monospace">
+                        <div class="mb-1"><span class="text-secondary">PACKETS:</span> <span class="text-success">24.5 TB/s</span></div>
+                        <div><span class="text-secondary">LATENCY:</span> <span class="text-info">12ms</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COL 2: NEURAL UPLINK & METRICS -->
+    <div class="col-lg-4">
+        <div class="d-flex flex-column gap-4 h-100">
+            <!-- NEURAL LOGS -->
+            <div class="card border-0 shadow-lg bg-black font-monospace small" style="flex: 1; border: 1px solid rgba(56, 189, 248, 0.2) !important;">
+                <div class="card-header bg-transparent border-0 pt-3 px-3">
+                     <h6 class="text-uppercase text-info fw-bold tracking-widest mb-0 opacity-75"><i class="fa-solid fa-brain me-2"></i>Neural Uplink</h6>
+                </div>
+                <div class="card-body p-3 overflow-hidden position-relative">
+                    <div class="neural-scanline"></div>
+                    <div id="neural-log-container" class="d-flex flex-column gap-1" style="height: 250px; overflow-hidden; mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);">
+                        {{#neural_logs}}
+                        <div class="d-flex gap-2 opacity-75">
+                            <span class="text-secondary">[{{time}}]</span>
+                            <span class="text-warning">[{{module}}]</span>
+                            <span class="text-light">{{msg}}</span>
                         </div>
+                        {{/neural_logs}}
                     </div>
-                    <div class="col-auto">
-                         <div class="d-flex align-items-center">
-                            <h2 class="display-6 fw-bold text-white mb-0 me-3">€ 170k</h2>
-                            <div class="border-start border-secondary border-opacity-25 ps-3">
-                                <div class="text-uppercase text-secondary x-small fw-bold">Valore Asset</div>
-                                <div class="text-info small"><i class="fa-solid fa-chart-line me-1"></i>Target 2026</div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+
+            <!-- KEY METRICS GRID -->
+            <div class="row g-2">
+                <div class="col-6">
+                    <div class="card bg-dark border-0 p-3 text-center h-100 shadow-sm hover-scale">
+                        <small class="text-secondary text-uppercase x-small fw-bold">Soci Attivi</small>
+                        <h3 class="text-white fw-bold mb-0 mt-1">{{stats.active}}</h3>
+                        <small class="text-success x-small"><i class="fa-solid fa-user-check me-1"></i>Confirm</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card bg-dark border-0 p-3 text-center h-100 shadow-sm hover-scale">
+                        <small class="text-secondary text-uppercase x-small fw-bold">Valore Asset</small>
+                        <h3 class="text-info fw-bold mb-0 mt-1">€175k</h3>
+                        <small class="text-info x-small"><i class="fa-solid fa-chart-line me-1"></i>Projected</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- SYSTEM HEALTH PULSE (Only for Admin/God) -->
-    {{#is_admin}}
-    <div class="col-12 col-xl-4">
-        <div class="card border-0 shadow-lg h-100 text-white" 
-             style="background: #0f172a; border: 1px solid rgba(255,255,255,0.05) !important;">
-            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                <h6 class="text-uppercase fw-bold text-secondary mb-0"><i class="fa-solid fa-heart-pulse me-2 text-danger"></i>System Vitality</h6>
-                <span class="badge bg-success bg-opacity-20 text-success animate-pulse">LIVE</span>
-            </div>
-            <div class="card-body px-4 pb-4">
-                <!-- METRIC 1: DB Load -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small text-secondary fw-bold">DATABASE LOAD</span>
-                        <span class="small text-white fw-bold">12ms (Optimal)</span>
-                    </div>
-                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.05);">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 15%"></div>
-                    </div>
-                </div>
-                
-                 <!-- METRIC 2: Integrigy -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small text-secondary fw-bold">INTEGRITY CHECK</span>
-                        <span class="small text-info fw-bold">100% Verified</span>
-                    </div>
-                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.05);">
-                        <div class="progress-bar bg-info" role="progressbar" style="width: 100%"></div>
-                    </div>
-                </div>
-
-                <!-- METRIC 3: Security -->
-                <div>
-                     <div class="d-flex justify-content-between mb-1">
-                        <span class="small text-secondary fw-bold">THREAT LEVEL</span>
-                        <span class="small text-success fw-bold">Low (Secure)</span>
-                    </div>
-                    <div class="progress" style="height: 6px; background: rgba(255,255,255,0.05);">
-                        <div class="progress-bar bg-primary" role="progressbar" style="width: 5%"></div>
-                    </div>
-                </div>
-                
-                <hr class="border-secondary opacity-10 my-4">
-                
-                <div class="d-grid">
-                    <a href="{{base_url}}/devtools" class="btn btn-outline-light btn-sm text-uppercase fw-bold opacity-75 hover-opacity-100">
-                        <i class="fa-solid fa-terminal me-2"></i>Open DevTools Protocol
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{/is_admin}}
 </div>
 
-<!-- INTERACTIVE WORKSPACE (v5.4.3) -->
+<!-- RESTORED INTERACTIVE WORKSPACE (Refitted for Holographic UI) -->
 {{#is_admin}}
-<div class="row g-4 mb-5">
+<div class="row g-4 mb-4">
     <!-- 1. SWITCHBOARD - SYSTEM OPERATIONS -->
     <div class="col-12 col-xl-4">
-        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05) !important;">
+        <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden" style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(56, 189, 248, 0.1) !important;">
             <div class="card-header bg-transparent border-0 pt-4 px-4">
-                <h6 class="text-uppercase fw-bold text-secondary mb-0"><i class="fa-solid fa-sliders me-2 text-primary"></i>Switchboard Operativa</h6>
+                <h6 class="text-uppercase fw-bold text-info mb-0 tracking-widest"><i class="fa-solid fa-sliders me-2"></i>Switchboard</h6>
             </div>
-            <div class="container-fluid px-4" id="readable-content">
-    
-    <!-- Welcome Banner / Header -->
-    <div class="d-flex justify-content-between align-items-center mb-5 mt-4">
+            <div class="card-body px-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <div class="fw-bold text-white">Global Maintenance</div>
-                        <small class="text-secondary">Blocca accesso utenti non-admin</small>
+                        <div class="fw-bold text-white small">Global Maintenance</div>
+                        <small class="text-secondary x-small">Lockdown Mode</small>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleMaintenance" data-setting="maintenance" {{#app_config.maintenance}}checked{{/app_config.maintenance}}>
+                        <input class="form-check-input dashboard-toggle shadow-none bg-dark border-secondary" type="checkbox" role="switch" id="toggleMaintenance" data-setting="maintenance" {{#app_config.maintenance}}checked{{/app_config.maintenance}}>
                     </div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                         <div class="fw-bold text-white">Nuove Registrazioni</div>
-                        <small class="text-secondary">Permetti signup autonomo</small>
+                         <div class="fw-bold text-white small">New Registrations</div>
+                        <small class="text-secondary x-small">Open/Close Gates</small>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggleRegistrations" data-setting="registrations" {{#app_config.registrations}}checked{{/app_config.registrations}}>
+                        <input class="form-check-input dashboard-toggle shadow-none bg-dark border-secondary" type="checkbox" role="switch" id="toggleRegistrations" data-setting="registrations" {{#app_config.registrations}}checked{{/app_config.registrations}}>
                     </div>
                 </div>
                  <div class="d-flex justify-content-between align-items-center">
                     <div>
-                         <div class="fw-bold text-white">Strict 2FA Enforcement</div>
-                        <small class="text-secondary">Richiedi OTP obbligatorio</small>
+                         <div class="fw-bold text-white small">Strict 2FA</div>
+                        <small class="text-secondary x-small">Force OTP</small>
                     </div>
                     <div class="form-check form-switch">
-                        <input class="form-check-input dashboard-toggle" type="checkbox" role="switch" id="toggle2FA" data-setting="strict_2fa" {{#app_config.strict_2fa}}checked{{/app_config.strict_2fa}}>
+                        <input class="form-check-input dashboard-toggle shadow-none bg-dark border-secondary" type="checkbox" role="switch" id="toggle2FA" data-setting="strict_2fa" {{#app_config.strict_2fa}}checked{{/app_config.strict_2fa}}>
                     </div>
                 </div>
             </div>
@@ -220,77 +147,56 @@
 
     <!-- 2. WORKFLOW INBOX -->
     <div class="col-12 col-xl-4">
-        <div class="card border-0 shadow-lg h-100" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05) !important;">
-             <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between">
-                <h6 class="text-uppercase fw-bold text-secondary mb-0"><i class="fa-solid fa-inbox me-2 text-success"></i>Workflow Inbox</h6>
-                <span class="badge bg-danger rounded-pill">3 Pending</span>
+        <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden" style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.1) !important;">
+             <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h6 class="text-uppercase fw-bold text-success mb-0 tracking-widest"><i class="fa-solid fa-inbox me-2"></i>Inbox</h6>
+                <span class="badge bg-danger bg-opacity-20 text-danger border border-danger border-opacity-25 rounded-pill x-small">3 Pending</span>
             </div>
-            <div class="list-group list-group-flush bg-transparent">
+            <div class="list-group list-group-flush bg-transparent mt-2">
                 <!-- Item 1 -->
-                <div class="list-group-item bg-transparent border-secondary border-opacity-10 px-4 py-3">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <small class="text-warning fw-bold">RICHIESTA ACCESSO</small>
-                        <small class="text-secondary">2m ago</small>
+                <div class="list-group-item bg-transparent border-bottom border-secondary border-opacity-10 px-4 py-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <small class="text-warning fw-bold x-small">ACCESS REQUEST</small>
+                        <small class="text-secondary x-small font-monospace">14:02</small>
                     </div>
-                    <p class="text-white small mb-2">Utente <strong>M.Rossi</strong> richiede reset password manuale.</p>
-                    <div class="d-grid gap-2 d-flex">
-                        <button class="btn btn-xs btn-success flex-grow-1"><i class="fa-solid fa-check me-1"></i>Approva</button>
-                        <button class="btn btn-xs btn-outline-secondary"><i class="fa-solid fa-xmark"></i></button>
+                    <p class="text-white small mb-2 text-opacity-75">Utente <strong>M.Rossi</strong> richiede reset password.</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-success bg-opacity-10 text-success border border-success border-opacity-25 flex-grow-1 py-0 x-small fw-bold">APPROVE</button>
+                        <button class="btn btn-sm btn-outline-secondary py-0 x-small"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
                 <!-- Item 2 -->
-                <div class="list-group-item bg-transparent border-secondary border-opacity-10 px-4 py-3">
-                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <small class="text-info fw-bold">SCADENZA</small>
-                        <small class="text-secondary">1h ago</small>
+                <div class="list-group-item bg-transparent border-0 px-4 py-3">
+                     <div class="d-flex justify-content-between align-items-start mb-1">
+                        <small class="text-info fw-bold x-small">EXPIRING</small>
+                        <small class="text-secondary x-small font-monospace">10:45</small>
                     </div>
-                    <p class="text-white small mb-2">Rinnovo quota socio <strong>#4412</strong> in scadenza.</p>
-                    <button class="btn btn-xs btn-outline-info w-100"><i class="fa-solid fa-paper-plane me-1"></i>Invia Sollecito</button>
+                    <p class="text-white small mb-2 text-opacity-75">Rinnovo quota socio <strong>#4412</strong> in scadenza.</p>
+                    <button class="btn btn-sm btn-outline-info w-100 py-0 x-small fw-bold">NOTIFY USER</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. ADMIN STICKY NOTES & TOOLS -->
+    <!-- 3. ADMIN TOOLS & NOTES -->
     <div class="col-12 col-xl-4">
         <div class="d-flex flex-column h-100 gap-4">
             <!-- Command Palette Trigger -->
-            <button class="btn btn-outline-secondary border-dashed p-3 text-start d-flex justify-content-between align-items-center hover-white" id="cmd-palette-trigger">
-                <span><i class="fa-solid fa-terminal me-2"></i>Type a command...</span>
-                <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-25">Ctrl+K</span>
+            <button class="btn btn-outline-secondary border-secondary border-opacity-25 border-dashed p-3 text-start d-flex justify-content-between align-items-center hover-border-primary transition-all text-white bg-dark bg-opacity-50" id="cmd-palette-trigger">
+                <span><i class="fa-solid fa-terminal me-2 text-primary opacity-75"></i>Execute Command...</span>
+                <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-25 font-monospace">Ctrl+K</span>
             </button>
 
             <!-- Sticky Notes -->
-            <div class="card border-0 shadow-lg flex-grow-1" style="background: #fffbeb;">
+            <div class="card border-0 shadow-lg flex-grow-1 position-relative overflow-hidden" style="background: rgba(255, 251, 235, 0.05); border: 1px solid rgba(251, 191, 36, 0.2) !important;">
                 <div class="card-header bg-transparent border-0 pt-3 px-3">
-                     <h6 class="text-uppercase fw-bold text-warning mb-0 text-dark opacity-50"><i class="fa-solid fa-note-sticky me-2"></i>Quick Notes</h6>
+                     <h6 class="text-uppercase fw-bold text-warning mb-0 tracking-widest opacity-75"><i class="fa-solid fa-note-sticky me-2"></i>Field Notes</h6>
                 </div>
                 <div class="card-body p-0">
-                    <textarea class="form-control border-0 bg-transparent h-100 resize-none text-dark" id="notes-area" style="font-family: 'Indie Flower', cursive; font-size: 1.1rem;" placeholder="Scrivi appunti veloci qui... (Salvato in locale)">{{admin_notes}}</textarea>
+                    <textarea class="form-control border-0 bg-transparent h-100 resize-none text-white small" id="notes-area" style="font-family: 'Consolas', monospace; line-height: 1.5;" placeholder="// Enter operational notes here...">{{admin_notes}}</textarea>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-end">
-                    <small class="text-muted fst-italic" id="notes-status">Syncing...</small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- COMMAND PALETTE MODAL -->
-<div class="modal fade" id="commandPaletteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg" style="background-color: #1e293b; color: #fff;">
-            <div class="modal-body p-0">
-                <div class="input-group border-bottom border-secondary border-opacity-25">
-                    <span class="input-group-text bg-transparent border-0 text-secondary ps-4"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" class="form-control bg-transparent border-0 text-white py-3 fs-5 shadow-none" id="cmd-input" placeholder="Type a command or search..." autocomplete="off">
-                </div>
-                <div class="list-group list-group-flush p-2" id="cmd-results" style="max-height: 300px; overflow-y: auto;">
-                    <!-- Results populated by JS -->
-                </div>
-                <div class="bg-black bg-opacity-20 p-2 text-end text-secondary small">
-                    <span class="me-3"><kbd class="bg-secondary bg-opacity-25 border-0">Enter</kbd> to select</span>
-                    <span><kbd class="bg-secondary bg-opacity-25 border-0">Esc</kbd> to close</span>
+                    <small class="text-secondary x-small font-monospace" id="notes-status">SYNC_READY</small>
                 </div>
             </div>
         </div>
@@ -298,95 +204,135 @@
 </div>
 {{/is_admin}}
 
-<!-- DYNAMIC WIDGETS GRID -->
-<div class="d-flex align-items-center mb-4">
-    <h3 class="h5 fw-bold text-uppercase tracking-wider text-secondary mb-0">
-        <i class="fa-solid fa-cubes-stacked me-2 text-info"></i>Operational Modules
-    </h3>
-    <div class="flex-grow-1 ms-3 border-bottom border-secondary opacity-25"></div>
-</div>
-
-<div class="row g-4">
-    <!-- MODULE: SOCI -->
-    <div class="col-md-6 col-xl-3">
-        <a href="{{base_url}}/soci" class="text-decoration-none group-hover">
-            <div class="card h-100 border-0 shadow-sm transition-all hover-translate-y" 
-                 style="background: rgba(30, 41, 59, 0.4); border-top: 3px solid #3b82f6 !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="p-3 rounded-circle bg-primary bg-opacity-10 text-primary">
-                            <i class="fa-solid fa-users fa-xl"></i>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-secondary opacity-50"></i>
-                    </div>
-                    <h5 class="fw-bold text-white mb-1">Registry</h5>
-                    <p class="text-secondary x-small mb-0">Master database access. CRUD operations, Filtering, Export.</p>
+<!-- COMMAND PALETTE MODAL (Restored) -->
+<div class="modal fade" id="commandPaletteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="background-color: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1) !important; color: #fff;">
+            <div class="modal-body p-0">
+                <div class="input-group border-bottom border-secondary border-opacity-25">
+                    <span class="input-group-text bg-transparent border-0 text-secondary ps-4"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" class="form-control bg-transparent border-0 text-white py-3 fs-5 shadow-none font-monospace" id="cmd-input" placeholder="> Type a command..." autocomplete="off" autofocus>
                 </div>
-            </div>
-        </a>
-    </div>
-
-     <!-- MODULE: NEW ENTRY -->
-    <div class="col-md-6 col-xl-3">
-        <a href="{{base_url}}/soci/nuovo" class="text-decoration-none group-hover">
-            <div class="card h-100 border-0 shadow-sm transition-all hover-translate-y" 
-                 style="background: rgba(30, 41, 59, 0.4); border-top: 3px solid #10b981 !important;">
-                <div class="card-body p-4">
-                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="p-3 rounded-circle bg-success bg-opacity-10 text-success">
-                            <i class="fa-solid fa-user-plus fa-xl"></i>
-                        </div>
-                         <i class="fa-solid fa-plus text-secondary opacity-50"></i>
-                    </div>
-                    <h5 class="fw-bold text-white mb-1">Onboarding</h5>
-                    <p class="text-secondary x-small mb-0">New member acquisition flow. OCR Integration ready.</p>
+                <div class="list-group list-group-flush p-2" id="cmd-results" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Results populated by JS -->
                 </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- MODULE: ANALYTICS -->
-    <div class="col-md-6 col-xl-3">
-        <a href="{{base_url}}/statistiche" class="text-decoration-none group-hover">
-             <div class="card h-100 border-0 shadow-sm transition-all hover-translate-y" 
-                 style="background: rgba(30, 41, 59, 0.4); border-top: 3px solid #8b5cf6 !important;">
-                <div class="card-body p-4">
-                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="p-3 rounded-circle bg-info bg-opacity-10 text-info">
-                            <i class="fa-solid fa-chart-pie fa-xl"></i>
-                        </div>
-                         <i class="fa-solid fa-magnifying-glass-chart text-secondary opacity-50"></i>
-                    </div>
-                    <h5 class="fw-bold text-white mb-1">Intelligence</h5>
-                    <p class="text-secondary x-small mb-0">Financial & Demographic Stats. deep-dive analysis.</p>
+                <div class="bg-black bg-opacity-50 p-2 text-end text-secondary small font-monospace">
+                    <span class="me-3"><kbd class="bg-secondary bg-opacity-25 border-0 text-white">Enter</kbd> to select</span>
+                    <span><kbd class="bg-secondary bg-opacity-25 border-0 text-white">Esc</kbd> to close</span>
                 </div>
-            </div>
-        </a>
-    </div>
-    
-     <!-- MODULE: GOD ACTIONS (Conditional) -->
-     {{#is_god_mode}}
-    <div class="col-md-6 col-xl-3">
-        <div class="card h-100 border-0 shadow-sm transition-all cursor-pointer" 
-             style="background: rgba(185, 28, 28, 0.1); border: 1px dashed #b91c1c !important;">
-            <div class="card-body p-4 d-flex flex-column justify-content-center align-items-center text-center">
-                <div class="mb-3 text-danger animate-pulse">
-                    <i class="fa-solid fa-fingerprint fa-2x"></i>
-                </div>
-                <h6 class="fw-bold text-danger text-uppercase mb-1">Override Protocol</h6>
-                <small class="text-secondary x-small">Emergency Action Menu</small>
             </div>
         </div>
     </div>
-    {{/is_god_mode}}
+</div>
+
+<!-- BOTTOM BAR: OPERATIONS & TICKER -->
+<div class="row g-4">
+    <!-- QUICK ACTIONS -->
+    <div class="col-lg-8">
+        <div class="d-flex gap-3 overflow-auto pb-2">
+            <a href="{{base_url}}/soci" class="btn btn-outline-light d-flex align-items-center gap-3 px-4 py-3 rounded-3 flex-grow-1 hover-border-primary transition-all">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-primary"><i class="fa-solid fa-users fa-lg"></i></div>
+                <div class="text-start">
+                    <div class="fw-bold">Registro Soci</div>
+                    <div class="x-small text-secondary">Manage Personnel</div>
+                </div>
+            </a>
+            <a href="{{base_url}}/statistiche" class="btn btn-outline-light d-flex align-items-center gap-3 px-4 py-3 rounded-3 flex-grow-1 hover-border-info transition-all">
+                <div class="rounded-circle bg-info bg-opacity-10 p-2 text-info"><i class="fa-solid fa-chart-pie fa-lg"></i></div>
+                <div class="text-start">
+                    <div class="fw-bold">Intelligence</div>
+                    <div class="x-small text-secondary">View Analytics</div>
+                </div>
+            </a>
+            {{#is_god_mode}}
+            <button class="btn btn-outline-danger d-flex align-items-center gap-3 px-4 py-3 rounded-3 flex-grow-1 hover-border-danger transition-all animate-pulse">
+                <div class="rounded-circle bg-danger bg-opacity-10 p-2 text-danger"><i class="fa-solid fa-fingerprint fa-lg"></i></div>
+                <div class="text-start">
+                    <div class="fw-bold">Override</div>
+                    <div class="x-small text-secondary">God Mode Actions</div>
+                </div>
+            </button>
+            {{/is_god_mode}}
+        </div>
+    </div>
+
+    <!-- VOICE COMMAND LOG -->
+    <div class="col-lg-4">
+        <div class="card border-secondary border-dashed bg-transparent h-100 p-2 d-flex align-items-center justify-content-center">
+             <i class="fa-solid fa-microphone-lines fa-2x text-muted mb-2"></i>
+             <div class="text-center">
+                 <small class="text-muted d-block font-monospace">VOICE COMMAND SYSTEM</small>
+                 <small class="text-secondary opacity-50">Listening...</small>
+             </div>
+        </div>
+    </div>
+</div>
+
+<!-- FINANCIAL TICKER (Fixed Bottom) -->
+<div class="fixed-bottom bg-black border-top border-secondary border-opacity-50 py-2 d-flex align-items-center overflow-hidden" style="z-index: 9999;">
+    <div class="px-3 bg-black border-end border-secondary border-opacity-50 text-warning fw-bold small whitespace-nowrap z-1">
+        MARKET LIVE
+    </div>
+    <div class="ticker-wrap flex-grow-1">
+        <div class="ticker">
+            {{#financial_tickers}}
+            <div class="ticker__item">
+                <span class="text-secondary fw-bold me-2">{{symbol}}</span>
+                <span class="text-white me-2">{{value}}</span>
+                <span class="{{#change_pos}}text-success{{/change_pos}}{{^change_pos}}text-danger{{/change_pos}} small">
+                    <i class="fa-solid fa-caret-{{#change_pos}}up{{/change_pos}}{{^change_pos}}down{{/change_pos}}"></i> {{change}}
+                </span>
+            </div>
+            {{/financial_tickers}}
+            <!-- Duplicate for loop effect -->
+            {{#financial_tickers}}
+            <div class="ticker__item">
+                <span class="text-secondary fw-bold me-2">{{symbol}}</span>
+                <span class="text-white me-2">{{value}}</span>
+                <span class="{{#change_pos}}text-success{{/change_pos}}{{^change_pos}}text-danger{{/change_pos}} small">
+                    <i class="fa-solid fa-caret-{{#change_pos}}up{{/change_pos}}{{^change_pos}}down{{/change_pos}}"></i> {{change}}
+                </span>
+            </div>
+            {{/financial_tickers}}
+        </div>
+    </div>
 </div>
 
 <style>
-.hover-translate-y:hover { transform: translateY(-5px); }
-.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-</style>
+/* HOLOGRAPHIC OVERLAY */
+.holographic-overlay {
+    position: fixed; top: 0; left: 0; w-100; h-100;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(56, 189, 248, 0.03) 50%), linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none; z-index: 9000;
+}
 
+/* BLUR BACKDROP */
+.backdrop-blur { backdrop-filter: blur(10px); }
+
+/* NEURAL SCANLINE */
+.neural-scanline {
+    position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+    background: rgba(56, 189, 248, 0.5);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+    opacity: 0.5;
+    animation: scanline 3s linear infinite;
+    pointer-events: none;
+}
+@keyframes scanline { 0% { top: 0%; } 100% { top: 100%; } }
+
+/* TICKER ANIMATION */
+.ticker-wrap { width: 100%; overflow: hidden; background-color: transparent; }
+.ticker { display: inline-block; white-space: nowrap; animation: ticker 30s linear infinite; }
+.ticker__item { display: inline-block; padding: 0 2rem; font-family: 'Consolas', monospace; }
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* HOVER EFFECTS */
+.hover-scale:hover { transform: scale(1.02); transition: transform 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+.hover-border-primary:hover { border-color: var(--bs-primary) !important; background: rgba(13, 110, 253, 0.1); }
+.hover-border-info:hover { border-color: var(--bs-info) !important; background: rgba(13, 202, 240, 0.1); }
+.hover-border-danger:hover { border-color: var(--bs-danger) !important; background: rgba(220, 53, 69, 0.1); }
+</style>
 
 {{> layout_footer }}
 
