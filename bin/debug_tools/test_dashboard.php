@@ -860,9 +860,7 @@ ksort($grouped);
                 <div class="ent-card-title">
                     <i class="fa-solid fa-bolt text-warning"></i> Automation & Debug
                 </div>
-                <div style="font-size: 0.7rem; color: var(--ent-text-muted); text-align: right; line-height: 1.2;">
-                    Scanned: bin/, src/Debug/
-                </div>
+                <!-- Controls -->
                 <button class="ent-btn-icon" onclick="runAll()" title="Run All"><i
                         class="fa-solid fa-play"></i></button>
             </div>
