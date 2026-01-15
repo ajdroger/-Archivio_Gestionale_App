@@ -119,6 +119,63 @@ function scanTestsRecursive($dir)
     return ['files' => $files, 'total' => $totalCount];
 }
 
+// 5. NETWORK RECONNAISSANCE (Real Implementations)
+function doPortScan($target)
+{
+    $ports = [21 => 'FTP', 22 => 'SSH', 23 => 'TELNET', 25 => 'SMTP', 53 => 'DNS', 80 => 'HTTP', 110 => 'POP3', 143 => 'IMAP', 443 => 'HTTPS', 3306 => 'MYSQL', 3389 => 'RDP', 8080 => 'HTTP-ALT'];
+    $results = [];
+    $target = filter_var($target, FILTER_VALIDATE_IP) ? $target : gethostbyname($target);
+
+    if ($target === $target) { // Basic check if resolution worked
+        foreach ($ports as $port => $service) {
+            $connection = @fsockopen($target, $port, $errno, $errstr, 0.5); // 0.5s timeout
+            if (is_resource($connection)) {
+                $results[] = "[OPEN] Port $port ($service)";
+                fclose($connection);
+            } else {
+                // $results[] = "[CLOSED] Port $port"; // Too noisy
+            }
+        }
+    }
+    return empty($results) ? ["No open ports found on $target (or firewall active)."] : $results;
+}
+
+function doWhois($domain)
+{
+    $server = 'whois.iana.org';
+    if (!$domain)
+        return ["Invalid Domain"];
+
+    $fp = fsockopen($server, 43, $errno, $errstr, 5);
+    if (!$fp)
+        return ["WHOIS Connection Failed: $errstr"];
+
+    fputs($fp, $domain . "\r\n");
+    $out = "";
+    while (!feof($fp)) {
+        $out .= fgets($fp, 128);
+    }
+    fclose($fp);
+    return explode("\n", $out);
+}
+
+function doDnsEnum($target)
+{
+    if (!filter_var($target, FILTER_VALIDATE_DOMAIN))
+        return ["Invalid Domain for DNS Scan"];
+
+    $records = dns_get_record($target, DNS_ALL);
+    if (!$records)
+        return ["No DNS records found."];
+
+    $out = [];
+    foreach ($records as $r) {
+        $data = $r['data'] ?? $r['ip'] ?? $r['ipv6'] ?? $r['target'] ?? $r['mname'] ?? 'N/A';
+        $out[] = strtoupper($r['type']) . ": " . $data;
+    }
+    return $out;
+}
+
 // ACTION HANDLER
 if (isset($_GET['action'])) {
     header('Content-Type: application/json');
@@ -167,6 +224,21 @@ if (isset($_GET['action'])) {
                 } else {
                     $res['output'] = "Error: File not found.";
                 }
+                break;
+
+            case 'nmap':
+                $input = json_decode(file_get_contents('php://input'), true);
+                $res['output'] = implode("\n", doPortScan($input['target'] ?? '127.0.0.1'));
+                break;
+
+            case 'whois':
+                $input = json_decode(file_get_contents('php://input'), true);
+                $res['output'] = implode("\n", doWhois($input['target'] ?? ''));
+                break;
+
+            case 'dns':
+                $input = json_decode(file_get_contents('php://input'), true);
+                $res['output'] = implode("\n", doDnsEnum($input['target'] ?? ''));
                 break;
         }
     } catch (Exception $e) {
@@ -499,6 +571,100 @@ foreach ($tests as $t) {
             box-shadow: inset 0 0 50px rgba(212, 0, 212, 0.1);
         }
 
+        /* --- PARROT ARSENAL MENUS --- */
+        .nav-menu {
+            display: flex;
+            gap: 2px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background: transparent;
+            color: var(--neon-blue);
+            padding: 8px 16px;
+            border: 1px solid transparent;
+            /* Invisible border initially */
+            font-family: 'Share Tech Mono', monospace;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .dropdown-btn:hover,
+        .dropdown:hover .dropdown-btn {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(5, 5, 5, 0.95);
+            min-width: 200px;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-blue);
+            z-index: 200;
+            top: 100%;
+            left: 0;
+            backdrop-filter: blur(5px);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .menu-item {
+            color: var(--neon-blue);
+            padding: 10px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(0, 243, 255, 0.2);
+            padding-left: 20px;
+            /* Slight bump */
+        }
+
+        .menu-item.danger {
+            color: var(--neon-pink);
+        }
+
+        .menu-item.danger:hover {
+            background-color: rgba(255, 0, 255, 0.2);
+        }
+
+        /* Submenus */
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        .dropdown-submenu .dropdown-content {
+            top: 0;
+            left: 100%;
+            margin-top: -1px;
+        }
+
+        .dropdown-submenu:hover>.dropdown-content {
+            display: block;
+        }
+
+
         .glitch:hover {
             animation: glitch 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
         }
@@ -519,7 +685,9 @@ foreach ($tests as $t) {
         <div class="module-list">
             <div class="module-group-title">
                 <span>TOTAL TESTS:</span>
-                <span id="live-count" style="color: var(--neon-green)"><?= $totalTests ?></span>
+                <span id="live-count" style="color: var(--neon-green)">
+                    <?= $totalTests ?>
+                </span>
             </div>
 
             <?php foreach ($groupedTests as $category => $modules): ?>
@@ -527,16 +695,21 @@ foreach ($tests as $t) {
                     style="margin-top: 15px; border-bottom: 1px solid rgba(0,243,255,0.1); padding-bottom: 2px;">
                     <?= htmlspecialchars($category) ?>
                     <span style="font-size: 10px; opacity: 0.5">
-                        [<?= array_sum(array_column($modules, 'count')) ?>]
+                        [
+                        <?= array_sum(array_column($modules, 'count')) ?>]
                     </span>
                 </div>
                 <?php foreach ($modules as $test): ?>
                     <div class="module-item" onclick="runTest('<?= $test['path'] ?>')">
                         <div style="display:flex; align-items:center; gap:8px">
                             <i class="fa-solid fa-vial"></i>
-                            <span><?= str_replace('Test.php', '', $test['name']) ?></span>
+                            <span>
+                                <?= str_replace('Test.php', '', $test['name']) ?>
+                            </span>
                         </div>
-                        <span class="badge-count"><?= $test['count'] ?>t</span>
+                        <span class="badge-count">
+                            <?= $test['count'] ?>t
+                        </span>
                     </div>
                 <?php endforeach; ?>
             <?php endforeach; ?>
@@ -556,27 +729,105 @@ foreach ($tests as $t) {
     <div class="main-deck">
         <!-- TOOLBAR (New Features) -->
         <div class="top-bar">
-            <button class="tool-btn" onclick="fetchGitStatus()"><i class="fa-solid fa-code-branch"></i> Git
-                Check</button>
-            <button class="tool-btn" onclick="fetchLogs()"><i class="fa-solid fa-align-left"></i> Tail Logs</button>
-            <button class="tool-btn" onclick="window.location.reload()"><i class="fa-solid fa-rotate"></i>
-                Reboot</button>
+            <!-- PARROT ARSENAL MENUS -->
+            <div class="nav-menu">
+
+                <!-- SYSTEM -->
+                <div class="dropdown">
+                    <div class="dropdown-btn"><i class="fa-solid fa-server"></i> SYSTEM</div>
+                    <div class="dropdown-content">
+                        <div class="menu-item" onclick="fetchGitStatus()"><i class="fa-brands fa-git-alt"></i> Git
+                            Status</div>
+                        <div class="menu-item" onclick="fetchLogs()"><i class="fa-solid fa-scroll"></i> System Logs
+                        </div>
+                        <div class="menu-item" onclick="window.location.reload()"><i class="fa-solid fa-rotate"></i>
+                            Reboot Deck</div>
+                        <div class="menu-item danger" onclick="purgeCache()"><i class="fa-solid fa-trash-can"></i> PURGE
+                            CACHE</div>
+                    </div>
+                </div>
+
+                <!-- RECONNAISSANCE -->
+                <div class="dropdown">
+                    <div class="dropdown-btn"><i class="fa-solid fa-radar"></i> RECON</div>
+                    <div class="dropdown-content">
+                        <div class="menu-item" onclick="runSim('nmap', 'NMAP NETWORK SCAN')"><i
+                                class="fa-solid fa-network-wired"></i> Nmap Port Scan</div>
+                        <div class="menu-item" onclick="runSim('whois', 'WHOIS DOMAIN LOOKUP')"><i
+                                class="fa-solid fa-id-card"></i> Whois Lookup</div>
+                        <div class="menu-item" onclick="runSim('dns', 'DNS ENUMERATION')"><i
+                                class="fa-solid fa-sitemap"></i> DNS Map</div>
+                        <div class="dropdown-submenu">
+                            <div class="menu-item"><i class="fa-solid fa-user-secret"></i> OSINT <i
+                                    class="fa-solid fa-caret-right" style="margin-left:auto"></i></div>
+                            <div class="dropdown-content">
+                                <div class="menu-item" onclick="runSim('harvester', 'THE HARVESTER')">The Harvester
+                                </div>
+                                <div class="menu-item" onclick="runSim('shodan', 'SHODAN QUERY')">Shodan Link</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VULNERABILITY -->
+                <div class="dropdown">
+                    <div class="dropdown-btn"><i class="fa-solid fa-bug"></i> VULN</div>
+                    <div class="dropdown-content">
+                        <div class="menu-item" onclick="runSim('openvas', 'OPENVAS VULN SCAN')"><i
+                                class="fa-solid fa-shield-halved"></i> OpenVAS</div>
+                        <div class="menu-item" onclick="runSim('nikto', 'NIKTO WEB SCAN')"><i
+                                class="fa-solid fa-globe"></i> Nikto Scanner</div>
+                    </div>
+                </div>
+
+                <!-- EXPLOIT -->
+                <div class="dropdown">
+                    <div class="dropdown-btn"><i class="fa-solid fa-skull"></i> EXPLOIT</div>
+                    <div class="dropdown-content">
+                        <div class="menu-item" onclick="runSim('msf', 'METASPLOIT FRAMEWORK')"><i
+                                class="fa-solid fa-terminal"></i> MSF Console</div>
+                        <div class="menu-item" onclick="runSim('sql', 'SQLMAP INJECTION')"><i
+                                class="fa-solid fa-database"></i> SQLMap</div>
+                        <div class="menu-item" onclick="runSim('hydra', 'HYDRA BRUTEFORCE')"><i
+                                class="fa-solid fa-lock-open"></i> Hydra</div>
+                    </div>
+                </div>
+
+                <!-- FORENSICS -->
+                <div class="dropdown">
+                    <div class="dropdown-btn"><i class="fa-solid fa-magnifying-glass"></i> FORENSICS</div>
+                    <div class="dropdown-content">
+                        <div class="menu-item" onclick="runSim('autopsy', 'AUTOPSY FORENSIC')"><i
+                                class="fa-solid fa-hard-drive"></i> Autopsy</div>
+                        <div class="menu-item" onclick="runSim('binwalk', 'BINWALK ANALYSIS')"><i
+                                class="fa-solid fa-file-code"></i> Binwalk</div>
+                    </div>
+                </div>
+
+                <!-- WIRESHARK (Direct) -->
+                <div class="dropdown">
+                    <div class="dropdown-btn" onclick="runSim('wireshark', 'WIRESHARK SNIFFER')"><i
+                            class="fa-solid fa-wave-square"></i> WIRESHARK</div>
+                </div>
+
+            </div>
+
             <div style="flex-grow: 1"></div>
+
             <!-- GOD MODE TOGGLE -->
             <button class="tool-btn"
                 style="border-color: var(--neon-green); color: var(--neon-green); margin-right: 10px;"
                 onclick="toggleMode()">
                 <i class="fa-solid fa-brain"></i> NEURAL LINK
             </button>
-            <button class="tool-btn danger" onclick="purgeCache()"><i class="fa-solid fa-trash-can"></i> PURGE
-                CACHE</button>
         </div>
 
         <!-- TERMINAL -->
         <div class="terminal-container" id="terminal">
             <div class="terminal-output" id="output">
                 > HYPER-GRID SYSTEM INITIALIZED...
-                > SCANNING FOR TESTS... DETECTED [<?= $totalTests ?>].
+                > SCANNING FOR TESTS... DETECTED [
+                <?= $totalTests ?>].
                 > READY FOR INPUT.
                 > _
             </div>
@@ -759,6 +1010,46 @@ foreach ($tests as $t) {
             apiCall('read_logs');
         }
 
+        // --- HYBRID ENGINE: REAL TOOLS + SIMULATION ---
+        function runSim(tool, title) {
+            // LIST OF REAL TOOLS
+            const realTools = ['nmap', 'whois', 'dns'];
+
+            if (realTools.includes(tool)) {
+                const target = prompt(`ENTER TARGET FOR ${title}:`, 'localhost');
+                if (!target) return;
+
+                log(`>>> EXECUTING REAL ${title} TARGETING [${target}]...`, 'info');
+                apiCall(tool, { target: target });
+                return;
+            }
+
+            // FALLBACK TO SIMULATION FOR OTHERS
+            log(`>>> INITIALIZING ${title} (SIMULATION MODE)...`, 'info');
+
+            const steps = [
+                "Loading modules...",
+                "Connecting to local interface...",
+                "Bypassing simulated firewalls...",
+                "Running heuristic analysis...",
+                "Decrypting data streams...",
+                "Compiling report..."
+            ];
+
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i >= steps.length) {
+                    clearInterval(interval);
+                    log(`>>> ${title} COMPLETE. REPORT SAVED TO /VAR/LOGS/SECURE.`, 'success');
+                } else {
+                    // Random hex output for effect
+                    const hex = Math.random().toString(16).substr(2, 8).toUpperCase();
+                    log(`[${hex}] ${steps[i]}`);
+                    i++;
+                }
+            }, 600);
+        }
+
         function purgeCache() {
             if (confirm('WARNING: THIS WILL NUKE SYSTEM CACHE. PROCEED?')) {
                 log('INITIATING CACHE PURGE PROTOCOL...');
@@ -773,6 +1064,14 @@ foreach ($tests as $t) {
                 if (!cmd) return;
 
                 log(`> ${cmd}`);
+
+                // Easter Eggs for Commands
+                if (cmd.toLowerCase() === 'help') {
+                    log("AVAILABLE COMMANDS: git_status, purge_cache, nmap <target>, help");
+                    cmdInput.value = '';
+                    return;
+                }
+
                 apiCall('run_cmd', { cmd });
                 cmdInput.value = '';
             }
