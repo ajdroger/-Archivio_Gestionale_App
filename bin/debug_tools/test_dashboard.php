@@ -176,6 +176,53 @@ function doDnsEnum($target)
     return $out;
 }
 
+// 6. AI CODING CORE (OLLAMA CONNECTOR)
+function doAiChat($prompt)
+{
+    $url = 'http://127.0.0.1:11434/api/generate';
+    $data = [
+        "model" => "llama3", // Default, can be configurable
+        "prompt" => "You are an Ethical Hacking AI Assistant integrated into MCAG Toolkit. Keep answers concise, technical, and 'hacker' style.\n\nUser: $prompt",
+        "stream" => false
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 2); // Fast timeout for responsiveness
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200 && $response) {
+        $json = json_decode($response, true);
+        return $json['response'] ?? "AI Error: Invalid JSON.";
+    }
+
+    // FALLBACK (Offline Core)
+    return fallbackAiResponse($prompt);
+}
+
+function fallbackAiResponse($prompt)
+{
+    $p = strtolower($prompt);
+    if (str_contains($p, 'php'))
+        return "Analyzed PHP structure. Suggest using `strict_types=1` and leveraging COMPOSER for dependency management. Check `vendor/autoload.php`.";
+    if (str_contains($p, 'sql'))
+        return "Detected SQL query. Ensure PDO prepared statements to prevent Injection. Use `security_token` for validation.";
+    if (str_contains($p, 'hack') || str_contains($p, 'exploit'))
+        return "Ethical parameters active. Authorization Code: 7-ALPHA-X. Proceed with white-hat auditing only.";
+
+    // Greetings / General
+    if (str_contains($p, 'ciao') || str_contains($p, 'hello') || str_contains($p, 'salve')) {
+        return "Connessione stabilita. \nSono CORTEX AI v1.0 [OFFLINE MODE].\nOllama non rilevato sulla porta 11434.\nPosso assisterti con logica pre-programmata o analisi statica.";
+    }
+
+    return "OLLAMA LINK OFFLINE. \nUsing localized logic kernel v1.0.\nAnalyzing request: '$prompt'...\nResult: Pattern not recognized in offline database. Please launch Ollama.";
+}
+
 // ACTION HANDLER
 if (isset($_GET['action'])) {
     header('Content-Type: application/json');
@@ -239,6 +286,11 @@ if (isset($_GET['action'])) {
             case 'dns':
                 $input = json_decode(file_get_contents('php://input'), true);
                 $res['output'] = implode("\n", doDnsEnum($input['target'] ?? ''));
+                break;
+
+            case 'ai_chat':
+                $input = json_decode(file_get_contents('php://input'), true);
+                $res['output'] = doAiChat($input['prompt'] ?? '');
                 break;
         }
     } catch (Exception $e) {
@@ -814,6 +866,13 @@ foreach ($tests as $t) {
 
             <div style="flex-grow: 1"></div>
 
+            <!-- AI MODE TOGGLE -->
+            <button class="tool-btn" id="ai-toggle-btn"
+                style="border-color: var(--neon-pink); color: var(--neon-pink); margin-right: 10px;"
+                onclick="toggleAiMode()">
+                <i class="fa-solid fa-robot"></i> AI DEV
+            </button>
+
             <!-- GOD MODE TOGGLE -->
             <button class="tool-btn"
                 style="border-color: var(--neon-green); color: var(--neon-green); margin-right: 10px;"
@@ -971,7 +1030,11 @@ foreach ($tests as $t) {
 
                 const opts = { method: 'POST', body: JSON.stringify(data) };
 
-                const res = await fetch(url, action === 'run_cmd' ? opts : undefined);
+                // DATA-DRIVEN ACTIONS NEED POST
+                const postActions = ['run_cmd', 'ai_chat', 'nmap', 'whois', 'dns'];
+                const usePost = postActions.includes(action);
+
+                const res = await fetch(url, usePost ? opts : undefined);
                 const json = await res.json();
 
                 if (json.data) {
@@ -1057,6 +1120,31 @@ foreach ($tests as $t) {
             }
         }
 
+        // --- AI MODE LOGIC ---
+        let aiModeActive = false;
+
+        function toggleAiMode() {
+            aiModeActive = !aiModeActive;
+            const btn = document.getElementById('ai-toggle-btn');
+            const promptSpan = document.querySelector('.terminal-input-line span');
+
+            if (aiModeActive) {
+                btn.style.background = 'var(--neon-pink)';
+                btn.style.color = '#000';
+                promptSpan.innerText = 'ai@cortex:~$';
+                promptSpan.style.color = 'var(--neon-pink)';
+                cmdInput.placeholder = "Ask AI (Coding, Auditing, Logic)...";
+                log(">>> AI CO-PILOT ENGAGED. CONNECTION ESTABLISHED.", 'success');
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.color = 'var(--neon-pink)';
+                promptSpan.innerText = 'admin@hypergrid:~$';
+                promptSpan.style.color = 'var(--neon-green)';
+                cmdInput.placeholder = "Enter command...";
+                log(">>> AI DISENGAGED. SHELL MODE ACTIVE.", 'info');
+            }
+        }
+
         // CMD Input
         cmdInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -1064,16 +1152,22 @@ foreach ($tests as $t) {
                 if (!cmd) return;
 
                 log(`> ${cmd}`);
+                cmdInput.value = '';
+
+                // AI MODE INTERCEPTION
+                if (aiModeActive) {
+                    log("... PROCESSING QUERY ...", 'info');
+                    apiCall('ai_chat', { prompt: cmd });
+                    return;
+                }
 
                 // Easter Eggs for Commands
                 if (cmd.toLowerCase() === 'help') {
                     log("AVAILABLE COMMANDS: git_status, purge_cache, nmap <target>, help");
-                    cmdInput.value = '';
                     return;
                 }
 
                 apiCall('run_cmd', { cmd });
-                cmdInput.value = '';
             }
         });
 
