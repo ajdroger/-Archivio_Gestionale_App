@@ -1,0 +1,397 @@
+:root {
+    --neon-blue: #00f3ff;
+    --neon-pink: #ff00ff;
+    --neon-green: #00ff41;
+    --void-bg: #050505;
+    --grid-color: rgba(0, 243, 255, 0.1);
+    --glass-bg: rgba(10, 15, 30, 0.85);
+    --crt-scanline: rgba(18, 16, 16, 0.1);
+}
+
+body {
+    background-color: var(--void-bg);
+    color: var(--neon-blue);
+    font-family: 'Rajdhani', sans-serif;
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: center bottom;
+    perspective: 1000px;
+}
+
+/* --- CRT EFFECT --- */
+body::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* --- LAYOUT --- */
+.sidebar {
+    width: 320px;
+    background: var(--glass-bg);
+    border-right: 1px solid var(--neon-blue);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    box-shadow: 10px 0 30px rgba(0, 243, 255, 0.1);
+    z-index: 100;
+}
+
+.main-deck {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    position: relative;
+}
+
+/* --- BRAND --- */
+.brand {
+    padding: 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 24px;
+    text-shadow: 0 0 10px var(--neon-blue);
+    border-bottom: 1px solid var(--neon-blue);
+    letter-spacing: 2px;
+}
+
+/* --- MODULES (Sidebar) --- */
+.module-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.module-list::-webkit-scrollbar {
+    width: 4px;
+    background: #000;
+}
+
+.module-list::-webkit-scrollbar-thumb {
+    background: var(--neon-blue);
+}
+
+.module-group-title {
+    color: var(--neon-pink);
+    font-size: 12px;
+    text-transform: uppercase;
+    margin: 15px 5px 5px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px var(--neon-pink);
+    display: flex;
+    justify-content: space-between;
+}
+
+.module-item {
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+}
+
+.module-item:hover {
+    background: rgba(0, 243, 255, 0.1);
+    border-color: var(--neon-blue);
+    transform: translateX(5px);
+    box-shadow: -5px 0 10px var(--neon-blue);
+}
+
+.module-item i {
+    width: 20px;
+}
+
+.badge-count {
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+/* --- TOP BAR (New Tools) --- */
+.top-bar {
+    display: flex;
+    gap: 15px;
+    padding: 10px;
+    background: var(--glass-bg);
+    border: 1px solid var(--neon-blue);
+    border-radius: 4px;
+}
+
+.tool-btn {
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 8px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tool-btn:hover {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+.tool-btn.danger {
+    border-color: var(--neon-pink);
+    color: var(--neon-pink);
+}
+
+.tool-btn.danger:hover {
+    background: var(--neon-pink);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-pink);
+}
+
+/* --- TERMINAL (CRT) --- */
+.terminal-container {
+    flex-grow: 1;
+    background: #000;
+    border: 2px solid var(--neon-green);
+    padding: 15px;
+    overflow-y: auto;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--neon-green);
+    text-shadow: 0 0 5px var(--neon-green);
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.2);
+}
+
+.terminal-output {
+    white-space: pre-wrap;
+    margin-bottom: 20px;
+}
+
+.terminal-input-line {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+}
+
+.terminal-input {
+    background: transparent;
+    border: none;
+    color: var(--neon-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    flex-grow: 1;
+    outline: none;
+    text-shadow: 0 0 5px var(--neon-green);
+}
+
+/* --- GLITCH ANIMATION --- */
+@keyframes glitch {
+    0% {
+        transform: translate(0)
+    }
+
+    20% {
+        transform: translate(-2px, 2px)
+    }
+
+    40% {
+        transform: translate(-2px, -2px)
+    }
+
+    60% {
+        transform: translate(2px, 2px)
+    }
+
+    80% {
+        transform: translate(2px, -2px)
+    }
+
+    100% {
+        transform: translate(0)
+    }
+}
+
+/* --- NEURAL MODE (God UX) --- */
+#neural-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.neural-mode {
+    --neon-blue: #00e5ff;
+    /* Cyan */
+    --neon-pink: #d400d4;
+    /* Deep Magenta */
+    --neon-green: #ffd700;
+    /* Gold */
+    --void-bg: #1a0b2e;
+    /* Deep Purple Void */
+    --grid-color: rgba(120, 81, 169, 0.1);
+    --glass-bg: rgba(45, 20, 60, 0.75);
+    font-family: 'Rajdhani', sans-serif !important;
+    /* Force organic font */
+}
+
+.neural-mode body {
+    background-image: radial-gradient(circle at 50% 50%, #2d143c 0%, #1a0b2e 100%);
+    background-size: cover;
+}
+
+.neural-mode .sidebar {
+    background: linear-gradient(180deg, rgba(80, 20, 100, 0.8), rgba(45, 20, 60, 0.8));
+    border-right: 1px solid var(--neon-pink);
+    border-radius: 0 20px 20px 0;
+    /* Organic Shapes */
+    box-shadow: 10px 0 50px rgba(212, 0, 212, 0.2);
+}
+
+.neural-mode .module-item {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+}
+
+.neural-mode .module-item:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: var(--neon-green);
+    transform: scale(1.02);
+    /* Breathe effect */
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.neural-mode .terminal-container {
+    border: 1px solid var(--neon-pink);
+    border-radius: 15px;
+    background: rgba(20, 10, 30, 0.9);
+    box-shadow: inset 0 0 50px rgba(212, 0, 212, 0.1);
+}
+
+/* --- PARROT ARSENAL MENUS --- */
+.nav-menu {
+    display: flex;
+    gap: 2px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    background: transparent;
+    color: var(--neon-blue);
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    /* Invisible border initially */
+    font-family: 'Share Tech Mono', monospace;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.dropdown-btn:hover,
+.dropdown:hover .dropdown-btn {
+    background: rgba(0, 243, 255, 0.1);
+    border-color: var(--neon-blue);
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgba(5, 5, 5, 0.95);
+    min-width: 200px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--neon-blue);
+    z-index: 200;
+    top: 100%;
+    left: 0;
+    backdrop-filter: blur(5px);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.menu-item {
+    color: var(--neon-blue);
+    padding: 10px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background-color: rgba(0, 243, 255, 0.2);
+    padding-left: 20px;
+    /* Slight bump */
+}
+
+.menu-item.danger {
+    color: var(--neon-pink);
+}
+
+.menu-item.danger:hover {
+    background-color: rgba(255, 0, 255, 0.2);
+}
+
+/* Submenus */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-content {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+}
+
+.dropdown-submenu:hover>.dropdown-content {
+    display: block;
+}
+
+
+.glitch:hover {
+    animation: glitch 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+}

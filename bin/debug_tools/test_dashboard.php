@@ -223,8 +223,24 @@ function fallbackAiResponse($prompt)
     return "OLLAMA LINK OFFLINE. \nUsing localized logic kernel v1.0.\nAnalyzing request: '$prompt'...\nResult: Pattern not recognized in offline database. Please launch Ollama.";
 }
 
+// Helper to prevent UTF-8 JSON crashes on Windows
+function safe_utf8($str)
+{
+    // Force conversion from common Windows codepages if detection fails
+    // Try to detect, fallback to CP850 (Western Europe DOS) which is common for "è" errors
+    $encoding = mb_detect_encoding($str, ['UTF-8', 'ISO-8859-1', 'Windows-1252', 'CP850'], true);
+    if (!$encoding)
+        $encoding = 'CP850';
+    return @mb_convert_encoding($str, 'UTF-8', $encoding);
+}
+
 // ACTION HANDLER
 if (isset($_GET['action'])) {
+    // Suppress HTML errors interfering with JSON
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ob_start(); // Buffer any stray output
+
     header('Content-Type: application/json');
     $act = $_GET['action'];
     $res = ['status' => 'ok', 'output' => ''];
@@ -242,9 +258,92 @@ if (isset($_GET['action'])) {
             case 'run_cmd':
                 $input = json_decode(file_get_contents('php://input'), true);
                 $cmd = $input['cmd'] ?? '';
+                $mode = $input['mode'] ?? 'cmd';
                 $root = realpath(__DIR__ . '/../../');
                 chdir($root);
-                $res['output'] = shell_exec($cmd . " 2>&1");
+
+                if ($mode === 'ps') {
+                    // PowerShell Execution Wrapper
+                    // Use -NoProfile for speed, -ExecutionPolicy Bypass to run scripts
+                    // Encode command in Base64 if needed, but direct execution is simpler for one-liners
+                    $psCmd = "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$cmd\"";
+                    $raw = shell_exec($psCmd . " 2>&1");
+                } elseif ($mode === 'py') {
+                    // Python Execution Wrapper
+                    // Assumes 'python' is in PATH. Escapes double quotes for -c
+                    $safeCmd = str_replace('"', '\"', $cmd);
+                    $pyCmd = "python -c \"$safeCmd\"";
+                    $raw = shell_exec($pyCmd . " 2>&1");
+                } elseif ($mode === 'java') {
+                    // JAVA SHELL SIMULATION
+                    if ($cmd === 'java -version') {
+                        $raw = shell_exec("java -version 2>&1");
+                    } else {
+                        // For generic java code, we need a class. 
+                        // This shell mode is best for 'java -jar' or system checks.
+                        // Interactive Java (JShell) is complex via non-interactive shell_exec.
+                        $raw = shell_exec($cmd . " 2>&1");
+                    }
+                } else {
+                    // Legacy CMD
+                    $raw = shell_exec($cmd . " 2>&1");
+                }
+
+                $res['output'] = safe_utf8($raw ?? '');
+                break;
+
+            case 'fs_op':
+                // FILESYSTEM OPERATIONS FOR OMNI-EDITOR
+                $input = json_decode(file_get_contents('php://input'), true);
+                $op = $input['op'] ?? '';
+                $path = $input['path'] ?? '';
+                $content = $input['content'] ?? '';
+                $root = realpath(__DIR__ . '/../../');
+
+                // Security Sanity Check (Prevent traversal outside root)
+                $realPath = realpath($root . '/' . $path);
+                if ($path && strpos($path, '..') !== false) {
+                    $res['output'] = "Security Violation: Path Traversal detected.";
+                    break;
+                }
+
+                if ($op === 'list') {
+                    // scandir with file types
+                    $dir = $realPath ?: $root;
+                    if (is_dir($dir)) {
+                        $files = scandir($dir);
+                        $list = [];
+                        foreach ($files as $f) {
+                            if ($f === '.' || $f === '..')
+                                continue;
+                            $list[] = [
+                                'name' => $f,
+                                'type' => is_dir($dir . '/' . $f) ? 'dir' : 'file',
+                                'ext' => pathinfo($f, PATHINFO_EXTENSION)
+                            ];
+                        }
+                        $res['data'] = $list;
+                    } else {
+                        $res['status'] = 'error';
+                        $res['output'] = "Not a directory.";
+                    }
+                } elseif ($op === 'read') {
+                    if ($realPath && file_exists($realPath) && is_file($realPath)) {
+                        $res['data'] = file_get_contents($realPath);
+                    } else {
+                        $res['status'] = 'error';
+                        $res['output'] = "File not found.";
+                    }
+                } elseif ($op === 'write') {
+                    // Allow creating new files
+                    $target = $root . '/' . $path;
+                    if (file_put_contents($target, $content) !== false) {
+                        $res['output'] = "File saved successfully.";
+                    } else {
+                        $res['status'] = 'error';
+                        $res['output'] = "Write failed.";
+                    }
+                }
                 break;
 
             case 'git_status':
@@ -267,7 +366,8 @@ if (isset($_GET['action'])) {
                     $cmd = ($ext === 'php') ? "php \"$target\"" : "\"$target\"";
                     $root = realpath(__DIR__ . '/../../');
                     chdir($root);
-                    $res['output'] = shell_exec($cmd . " 2>&1");
+                    $raw = shell_exec($cmd . " 2>&1");
+                    $res['output'] = safe_utf8($raw ?? '');
                 } else {
                     $res['output'] = "Error: File not found.";
                 }
@@ -297,7 +397,15 @@ if (isset($_GET['action'])) {
         $res['status'] = 'error';
         $res['output'] = $e->getMessage();
     }
-    echo json_encode($res);
+
+    // Final Safe Encode
+    ob_end_clean(); // Discard any PHP warnings (HTML)
+    $json = json_encode($res, JSON_INVALID_UTF8_SUBSTITUTE);
+    if ($json === false) {
+        echo json_encode(['status' => 'error', 'output' => 'JSON ENCODING ERROR: ' . json_last_error_msg()]);
+    } else {
+        echo $json;
+    }
     exit;
 }
 
@@ -322,405 +430,7 @@ foreach ($tests as $t) {
         rel="stylesheet">
     <link rel="stylesheet" href="../../public/css/all.min.css">
 
-    <style>
-        :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-green: #00ff41;
-            --void-bg: #050505;
-            --grid-color: rgba(0, 243, 255, 0.1);
-            --glass-bg: rgba(10, 15, 30, 0.85);
-            --crt-scanline: rgba(18, 16, 16, 0.1);
-        }
-
-        body {
-            background-color: var(--void-bg);
-            color: var(--neon-blue);
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            background-image:
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px;
-            background-position: center bottom;
-            perspective: 1000px;
-        }
-
-        /* --- CRT EFFECT --- */
-        body::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        /* --- LAYOUT --- */
-        .sidebar {
-            width: 320px;
-            background: var(--glass-bg);
-            border-right: 1px solid var(--neon-blue);
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(10px);
-            box-shadow: 10px 0 30px rgba(0, 243, 255, 0.1);
-            z-index: 100;
-        }
-
-        .main-deck {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            gap: 20px;
-            position: relative;
-        }
-
-        /* --- BRAND --- */
-        .brand {
-            padding: 20px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 24px;
-            text-shadow: 0 0 10px var(--neon-blue);
-            border-bottom: 1px solid var(--neon-blue);
-            letter-spacing: 2px;
-        }
-
-        /* --- MODULES (Sidebar) --- */
-        .module-list {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .module-list::-webkit-scrollbar {
-            width: 4px;
-            background: #000;
-        }
-
-        .module-list::-webkit-scrollbar-thumb {
-            background: var(--neon-blue);
-        }
-
-        .module-group-title {
-            color: var(--neon-pink);
-            font-size: 12px;
-            text-transform: uppercase;
-            margin: 15px 5px 5px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px var(--neon-pink);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .module-item {
-            padding: 10px 15px;
-            margin-bottom: 5px;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            background: rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 14px;
-        }
-
-        .module-item:hover {
-            background: rgba(0, 243, 255, 0.1);
-            border-color: var(--neon-blue);
-            transform: translateX(5px);
-            box-shadow: -5px 0 10px var(--neon-blue);
-        }
-
-        .module-item i {
-            width: 20px;
-        }
-
-        .badge-count {
-            font-size: 10px;
-            opacity: 0.7;
-        }
-
-        /* --- TOP BAR (New Tools) --- */
-        .top-bar {
-            display: flex;
-            gap: 15px;
-            padding: 10px;
-            background: var(--glass-bg);
-            border: 1px solid var(--neon-blue);
-            border-radius: 4px;
-        }
-
-        .tool-btn {
-            background: transparent;
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
-            padding: 8px 16px;
-            font-family: 'Share Tech Mono', monospace;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tool-btn:hover {
-            background: var(--neon-blue);
-            color: #000;
-            box-shadow: 0 0 15px var(--neon-blue);
-        }
-
-        .tool-btn.danger {
-            border-color: var(--neon-pink);
-            color: var(--neon-pink);
-        }
-
-        .tool-btn.danger:hover {
-            background: var(--neon-pink);
-            color: #000;
-            box-shadow: 0 0 15px var(--neon-pink);
-        }
-
-        /* --- TERMINAL (CRT) --- */
-        .terminal-container {
-            flex-grow: 1;
-            background: #000;
-            border: 2px solid var(--neon-green);
-            padding: 15px;
-            overflow-y: auto;
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--neon-green);
-            text-shadow: 0 0 5px var(--neon-green);
-            position: relative;
-            box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.2);
-        }
-
-        .terminal-output {
-            white-space: pre-wrap;
-            margin-bottom: 20px;
-        }
-
-        .terminal-input-line {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            border-top: 1px solid #333;
-            padding-top: 10px;
-        }
-
-        .terminal-input {
-            background: transparent;
-            border: none;
-            color: var(--neon-green);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 16px;
-            flex-grow: 1;
-            outline: none;
-            text-shadow: 0 0 5px var(--neon-green);
-        }
-
-        /* --- GLITCH ANIMATION --- */
-        @keyframes glitch {
-            0% {
-                transform: translate(0)
-            }
-
-            20% {
-                transform: translate(-2px, 2px)
-            }
-
-            40% {
-                transform: translate(-2px, -2px)
-            }
-
-            60% {
-                transform: translate(2px, 2px)
-            }
-
-            80% {
-                transform: translate(2px, -2px)
-            }
-
-            100% {
-                transform: translate(0)
-            }
-        }
-
-        /* --- NEURAL MODE (God UX) --- */
-        #neural-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-        }
-
-        .neural-mode {
-            --neon-blue: #00e5ff;
-            /* Cyan */
-            --neon-pink: #d400d4;
-            /* Deep Magenta */
-            --neon-green: #ffd700;
-            /* Gold */
-            --void-bg: #1a0b2e;
-            /* Deep Purple Void */
-            --grid-color: rgba(120, 81, 169, 0.1);
-            --glass-bg: rgba(45, 20, 60, 0.75);
-            font-family: 'Rajdhani', sans-serif !important;
-            /* Force organic font */
-        }
-
-        .neural-mode body {
-            background-image: radial-gradient(circle at 50% 50%, #2d143c 0%, #1a0b2e 100%);
-            background-size: cover;
-        }
-
-        .neural-mode .sidebar {
-            background: linear-gradient(180deg, rgba(80, 20, 100, 0.8), rgba(45, 20, 60, 0.8));
-            border-right: 1px solid var(--neon-pink);
-            border-radius: 0 20px 20px 0;
-            /* Organic Shapes */
-            box-shadow: 10px 0 50px rgba(212, 0, 212, 0.2);
-        }
-
-        .neural-mode .module-item {
-            border-radius: 12px;
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 600;
-        }
-
-        .neural-mode .module-item:hover {
-            background: rgba(255, 215, 0, 0.15);
-            border-color: var(--neon-green);
-            transform: scale(1.02);
-            /* Breathe effect */
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .neural-mode .terminal-container {
-            border: 1px solid var(--neon-pink);
-            border-radius: 15px;
-            background: rgba(20, 10, 30, 0.9);
-            box-shadow: inset 0 0 50px rgba(212, 0, 212, 0.1);
-        }
-
-        /* --- PARROT ARSENAL MENUS --- */
-        .nav-menu {
-            display: flex;
-            gap: 2px;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-btn {
-            background: transparent;
-            color: var(--neon-blue);
-            padding: 8px 16px;
-            border: 1px solid transparent;
-            /* Invisible border initially */
-            font-family: 'Share Tech Mono', monospace;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 12px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .dropdown-btn:hover,
-        .dropdown:hover .dropdown-btn {
-            background: rgba(0, 243, 255, 0.1);
-            border-color: var(--neon-blue);
-            text-shadow: 0 0 5px var(--neon-blue);
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: rgba(5, 5, 5, 0.95);
-            min-width: 200px;
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--neon-blue);
-            z-index: 200;
-            top: 100%;
-            left: 0;
-            backdrop-filter: blur(5px);
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .menu-item {
-            color: var(--neon-blue);
-            padding: 10px 16px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
-            transition: 0.2s;
-        }
-
-        .menu-item:hover {
-            background-color: rgba(0, 243, 255, 0.2);
-            padding-left: 20px;
-            /* Slight bump */
-        }
-
-        .menu-item.danger {
-            color: var(--neon-pink);
-        }
-
-        .menu-item.danger:hover {
-            background-color: rgba(255, 0, 255, 0.2);
-        }
-
-        /* Submenus */
-        .dropdown-submenu {
-            position: relative;
-        }
-
-        .dropdown-submenu .dropdown-content {
-            top: 0;
-            left: 100%;
-            margin-top: -1px;
-        }
-
-        .dropdown-submenu:hover>.dropdown-content {
-            display: block;
-        }
-
-
-        .glitch:hover {
-            animation: glitch 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-        }
-    </style>
+    <link rel="stylesheet" href="../../public/css/debug_console.css">
 </head>
 
 <body>
@@ -866,10 +576,24 @@ foreach ($tests as $t) {
 
             <div style="flex-grow: 1"></div>
 
+            <!-- OMNI-EDITOR BTN -->
+            <button class="tool-btn" id="editor-btn" style="border-color: #ffd700; color: #ffd700; margin-right: 10px;"
+                onclick="toggleEditor()">
+                <i class="fa-solid fa-code"></i> OMNI-EDITOR
+            </button>
+
+            <!-- SHELL SWITCHERS -->
+            <button class="tool-btn shell-toggle" onclick="toggleShell('cmd')"
+                style="border-color: #888; color: #888; margin-right: 5px;">CMD</button>
+            <button class="tool-btn shell-toggle" onclick="toggleShell('ps')"
+                style="border-color: #00f3ff; color: #00f3ff; margin-right: 5px;">PS</button>
+            <button class="tool-btn shell-toggle" onclick="toggleShell('py')"
+                style="border-color: #ffd700; color: #ffd700; margin-right: 10px;">PY</button>
+
             <!-- AI MODE TOGGLE -->
-            <button class="tool-btn" id="ai-toggle-btn"
+            <button class="tool-btn shell-toggle" id="ai-toggle-btn"
                 style="border-color: var(--neon-pink); color: var(--neon-pink); margin-right: 10px;"
-                onclick="toggleAiMode()">
+                onclick="toggleShell('ai')">
                 <i class="fa-solid fa-robot"></i> AI DEV
             </button>
 
@@ -879,6 +603,42 @@ foreach ($tests as $t) {
                 onclick="toggleMode()">
                 <i class="fa-solid fa-brain"></i> NEURAL LINK
             </button>
+        </div>
+
+        <!-- OMNI-EDITOR MODAL -->
+        <div id="editor-modal"
+            style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; background:rgba(0,0,0,0.95); border:1px solid #ffd700; z-index:9999; flex-direction:column; padding:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <div style="color:#ffd700; font-family:'Courier New'; font-weight:bold;">
+                    <i class="fa-solid fa-file-code"></i> OMNI-EDITOR v1.0
+                </div>
+                <div>
+                    <button onclick="saveFile()"
+                        style="background:#000; color:#0f0; border:1px solid #0f0; cursor:pointer;">SAVE
+                        [Ctrl+S]</button>
+                    <button onclick="runScript()"
+                        style="background:#000; color:#0ff; border:1px solid #0ff; cursor:pointer; margin-left:10px;">RUN
+                        [F5]</button>
+                    <button onclick="toggleEditor()"
+                        style="background:#000; color:#f00; border:1px solid #f00; cursor:pointer; margin-left:10px;">CLOSE</button>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; flex-grow:1;">
+                <!-- File Browser -->
+                <div style="width:20%; border:1px solid #444; overflow-y:auto; color:#ccc; font-size:12px; padding:5px;"
+                    id="file-browser">
+                    <div onclick="loadDir('')" style="cursor:pointer; color:#ffd700;">[ROOT]</div>
+                    <div id="file-list"></div>
+                </div>
+                <!-- Editor Area -->
+                <div style="flex-grow:1; display:flex; flex-direction:column;">
+                    <input type="text" id="editor-filename" placeholder="/path/to/file.php"
+                        style="background:#111; color:#fff; border:1px solid #444; padding:5px; width:100%; font-family:monospace;">
+                    <textarea id="code-area"
+                        style="flex-grow:1; background:#0c0c0c; color:#dcdcdc; border:1px solid #444; font-family:'Consolas', monospace; font-size:14px; padding:10px; outline:none; resize:none;"
+                        spellcheck="false"></textarea>
+                </div>
+            </div>
         </div>
 
         <!-- TERMINAL -->
@@ -900,278 +660,7 @@ foreach ($tests as $t) {
     <!-- NEURAL CANVAS -->
     <canvas id="neural-canvas"></canvas>
 
-    <script>
-        const outputEl = document.getElementById('output');
-        const cmdInput = document.getElementById('cmdInput');
-        const countEl = document.getElementById('live-count');
-
-        // --- CORTEX OS ENGINE (NEURAL INTERFACE) ---
-        class CortexEngine {
-            constructor() {
-                this.canvas = document.getElementById('neural-canvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.nodes = [];
-                this.active = false;
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-            }
-
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-            }
-
-            ignite() {
-                this.active = true;
-                this.canvas.style.opacity = 1;
-                // Generate Nodes
-                this.nodes = [];
-                const nodeCount = 80;
-                for (let i = 0; i < nodeCount; i++) {
-                    this.nodes.push({
-                        x: Math.random() * this.canvas.width,
-                        y: Math.random() * this.canvas.height,
-                        vx: (Math.random() - 0.5) * 1.5,
-                        vy: (Math.random() - 0.5) * 1.5,
-                        size: Math.random() * 3 + 1
-                    });
-                }
-                this.loop();
-            }
-
-            shutdown() {
-                this.active = false;
-                this.canvas.style.opacity = 0;
-            }
-
-            loop() {
-                if (!this.active) return;
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Draw Connections
-                this.ctx.strokeStyle = 'rgba(120, 81, 169, 0.15)'; // Neural Purple
-                this.ctx.lineWidth = 1;
-
-                for (let i = 0; i < this.nodes.length; i++) {
-                    const nodeA = this.nodes[i];
-
-                    // Move
-                    nodeA.x += nodeA.vx;
-                    nodeA.y += nodeA.vy;
-
-                    // Bounce
-                    if (nodeA.x < 0 || nodeA.x > this.canvas.width) nodeA.vx *= -1;
-                    if (nodeA.y < 0 || nodeA.y > this.canvas.height) nodeA.vy *= -1;
-
-                    // Draw Node
-                    this.ctx.beginPath();
-                    this.ctx.arc(nodeA.x, nodeA.y, nodeA.size, 0, Math.PI * 2);
-                    this.ctx.fillStyle = '#FFD700'; // Gold Synapse
-                    this.ctx.fill();
-
-                    // Connect
-                    for (let j = i + 1; j < this.nodes.length; j++) {
-                        const nodeB = this.nodes[j];
-                        const dx = nodeA.x - nodeB.x;
-                        const dy = nodeA.y - nodeB.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-
-                        if (dist < 150) {
-                            this.ctx.beginPath();
-                            this.ctx.moveTo(nodeA.x, nodeA.y);
-                            this.ctx.lineTo(nodeB.x, nodeB.y);
-                            this.ctx.stroke();
-                        }
-                    }
-                }
-
-                requestAnimationFrame(() => this.loop());
-            }
-        }
-
-        const cortex = new CortexEngine();
-        let mode = localStorage.getItem('mcag_ux_mode') || 'hyper';
-
-        function toggleMode() {
-            if (mode === 'hyper') {
-                mode = 'neural';
-                document.body.classList.add('neural-mode');
-                cortex.ignite();
-                log('>>> CORTEX OS INTEGRATION: ACTIVE. SYNAPTIC LINK ESTABLISHED.', 'success');
-            } else {
-                mode = 'hyper';
-                document.body.classList.remove('neural-mode');
-                cortex.shutdown();
-                log('>>> HYPER-GRID RESTORED. LOGIC SYSTEMS ONLINE.', 'info');
-            }
-            localStorage.setItem('mcag_ux_mode', mode);
-        }
-
-        // Init Mode
-        if (mode === 'neural') {
-            document.body.classList.add('neural-mode');
-            setTimeout(() => cortex.ignite(), 100);
-        }
-
-        function log(text, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString();
-            let prefix = `[${timestamp}] `;
-            if (type === 'error') prefix += '[ERR] ';
-            if (type === 'success') prefix += '[OK] ';
-
-            outputEl.innerText += '\n' + prefix + text;
-            document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
-        }
-
-        async function apiCall(action, data = {}) {
-            try {
-                let url = `?action=${action}`;
-                if (action === 'run_test') url += `&file=${data.file}`;
-
-                const opts = { method: 'POST', body: JSON.stringify(data) };
-
-                // DATA-DRIVEN ACTIONS NEED POST
-                const postActions = ['run_cmd', 'ai_chat', 'nmap', 'whois', 'dns'];
-                const usePost = postActions.includes(action);
-
-                const res = await fetch(url, usePost ? opts : undefined);
-                const json = await res.json();
-
-                if (json.data) {
-                    if (action === 'refresh_stats') {
-                        countEl.innerText = json.data.total;
-                        // Only log if changed? Nah excessive logging is cool.
-                        // Actually, let's NOT log stats refresh to keep terminal clean.
-                        return;
-                    }
-                    log(JSON.stringify(json.data, null, 2), 'success');
-                } else if (json.output) {
-                    log(json.output);
-                }
-            } catch (e) {
-                log(e.message, 'error');
-            }
-        }
-
-        // Live Count Update (Poll every 5s)
-        setInterval(() => {
-            apiCall('refresh_stats');
-        }, 5000);
-
-        function runTest(file) {
-            log(`INITIATING TEST MODULE: ${file}...`);
-            apiCall('run_test', { file });
-        }
-
-        function fetchGitStatus() {
-            log('QUERYING GIT REPOSITORY...');
-            apiCall('git_status');
-        }
-
-        function fetchLogs() {
-            log('INTERCEPTING SYSTEM LOGS...');
-            apiCall('read_logs');
-        }
-
-        // --- HYBRID ENGINE: REAL TOOLS + SIMULATION ---
-        function runSim(tool, title) {
-            // LIST OF REAL TOOLS
-            const realTools = ['nmap', 'whois', 'dns'];
-
-            if (realTools.includes(tool)) {
-                const target = prompt(`ENTER TARGET FOR ${title}:`, 'localhost');
-                if (!target) return;
-
-                log(`>>> EXECUTING REAL ${title} TARGETING [${target}]...`, 'info');
-                apiCall(tool, { target: target });
-                return;
-            }
-
-            // FALLBACK TO SIMULATION FOR OTHERS
-            log(`>>> INITIALIZING ${title} (SIMULATION MODE)...`, 'info');
-
-            const steps = [
-                "Loading modules...",
-                "Connecting to local interface...",
-                "Bypassing simulated firewalls...",
-                "Running heuristic analysis...",
-                "Decrypting data streams...",
-                "Compiling report..."
-            ];
-
-            let i = 0;
-            const interval = setInterval(() => {
-                if (i >= steps.length) {
-                    clearInterval(interval);
-                    log(`>>> ${title} COMPLETE. REPORT SAVED TO /VAR/LOGS/SECURE.`, 'success');
-                } else {
-                    // Random hex output for effect
-                    const hex = Math.random().toString(16).substr(2, 8).toUpperCase();
-                    log(`[${hex}] ${steps[i]}`);
-                    i++;
-                }
-            }, 600);
-        }
-
-        function purgeCache() {
-            if (confirm('WARNING: THIS WILL NUKE SYSTEM CACHE. PROCEED?')) {
-                log('INITIATING CACHE PURGE PROTOCOL...');
-                apiCall('purge_cache');
-            }
-        }
-
-        // --- AI MODE LOGIC ---
-        let aiModeActive = false;
-
-        function toggleAiMode() {
-            aiModeActive = !aiModeActive;
-            const btn = document.getElementById('ai-toggle-btn');
-            const promptSpan = document.querySelector('.terminal-input-line span');
-
-            if (aiModeActive) {
-                btn.style.background = 'var(--neon-pink)';
-                btn.style.color = '#000';
-                promptSpan.innerText = 'ai@cortex:~$';
-                promptSpan.style.color = 'var(--neon-pink)';
-                cmdInput.placeholder = "Ask AI (Coding, Auditing, Logic)...";
-                log(">>> AI CO-PILOT ENGAGED. CONNECTION ESTABLISHED.", 'success');
-            } else {
-                btn.style.background = 'transparent';
-                btn.style.color = 'var(--neon-pink)';
-                promptSpan.innerText = 'admin@hypergrid:~$';
-                promptSpan.style.color = 'var(--neon-green)';
-                cmdInput.placeholder = "Enter command...";
-                log(">>> AI DISENGAGED. SHELL MODE ACTIVE.", 'info');
-            }
-        }
-
-        // CMD Input
-        cmdInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = cmdInput.value;
-                if (!cmd) return;
-
-                log(`> ${cmd}`);
-                cmdInput.value = '';
-
-                // AI MODE INTERCEPTION
-                if (aiModeActive) {
-                    log("... PROCESSING QUERY ...", 'info');
-                    apiCall('ai_chat', { prompt: cmd });
-                    return;
-                }
-
-                // Easter Eggs for Commands
-                if (cmd.toLowerCase() === 'help') {
-                    log("AVAILABLE COMMANDS: git_status, purge_cache, nmap <target>, help");
-                    return;
-                }
-
-                apiCall('run_cmd', { cmd });
-            }
-        });
-
-    </script>
+    <script src="../../public/js/debug_console.js"></script>
 </body>
 
 </html>

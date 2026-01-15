@@ -1,0 +1,572 @@
+Comandi PowerShell essenziali: una guida rapida per principianti
+PowerShell è un shell a riga di comando e un linguaggio di scripting per automatizzare l'amministrazione di Windows e gestire sistemi su piattaforme diverse. I principianti dovrebbero padroneggiare cmdlet come Get-Help, Get-ChildItem, Get-Process, Set-Location, New-Item, e Export-Csv. PowerShell supporta pipeline basate su oggetti, alias per l'efficienza, sessioni remote e politiche di esecuzione per la sicurezza. Con la pratica, questi comandi costituiscono le basi per l'automazione, la gestione del sistema e la scrittura di script sicuri.
+
+Introduzione a PowerShell
+Cos'è PowerShell?
+PowerShell è un potente shell a riga di comando che supporta linguaggi di scripting e fornisce strumenti per la gestione delle risorse del computer localmente e da remoto.
+
+Vantaggi di PowerShell per l'amministrazione di Windows
+I comandi di Windows PowerShell consentono l'automazione di compiti ripetitivi come la gestione di utenti, servizi, file o script. PowerShell può anche essere utilizzato per la gestione di sistemi, l'amministrazione remota e l'integrazione di sistemi come Active Directory, Entra ID e Exchange.
+
+Contenuti correlati selezionati:
+[eBook Gratuito] Tutorial di scripting Windows PowerShell per principianti
+Differenze tra PowerShell e Command Prompt
+PowerShell e la riga di comando differiscono in funzionalità, design e capacità. Per scegliere l'opzione giusta per il compito da svolgere, considera quanto segue:
+
+-
+
+Riga di comando
+
+PowerShell
+
+Sintassi del comando
+
+Semplice e limitato a compiti di base
+
+Comandi complessi nel formato verbo-sostantivo
+
+Scripting
+
+Capacità di scripting limitate
+
+Capacità avanzate di scripting
+
+Output
+
+Testo semplice
+
+Possono essere oggetti strutturati come tabelle e liste
+
+Estensibilità
+
+Estensibilità limitata
+
+Altamente estensibile tramite moduli e librerie .Net, cmdlet personalizzati e funzioni
+
+Pipelines
+
+Supporta il piping di testo semplice da un comando all'altro
+
+Supporta il piping di oggetti con proprietà
+
+Componenti chiave dei comandi PowerShell
+Cmdlet di PowerShell: Struttura Verbo-Sostantivo
+I comandi di PowerShell utilizzano una sintassi verbo-sostantivo. La parte del verbo specifica l'azione da eseguire, e la parte del sostantivo del comando definisce l'oggetto su cui verrà eseguita l'azione. Esempi includono Get-process, New-item, Set-Date e Remove-Item.
+
+I verbi comuni includono:
+
+Ottieni: Recupera dati
+Set: Modifica le proprietà di un oggetto
+Aggiungi: Aggiunge un elemento a una collezione
+Stop: Interrompe un processo o servizio
+Avvio: Avvia un processo o un servizio
+Clear: Rimuove tutti gli elementi da una collezione
+Alias di PowerShell: Scorciatoie e Supporto Legacy
+Gli alias sono nomi brevi per cmdlet, funzioni e script. Gli alias vengono utilizzati per l'efficienza nella digitazione e per supportare le versioni precedenti. Puoi vedere tutti gli alias definiti nella sessione PowerShell corrente inserendo il comando Get-Alias.
+
+Ecco alcuni alias comunemente utilizzati:
+
+Ls —Alias per Get-ChildItem
+Gci — un altro alias per Get-ChildItem
+Gc —Alias per Get-Content
+Rm — Alias per Remove-Item
+Cd —Alias per Set-Location
+Cls — Alias per Clear-Host
+Dir — Alias per Get-ChildItem
+Comprensione dei parametri nei comandi PowerShell
+I parametri vengono utilizzati per passare valori o opzioni a comandi, funzioni e script per modificarne le azioni. Per vedere i dettagli sui parametri di un cmdlet, esegui Get-Help.
+
+I tipi di base dei parametri sono i seguenti:
+
+I parametri posizionali vengono passati in un ordine specifico senza nominarli esplicitamente, come mostrato in questo esempio:
+Copy-Item "C:\File1.txt" "D:\Backup\"
+
+I parametri denominati sono specificati con il prefisso – e possono essere forniti in qualsiasi ordine.
+Get-Process -Name "notepad" -Id 1234
+
+I parametri di switch non richiedono un valore perché funzionano come flag booleani: la presenza dello switch abilita una funzione e l'assenza la disabilita.
+Remove-Item "C:\temp\file.txt" -Confirm
+
+I parametri obbligatori devono essere forniti; se ne viene omesso uno, PowerShell richiederà un valore.
+Get-MyProcess -ProcessName "chrome"
+
+Comandi PowerShell essenziali per principianti
+Comandi di base per iniziare
+Uno dei comandi di base di PowerShell con cui familiarizzare è Get-Help, che mostrerà informazioni su un cmdlet che si desidera imparare ad utilizzare. Aggiungendo il parametro -examples verranno forniti anche degli esempi.
+
+Ad esempio, per saperne di più sul cmdlet Get-ChildItem, potresti inserire Get-Help Get-ChildItem oppure Get-Help Get-ChildItem -examples, come illustrato di seguito.
+
+Image
+Un altro cmdlet utile è Get-Command. Ad esempio, digitando Get-Command *Service* verranno elencati tutti i comandi che contengono “Service” nel loro nome.
+
+Image
+Visualizzazione del contenuto del file system
+Questo comando mostra gli elementi nella directory corrente:
+
+Get-ChildItem
+
+E questo mostra gli elementi nella directory Office :
+
+Get-ChildItem D:\Office
+
+Image
+Lavorare con gli oggetti
+Il seguente cmdlet otterrà il processo dell'applicazione Notepad sul computer locale:
+
+Get-Process -Name "notepad"
+
+E questo recupererà i processi che utilizzano più del 10% della RAM:
+
+Get-Process | Where-Object {$_.CPU -gt 10}
+
+Il comando sottostante otterrà ogni istanza di Notepad e interromperà il processo tramite ID.
+
+Get-Process | Where-Object { $_.Name -eq "notepad" } | ForEach-Object { Stop-Process -Id $_.Id }
+
+Image
+Verifica delle Informazioni di Base del Sistema
+Il comando sottostante recupererà i servizi Windows con lo stato di running:
+
+Get-Service | Where-Object { $_.Status -eq 'Running' }
+
+Questo comando recupererà i primi 10 log degli eventi:
+
+Get-EventLog -LogName System -Newest 10
+
+E questo comando otterrà le statistiche dell'adattatore di rete chiamato “Wi-fi”:
+
+Get-NetAdapterStatistics -Name "Wi-fi"
+
+Image
+Comandi PowerShell per la gestione di file e cartelle
+Navigazione delle Directory: Set-Location e Get-ChildItem
+Questo cmdlet imposterà la posizione corrente di PowerShell in D:\Office\Project:
+
+Set-Location -Path "D:\Office\Project"
+
+Per ottenere il contenuto di una directory, utilizza questo comando:
+
+Get-ChildItem, dir, ls
+
+Per mostrare i file e le cartelle nella directory Project, utilizza questo codice:
+
+Get-ChildItem "D:\Office\Project"dir  "D:\Office\Project"
+
+Questo comando elencherà i file nella directory Project:
+
+Get-ChildItem "D:\Office\Project" -file
+
+Questo comando elencherà le cartelle nella directory Project:
+
+dir  "D:\Office\Project" -directory
+
+Image
+Creazione, copia ed eliminazione di file: New-Item, Copy-Item, Remove-Item
+Questo comando creerà il file di testo myfile nella cartella Project:
+
+New-Item -Path "D:\Office \Project\myfile.txt" -ItemType File
+
+Questo comando copierà myfile.txt dalla cartella Project alla cartella startup:
+
+Copy-Item -Path "D:\Office \Project\myfile.txt" -Destination "D:\Office \Project\startup\myfile.txt"
+
+Questo comando eliminerà myfile.txt dalla cartella Project:
+
+Remove-Item -Path "D:\Office \Project\myfile.txt"
+
+Il comando sottostante eliminerà la cartella Project, inclusi tutti i suoi contenuti:
+
+Remove-Item -Path "D:\Office \Project" -Recurse
+
+Controllo del contenuto delle cartelle e ricerca: Get-ChildItem, Select-String
+Questo comando elencherà tutti i file di tipo .txt:
+
+Get-ChildItem -Path "D:\Office\Project" -Filter "*.txt"
+
+Il seguente comando elencherà tutti i file nascosti:
+
+Get-ChildItem -Path "D:\Office\Project" -Hidden
+
+Questo comando cercherà la stringa errore nel file Projectlogs.txt:
+
+Select-String -Path "D:\Office\Project\projectlogs.txt" -Pattern "error"
+
+Image
+Gestione dei sistemi e dei processi
+Gestione dei servizi di sistema: Get-Service, Start-Service, Stop-Service
+Questo comando otterrà tutti i servizi con la stringa SQL nel loro nome:
+
+Get-Service -Name "*SQL*"
+
+Image
+Questo comando otterrà tutti i servizi i cui nomi iniziano con la stringa Windows:
+
+Get-Service -DisplayName "Windows *"
+
+Image
+Utilizza il cmdlet sottostante per ottenere tutti i servizi impostati per avviarsi automaticamente:
+
+Get-Service | Where-Object {$_.StartType -eq "Automatic"}
+
+Image
+Il nome visualizzato di un servizio può differire dal suo effettivo nome di servizio. Assicurati di fornire il nome del servizio con i comandi sottostanti.
+
+Per avviare un servizio, utilizza un comando come questo:
+
+Start-Service -Name "spooler"
+
+Per fermare un servizio, utilizza un comando come questo:
+
+Stop-Service -Name "autotimesvc"
+
+Lavorare con i Processi: Get-Process, Start-Process, Stop-Process
+È possibile ottenere un processo utilizzando il parametro -Name, come mostrato qui:
+
+Get-Process -Name notepad
+
+Il comando sottostante ottiene i processi e li indirizza per ottenere i risultati in una tabella che mostra il loro nome, ID e utilizzo della CPU:
+
+Get-Process | Format-Table Name, Id, CPU -AutoSize
+
+Image
+Questo cmdlet avvierà chrome.exe e aprirà il sito specificato:
+
+Start-Process chrome.exe "https://www.google.com"
+
+Image
+Ecco come avviare Notepad:
+
+Start-Process -FilePath "notepad.exe"
+
+Lo script seguente avvierà il Blocco Note, attenderà per 5 secondi e poi terminerà tutti i processi del Blocco Note:
+
+Start-Process -FilePath "notepad.exe" -PassThruWrite-Host "Notepad started."Start-Sleep -Seconds 5write-host "waiting for 5 seconds"stop-process -name notepadWrite-host "Notepad stopped"
+
+Image
+Per fermare un singolo processo, utilizza un comando come questo:
+
+Stop-Process -Name notepad
+
+Per fermare più processi, elencali come mostrato qui:
+
+Stop-Process -Name notepad, chrome
+
+Accesso e monitoraggio dei log di sistema: Get-EventLog, Get-WinEvent
+Per ottenere le voci del registro eventi, puoi utilizzare il vecchio cmdlet Get-EventLog. Ad esempio, ecco come ottenere le ultime 10 voci di errore dal registro eventi delle applicazioni:
+
+Get-EventLog -LogName Application -EntryType Error -newest 10
+
+Image
+In alternativa, puoi utilizzare il cmdlet più moderno Get-WinEvent. Ecco come ottenere le 10 voci più recenti nel registro applicazioni:
+
+Get-WinEvent -LogName Application -MaxEvents 10
+
+Image
+Comandi per la gestione di dati e contenuti
+Lettura e scrittura di file: Get-Content, Set-Content, Out-File
+Per leggere il contenuto del file myfile.txt nella cartella del Progetto, usa questo comando:
+
+Get-Content -Path "D:\Office\Project\myfile.txt"
+
+Per leggere solo le prime cinque righe, modifica il comando come mostrato qui:
+
+Get-Content -Path "D:\Office\Project\myfile.txt" -TotalCount 5
+
+Image
+Per scrivere del testo nel file myfile.txt, puoi usare il cmdlet Set-Content:
+
+Set-Content -Path "D:\Office\Project\myfile.txt"" -Value "Welcome to PowerShell blog"
+
+In alternativa, potresti usare Add-Content, come questo:
+
+Add-Content -Path "D:\Office\Project\myfile.txt" -Value "Are you new to PowerShell?"
+
+Il cmdlet Out-File invia l'output a un file; è comunemente utilizzato per l'output formattato. Il cmdlet seguente scrive Hello, World! in myfile.txt:
+
+"Hello, World!" | Out-File -FilePath "D:\Office\Project\myfile.txt "
+
+Tutorial di scripting Windows PowerShell (PDF) per principianti
+Scopri di più
+Esportazione e Importazione di Dati: Export-Csv, Import-Csv
+Questo comando otterrà informazioni sul processo notepad per i parametri specificati ed esporterà il tutto nel file processes.csv:
+
+Get-Process -Name notepad | Select-Object Name, Id, CPU | Export-Csv -Path "D:\Office\Project\Processes.csv" -NoTypeInformation
+
+Per importare un file csv, utilizzare Import-Csv. Questo comando importa il file CVS appena creato in un altro cmdlet, che itera sugli oggetti e ottiene il processo dalla colonna Id:
+
+Import-Csv -Path "D:\Office\Project\Processes.csv" | ForEach-Object { Get-Process -Id $_.Id }
+
+Image
+Gestione e conversione dei formati dei dati: ConvertTo-Html, ConvertTo-Json
+Il seguente comando otterrà informazioni su due processi in esecuzione e le convertirà in formato HTML:
+
+Get-Process -Name "notepad" , "chrome" | Select-Object Name, Id, CPU | ConvertTo-Html -Property Name, Id, CPU -Title "Process Report" | Out-File "D:\Office\Project\ProcessReport.html"
+
+Image
+Analogamente, i seguenti comandi esporteranno le informazioni in formato JSON:
+
+Get-Process -Name "notepad" , "chrome"  | Select-Object Name, Id, CPU, StartTime| ConvertTo-Json -Depth 2 | Out-File "D:\Office\Project\Processes.json"
+
+Image
+Gestione di rete e remota
+Verifica della connettività: Test-Connection, Resolve-DnsName
+Il comando Test-Connection invia una richiesta di eco ICMP (ping) all'host remoto definito e verifica se è raggiungibile.
+
+Ad esempio, questo comando tenta di stabilire una connessione con google.com attraverso internet:
+
+Test-Connection -ComputerName google.com
+
+E questo comando verifica la connettività con due host specificati per nome e uno specificato tramite il suo indirizzo IP:
+
+Test-Connection -ComputerName "google.com" , "microsoft.com" , "192.168.0.1"
+
+Per controllare porte TCP specifiche, utilizza il parametro -Port:
+
+Test-NetConnection -ComputerName google.com -Port 443
+
+Image
+Questo comando testerà la risoluzione del nome di un computer per verificare se un computer specifico esiste nella nostra rete:
+
+Resolve-DnsName -Name DC1
+
+Image
+In alternativa, possiamo specificare un dispositivo tramite il suo indirizzo IP:
+
+Resolve-DnsName -Name 192.168.0.108
+
+Image
+Per interrogare un particolare tipo di record, aggiungi il parametro -Type con un valore come A (indirizzo), AAAA (IPv6), CNAME o MX (Mail Exchange).
+
+Lavorare con sessioni remote: Enter-PSSession, Exit-PSSession
+PowerShell può essere utilizzato per gestire host da remoto, a condizione che PowerShell remoting sia abilitato sull'host. Per abilitare PowerShell remoting su un host, eseguire il seguente comando con privilegi amministrativi:
+
+Enable-PSRemoting -Force
+
+Per connettersi all'host remoto, utilizzare il seguente comando:
+
+Enter-PSSession -ComputerName "DC1"
+
+Se non esegui PowerShell in un contesto utente privilegiato, ti verrà richiesto di inserire le credenziali per il contesto utente per la sessione remota.
+
+Dopo aver stabilito una sessione remota di PowerShell, puoi eseguire comandi e script sull'host di destinazione come consentito dai tuoi privilegi su quel server. Ad esempio, eseguendo Get-Process verranno recuperate informazioni dal computer remoto:
+
+Image
+Per uscire dalla sessione, utilizza semplicemente il seguente comando.
+
+Exit-PSSession.
+
+Gestione dei comandi remoti: Invoke-Command, New-PSSession
+Per eseguire un comando in modo non interattivo su un host remoto, utilizzare il cmdlet Invoke-Command. Ad esempio, per ottenere il processo Notepad sull'host di destinazione DC1, eseguire questo cmdlet:
+
+Invoke-Command -ComputerName DC1 -ScriptBlock { Get-Process -Name Notpad }
+
+Se vuoi stabilire una sessione persistente per operazioni ripetute, usa New-PSSession. Ecco come stabilire una nuova sessione PS e memorizzarla in una variabile:
+
+$session = New-PSSession -ComputerName DC1
+
+Quindi, esegui questo comando per accedere alla sessione remota di PowerShell:
+
+Enter-PSSession -Session $session
+
+Dopo ciò, possiamo eseguire comandi sul host di destinazione come se stessimo eseguendo comandi nativamente sul nostro host locale, come mostrato qui:
+
+Get-Process notepad
+
+Image
+Politiche di Sicurezza ed Esecuzione
+PowerShell Execution Policy: Get-ExecutionPolicy, Set-ExecutionPolicy
+La policy di esecuzione di PowerShell aiuta a prevenire l'esecuzione di script non autorizzati o malevoli. Esistono diversi tipi di policy e ambiti di applicazione.
+
+Tipi di Execution Policy
+Riservato — Non è consentita l'esecuzione di script; possono essere eseguiti solo comandi interattivi. Questa è l'impostazione predefinita per le nuove installazioni di Windows.
+AllSigned — Solo gli script firmati da un editore affidabile possono essere eseguiti. Il sistema chiede all'utente di confermare l'editore di uno script, anche se era precedentemente considerato affidabile.
+RemoteSigned — Gli script creati localmente possono essere eseguiti senza firma. Uno script scaricato da internet deve essere firmato da un editore fidato.
+Senza restrizioni — Tutti gli script possono essere eseguiti senza restrizioni. Richiede conferma quando si eseguono script scaricati da Internet.
+Bypass — Nessuna restrizione o avviso; tutti gli script possono essere eseguiti indipendentemente dalla loro origine.
+Indefinito — Nessuna policy di esecuzione è impostata nell'ambito corrente. Il sistema eredita la policy di esecuzione da un ambito più ampio, ad esempio, LocalMachine.
+Ambiti per la Policy di Esecuzione
+CurrentUser — Riguarda l'utente attualmente connesso e persiste per le sessioni future di tale utente.
+LocalMachine — Si applica a tutti gli utenti e sessioni sul computer. Richiede privilegi amministrativi per la modifica.
+Processo — Riguarda solo la sessione PowerShell corrente. Non persiste dopo la fine della sessione.
+Verifica e modifica della Execution Policy
+Per verificare la politica di esecuzione effettiva, digitare questo comando:
+
+Get-ExecutionPolicy
+
+Per impostare la policy di esecuzione, utilizza il comando sottostante, specificando il nome della policy. Se desideri, puoi specificare l'ambito utilizzando il parametro -Scope.
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+
+Image
+Gestione dei permessi e dei ruoli: Get-ACL, Set-ACL
+Una lista di controllo degli accessi (ACL) controlla i permessi degli utenti e dei gruppi su file, cartelle e altri oggetti. I permessi di base dell'ACL sono leggere, scrivere, eseguire, cancellare e modificare.
+
+Per ottenere l'ACL di un file, utilizza il cmdlet Get-ACL e fornisci il percorso del file:
+
+Get-Acl -Path "D:\Office\Project\Processes.csv"
+
+Image
+Per copiare l'ACL di un file e applicarlo a un altro file, seguire i seguenti passaggi:
+
+Ottieni l'ACL del file sorgente e memorizzalo in una variabile:
+$SourcefileACL = Get-Acl -Path "D:\Office\Project\Processes.csv"
+
+Imposta l'ACL memorizzata sul file desiderato:
+Set-ACL -Path "D:\Office\Project\Processes1.json" -AclObject $SourceACL
+
+Per verificare che l'ACL sia stata impostata correttamente, utilizzare il seguente comando:
+
+Get-Acl -Path "D:\Office\Project\Processes1.json"
+
+Image
+Proteggere gli script con certificati: Set-AuthenticodeSignature, ConvertTo-SecureString
+Creazione e applicazione di certificati
+Utilizzare il cmdlet Set-AuthenticodeSignature viene utilizzato per applicare una firma digitale a uno script o a un file. Questa firma assicura agli utenti che lo script proviene da una fonte affidabile e non è stato modificato da quando è stato firmato.
+
+Puoi utilizzare un certificato rilasciato da un'autorità di certificazione (CA) fidata o creare un certificato autofirmato per uso interno. Di seguito è riportato un esempio di creazione di un certificato autofirmato:
+
+New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=MyCert" -CertStoreLocation Cert:\CurrentUser\My
+
+Image
+Individua il certificato nello store dei certificati e salvalo in una variabile per utilizzarlo in seguito per firmare i file:
+
+$cert = Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -like '*MyCert*' }
+
+Quindi usa Set-AuthenticodeSignature per firmare il tuo script:
+
+Set-AuthenticodeSignature -FilePath "C:\Temp\Script.ps1" -Certificate $cert
+
+Dopo la firma, verifica la firma utilizzando questo comando:
+
+Get-AuthenticodeSignature -FilePath "C:\Temp\Script.ps1"
+
+Image
+Convertire i dati in una stringa sicura
+ConvertTo-SecureString crea una stringa sicura per la password o dati sensibili e la memorizza in un file. Ad esempio, puoi convertire una password in chiaro in una stringa sicura utilizzando questo comando:
+
+$securePsw = ConvertTo-SecureString "MyPassword123" -AsPlainText -Force
+
+Quindi puoi salvare la stringa sicura in un file utilizzando questo cmdlet:
+
+$securePsw | ConvertFrom-SecureString | Out-File "D:\Office\Project\EncryptedPassword.txt"
+
+PowerShell per la configurazione del sistema Windows
+Recupero delle Informazioni di Sistema: Get-ComputerInfo, Get-Host, Get-WmiObject
+Get-ComputerInfo
+Questo cmdlet recupera informazioni dettagliate sull'hardware del computer, sul sistema operativo e sulla configurazione:
+
+Get-ComputerInfo
+
+Image
+Per limitare l'output a proprietà specifiche, utilizzare un cmdlet come questo:
+
+Get-ComputerInfo | Select-Object CsName, WindowsVersion, WindowsBuildLabEx, OsArchitecture
+
+Image
+È possibile recuperare informazioni utilizzando il carattere jolly con il parametro -Property, come mostrato di seguito:
+
+Get-ComputerInfo -Property "OS*"
+
+Image
+Get-Host
+Questo cmdlet fornisce informazioni sull'attuale ambiente host di PowerShell, utile per il debug e altri scopi:
+
+Get-Host
+
+Per recuperare proprietà specifiche, utilizza un comando come uno dei seguenti:
+
+(Get-Host).Version(Get-Host).Name
+
+Image
+Get-WmiObject
+Get-WmiObject è un potente cmdlet per interrogare gli oggetti Windows Management Instrumentation (WMI). Fornisce informazioni dettagliate su diversi componenti del sistema e servizi.
+
+Questo cmdlet recupererà le informazioni sul sistema operativo:
+
+Get-WmiObject -Class Win32_OperatingSystem
+
+Image
+E questo recupererà le informazioni del BIOS:
+
+Get-WmiObject -Class Win32_BIOS
+
+Image
+Per recuperare le informazioni del processore, utilizza questo comando:
+
+Get-WmiObject -Class Win32_Processor | Select-Object Name, NumberOfCores, MaxClockSpeed
+
+Image
+Suggerimenti utili per gli utenti di PowerShell
+Utilizzando Get-Help e Get-Command per il Riferimento ai Comandi
+Il comando Get-Help è utile per cercare la sintassi di altri comandi:
+
+Get-Help Get-Process
+
+Image
+Get-Command può essere utilizzato per ottenere comandi, funzioni, alias, script e moduli di PowerShell. Mostra i loro tipi, nome, versione e dettagli della fonte.
+
+Get-Command Get-Process
+
+Image
+Puoi utilizzare i caratteri jolly (*) per esplorare i comandi basati su nomi parziali. Ad esempio, ecco come visualizzare tutti i cmdlet e le funzioni con Service nei loro nomi:
+
+Get-Command *Service*
+
+Image
+Esplorare le proprietà degli oggetti con Get-Member
+Il comando Get-Member è utilizzato principalmente per comprendere la struttura e le capacità degli oggetti esplorando le loro proprietà e metodi. Ad esempio, il seguente comando elencherà tutte le proprietà del comando Get-Date:
+
+Get-Date | Get-Member -MemberType property
+
+Image
+Creazione di alias e funzioni personalizzati per l'efficienza
+Puoi creare nuovi alias e funzioni per rendere PowerShell più facile da usare e automatizzare compiti frequenti. Ad esempio, il seguente comando creerà l'alias p per il comando Get-process:
+
+New-Alias -Name p -Value Get-Process
+
+Image
+Le funzioni ti permettono di raggruppare più comandi in un blocco riutilizzabile. Lo script sottostante crea una semplice funzione per elencare e contare i file in una directory:
+
+function ListAndCountFiles {    param (        [string]$directory    )    Get-ChildItem -Path $directory    $fileCount = (Get-ChildItem -Path $directory).Count    Write-Host "Total files in $($directory): $fileCount"}
+
+Per utilizzare questa funzione in seguito, usa semplicemente questo comando:
+
+ListAndCountFiles -directory "C:\Temp"
+
+Image
+Conclusione
+La pratica diretta è essenziale per acquisire competenze in PowerShell. Per iniziare, usa Get-Help per vedere i dettagli sugli altri cmdlet, naviga nel tuo file system usando Get-ChildItem e Set-Location, e recupera informazioni sul sistema utilizzando Get-ComputerInfo, Get-Host e Get-WmiObject. Quindi passa a compiti più avanzati come manipolare dati, firmare script, avviare e fermare servizi e gestire oggetti. Se hai bisogno di gestire host in remoto, assicurati di rivedere il materiale sulle politiche di esecuzione remota e le sessioni.
+
+Assicurati di scaricare o aggiungere ai segnalibri questo blog in modo da poter rivedere rapidamente i cmdlet di cui hai bisogno per utilizzare PowerShell efficacemente.
+
+Netwrix Directory Manager
+Richiedi una demo
+FAQ
+Quanti comandi PowerShell ci sono?
+Il numero di comandi PowerShell disponibili dipende dalla versione di PowerShell e dai moduli che hai installato. Per ottenere il numero totale dei comandi, utilizza il seguente comando:
+
+Get-Command | Measure-Object
+
+Quali comandi vengono utilizzati in PowerShell?
+I comandi PowerShell offrono una vasta gamma di funzionalità, come la gestione dei dati, la gestione di file e cartelle e l'amministrazione del sistema. Alcuni comandi importanti includono Get-Help, Get-ChildItem, Set-Location, Get-Process e Export-Csv.
+
+Come ottengo un elenco dei comandi di PowerShell?
+Per vedere tutti i comandi disponibili, esegui questo cmdlet:
+
+Get-Command
+
+Quali cose interessanti puoi fare con PowerShell?
+PowerShell consente agli utenti di automatizzare compiti ripetitivi, gestire server da remoto, lavorare con servizi web e API, analizzare le risorse di sistema e gestire risorse cloud.
+
+Come si usa Windows PowerShell?
+Per avviare PowerShell dal menu Start di Windows, inserisci semplicemente il comando PowerShell.
+
+Cosa sono PowerShell e i comandi di base?
+PowerShell è un interprete a riga di comando e un linguaggio di scripting. Alcuni comandi di base includono:
+
+Get-Help
+Get-Service
+Imposta-posizione
+New-Item
+Cos'è PowerShell per principianti?
+PowerShell può essere divertente per i principianti. La sua struttura verbo-sostantivo è facile da usare. Con dedizione e strumenti come questo blog, si può facilmente padroneggiare compiti di base e diventare un praticante intermedio o avanzato in poche settimane.
