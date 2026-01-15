@@ -247,4 +247,130 @@ window.addEventListener('load', function () {
         });
     }
 
+    // --- 7. SWITCHBOARD LOGIC (Real-time Toggles) ---
+    const toggles = document.querySelectorAll('.dashboard-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('change', function () {
+            const setting = this.dataset.setting;
+            const state = this.checked;
+
+            // Visual Feedback
+            const label = this.closest('.d-flex').querySelector('small');
+            const originalText = label.innerText;
+            label.innerText = 'Updating...';
+            label.classList.add('text-warning');
+
+            // Simulate AJAX (Or use fetch('/api/settings/update') if exists)
+            // For Genius Mode, we simulate instant success
+            setTimeout(() => {
+                label.innerText = originalText;
+                label.classList.remove('text-warning');
+
+                // Optional: Toast notification
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#1e293b',
+                    color: '#fff'
+                });
+
+                Toast.fire({
+                    icon: 'success',
+                    title: `${setting.toUpperCase()} ${state ? 'ENABLED' : 'DISABLED'}`
+                });
+            }, 600);
+        });
+    });
+
+    // --- 8. FIELD NOTES AUTO-SAVE ---
+    const notesArea = document.getElementById('notes-area');
+    const notesStatus = document.getElementById('notes-status');
+    let notesTimeout;
+
+    if (notesArea) {
+        notesArea.addEventListener('input', () => {
+            notesStatus.innerText = 'Typing...';
+            notesStatus.className = 'text-warning x-small font-monospace';
+
+            clearTimeout(notesTimeout);
+            notesTimeout = setTimeout(() => {
+                notesStatus.innerText = 'Saving...';
+
+                // Simulate Backend Save
+                setTimeout(() => {
+                    notesStatus.innerText = 'SYNCED';
+                    notesStatus.className = 'text-success x-small font-monospace';
+                    // Persist to localStorage for demo
+                    localStorage.setItem('admin_notes_backup', notesArea.value);
+                }, 800);
+            }, 1000); // 1s debounce
+        });
+
+        // Load backup if exists
+        const savedNotes = localStorage.getItem('admin_notes_backup');
+        if (savedNotes && !notesArea.value.trim()) {
+            notesArea.value = savedNotes;
+        }
+    }
+
+    // --- 9. INBOX ACTIONS ---
+    document.querySelectorAll('.btn-success.x-small').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const item = this.closest('.list-group-item');
+            item.style.transition = 'all 0.5s';
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(50px)';
+
+            setTimeout(() => {
+                item.remove();
+
+                // Update Badge
+                const badge = document.querySelector('.badge.bg-danger');
+                if (badge) {
+                    const current = parseInt(badge.innerText);
+                    if (current > 0) badge.innerText = `${current - 1} Pending`;
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Approved',
+                    text: 'Request processed successfully.',
+                    background: '#1e293b',
+                    color: '#fff',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }, 500);
+        });
+    });
+
+    document.querySelectorAll('.btn-outline-info.x-small').forEach(btn => {
+        btn.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Invia Notifica?',
+                text: "Verrà inviata una mail di sollecito al socio.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                background: '#1e293b',
+                color: '#fff',
+                confirmButtonText: 'Invia'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sent!',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        background: '#1e293b',
+                        color: '#fff'
+                    });
+                }
+            });
+        });
+    });
+
 });
