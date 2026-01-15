@@ -666,6 +666,11 @@ ksort($grouped);
             transform: translateY(0);
         }
 
+        #console-drawer.maximized {
+            height: 100% !important;
+            transform: translateY(0);
+        }
+
         .drawer-handle-bar {
             height: 32px;
             background: var(--ent-bg-panel);
@@ -921,10 +926,9 @@ ksort($grouped);
         <div class="drawer-handle-bar" id="console-handle">
             <div class="handle-pill"></div>
             <div class="console-controls">
-                <button class="ent-btn-icon" onclick="clearLog()" style="border:none; height:24px; width:24px;"><i
-                        class="fa-solid fa-eraser"></i></button>
-                <button class="ent-btn-icon" onclick="toggleConsole()" style="border:none; height:24px; width:24px;"><i
-                        class="fa-solid fa-chevron-down"></i></button>
+                <button class="ent-btn-icon" onclick="clearLog()" style="border:none; height:24px; width:24px;" title="Clear"><i class="fa-solid fa-eraser"></i></button>
+                <button class="ent-btn-icon" onclick="toggleMaximize()" style="border:none; height:24px; width:24px;" title="Maximize"><i class="fa-solid fa-expand" id="icon-max"></i></button>
+                <button class="ent-btn-icon" onclick="toggleConsole()" style="border:none; height:24px; width:24px;" title="Close"><i class="fa-solid fa-chevron-down"></i></button>
             </div>
         </div>
         <div id="console-content">
@@ -976,22 +980,10 @@ ksort($grouped);
         </div>
     </div>
 
-    <!-- OUTPUT MODAL (Restored) -->
-    <div class="modal-overlay" id="outputModal" style="display: none; z-index: 2000;">
-        <div class="ent-modal" style="max-width: 900px; height: 80vh; display: flex; flex-direction: column; border: 1px solid var(--ent-border);">
-            <div class="ent-modal-header">
-                <div class="ent-card-title"><i class="fa-solid fa-terminal"></i> Execution Output</div>
-                <button class="ent-btn-icon" onclick="closeOutputModal()"><i class="fa-solid fa-times"></i></button>
-            </div>
-            <div class="ent-modal-body" style="flex: 1; overflow: auto; background: #0f172a; color: #e2e8f0; font-family: 'JetBrains Mono', monospace; padding: 0;">
-                <pre id="termOutput" style="margin: 0; padding: 1rem; white-space: pre-wrap; font-size: 0.9rem;"></pre>
-            </div>
-        </div>
-    </div>
-
     <script>
         function closeOutputModal() {
-            document.getElementById('outputModal').style.display = 'none';
+            // Function retained for compatibility if called, but does nothing or logs warning
+            // document.getElementById('outputModal').style.display = 'none';
         }
     </script>
 

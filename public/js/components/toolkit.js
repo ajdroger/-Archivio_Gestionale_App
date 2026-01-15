@@ -190,23 +190,22 @@ function logSystem(msg) {
 }
 
 // --- RUNNER FUNCTIONS ---
+// --- RUNNER FUNCTIONS ---
 window.runTest = function (relPath) {
-    if (config.autoClear) {
-        document.getElementById('console-content').innerHTML = '';
-        document.getElementById('termOutput').innerHTML = '';
-    }
-
-    // Open Console if closed
+    // 1. Prepare Console
     const drawer = document.getElementById('console-drawer');
     if (!drawer.classList.contains('open')) {
         drawer.classList.add('open');
     }
 
-    appendConsoleOutput(`Executing: <span style="color:var(--ent-accent-amber)">${relPath}</span>...`);
+    // Auto-clear if config set
+    if (config.autoClear) {
+        document.getElementById('console-content').innerHTML = '';
+        appendConsoleOutput(`<span style="color:var(--ent-text-muted)">// Console cleared automatically</span>`);
+    }
 
-    // Open Detailed Modal
-    const modal = document.getElementById('outputModal');
-    modal.style.display = 'block';
+    appendConsoleOutput(`Executing: <span style="color:var(--ent-accent-amber)">${relPath}</span>...`);
+    appendConsoleOutput(`<span class="text-muted">...running...</span>`);
 
     let url = `test_dashboard.php?action=run_test&file=${encodeURIComponent(relPath)}`;
     if (config.verbose) url += '&verbose=true';
@@ -214,42 +213,75 @@ window.runTest = function (relPath) {
     fetch(url)
         .then(r => r.text())
         .then(text => {
-            // Put in Modal
-            document.getElementById('termOutput').innerHTML = ansiToHtml(text);
+            // Remove "...running" placeholder if possible (or just append)
 
-            // Console Summary
+            // Append formatted output
+            appendConsoleOutput(ansiToHtml(text));
+
+            // Summary Line
             if (text.includes('FAIL') || text.includes('Error')) {
-                appendConsoleOutput(`Result: <span style="color:#ef4444; font-weight:bold;">FAILED</span>`, 'error');
+                appendConsoleOutput(`\n<span style="color:#ef4444; font-weight:bold;">[EXIT STATUS] FAILED</span>`, 'error');
             } else {
-                appendConsoleOutput(`Result: <span style="color:#10b981; font-weight:bold;">PASSED</span>`);
+                appendConsoleOutput(`\n<span style="color:#10b981; font-weight:bold;">[EXIT STATUS] PASSED</span>`);
             }
         })
         .catch(e => {
-            document.getElementById('termOutput').innerHTML = `CRITICAL ERROR:\n${e}`;
-            appendConsoleOutput(`Network Error during execution.`, 'error');
+            appendConsoleOutput(`CRITICAL ERROR:\n${e}`, 'error');
         });
 }
 
 window.runAll = function () {
     if (!confirm("Execute FULL SUITE? This is intensive.")) return;
-    runTest('bin/debug_tools/safe_test_runner.php'); // Assuming this exists or map to a meta-runner
+    runTest('bin/debug_tools/safe_test_runner.php');
 }
 
 window.clearLog = function () {
     document.getElementById('console-content').innerHTML = '';
+    appendConsoleOutput("// Console cleared.");
 }
 
-window.closeModal = function () {
-    document.getElementById('outputModal').style.display = 'none';
+window.toggleConsole = function () {
+    const drawer = document.getElementById('console-drawer');
+    drawer.classList.toggle('open');
+    // Also reset maximize if closing
+    if (!drawer.classList.contains('open')) {
+        drawer.classList.remove('maximized');
+        const icon = document.getElementById('icon-max');
+        if (icon) icon.className = 'fa-solid fa-expand';
+    }
+}
+
+window.toggleMaximize = function () {
+    const drawer = document.getElementById('console-drawer');
+    drawer.classList.toggle('maximized');
+
+    // Update Icon
+    const icon = document.getElementById('icon-max');
+    if (icon) {
+        if (drawer.classList.contains('maximized')) {
+            icon.className = 'fa-solid fa-compress';
+        } else {
+            icon.className = 'fa-solid fa-expand';
+        }
+    }
+
+    // Ensure it is marked as open
+    if (!drawer.classList.contains('open')) {
+        drawer.classList.add('open');
+    }
 }
 
 // Helper: ANSI to HTML (Basic)
 function ansiToHtml(text) {
     return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
         .replace(/\n/g, '<br>')
         .replace(/\[32m/g, '<span style="color:#10b981">') // Green
         .replace(/\[31m/g, '<span style="color:#ef4444">') // Red
         .replace(/\[33m/g, '<span style="color:#f59e0b">') // Yellow
+        .replace(/\[36m/g, '<span style="color:#3b82f6">') // Blue/Cyan
         .replace(/\[0m/g, '</span>')
         .replace(/\[1m/g, '<span style="font-weight:bold">');
 }
