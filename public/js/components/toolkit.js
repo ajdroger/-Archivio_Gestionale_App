@@ -201,7 +201,6 @@ function logSystem(msg) {
 }
 
 // --- RUNNER FUNCTIONS ---
-// --- RUNNER FUNCTIONS ---
 window.runTest = function (relPath) {
     // 1. Prepare Console
     const drawer = document.getElementById('console-drawer');
@@ -209,11 +208,9 @@ window.runTest = function (relPath) {
         drawer.classList.add('open');
     }
 
-    // Auto-clear if config set
-    if (config.autoClear) {
-        document.getElementById('console-content').innerHTML = '';
-        appendConsoleOutput(`<span style="color:var(--ent-text-muted)">// Console cleared automatically</span>`);
-    }
+    // History Persistence Enforced: We do NOT clear automatically anymore.
+    // Separator line for clarity
+    appendConsoleOutput(`<div style="margin-top:10px; border-top:1px dashed #333; width:100%;"></div>`);
 
     appendConsoleOutput(`Executing: <span style="color:var(--ent-accent-amber)">${relPath}</span>...`);
     appendConsoleOutput(`<span class="text-muted">...running...</span>`);
