@@ -230,7 +230,7 @@ function getBinScripts($ignoredDir = null)
                     continue;
 
                 $ext = $file->getExtension();
-                if (!in_array($ext, ['php', 'ps1', 'sh', 'bat']))
+                if (!in_array($ext, ['php', 'ps1', 'sh', 'bat', 'cmd', 'py', 'java', 'js', 'ts', 'go', 'rb']))
                     continue;
 
                 $path = str_replace('\\', '/', $file->getRealPath());
@@ -265,7 +265,7 @@ function getBinScripts($ignoredDir = null)
             }
         } catch (Exception $e) {
             // Fallback for this dir
-            $fallback = glob($dir . '/*.php');
+            $fallback = glob($dir . '/*.{php,py,js,sh,bat,cmd,ps1}', GLOB_BRACE);
             if ($fallback) {
                 foreach ($fallback as $f) {
                     if (str_contains($f, 'test_dashboard.php'))
@@ -852,30 +852,36 @@ ksort($grouped);
     <main class="ent-grid">
 
         <!-- Automation Scripts Panel -->
-        <?php if (!empty($binScripts)): ?>
-            <div class="ent-card" style="border-top: 3px solid var(--ent-accent-amber);">
-                <div class="ent-card-header">
-                    <div class="ent-card-title">
-                        <i class="fa-solid fa-bolt text-warning"></i> Scripts
-                    </div>
-                    <button class="ent-btn-icon" onclick="runAll()" title="Run All"><i
-                            class="fa-solid fa-play"></i></button>
+        <div class="ent-card" style="border-top: 3px solid var(--ent-accent-amber);">
+            <div class="ent-card-header">
+                <div class="ent-card-title">
+                    <i class="fa-solid fa-bolt text-warning"></i> Scripts
                 </div>
-                <div class="ent-card-body">
+                <button class="ent-btn-icon" onclick="runAll()" title="Run All"><i
+                        class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="ent-card-body">
+                <?php if (empty($binScripts)): ?>
+                    <div style="padding:16px; color:var(--ent-text-muted); text-align:center;">
+                        No automation scripts found.<br>
+                        <small>Scanned: bin/, src/Debug/</small>
+                    </div>
+                <?php else: ?>
                     <?php foreach ($binScripts as $script): ?>
                         <div class="ent-list-item">
                             <div>
                                 <div class="ent-item-name"><?php echo $script['name']; ?></div>
-                                <div style="font-size: 0.7rem; color: var(--ent-text-muted);"><?php echo $script['last_mod']; ?>
-                                    • <?php echo $script['type']; ?></div>
+                                <div style="font-size: 0.7rem; color: var(--ent-text-muted);">
+                                    <?php echo $script['last_mod']; ?> • <?php echo $script['type']; ?>
+                                </div>
                             </div>
                             <button class="ent-btn-icon" onclick="runTest('<?php echo $script['rel_path']; ?>')"><i
                                     class="fa-solid fa-caret-right"></i></button>
                         </div>
                     <?php endforeach; ?>
-                </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+        </div>
 
         <!-- Test Suites Loop -->
         <?php foreach ($grouped as $cat => $tests): ?>
