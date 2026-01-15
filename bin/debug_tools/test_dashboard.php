@@ -940,6 +940,7 @@ ksort($grouped);
 
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settings-modal">
+        <!-- ... existing settings modal ... -->
         <div class="ent-modal">
             <div class="ent-modal-header">
                 <div class="ent-card-title"><i class="fa-solid fa-sliders"></i> Configuration</div>
@@ -974,6 +975,25 @@ ksort($grouped);
             </div>
         </div>
     </div>
+
+    <!-- OUTPUT MODAL (Restored) -->
+    <div class="modal-overlay" id="outputModal" style="display: none; z-index: 2000;">
+        <div class="ent-modal" style="max-width: 900px; height: 80vh; display: flex; flex-direction: column; border: 1px solid var(--ent-border);">
+            <div class="ent-modal-header">
+                <div class="ent-card-title"><i class="fa-solid fa-terminal"></i> Execution Output</div>
+                <button class="ent-btn-icon" onclick="closeOutputModal()"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="ent-modal-body" style="flex: 1; overflow: auto; background: #0f172a; color: #e2e8f0; font-family: 'JetBrains Mono', monospace; padding: 0;">
+                <pre id="termOutput" style="margin: 0; padding: 1rem; white-space: pre-wrap; font-size: 0.9rem;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function closeOutputModal() {
+            document.getElementById('outputModal').style.display = 'none';
+        }
+    </script>
 
     <!-- Scripts (Bootstrap for util if needed, Custom Logic) -->
     <script src="../../public/js/components/toolkit.js?v=<?php echo time(); ?>"></script>
