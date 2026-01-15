@@ -3,12 +3,15 @@
 use MCAG\Controller\Intelligence\StatsDashboardController;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Factory\ResponseFactory;
-use Mustache_Engine;
+
 
 class FinancialIntelTest extends \PHPUnit\Framework\TestCase
 {
     private $controller;
     private $mustache;
+    private $repo;
+    private $monitor;
+    private $health;
 
     protected function setUp(): void
     {
