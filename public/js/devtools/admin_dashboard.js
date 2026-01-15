@@ -1,10 +1,10 @@
 /**
  * @file admin_dashboard.js
- * @description MISSION CONTROL VISUALIZATION ENGINE - v5.4.2
+ * @description MISSION CONTROL VISUALIZATION ENGINE - v7.4.0
  * Orchestrates Real-time Charts, System Pulse Monitoring, and GodMode Protocols.
  * 
  * @author Soobadur Mohammad Ajmeer
- * @version 5.4.2
+ * @version 7.4.0
  */
 
 window.addEventListener('load', function () {

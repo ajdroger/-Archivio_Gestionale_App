@@ -14,46 +14,67 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 ## [Unreleased]
 
 ## [v7.4.0-operational-command] - 2026-01-15 "**Operational Command**"
-### Stable Release
-- **Global Access Upgrade**: Estensione permessi operativi (`real_is_admin`) ai ruoli `Segreteria`, `Segreteria Soci` e `Direttore Associazione`.
-- **Contextual Workflows**: Popolamento dinamico della "Tendina Utente" con azioni rapide ("Nuovo Socio", "Quote Scadute") in base al ruolo.
-- **Dashboard Enhancement**: Nuovo widget "Nuova Iscrizione" nella Dashboard User per accesso immediato.
-- **UX Fixes**: Ripristino scroll navigation e fix pulsante login (`v2`).
-- **Layout Integrity**: Correzione frammentazione `socio_detail`.
+### Core Evolution: AI & Shell
+- **AI Coding Core**: Connettore Ollama locale (deepseek-coder/llama3) per assistenza coding offline.
+- **Universal Shell**: Backend `run_cmd` potenziato per supportare nativamente PowerShell (Windows) e Python, oltre a Bash.
+- **Omni-Editor**: Editor modale visuale con supporto multi-lingua (.php, .js, .css), drag & drop e creazione file.
+- **Surgical Refactoring**: Separazione modulare degli asset della Debug Console (`debug_console.css/js`) per massima pulizia.
+
+### Hotfix Massivo: Socio Profile & Security (Fix 1-19)
+1. **Vault UI Fix**: Risolto clash layout nel footer del "Vault Documenti" e allineamento form upload.
+2. **Scroll Lock**: Implementato `max-height: 550px` e scroll interno per prevenire overflow pagina.
+3. **Card Rendering**: Forzata altezza minima (750px) per layout consistente.
+4. **Routing**: Abilitato link `/modifica` con redirect intelligente.
+5. **Asset Types**: Aggiunte proprietà `TipoDocumento` estese.
+6. **Accessibility**: Badge ad alto contrasto per i documenti.
+7. **Pro Vault**: Categorie professionali (Legal, Financial, Career) per classificazione documenti.
+8. **Login Button**: Risolto problema `z-index` e `pointer-events` che rendeva il login incliccabile.
+9. **CSRF Bypass**: Iniezione token e BaseURL mancanti nel login form v2.
+10. **Form Action**: Semplificazione action a percorso relativo per prevenire errori template.
+11. **Route Parser**: Reintrodotta logica robusta di parsing rotte nel Controller.
+12. **Debug Mode**: Marker visivo "ACCEDI (FIX)" per diagnosi cache immediata.
+13. **Cache Busting**: Rinomina template a `login_v2` per invalidazione forzata cache server.
+14. **HTML Integrity**: Chiusura tag mancanti (`layout_footer`) in `socio_detail`.
+15. **Admin Visibility**: Corretta discrepanza `is_admin` vs `real_is_admin`.
+16. **Role Access**: Estesi privilegi operativi al ruolo `Segreteria` e `Direttore`.
+17. **Full Management**: Accesso completo in lettura/scrittura per la Segreteria Soci.
+18. **Contextual Workflows**: Menu utente intelligente popolato in base al ruolo (Azioni Rapide).
+19. **Visual Assurance**: Verifica scroll navigation e nuove card Dashboard User.
 
 ## [v7.3.0-parrot-arsenal] - 2026-01-15 "**Parrot Arsenal**"
-### New Features
-- **Legacy of the Hacker**: Integrated "Parrot OS" style menu system in Toolkit.
-- **Real Networking Tools**: Embedded PHP implementations of `Nmap`, `Whois`, and `DNS Enum`.
-- **Hybrid Simulation**: "Heavy" tools (Metasploit, etc.) use a realistic terminal simulation engine.
-- **Cyber-Warfare UI**: Multi-level dropdowns with categorization (Recon, Vuln, Exploit, Forensics).
+### Security Suite
+- **Legacy of the Hacker**: Interfaccia menu multilivello ispirata a Parrot OS.
+- **Real Networking Tools**:
+    - **Port Scanner**: Implementazione nativa PHP (Socket API) senza nmap.
+    - **Whois Client**: Query TCP raw dirette ai server registrar.
+    - **DNS Enum**: Risoluzione record avanzata.
+- **Hybrid Simulation**: Engine di simulazione per tool non sicuri in ambiente web (Metasploit, SQLMap) per training.
+- **Cyber-Warfare UI**: Layout categorizzato (Recon, Vuln, Exploit, Forensics).
 
 ## [v7.2.0-god-mode] - 2026-01-15 "**God Mode**"
-### UX Revolution
-- **Neural Interface (Cortex OS)**: A radical new UX mode for the Toolkit.
-- **Dual-Core UI Engine**: Toggle between "Hyper-Grid" (Industrial/Tech) and "Neural" (Organic/Living).
-- **Synaptic Web Background**: Real-time particle network visualization on HTML5 Canvas.
-- **Living UI**: Breathing elements, organic shapes, and fluid transitions.
+### Neural Interface UX
+- **Dual-Core UI Engine**: Switch on-the-fly tra modalità "Hyper-Grid" (Tecnica) e "Neural" (Organica).
+- **Synaptic Web**: Sfondo interattivo (Canvas) con rete neurale che reagisce al mouse.
+- **Living UI**: Elementi dell'interfaccia con animazioni "breathing" e transizioni fluide.
+- **Omni-Search**: Barra di ricerca olografica fluttuante.
 
 ## [v7.1.0-hypergrid] - 2026-01-15 "**Hyper-Grid**"
-### Added
-- **Quantum Engineering Deck**: Complete overhaul of the Toolkit UI.
-- **Precise Test Counting**: Recursive regex scanning for accurate metrics.
-- **Live Stats**: Autosync every 5 seconds.
+### Toolkit Revolution
+- **Quantum Engineering Deck**: Layout a griglia reattiva modulare per il Toolkit.
+- **Recursive Metrics**: Conteggio preciso dei test tramite scansione regex ricorsiva su filesystem.
+- **Lazy Loading**: Caricamento asincrono dei pannelli per performance istantanee.
+- **Persistent Console**: Terminale sempre attivo in background.
 
-### Pianificato
-- Redis-based caching per query frequenti
-- API versioning esplicito (`/api/v1/`)
-- Background jobs system con queue
-- Monitoring con Prometheus + Grafana
-
-## [6.0.0-genius] - 2026-01-15 "**Genius Mode**"
-### Holographic Overhaul
-- **Dashboard UI**: Completa riscrittura in stile "Mission Control" con overlay olografico.
-- **Widgets**: Switchboard Operativa, Workflow Inbox, Field Notes integrati nel nuovo design.
-- **Live Data**: Ticker finanziario scorrevole, Neural Uplink Log, Threat Map (Placeholder).
-- **Interattività**: Command Palette (Ctrl+K), Voice Log Visualizer.
-- **Privacy**: Rimozione totale dipendenze CDN esterne per asset critici.
+## [v6.0.0-genius] - 2026-01-15 "**Genius Mode**"
+### Holographic Dashboard
+- **Mission Control UI**: Completo restyling olografico con effetti neon/glass.
+- **Live Widgets**:
+    - **DEFCON Selector**: Cambio stato globale sistema.
+    - **Threat Map**: Visualizzazione geo-localizzata minacce (Canvas).
+    - **Financial Ticker**: Dati di borsa simulati in scorrimento.
+    - **Neural Uplink**: Visualizzatore log connessioni neurali.
+- **Switchboard**: Toggle fisici per manutenzione e accessi.
+- **Privacy Core**: Rimozione totale dipendenze esterne.
 
 ## [5.7.1] - 2026-01-15 "**Dossier Polish**"
 ### Migliorato
@@ -322,62 +343,38 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Git Workflow**: Branch di test perenni.
 - **Documentazione**: Refactoring guide.
 
-## [2.4.4] - 2026-01-10 - Enterprise Perfection
+## [2.4.4] - 2026-01-10 - "**Enterprise Perfection & Strict Workflow**"
 ### Aggiunto
 - **DevTools Ultimate v4.0**: Aggiornamento massivo della dashboard per sviluppatori con focus su stabilità e features "Mission-Critical".
-    - **Pro Terminal**: Nuova sezione integrata *in-page* (bottom dashboard) per evitare shift del layout, con altezza fissa e supporto completo (Web Shell).
-    - **Security Center**: Nuova gestione utenti avanzata con calcolo "Security Score" in tempo reale, gestione 2FA, badge di ruolo e azioni rapide (Reset, Delete, Rotate 2FA).
-    - **Audit Logs**: Visualizzazione avanzata dei log con filtri per IP, Utente e Componente.
-    - **Design Premium**: Integrazione completa del design system "Glassmorphism" con animazioni CSS, effetti glow e tipografia monospaziata ad alto contrasto.
-- **Legal Kit Enterprise**: EULA, SLA Maintenance, GDPR DPA (Documentazione/Legal/).
-- **Commercial Landing**: Pagina vendita `public/landing.html`.
-- **Valuation**: Certificazione Platinum (97.5/100).
-- **Backend API**: Nuovi endpoint sicuri per la gestione del terminale (`/devtools/terminal`) e della sicurezza (`/devtools/security/*`).
-- **Feature Tests**: Suite di test completa (`tests/Feature/DevToolsV4Test.php`) per garantire la stabilità delle nuove funzioni.
+    - **Pro Terminal**: Nuova sezione integrata *in-page* (bottom dashboard).
+    - **Security Center**: Nuova gestione utenti avanzata con calcolo "Security Score".
+    - **Audit Logs**: Visualizzazione avanzata dei log.
+    - **Design Premium**: Integrazione completa del design system "Glassmorphism".
+- **Quality Gate**: Branch `feature/tests` obbligatorio per certificazione 100% green.
+- **PaidServicePlaceholder**: Implementazione completa logica servizi a pagamento.
+- **InputSanitizer**: Logica completa di sanitizzazione HTMLPurifier.
+- **Legal Kit Enterprise**: EULA, SLA Maintenance, GDPR DPA.
+- **Backend API**: Nuovi endpoint sicuri per DevTools.
+- **Feature Tests**: Suite completa `DevToolsV4Test.php`.
 
 ### Modificato
-- **DevTools Dashboard**: Refactoring "Additive-Only" del template `devtools.mustache` per mantenere la compatibilità v3.1 aggiungendo tab modulari.
-- **CSS Framework**: Estensione di `devtools.css` con classi di utilità per il terminale e layout flessibili.
+- **DevTools Dashboard**: Refactoring "Additive-Only" del template `devtools.mustache`.
+- **Git Workflow**: Adozione modello "Sacred Main".
+- **CI/CD Configuration**: Standardizzazione tag Actions (`v4`, `v2`).
 
 ### Risolto
-- Risolto conflitto footer doppio nella pagina statistiche (v3.1 regression).
-- Ripristinata stabilità operativa dopo il revert della v2.5.
-
-## [2.4.4] - 2026-01-10 - Enterprise Perfection & Strict Workflow
-
-### Aggiunto
-- **Quality Gate**: Branch `feature/tests` obbligatorio per certificazione 100% green (167 test)
-- **PaidServicePlaceholder**: Implementazione completa logica servizi a pagamento (no stubs)
-- **InputSanitizer**: Logica completa di sanitizzazione HTMLPurifier nel middleware
-
-### Modificato
-- **Git Workflow**: Adozione modello "Sacred Main" con branch feature preservati
-- **CI/CD Configuration**: Standardizzazione tag Actions (`v4`, `v2`) per massima compatibilità IDE
-- **Release Protocol**: Processo di rilascio rigoroso (Merge -> Test -> Release -> Tag)
-
-### Risolto
-- **CI/CD Lints**: Rimozione falsi positivi su risoluzione actions Git
-- **Code Gaps**: Eliminati tutti i placeholder vuoti e TODO critici
+- **CI/CD Lints**: Rimozione falsi positivi.
+- **Code Gaps**: Eliminati placeholder vuoti.
+- Risolto conflitto footer doppio in statistiche.
 
 ### Sicurezza
-- **Verification Gate**: Nessun codice raggiunge `develop` senza passare il gate `feature/tests`
+- **Verification Gate**: Nessun codice raggiunge `develop` senza passare il gate.
+
 
 ---
 
----
 
 
-- **EventiController**: Controller dedicato per la logica degli eventi.
-- **EventiRepository**: Repository per l'accesso ai dati degli eventi.
-- **Validazione Eventi**: Regole di validazione per i campi degli eventi (data, ora, descrizione).
-- **Test Eventi**: `EventiTest.php` per coprire le funzionalità CRUD degli eventi.
-
-### Modificato
-- **Database Schema**: Aggiunta tabella `events` e `event_registrations`.
-- **Routing**: Aggiunte nuove route per il modulo eventi.
-
-### Risolto
-- Corretto un problema di visualizzazione delle date in alcuni browser.
 
 ---
 
@@ -448,12 +445,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
-dazione avanzata
-- **PDF Generation**: Moduli iscrizione e documenti con DomPDF
-- **RBAC (Role-Based Access Control)**: 3 ruoli (Admin, Segreteria, Presidente)
-- **2FA Obbligatorio**: TOTP con Google Authenticator
-- **Audit Trail GDPR**: Logging completo con pseudonimizzazione IP
-- **DevTools Dashboard**: Toolkit amministrativo completo
+
 
 ---
 
@@ -659,5 +651,5 @@ dazione avanzata
 
 **Mantainer**: Soobadur Mohammad Ajmeer ©  
 **Progetto**: Fratellanza Militare di Firenze - Archivio Digitale Soci  
-**Versione Corrente**: 2.4.0 (2026-01-10)  
+**Versione Corrente**: 7.4.0 "Operational Command" (2026-01-15)  
 **License**: Proprietary - All Rights Reserved

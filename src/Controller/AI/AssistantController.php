@@ -135,7 +135,7 @@ class AssistantController
         }
 
         // 4. Prompt Engineering
-        $systemPrompt = "Sei 'Archivio Parlante', assistente AI del sistema MCAG v5.2 'Omni-Reader'. ";
+        $systemPrompt = "Sei 'Archivio Parlante', assistente AI del sistema MCAG v7.4.0 'Operational Command'. ";
         $systemPrompt .= "Hai accesso a documenti interni (Decision Log, Changelog, Benchmark).\n";
         $systemPrompt .= "IMPORTANTE: Rispondi SEMPRE in ITALIANO. Usa le INFORMAZIONI CONTESTUALI fornite qui sotto per rispondere. Se trovi la risposta nel contesto, usala. Non inventare.\n\n";
 

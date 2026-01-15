@@ -1,10 +1,10 @@
-# 🎖️ MCAG_Militare-Civile-Archivio-Gestionale (v5.3.0 Open Heart)
+# 🎖️ MCAG_Militare-Civile-Archivio-Gestionale (v7.4.0 Operational Command)
 
 > **Enterprise Gold Master Edition** - Sistema di gestione archivi mission-critical con DevTools integrati, Legal Compliance, e Security A++.
 
-**MCAG** (Militare Civile Archivio Gestionale) è una piattaforma enterprise-grade sviluppata per la gestione sicura e scalabile di archivi sensibili. Originariamente nota come "Fratellanza Militare - Archivio Digitale", la piattaforma è evoluta nella **versione 5.3.0 "Operation Open Heart"** per servire un bacino d'utenza più ampio con standard di sicurezza militari e strumenti per sviluppatori integrati.
+**MCAG** (Militare Civile Archivio Gestionale) è una piattaforma enterprise-grade sviluppata per la gestione sicura e scalabile di archivi sensibili. Originariamente nota come "Fratellanza Militare - Archivio Digitale", la piattaforma è evoluta nella **versione 7.4.0 "Operational Command"** per servire un bacino d'utenza più ampio con standard di sicurezza militari e strumenti per sviluppatori integrati.
 
-## 🚀 Caratteristiche Enterprise v5.3.0
+## 🚀 Caratteristiche Enterprise v7.4.0
 
 ### Core Features
 - ✅ **DevTools Ultimate v2**: Terminale web, Security Center, Audit Logs viewer integrati, Console cross-platform
@@ -143,7 +143,7 @@ Proprietary - © 2026 MCAG
 
 **Developer**: Soobadur Mohammad Ajmeer - IT Technical Specialist  
 **Organization**: MCAG  
-**Version**: 5.3.0 "Operation Open Heart"
+**Version**: 7.4.0 "Operational Command"
 
 ---
 

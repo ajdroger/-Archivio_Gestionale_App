@@ -21,6 +21,241 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+## [ADR-043] Contextual Workflows & Role Extension
+**Data**: 2026-01-15 21:00
+**Stato**: ✅ Attivo
+**Contesto**:
+I ruoli operativi (Segreteria, Direttore) non avevano accesso agli strumenti necessari, e il workflow era frammentato.
+**Decisione**:
+1.  **Role Extension**: Estendere `real_is_admin` a Segreteria, Segreteria Soci e Direttore.
+2.  **Contextual Actions**: Popolare dinamicamente il menu utente ("Tendina") con azioni specifiche per il ruolo (es. "Nuovo Socio", "Quote Scadute").
+3.  **Socio Profile Fixes**: Serie di 19 hotfix per garantire usabilità e coerenza nel profilo socio (Layout, Login, Routing).
+
+**Conseguenze**:
+- (+) Operatività fluida per tutto lo staff.
+- (+) Eliminazione blocchi di accesso ingiustificati.
+
+---
+
+## [ADR-042] Surgical Refactoring & Modularization
+**Data**: 2026-01-15 20:10
+**Stato**: ✅ Completato
+**Contesto**:
+Il file `admin_dashboard.mustache` e i relativi JS/CSS erano diventati monolitici e difficili da mantenere.
+**Decisione**:
+1.  **Extraction**: Separazione fisica degli asset in `public/css/debug_console.css` e `public/js/debug_console.js`.
+2.  **Linkage**: Aggiornamento `test_dashboard.php` per caricamento asset esterni.
+3.  **Safety**: Creazione branch di backup pre-refactor.
+
+**Conseguenze**:
+- (+) Manutenibilità ripristinata.
+- (+) Caching browser abilitato per gli asset statici.
+
+---
+
+## [ADR-041] AI Coding Core & Omni-Editor
+**Data**: 2026-01-15 19:20
+**Stato**: ✅ Implementato (v7.4)
+**Contesto**:
+L'amministratore necessita di modificare codice e lanciare script direttamente dalla piattaforma, assistito dall'AI.
+**Decisione**:
+1.  **Omni-Editor**: Editor modale con supporto multi-lingua (.php, .js, .css, .py).
+2.  **Universal Shell**: Backend `run_cmd` potenziato per supportare PowerShell, Python e Bash con toggle nell'UI.
+3.  **AI Proxy**: Connettore locale verso Ollama (localhost:11434) per assistenza coding offline.
+4.  **FileSystem Ops**: API per lettura/scrittura/creazione file diretta.
+
+**Conseguenze**:
+- (+) Ambiente di sviluppo completo nel browser (Cloud IDE like).
+- (+) Totale indipendenza da editor desktop per hotfix.
+- (-) Rischi di sicurezza elevati (mitigati da Middleware Auth Admin-Only).
+
+---
+
+## [ADR-040] Parrot Security Arsenal Integration
+**Data**: 2026-01-15 16:45
+**Stato**: ✅ Implementato (v7.3)
+**Contesto**:
+Necessità di strumenti di sicurezza offensiva/difensiva integrati direttamente nel gestionale.
+**Decisione**:
+Integrare una suite di tool in stile **Parrot OS**:
+1.  **Real Tools (PHP-based)**: Implementazione nativa di `Port Scanner` (fsockopen), `Whois` (TCP raw), `DNS Enum` (dns_get_record).
+2.  **Simulated Tools**: Simulazione ad alta fedeltà per tool pesanti (Metasploit, SQLMap) per training/demo.
+3.  **Categorizzazione**: Menu Multi-Level (Recon, Vuln, Exploit, Forensics).
+
+**Conseguenze**:
+- (+) Capacità di audit interno senza tool esterni.
+- (+) Dashboard di sicurezza completa.
+
+---
+
+## [ADR-039] Neural Interface (God Mode UX)
+**Data**: 2026-01-15 14:15
+**Stato**: ✅ Implementato (v7.2)
+**Contesto**:
+Richiesta di un'interfaccia "Organica" contrapposta a quella "Tecnica" del Hyper-Grid.
+**Decisione**:
+Implementare un **Dual-Core UI Engine**:
+1.  **Mode Toggle**: Switch istantaneo tra "Hyper-Grid" (Tech/Industrial) e "Neural" (Organic/Living).
+2.  **Synaptic Web**: Background Canvas HTML5 con sistema particellare interattivo (nodi che reagiscono al mouse).
+3.  **Living Elements**: Animazioni di "respiro" (breathing) su pulsanti e pannelli per simulare un organismo vivente.
+
+**Conseguenze**:
+- (+) Esperienza utente unica nel suo genere.
+- (+) Dimostrazione capacità frontend avanzate.
+
+---
+
+## [ADR-038] Toolkit Hyper-Grid System
+**Data**: 2026-01-15 11:30
+**Stato**: ✅ Implementato (v7.1)
+**Contesto**:
+Il Toolkit sviluppatore necessita di un'organizzazione modulare per gestire il crescente numero di tool (Test, Git, Log, DB).
+**Decisione**:
+Adottare il **Hyper-Grid Layout**:
+- Griglia CSS reattiva modulare.
+- Caricamento asincrono dei moduli (Lazy Load).
+- Terminale persistente "Quantum Engineering Deck" sempre accessibile.
+- Test Runner con conteggio ricorsivo preciso (Regex scanning).
+
+**Conseguenze**:
+- (+) Scalabilità infinita per nuovi tool.
+- (+) Performance navigazione migliorata.
+
+---
+
+## [ADR-037] Genius Mode Architecture (Holographic UI)
+**Data**: 2026-01-15 09:00
+**Stato**: ✅ Implementato (v6.0)
+**Contesto**:
+La dashboard amministrativa v5.x era funzionale ma statica. L'utente richiede un'esperienza "Mission Control" immersiva con dati in tempo reale e visualizzazione olografica.
+**Decisione**:
+Trasformare la Dashboard in un **Data Core** reattivo:
+1.  **Holographic UI**: Utilizzo di CSS `backdrop-filter`, gradienti neon e animazioni Canvas per simulare un'interfaccia HUD.
+2.  **Live Intelligence**: Iniezione di dataset massivi (Threats, Financials) calcolati dal backend.
+3.  **Interactivity**: Widget trascinabili e Command Palette globale (Ctrl+K).
+4.  **DEFCON System**: Selettore di stato globale che altera il tema visivo dell'intero applicativo.
+
+**Conseguenze**:
+- (+) UX rivoluzionaria e premium.
+- (+) Densità di informazioni aumentata.
+- (-) Carico frontend maggiore (mitigato da ottimizzazioni Canvas).
+
+---
+
+## [ADR-036] Omni-Context Intelligent Workflows
+**Data**: 2026-01-14 18:00
+**Stato**: ✅ Implementato (v5.5.0)
+**Contesto**:
+L'assistente AI (v5.2) era passivo. L'utente richiede un assistente che *agisca* contestualmente alla pagina visitata (es. su "Scheda Socio" suggerisce "Analisi Grado", su "Bilancio" suggerisce "Previsione").
+**Decisione**:
+1.  **Context-Aware Injector**: Middleware che inietta metadata della pagina current (`<meta name="ai-context" content="...">`) nel prompt di sistema.
+2.  **Smart Triggers**: Suggerimenti proattivi visualizzati nel widget AI.
+
+**Conseguenze**:
+- (+) Assistenza proattiva.
+- (+) Riduzione tempo ricerca informazioni.
+
+---
+
+## [ADR-035] Financial Intelligence Core
+**Data**: 2026-01-14 16:00
+**Stato**: ✅ Implementato (v5.5.2)
+**Contesto**:
+Necessità di tracciare il valore *economico* del capitale umano e degli asset digitali.
+**Decisione**:
+Implementare `FinancialProjectionService` che calcola:
+- **Human Capital Value**: Basato su grado, anzianità e specializzazioni.
+- **Digital Asset Value**: Valore del codice, database e IP.
+- **Growth Forecast**: Algoritmo di regressione lineare per proiezioni 5 anni.
+
+**Conseguenze**:
+- (+) Visibilità valore aziendale nascosto.
+- (+) Strumento decisionale strategico.
+
+---
+
+## [ADR-034] Personnel Command Center UI
+**Data**: 2026-01-14 14:00
+**Stato**: ✅ Implementato (v5.6.0)
+**Contesto**:
+La lista soci era una tabella passiva. Il comando richiede una dashboard operativa per gestire il personale.
+**Decisione**:
+1.  **Interactive Grid**: Sostituzione DataTable con griglia interattiva custom.
+2.  **Quick Dossier**: Pannello laterale (Offcanvas) per dettagli rapidi.
+3.  **Live KPIs**: Indicatori in tempo reale sopra la griglia per status organico.
+
+**Conseguenze**:
+- (+) Gestione operativa rapida.
+- (+) UX militare professionale.
+
+---
+
+## [ADR-033] Classified Dossier System
+**Data**: 2026-01-14 12:00
+**Stato**: ✅ Implementato (v5.7.0)
+**Contesto**:
+La scheda dettaglio socio standard non rifletteva la natura "riservata" e "gerarchica" dell'ente.
+**Decisione**:
+Ridisegnare la vista dettaglio come **Fascicolo Classificato**:
+1.  **Watermarking**: Overlay "CLASSIFIED" dinamico.
+2.  **Ribbon Rack**: Gamification visiva per status e meriti.
+3.  **Audit Log**: Tracciamento accessi fascicolo visibile in pagina.
+
+**Conseguenze**:
+- (+) Immersività totale.
+- (+) Percezione valore dati aumentata.
+
+---
+
+## [ADR-032] Secure Asset Pipeline (No-CDN)
+**Data**: 2026-01-14 10:00
+**Stato**: ✅ Implementato
+**Contesto**:
+L'uso di CDN pubbliche (JSDelivr, GFonts) espone a tracciamento e rischi availability.
+**Decisione**:
+Scaricare localmente ("Vendorize") tutte le dipendenze critiche:
+- `chart.js` -> `public/js/lib/chart.min.js`
+- `sweetalert2` -> `public/js/lib/sweetalert2.min.js`
+- `fontawesome` -> `public/css/fontawesome/`
+
+**Conseguenze**:
+- (+) Privacy 100% (GDPR compliant).
+- (+) Funzionamento offline/intranet garantito.
+
+---
+
+## [ADR-031] Strict Workflow Enforcement
+**Data**: 2026-01-14 09:00
+**Stato**: ✅ Attivo
+**Contesto**:
+Discrepanze tra documentazione e codice ("Code Gaps") e commit disordinati.
+**Decisione**:
+1.  **Documentation First**: Nessuna feature senza ADR.
+2.  **Commit Standards**: Prefix obbligatori (`feat:`, `fix:`, `docs:`).
+3.  **Linkage**: Ogni commit deve riferire l'ADR o Issue ID.
+
+**Conseguenze**:
+- (+) Ordine e tracciabilità Enterprise.
+- (-) Overhead procedurale.
+
+---
+
+## [ADR-030] Codebase Refactoring & Rebranding (MCAG)
+**Data**: 2026-01-13 14:00
+**Stato**: ✅ Completato (v5.3.0)
+**Contesto**:
+Il progetto necessitava di un'identità professionale ("MCAG") distinta dall'associazione originale.
+**Decisione**:
+1.  **Namespace Core**: Refactoring globale `FratellanzaMilitare\` -> `MCAG\`.
+2.  **Database Isolation**: Migrazione a `mcag_db`.
+3.  **Legal Identity**: Aggiornamento EULA e Copyright headers.
+
+**Conseguenze**:
+- (+) Brand identity forte e vendibile.
+- (+) Separazione netta legacy codebase.
+
+---
+
 ## [ADR-016] Zero-Dependency Asynchronous Queue
 **Data**: 2026-01-13
 **Stato**: ✅ Implementato
@@ -910,125 +1145,7 @@ La manutenzione a lungo termine di un progetto Enterprise richiede leggibilità 
 - (+) **Performance**: Caching ottimizzato per asset statici.
 - (-) **Verbosity**: Richiede la creazione di più file anche per piccole funzionalità.
 
-## [ADR-030] Semantic Chunking Strategy for RAG Context
-**Data**: 2026-01-13
-**Stato**: ✅ Attivo
-**Contesto**:
-Durante il debugging del sistema RAG v5.2, è emerso che l'AI faticava a recuperare informazioni specifiche contenute in documenti lunghi e strutturati (come il `DECISION_LOG.md` o i Report). L'analisi ha rivelato che il `DocumentChunkerService` originale frammentava il testo basandosi esclusivamente sulla lunghezza (500 char) e sui segni di punteggiatura.
-Questo approccio "cieco" separava spesso il titolo di una sezione (es. `## [ADR-016] No Redis`) dal suo contenuto, rendendo l'embedding del contenuto orfano del suo contesto chiave. Di conseguenza, una ricerca per "Redis" trovava il titolo ma non la spiegazione, o viceversa, abbassando il *similarity score*.
-
-**Decisione**:
-Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa dei documenti Markdown.
-1.  **Regex-Based Splitting**: Utilizzare `preg_split('/^(?="#{1,3}\s)/m')` per identificare i confini delle sezioni (Header H1, H2, H3).
-2.  **Fallback Ibrido**:
-    - Se una sezione è inferiore al limite (800 char), viene mantenuta intera (Titolo + Corpo).
-    - Se una sezione supera il limite, viene ulteriormente suddivisa per frasi, ma solo *all'interno* del contesto della sezione.
-3.  **Wipe & Re-ingest**: Ogni modifica alla strategia di chunking richiede l'invalidazione totale del Vector Store esistente.
-
-**Conseguenze**:
-- (+) **Coerenza Semantica**: L'AI ora riceve "pacchetti di pensiero" completi, migliorando drasticamente la qualità delle risposte.
-- (+) **Precisione di Recupero**: I test (`verify_knowledge.php`) mostrano che le query specifiche ora recuperano il blocco corretto con score >0.70.
-- (-) **Complessità di Ingestione**: L'algoritmo è leggermente più pesante computazionalmente rispetto allo split cieco.
-- (-) **Dipendenza dal Formato**: Richiede che i documenti siano formattati con Markdown corretto per funzionare al meglio.
 
 
 
 
-## [ADR-031] Rebranding "Cuore Aperto" (MCAG)
-**Data**: 2026-01-13
-**Stato**: ✅ Completato
-**Contesto**:
-Necessità imperativa di cambiare l'identità del sistema da "Fratellanza Militare" a "MCAG" (Militare-Civile Archivio Gestionale) per riposizionamento strategico, mantenendo però la stabilità tecnica.
-
-**Decisione**:
-Eseguire un refactoring "Surgical Precision" (Piano Cuore Aperto):
-1.  **Codebase**: Rename Namespace `FratellanzaMilitare` -> `MCAG` (Breaking Change).
-2.  **Database**: Rename fisico Database `fratellanza_db` -> `mcag_db`.
-3.  **Safety**: Creazione layer di alias (`legacy_aliases.php`) per mitigare errori runtime immediati.
-4.  **Content**: Aggiornamento massivo stringhe UI e DB (`settings` table).
-
-**Conseguenze**:
-- (+) **Identità**: Allineamento totale al nuovo brand v5.3.
-- (+) **Pulizia**: Rimozione debito tecnico legato a naming legacy.
-- (-) **Breaking Changes**: Script esterni non aggiornati che chiamano i vecchi namespace falliranno (mitigato parzialmente dagli alias).
-- (-) **Deploy**: Richiede downtime per migrazione DB e update config.
-
----
-
-## [ADR-032] Commercial Strategy & Pricing Model
-**Data**: 2026-01-13
-**Stato**: Accettato
-**Contesto**: Il progetto MCAG ha raggiunto un livello di maturità "Enterprise" (v5.3.0). È necessario definire un modello di pricing che rifletta il valore reale del software (181 test, security score 97.2/100, 2.140 ore di sviluppo) e le metriche di mercato attuali.
-**Decisione**:
-1.  **Modello Value-Based**: Pricing non basato sulle ore ma sul valore fornito (Security, Compliance, Reliability).
-2.  **Tiering**:
-    *   *Standard*: €115.000 (Core features).
-    *   *Professional*: €135.000 (Full suite + Analytics).
-    *   *Enterprise*: €175.000 + (Custom SLA, Dedicated Support).
-3.  **ROI Calculation**: Basato su metriche ROTI (Return on Time Investment) aggiornate (€63.08/h).
-**Conseguenze**: Posizionamento premium sul mercato, giustificazione degli alti standard di sicurezza richiesti.
-
-## [ADR-033] Toolkit Console Architecture v2
-**Data**: 2026-01-13
-**Stato**: Accettato
-**Contesto**: La console di debug (`terminal.php`) presentava problemi di encoding JSON su ambienti Windows/Powershell e instabilità nell'output buffering, causando crash del frontend DevTools.
-**Decisione**:
-1.  **JSON Response Enforcement**: Forzatura header `Content-Type: application/json` e pulizia preventiva dei buffer di output PHP.
-2.  **Cross-Platform Shell Wrapper**: Astrazione dell'esecuzione comandi per gestire differenze tra `bash` e `powershell` (es. escaping caratteri).
-3.  **Error Handling**: Catch globale delle eccezioni durante l'esecuzione comandi per garantire sempre una risposta JSON valida, anche in caso di errore fatale dello script chiamato.
-**Conseguenze**: Maggiore stabilità degli strumenti di diagnostica e possibilità di eseguire test suite complete da interfaccia web senza timeout o errori di parsing.
-
-## [ADR-034] Cookie Policy & Compliance Banner Implementation
-**Data**: 2026-01-13
-**Stato**: Implementato
-**Contesto**: In fase di rilascio v5.3.0, è emersa la necessità di adeguare la piattaforma alle normative GDPR/ePrivacy per quanto riguarda la gestione dei cookie e l'informativa privacy, specificatamente per un contesto "Militare-Civile".
-**Decisione**:
-1.  **Banner Informativo "Zero-Block"**: Implementazione di un banner non intrusivo (bottom-fixed) in `cookie_banner.mustache` che informa l'utente senza bloccare l'operatività critica (essendo un gestionale interno).
-2.  **Policy Controller Refactoring**: Aggiornamento di `PolicyController` per servire contenuti HTML statici ma "rich" (con formattazione Bootstrap) invece di placeholder vuoti.
-3.  **Local Storage Consent**: Utilizzo di `localStorage` (chiave `cookieConsented`) lato client per memorizzare la scelta dell'utente, evitando cookie server-side aggiuntivi per la gestione del consenso stesso.
-4.  **Privacy Policy "Hardened"**: Redazione di una Privacy Policy che specifica chiaramente la natura dei dati trattati (solo tecnici/funzionali, niente profilazione marketing) per rassicurare l'utenza istituzionale.
-**Conseguenze**: Piena conformità normativa (GDPR Art. 13-14) senza degradare l'esperienza d'uso operativa mission-critical.
-
----
-
-# ADR-035: Adoption of Fluid Layout for Data-Intensive Views
-
-## Status
-ACCEPTED
-
-## Context
-The 'Registro Unico Anagrafiche' (Members List) view contains a wide data table with multiple columns (Identity, Matricola, CF, Contacts, Status, etc.).
-On standard displays, the default Bootstrap .container class constrains the width, causing the table to be cut off or requiring a double scrollbar (one for the table responsive div, one for the browser if the card is too wide).
-This negatively impacts user experience and 'Mission-Critical' usability standards.
-
-## Decision
-We have decided to implement a dynamic layout system in layout_header.mustache.
-- A new Mustache variable {{container_fluid}} will be introduced.
-- If this variable is true, the main content wrapper will use the .container-fluid class (100% width with padding).
-- If false or unset, it defaults to the standard .container (fixed max-width steps).
-
-This allows us to selectively enable full-width layouts for data-heavy pages (like the Members List or Statistics Dashboard) while keeping text-heavy pages (like Landing or Settings) centered and constrained for readability.
-
-## Consequences
-### Positive
-- **Improved Usability**: Data tables can expand to fill the screen, reducing horizontal scrolling.
-- **Flexibility**: Developers can opt-in to fluid layouts per-controller.
-- **Backward Compatibility**: Existing pages remain unchanged by default.
-
-### Negative
-- **Inconsistent Visuals**: Users navigating between fluid and fixed pages might notice the layout 'jump' in width. This is considered acceptable for the utility gained.
-
-## References
-- templates/layout/layout_header.mustache
-- src/Controller/Anagrafica/Soci/ListController.php
-- User feedback regarding truncated UI.
-
-## [ADR-036] Professional Footer Redesign
-**Data**: 2026-01-14
-**Stato**: Implementato
-**Contesto**: Il footer precedente era minimale e puramente funzionale, giudicato 'rozzo' e non in linea con il restyling 'Mission-Critical' e 'Premium' del resto dell'applicazione (v5.3). Mancava di gerarchia visiva e spazio per link legali e di supporto.
-**Decisione**:
-1. **Fat Footer Architecture**: Adozione di un layout a 4 colonne (Brand, Navigazione, Legal, Sviluppo) per massimizzare la discoverability delle risorse e conferire autorevolezza.
-2. **Visual Hierarchy**: Separazione netta tra footer di navigazione (percorsi utili) e 'bottom bar' (Copyright, Versione, Crediti tecnici).
-3. **Compliance Visibility**: Sezione dedicata per Privacy, Cookie Policy e Termini, rendendo esplicita la conformità normativa.
-**Conseguenze**: Migliore esperienza utente, percezione di prodotto 'Enterprise' e maggiore facilità di accesso alle informazioni legali e di supporto.
