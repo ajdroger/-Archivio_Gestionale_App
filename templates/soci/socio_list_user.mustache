@@ -14,20 +14,78 @@
             <p class="text-secondary lead mb-0">Elenco pubblico degli associati MCAG</p>
         </div>
         
-        <!-- SEARCH BAR (Common) -->
+        <!-- VIEW TOGGLE BUTTONS -->
         <div class="d-flex gap-2">
-            <form action="" method="GET" class="d-flex">
-                <input type="hidden" name="view" value="user">
-                <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" name="q" class="form-control bg-dark border-secondary text-white" placeholder="Cerca socio..." value="{{search_query}}">
-                </div>
-            </form>
+            <div class="btn-group bg-dark border border-secondary rounded-pill p-1">
+                <button id="btn-view-cards" class="btn btn-sm btn-primary rounded-pill px-3 transition-all" onclick="toggleView('cards')">
+                    <i class="fa-solid fa-border-all me-2"></i> Griglia
+                </button>
+                <button id="btn-view-table" class="btn btn-sm text-secondary rounded-pill px-3 transition-all" onclick="toggleView('table')">
+                    <i class="fa-solid fa-list-ul me-2"></i> Lista
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- USER VIEW: PUBLIC TABLE (DataTables) -->
-    <div class="card border-0 shadow-lg bg-dark text-white overflow-hidden">
+    <!-- USER VIEW: CARD GRID (Default) -->
+    <div id="user-directory-grid" class="row g-4 mb-5">
+        {{#soci}}
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
+                <div class="card-body text-center p-4">
+                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
+                    <p class="text-secondary small mb-3">Membro Associato MCAG</p>
+                    
+                    {{#is_attivo}}
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>
+                    {{/is_attivo}}
+                    {{^is_attivo}}
+                         <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>
+                    {{/is_attivo}}
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex flex-column gap-2">
+                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
+                         
+                         {{#can_manage_soci}}
+                         <div class="dropdown w-100">
+                            <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                <i class="fa-solid fa-bars me-1"></i> Gestione
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100" style="z-index: 9999;">
+                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Azioni Rapide</h6></li>
+                                <li><a class="dropdown-item text-success fw-bold" href="{{base_url}}/soci/nuovo"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a></li>
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                
+                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Anagrafica</h6></li>
+                                <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
+                                <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                
+                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Amministrazione</h6></li>
+                                <li><a class="dropdown-item text-white" href="#"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
+                                <li>
+                                    <form action="{{base_url}}/soci/{{cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler procedere?');">
+                                        <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                        {{/can_manage_soci}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/soci}}
+    </div>
+    
+    <!-- Sentinel for Infinite Scroll (Visible mainly in Grid Mode) -->
+    <div id="scroll-sentinel" class="text-center py-5 mt-4"></div>
+
+    <!-- USER VIEW: PUBLIC TABLE (DataTables) - Hidden by default -->
+    <div id="user-directory-table-container" class="card border-0 shadow-lg bg-dark text-white overflow-hidden d-none">
         <div class="table-responsive">
             <table class="table table-dark table-hover mb-0 align-middle" id="table-soci-user">
                 <thead class="bg-black bg-opacity-25 text-secondary text-uppercase x-small">
@@ -95,8 +153,38 @@
         </div>
     </div>
 
-    <!-- DataTables Initialization for User View -->
+    <!-- View Toggling & Init Logic -->
     <script>
+        function toggleView(mode) {
+            const grid = document.getElementById('user-directory-grid');
+            const table = document.getElementById('user-directory-table-container');
+            const sentinel = document.getElementById('scroll-sentinel');
+            const btnCards = document.getElementById('btn-view-cards');
+            const btnTable = document.getElementById('btn-view-table');
+
+            if (mode === 'cards') {
+                grid.classList.remove('d-none');
+                sentinel.classList.remove('d-none'); // Enable Infinite Scroll
+                table.classList.add('d-none');
+                
+                btnCards.classList.remove('text-secondary', 'btn-sm');
+                btnCards.classList.add('btn-primary');
+                
+                btnTable.classList.remove('btn-primary');
+                btnTable.classList.add('text-secondary');
+            } else {
+                grid.classList.add('d-none');
+                sentinel.classList.add('d-none'); // Disable Infinite Scroll
+                table.classList.remove('d-none');
+                
+                btnTable.classList.remove('text-secondary');
+                btnTable.classList.add('btn-primary');
+                
+                btnCards.classList.remove('btn-primary');
+                btnCards.classList.add('text-secondary');
+            }
+        }
+
         $(document).ready(function() {
             const tableId = '#table-soci-user';
             const tableEl = $(tableId);
