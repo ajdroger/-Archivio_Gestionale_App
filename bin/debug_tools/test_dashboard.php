@@ -6,6 +6,9 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+// Set Timezone to match User Context (Rome)
+date_default_timezone_set('Europe/Rome');
+
 // Secure Session Start (Matches Middleware)
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
