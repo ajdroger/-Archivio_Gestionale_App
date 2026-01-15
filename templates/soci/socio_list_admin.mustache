@@ -170,6 +170,34 @@
     {{/is_admin}}
 
     <script src="{{base_url}}/js/pages/socio_list.js?v=20260115"></script>
+
+    <!-- DataTables Initialization -->
+    <script>
+        $(document).ready(function() {
+            // Check if table exists (only in Admin View)
+            if ($('#table-soci').length) {
+                const table = $('#table-soci').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/2.0.0/i18n/it-IT.json',
+                    },
+                    paging: true,
+                    info: true,
+                    ordering: true,
+                    searching: true, // Enable client-side search on the loaded dataset
+                    responsive: true,
+                    columnDefs: [
+                        { orderable: false, targets: 5 } // Disable sorting on Action column
+                    ],
+                    dom: '<"d-flex justify-content-between align-items-center mb-3"f<"d-flex align-items-center"l>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+                    initComplete: function() {
+                        // Custom styling for DataTables elements
+                        $('.dataTables_filter input').addClass('form-control bg-dark border-secondary text-white');
+                        $('.dataTables_length select').addClass('form-select bg-dark border-secondary text-white');
+                    }
+                });
+            }
+        });
+    </script>
 </div>
 
 {{> layout_footer }}
