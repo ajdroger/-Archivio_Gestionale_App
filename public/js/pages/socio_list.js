@@ -115,13 +115,35 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Helper: Card Template Builder (Matches Mustache Template)
-function createSocioCard(socio) {
-    const initial = socio.nome.charAt(0) + socio.cognome.charAt(0);
-    const badge = socio.stato === 'ATTIVO'
-        ? '<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Socio Attivo</span>'
-        : '<span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">Non Attivo</span>';
+const role = (window.USER_ROLE || '').toLowerCase();
+const authorizedRoles = ['system_admin', 'segreteria', 'direttore_associazione', 'sviluppo'];
+const showGestione = authorizedRoles.includes(role);
 
-    return `
+let gestioneButton = '';
+if (showGestione) {
+    gestioneButton = `
+            <div class="mt-2 text-center"> <!-- Added wrapper for spacing -->
+                <div class="dropdown d-inline-block w-100">
+                    <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-bars me-1"></i> Gestione
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100">
+                        <li><a class="dropdown-item text-white" href="${window.BASE_URL}/soci/${socio.cf}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
+                        <li><a class="dropdown-item text-info" href="${window.BASE_URL}/soci/${socio.cf}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
+                        <li><a class="dropdown-item text-white" href="#"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
+                        <li><hr class="dropdown-divider border-secondary"></li>
+                        <li>
+                            <form action="${window.BASE_URL}/soci/${socio.cf}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\\n\\nQuesta azione è IRREVERSIBILE.\\n\\nSei sicuro di voler procedere?');">
+                                <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `;
+}
+
+return `
         <div class="col-md-6 col-lg-4 col-xl-3">
             <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
                 <div class="card-body text-center p-4">
@@ -134,7 +156,8 @@ function createSocioCard(socio) {
                     ${badge}
 
                     <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
-                         <a href="${window.BASE_URL}/soci/${socio.cf}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
+                         <a href="${window.BASE_URL}/soci/${socio.cf}" class="btn btn-outline-light btn-sm w-100 rounded-pill mb-1">Visualizza Profilo</a>
+                         ${gestioneButton}
                     </div>
                 </div>
             </div>
