@@ -66,7 +66,33 @@ class ListController
         // Data Retrieval
         $soci = ($query || $tipoProfilo) ? $this->socioRepo->search($query ?? '', $tipoProfilo) : $this->socioRepo->findAll();
 
+        // --- PERSONNEL INTELLIGENCE (KPIs) ---
+        $stats = [
+            'total' => count($soci),
+            'active' => 0,
+            'inactive' => 0,
+            'officers' => 0,
+            'nco' => 0 // Sottufficiali/Truppa
+        ];
+
+        foreach ($soci as $s) {
+            if ($s->Stato->name === 'ATTIVO') {
+                $stats['active']++;
+            } else {
+                $stats['inactive']++;
+            }
+
+            // Heuristic for Rank (Mock logic based on string)
+            $grado = strtolower($s->Grado ?? '');
+            if (str_contains($grado, 'tenente') || str_contains($grado, 'capitano') || str_contains($grado, 'maggiore') || str_contains($grado, 'colonnello') || str_contains($grado, 'generale')) {
+                $stats['officers']++;
+            } else {
+                $stats['nco']++;
+            }
+        }
+
         $viewData = [
+            'personnel_stats' => $stats,
             'soci' => array_map(function (Socio $socio) {
                 return [
                     'nome' => $socio->DatiPersonali->Nome,
@@ -76,9 +102,25 @@ class ListController
                     'telefono' => $socio->DatiPersonali->Telefono,
                     'cf' => $socio->CodiceFiscale,
                     'matricola' => $socio->Matricola,
+                    'grado' => $socio->Grado ?? 'N.A.',
+                    'corpo' => $socio->CorpoAppartenenza ?? 'N.A.',
+                    'luogo_nascita' => $socio->DatiPersonali->LuogoNascita ?? 'N.A.',
                     'stato' => $socio->Stato->name,
-                    'is_attivo' => $socio->Stato->name === 'ATTIVO', // ENUM comparison logic
+                    'is_attivo' => $socio->Stato->name === 'ATTIVO',
                     'is_moroso' => $socio->verificaMorosita(),
+                    'avatar_initials' => strtoupper(substr($socio->DatiPersonali->Nome, 0, 1) . substr($socio->DatiPersonali->Cognome, 0, 1)),
+                    // JSON Blob for Quick View
+                    'json_blob' => htmlspecialchars(json_encode([
+                        'nome' => $socio->DatiPersonali->Nome . ' ' . $socio->DatiPersonali->Cognome,
+                        'cf' => $socio->CodiceFiscale,
+                        'matricola' => $socio->Matricola,
+                        'email' => $socio->DatiPersonali->Email,
+                        'telefono' => $socio->DatiPersonali->Telefono,
+                        'stato' => $socio->Stato->name,
+                        'grado' => $socio->Grado ?? 'N.A.',
+                        'corpo' => $socio->CorpoAppartenenza ?? 'N.A.',
+                        'residenza' => ($socio->DatiPersonali->Indirizzo ?? '') . ', ' . ($socio->DatiPersonali->Citta ?? '')
+                    ]), ENT_QUOTES, 'UTF-8'),
                     // Universal Search Blob (Hidden Metadata)
                     'search_blob' => trim(sprintf(
                         "%s %s %s %s %s %s %s %s %s %s",

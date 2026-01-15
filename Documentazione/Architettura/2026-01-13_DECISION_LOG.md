@@ -1044,5 +1044,36 @@ Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa 
 - (-) **Complessità di Ingestione**: L'algoritmo è leggermente più pesante computazionalmente rispetto allo split cieco.
 - (-) **Dipendenza dal Formato**: Richiede che i documenti siano formattati con Markdown corretto per funzionare al meglio.
 
+---
+
+## [ADR-036] Mission Control System (SOC)
+**Data**: 2026-01-15
+**Stato**: ✅ Implementato (v5.5.1)
+**Contesto**:
+L'interfaccia Admin standard non rifletteva la criticità e la complessità delle operazioni di sicurezza.
+**Decisione**:
+Trasformare `admin/impostazioni` in un "Security Operations Center" (SOC).
+- **UX**: Adozione tema dark "Mission Control" con badge olografici e indicatori di stato pulsing.
+- **Funzionalità**: Switchboard operativa per lockdown immediato e toggle manutenzione.
+**Conseguenze**:
+- (+) Immediata percezione dello stato di sicurezza.
+- (+) Risposta operativa rapida agli incidenti.
+
+---
+
+## [ADR-037] Financial Intelligence Unit (FIU)
+**Data**: 2026-01-15
+**Stato**: ✅ Implementato (v5.5.2)
+**Contesto**:
+Necessità di fornire proiezioni economiche e monitoraggio asset per la governance, mantenendo privacy.
+**Decisione**:
+Creare un modulo "Financial Intelligence" nella dashboard Statistiche.
+- **Backend**: Implementato `StatsDashboardController::getFinancialProjections` con mock data basati su regressione lineare simulata.
+- **UI**: Introdotto "Ticker Tape" scorrevole e "Asset Allocation Map" in `statistics_admin.mustache`.
+- **Privacy**: Sostituita CDN Chart.js con libreria locale (`public/js/lib/chart.min.js`) per evitare blocchi anti-tracking.
+**Conseguenze**:
+- (+) Visibilità strategica sugli asset.
+- (+) Privacy compliance migliorata (zero tracking esterno).
+
 
 

@@ -14,41 +14,98 @@
 {{/is_system_admin}}
 
 <div class="container-fluid px-4">
-    <!-- PAGE HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
+    <!-- MISSION CONTROL HUD -->
+    {{#is_admin}}
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="p-4 bg-dark border-start border-4 border-primary shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-bold tracking-wider">Totale Personale</small>
+                        <h2 class="display-5 fw-bold text-white mb-0">{{personnel_stats.total}}</h2>
+                    </div>
+                    <i class="fa-solid fa-users fa-2x text-primary opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-4 bg-dark border-start border-4 border-success shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-bold tracking-wider">In Servizio Attivo</small>
+                        <h2 class="display-5 fw-bold text-white mb-0">{{personnel_stats.active}}</h2>
+                    </div>
+                    <i class="fa-solid fa-circle-check fa-2x text-success opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-4 bg-dark border-start border-4 border-warning shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-bold tracking-wider">Ufficiali (Est.)</small>
+                        <h2 class="display-5 fw-bold text-white mb-0">{{personnel_stats.officers}}</h2>
+                    </div>
+                    <i class="fa-solid fa-star fa-2x text-warning opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+             <div class="p-4 bg-dark border-start border-4 border-secondary shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-secondary text-uppercase fw-bold tracking-wider">Congedo / Altro</small>
+                        <h2 class="display-5 fw-bold text-white mb-0">{{personnel_stats.inactive}}</h2>
+                    </div>
+                    <i class="fa-solid fa-box-archive fa-2x text-secondary opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/is_admin}}
+
+    <!-- TACTICAL TOOLBAR -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
         <div>
-            <h1 class="display-5 fw-bold text-white mb-0">
-                {{#is_admin}}Gestione Anagrafica{{/is_admin}}
+            <h4 class="text-white fw-bold mb-1">
+                {{#is_admin}}Registro Operativo{{/is_admin}}
                 {{^is_admin}}Directory Soci{{/is_admin}}
-            </h1>
-            <p class="text-secondary lead mb-0">
-                {{#is_admin}}DB Master • {{count}} Records • Accesso Completo{{/is_admin}}
-                {{^is_admin}}Elenco pubblico degli associati MCAG{{/is_admin}}
+            </h4>
+            <p class="text-secondary mb-0 small">
+                Gestione e monitoraggio anagrafiche.
             </p>
         </div>
         
-        <!-- SEARCH BAR (Common) -->
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-grow-1 justify-content-end">
+            <!-- Smart Filters -->
+            {{#is_admin}}
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterGrid('all')">Tutti</button>
+                <button type="button" class="btn btn-outline-success btn-sm" onclick="filterGrid('ATTIVO')">Attivi</button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="filterGrid('MOROSO')">Morosi</button>
+            </div>
+            {{/is_admin}}
+
             <!-- Grid/List Toggle -->
-            <div class="btn-group bg-dark border border-secondary rounded-pill p-1">
+            <div class="btn-group bg-dark border border-secondary rounded-pill p-1 ms-2">
                 <button id="btn-admin-cards" class="btn btn-sm text-secondary rounded-pill px-3 transition-all" onclick="toggleAdminView('cards')">
-                    <i class="fa-solid fa-border-all me-2"></i> Griglia
+                    <i class="fa-solid fa-border-all"></i>
                 </button>
                 <button id="btn-admin-table" class="btn btn-sm btn-primary rounded-pill px-3 transition-all" onclick="toggleAdminView('table')">
-                    <i class="fa-solid fa-list-ul me-2"></i> Lista
+                    <i class="fa-solid fa-list-ul"></i>
                 </button>
             </div>
 
             <!-- UNIVERSAL SEARCH BAR -->
-            <div class="input-group">
+            <div class="input-group" style="max-width: 350px;">
                 <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
                 <input type="text" id="global-search-bar" class="form-control bg-dark border-secondary text-white" 
-                       placeholder="Cerca tutto (CF, Nome, Gruppo Sanguigno...)" 
-                       style="min-width: 300px;">
+                       placeholder="Cerca matricola, nome, grado..." 
+                       autocomplete="off">
             </div>
 
              {{#is_admin}}
-             <a href="{{base_url}}/soci/nuovo" class="btn btn-success d-flex align-items-center gap-2 rounded-pill px-4">
+             <a href="{{base_url}}/soci/nuovo" class="btn btn-primary d-flex align-items-center gap-2 rounded-pill px-4 ms-2 shadow-lg">
                  <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline">Nuovo</span>
              </a>
              {{/is_admin}}
@@ -73,7 +130,7 @@
                 </thead>
                 <tbody>
                     {{#soci}}
-                    <tr>
+                    <tr onclick="openQuickView(this)" data-json="{{json_blob}}" class="cursor-pointer interact-row" style="cursor: pointer;">
                         <td class="ps-4" data-grid-label="Socio">
                             <div class="d-flex align-items-center justify-content-start grid-centered">
                                 <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center me-3 grid-avatar" style="width: 35px; height: 35px;">
@@ -315,6 +372,62 @@
     <!-- Sentinel for Infinite Scroll (Observer Target) -->
     <div id="scroll-sentinel" class="text-center py-5 mt-4"></div>
 
+    <!-- QUICK VIEW OFFCANVAS (ADMIN ONLY) -->
+    <div class="offcanvas offcanvas-end bg-dark text-white border-start border-secondary" tabindex="-1" id="quickViewOffcanvas" aria-labelledby="quickViewLabel" style="min-width: 400px; z-index: 10000 !important;">
+        <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title" id="quickViewLabel"><i class="fa-solid fa-file-shield me-2 text-primary"></i>Dossier Personale</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="text-center mb-4">
+                 <div class="rounded-circle bg-secondary bg-opacity-25 d-inline-flex align-items-center justify-content-center mb-3 border border-secondary" style="width: 100px; height: 100px;">
+                    <i class="fa-solid fa-user fa-3x text-white-50"></i>
+                </div>
+                <h3 class="fw-bold mb-0" id="qv-name">Loading...</h3>
+                <p class="text-info font-monospace small mb-2" id="qv-matricola">Loading...</p>
+                <div id="qv-badges" class="mt-2"></div>
+            </div>
+
+            <div class="card bg-black bg-opacity-50 border border-secondary mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6 border-end border-secondary border-opacity-25">
+                            <small class="text-secondary d-block text-uppercase x-small">Codice Fiscale</small>
+                            <span class="font-monospace fw-bold text-white" id="qv-cf">-</span>
+                        </div>
+                         <div class="col-6">
+                            <small class="text-secondary d-block text-uppercase x-small">Grado</small>
+                            <span class="fw-bold text-white text-capitalize" id="qv-grado">-</span>
+                        </div>
+                        <div class="col-12 border-top border-secondary border-opacity-25 pt-2">
+                            <small class="text-secondary d-block text-uppercase x-small">Reparto/Corpo</small>
+                            <span class="fw-bold text-white" id="qv-corpo">-</span>
+                        </div>
+                         <div class="col-12 border-top border-secondary border-opacity-25 pt-2">
+                            <small class="text-secondary d-block text-uppercase x-small">Contatti</small>
+                            <div class="d-flex flex-column gap-1 mt-1">
+                                <span class="text-white small"><i class="fa-solid fa-envelope me-2 text-primary"></i> <span id="qv-email">-</span></span>
+                                <span class="text-white small"><i class="fa-solid fa-phone me-2 text-success"></i> <span id="qv-phone">-</span></span>
+                            </div>
+                        </div>
+                         <div class="col-12 border-top border-secondary border-opacity-25 pt-2">
+                             <small class="text-secondary d-block text-uppercase x-small">Residenza</small>
+                             <span class="text-white small" id="qv-residenza">-</span>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="d-grid gap-2">
+                <a href="#" id="qv-btn-details" class="btn btn-primary fw-bold"><i class="fa-solid fa-eye me-2"></i>Apri Fascicolo Completo</a>
+                <div class="d-flex gap-2">
+                    <a href="#" id="qv-btn-edit" class="btn btn-outline-info flex-grow-1"><i class="fa-solid fa-pen me-2"></i>Modifica</a>
+                    <button class="btn btn-outline-light" onclick="window.print()"><i class="fa-solid fa-print"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
         .hover-translate-y:hover { transform: translateY(-5px); }
         .transition-all { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -394,6 +507,50 @@
                 });
             }
         });
+
+        // --- GLOBAL ACTIONS ---
+        function openQuickView(row) {
+            // Prevent if clicking on dropdown or link
+            if ($(event.target).closest('.dropdown, .btn, a').length) return;
+
+            try {
+                const data = JSON.parse(row.getAttribute('data-json'));
+                
+                $('#qv-name').text(data.nome);
+                $('#qv-matricola').text(data.matricola);
+                $('#qv-cf').text(data.cf);
+                $('#qv-grado').text(data.grado);
+                $('#qv-corpo').text(data.corpo);
+                $('#qv-email').text(data.email);
+                $('#qv-phone').text(data.telefono);
+                $('#qv-residenza').text(data.residenza);
+
+                // Badges
+                const badgeClass = data.stato === 'ATTIVO' ? 'bg-success text-success border-success' : 'bg-secondary text-secondary border-secondary';
+                $('#qv-badges').html(`<span class="badge ${badgeClass} bg-opacity-10 border border-opacity-25 rounded-pill px-3">${data.stato}</span>`);
+
+                // Links
+                $('#qv-btn-details').attr('href', '{{base_url}}/soci/' + data.cf);
+                $('#qv-btn-edit').attr('href', '{{base_url}}/soci/' + data.cf + '/edit');
+
+                const bsOffcanvas = new bootstrap.Offcanvas(document.getElementById('quickViewOffcanvas'));
+                bsOffcanvas.show();
+            } catch (e) {
+                console.error("QuickView Error:", e);
+                alert("Errore caricamento dati socio.");
+            }
+        }
+
+        function filterGrid(status) {
+            const table = $('#table-soci').DataTable();
+            if (status === 'all') {
+                table.search('').columns().search('').draw();
+            } else {
+                // Search specifically in the Status column (Index 3)
+                // Note: badges contain text "ATTIVO", "MOROSO"
+                table.column(3).search(status).draw();
+            }
+        }
     </script>
 </div>
 
