@@ -57,7 +57,7 @@
     {{#is_admin}}
     <div id="admin-directory-table" class="card border-0 shadow-lg bg-dark text-white overflow-hidden transition-all">
         <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0 align-middle" id="table-soci">
+            <table class="table table-dark table-hover mb-0 align-middle w-100" id="table-soci">
                 <thead class="bg-black bg-opacity-25 text-secondary text-uppercase x-small">
                     <tr>
                         <th class="ps-4">Socio</th>
@@ -71,20 +71,20 @@
                 <tbody>
                     {{#soci}}
                     <tr>
-                        <td class="ps-4">
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px;">
+                        <td class="ps-4" data-grid-label="Socio">
+                            <div class="d-flex align-items-center justify-content-start grid-centered">
+                                <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center me-3 grid-avatar" style="width: 35px; height: 35px;">
                                     <i class="fa-solid fa-user text-white-50"></i>
                                 </div>
-                                <div>
+                                <div class="text-start grid-text-center">
                                     <div class="fw-bold text-white">{{nome}} {{cognome}}</div>
                                     <small class="text-secondary">{{data_nascita}}</small>
                                 </div>
                             </div>
                         </td>
-                        <td class="font-monospace text-info">{{matricola}}</td>
-                        <td class="font-monospace text-white-50">{{cf}}</td>
-                        <td>
+                        <td class="font-monospace text-info text-start grid-text-center" data-grid-label="Matricola">{{matricola}}</td>
+                        <td class="font-monospace text-white-50 text-start grid-text-center" data-grid-label="CF">{{cf}}</td>
+                        <td class="text-start grid-text-center" data-grid-label="Stato">
                             {{#is_attivo}}
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">ATTIVO</span>
                             {{/is_attivo}}
@@ -95,16 +95,17 @@
                                 <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1">MOROSO</span>
                             {{/is_moroso}}
                         </td>
-                        <td>
+                        <td class="text-start grid-text-center" data-grid-label="Contatti">
                              <a href="mailto:{{email}}" class="text-decoration-none text-secondary hover-white me-2"><i class="fa-solid fa-envelope"></i></a>
                              <span class="text-secondary">{{telefono}}</span>
                         </td>
-                        <td class="text-end pe-4">
-                            <div class="dropdown">
+                        <td class="text-end pe-4 grid-w-100" data-grid-label="Azioni">
+                            <div class="dropdown d-inline-block">
                                 <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                     <i class="fa-solid fa-bars me-1"></i> Gestione
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow">
+                                <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow" style="z-index: 9999;">
+                                    <li><h6 class="dropdown-header text-uppercase small opacity-50">Azioni Rapide</h6></li>
                                     <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
                                     <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
                                     <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
@@ -119,83 +120,90 @@
                         </td>
                     </tr>
                     {{/soci}}
-                    {{^soci}}
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-secondary">
-                            <i class="fa-solid fa-ghost fa-2x mb-3 opacity-50"></i><br>
-                            Nessun socio trovato.
-                        </td>
-                    </tr>
-                    {{/soci}}
                 </tbody>
             </table>
         </div>
     </div>
-
-    <!-- ADMIN VIEW: CARD GRID (Hidden by default) -->
-    <div id="admin-directory-grid" class="row g-4 d-none transition-all">
-        {{#soci}}
-        <div class="col-md-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow bg-dark text-white hover-translate-y transition-all">
-                <div class="card-body text-center p-4">
-                     <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <span class="fw-bold fs-4 text-primary">{{nome.0}}{{cognome.0}}</span>
-                    </div>
-                    <h5 class="fw-bold mb-1">{{nome}} {{cognome}}</h5>
-                    <div class="mb-3">
-                         <span class="badge bg-dark border border-secondary text-secondary font-monospace">{{matricola}}</span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-center gap-2 mb-3">
-                        {{#is_attivo}}
-                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">ATTIVO</span>
-                        {{/is_attivo}}
-                        {{^is_attivo}}
-                                <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-3">INATTIVO</span>
-                        {{/is_attivo}}
-                        {{#is_moroso}}
-                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1">MOROSO</span>
-                        {{/is_moroso}}
-                    </div>
-
-                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex flex-column gap-2">
-                         <a href="{{base_url}}/soci/{{cf}}" class="btn btn-outline-light btn-sm w-100 rounded-pill">Visualizza Profilo</a>
-                         
-                         <div class="dropdown w-100">
-                            <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                <i class="fa-solid fa-bars me-1"></i> Gestione
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100" style="z-index: 9999;">
-                                <li><h6 class="dropdown-header text-uppercase small opacity-50">Azioni Rapide</h6></li>
-                                <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
-                                <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
-                                <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
-                                <li><hr class="dropdown-divider border-secondary"></li>
-                                <li>
-                                    <form action="{{base_url}}/soci/{{cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler procedere?');">
-                                        <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{/soci}}
-    </div>
     {{/is_admin}}
+
+    <!-- CSS Toggle Logic -->
+    <style>
+        /* Grid View Transforms */
+        .table.view-grid thead {
+            display: none;
+        }
+        .table.view-grid tbody {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            padding: 1.5rem;
+            background: #2b3035; /* Match card bg */
+        }
+        .table.view-grid tr {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 350px; /* Card size */
+            background: #212529;
+            border: 1px solid #495057;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+            align-items: center;
+            text-align: center;
+        }
+        .table.view-grid td {
+            display: block;
+            width: 100%;
+            border: none !important;
+            padding: 0.5rem 0;
+            background: transparent !important;
+            text-align: center;
+        }
+        /* Specialized Transforms for consistency */
+        .table.view-grid .grid-centered {
+            flex-direction: column;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .table.view-grid .grid-avatar {
+            width: 80px !important;
+            height: 80px !important;
+            margin-right: 0 !important;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        .table.view-grid .grid-text-center {
+            text-align: center !important;
+        }
+        .table.view-grid .text-start {
+            text-align: center !important;
+        }
+        .table.view-grid .ps-4, .table.view-grid .pe-4 {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        /* Hide less relevant columns in grid if needed, or style them nicely */
+        .table.view-grid td[data-grid-label="Azioni"] {
+            margin-top: 1rem;
+            padding-top: 1rem !important;
+            border-top: 1px solid rgba(255,255,255,0.1) !important;
+        }
+        .table.view-grid .dropdown-menu {
+             position: absolute !important; /* Fix popup in grid */
+        }
+    </style>
 
     <script>
         function toggleAdminView(mode) {
-            const grid = document.getElementById('admin-directory-grid');
-            const table = document.getElementById('admin-directory-table');
+            const table = document.getElementById('table-soci');
             const btnCards = document.getElementById('btn-admin-cards');
             const btnTable = document.getElementById('btn-admin-table');
+            const tableContainer = document.getElementById('admin-directory-table');
 
             if (mode === 'cards') {
-                grid.classList.remove('d-none');
-                table.classList.add('d-none');
+                $(table).addClass('view-grid');
                 
                 btnCards.classList.remove('text-secondary');
                 btnCards.classList.add('btn-primary');
@@ -203,8 +211,7 @@
                 btnTable.classList.remove('btn-primary');
                 btnTable.classList.add('text-secondary');
             } else {
-                grid.classList.add('d-none');
-                table.classList.remove('d-none');
+                $(table).removeClass('view-grid');
                 
                 btnTable.classList.remove('text-secondary');
                 btnTable.classList.add('btn-primary');
