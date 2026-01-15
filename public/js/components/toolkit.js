@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- PREFERENCES MANAGEMENT ---
 const config = {
-    verbose: false,
+    verbose: true,        // Default to verbose for details
     stopOnFailure: false,
-    autoClear: true
+    autoClear: false      // Keep history by default
 };
 
 function loadPreferences() {

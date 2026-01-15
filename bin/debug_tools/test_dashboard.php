@@ -89,11 +89,16 @@ if (isset($_GET['action'])) {
                 if (str_contains($file, 'bin/') || str_contains($file, 'debug_tools/') || str_contains($file, 'src/Debug/')) {
                     $cmd = "php \"$target\"";
                 } else {
-                    // Test Logic (Pest/PHPUnit) stays same
+                    // Test Logic (Pest/PHPUnit)
+                    // Fix: Use simple execution to avoid XML config errors if arg order is wrong
                     $bin = $realBase . '/vendor/bin/pest';
                     if (!file_exists($bin))
                         $bin = $realBase . '/vendor/bin/phpunit';
-                    $cmd = "\"$bin\" \"$target\"" . ($verbose ? " --testdox" : "") . " --colors=always";
+
+                    // Windows Safe Wrapper
+                    // Force colors for ANSI parsing
+                    // Use --testdox for better readability if verbose
+                    $cmd = "php \"$bin\" --colors=always " . ($verbose ? "--testdox " : "") . "\"$target\"";
                 }
                 break;
             case 'py':
@@ -926,9 +931,12 @@ ksort($grouped);
         <div class="drawer-handle-bar" id="console-handle">
             <div class="handle-pill"></div>
             <div class="console-controls">
-                <button class="ent-btn-icon" onclick="clearLog()" style="border:none; height:24px; width:24px;" title="Clear"><i class="fa-solid fa-eraser"></i></button>
-                <button class="ent-btn-icon" onclick="toggleMaximize()" style="border:none; height:24px; width:24px;" title="Maximize"><i class="fa-solid fa-expand" id="icon-max"></i></button>
-                <button class="ent-btn-icon" onclick="toggleConsole()" style="border:none; height:24px; width:24px;" title="Close"><i class="fa-solid fa-chevron-down"></i></button>
+                <button class="ent-btn-icon" onclick="clearLog()" style="border:none; height:24px; width:24px;"
+                    title="Clear"><i class="fa-solid fa-eraser"></i></button>
+                <button class="ent-btn-icon" onclick="toggleMaximize()" style="border:none; height:24px; width:24px;"
+                    title="Maximize"><i class="fa-solid fa-expand" id="icon-max"></i></button>
+                <button class="ent-btn-icon" onclick="toggleConsole()" style="border:none; height:24px; width:24px;"
+                    title="Close"><i class="fa-solid fa-chevron-down"></i></button>
             </div>
         </div>
         <div id="console-content">
@@ -1012,57 +1020,8 @@ ksort($grouped);
         });
 
         // --- Console Logic (Draggable) ---
-        const drawer = document.getElementById('console-drawer');
-        const handle = document.getElementById('console-handle');
-        let startY = 0;
-        let currentY = 0;
-        let isDragging = false;
-        const threshold = 100;
-
-        function toggleConsole() {
-            drawer.classList.toggle('open');
-        }
-
-        // Touch/Mouse Events for Drag
-        handle.addEventListener('mousedown', startDrag);
-        handle.addEventListener('touchstart', startDrag, { passive: false });
-
-        function startDrag(e) {
-            isDragging = true;
-            startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-            document.addEventListener('mousemove', onDrag);
-            document.addEventListener('touchmove', onDrag, { passive: false });
-            document.addEventListener('mouseup', endDrag);
-            document.addEventListener('touchend', endDrag);
-        }
-
-        function onDrag(e) {
-            if (!isDragging) return;
-            e.preventDefault(); // Prevent scrolling
-            currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-            const delta = startY - currentY;
-
-            // Logic to visually move drawer (simplified for CSS transition reliance)
-            // Ideally we'd map this 1:1, but toggle is safer for cross-browser without big libs.
-            // If dragged UP significantly, open. If DOWN significantly, close.
-        }
-
-        function endDrag(e) {
-            if (!isDragging) return;
-            isDragging = false;
-            const delta = startY - currentY;
-
-            if (delta > 50) { // Dragged UP
-                drawer.classList.add('open');
-            } else if (delta < -50) { // Dragged DOWN
-                drawer.classList.remove('open');
-            }
-
-            document.removeEventListener('mousemove', onDrag);
-            document.removeEventListener('touchmove', onDrag);
-            document.removeEventListener('mouseup', endDrag);
-            document.removeEventListener('touchend', endDrag);
-        }
+        // MOVED TO toolkit.js 
+        // This duplicate block is removed to prevent conflicts.
 
         // --- Settings Modal ---
         function openSettings() {
