@@ -90,9 +90,21 @@
                              <span class="text-secondary">{{telefono}}</span>
                         </td>
                         <td class="text-end pe-4">
-                            <div class="btn-group">
-                                <a href="{{base_url}}/soci/{{cf}}" class="btn btn-sm btn-outline-light" title="Dettaglio"><i class="fa-solid fa-eye"></i></a>
-                                <a href="{{base_url}}/soci/{{cf}}/edit" class="btn btn-sm btn-outline-info" title="Modifica"><i class="fa-solid fa-pen"></i></a>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-bars me-1"></i> Gestione
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow">
+                                    <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
+                                    <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
+                                    <li><a class="dropdown-item text-white" href="#"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
+                                    <li><hr class="dropdown-divider border-secondary"></li>
+                                    <li>
+                                        <form action="{{base_url}}/soci/{{cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler procedere?');">
+                                            <button type="submit" class="dropdown-item text-danger"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </div>
                         </td>
                     </tr>
