@@ -115,265 +115,756 @@ foreach ($testFiles as $tf) {
 ksort($grouped);
 ?>
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="h-100">
 
 <head>
     <meta charset="UTF-8">
-    <title>Toolkit Compact - MCAG System</title>
-    <link rel="stylesheet" href="../../public/css/premium.css?v=<?php echo time(); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCAG Toolkit v5.5 | Enterprise Edition</title>
+
+    <!-- Fonts: Inter (UI), JetBrains Mono (Code) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../../public/css/all.min.css">
 
-    <link rel="stylesheet" href="../../public/css/components/toolkit.css?v=<?php echo time(); ?>">
+    <style>
+        :root {
+            /* Enterprise Palette - Dark Slate/Charcoal */
+            --ent-bg-main: #0f172a;
+            /* Slate 900 */
+            --ent-bg-panel: #1e293b;
+            /* Slate 800 */
+            --ent-bg-hover: #334155;
+            /* Slate 700 */
+            --ent-border: #334155;
+            --ent-text-main: #f8fafc;
+            /* Slate 50 */
+            --ent-text-muted: #94a3b8;
+            /* Slate 400 */
+
+            /* Accents - Professional & Restrained */
+            --ent-accent-blue: #3b82f6;
+            /* Primary Action */
+            --ent-accent-amber: #f59e0b;
+            /* Warning/Scripts */
+            --ent-accent-red: #ef4444;
+            /* Critical/Emergency */
+            --ent-accent-green: #10b981;
+            /* Success */
+
+            --ent-font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+            --ent-font-code: 'JetBrains Mono', monospace;
+            --ent-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --ent-drawer-height: 400px;
+        }
+
+        body {
+            background-color: var(--ent-bg-main);
+            color: var(--ent-text-main);
+            font-family: var(--ent-font-ui);
+            overflow-x: hidden;
+            margin: 0;
+            padding-bottom: 80px;
+            /* Space for drawer handle */
+        }
+
+        /* --- Top Navigation Bar --- */
+        .ent-navbar {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid var(--ent-border);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .ent-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            font-size: 1.1rem;
+            color: var(--ent-text-main);
+        }
+
+        .ent-brand i {
+            color: var(--ent-accent-blue);
+        }
+
+        .ent-version {
+            font-size: 0.75rem;
+            color: var(--ent-text-muted);
+            background: var(--ent-bg-panel);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: var(--ent-font-code);
+        }
+
+        /* --- Emergency/Action Menu --- */
+        .ent-actions {
+            position: relative;
+        }
+
+        .btn-emergency {
+            background: transparent;
+            border: 1px solid var(--ent-border);
+            color: var(--ent-text-muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-emergency:hover,
+        .btn-emergency.active {
+            background: var(--ent-bg-hover);
+            color: var(--ent-text-main);
+            border-color: var(--ent-text-muted);
+        }
+
+        .btn-emergency i.fa-chevron-down {
+            font-size: 0.7rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-emergency.active i.fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .ent-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            width: 280px;
+            background: var(--ent-bg-panel);
+            border: 1px solid var(--ent-border);
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .ent-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .ent-menu-header {
+            padding: 12px 16px;
+            background: #00000030;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--ent-text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--ent-border);
+        }
+
+        .ent-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--ent-text-main);
+            text-decoration: none;
+            transition: background 0.15s;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #ffffff05;
+            background: none;
+            width: 100%;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .ent-menu-item:hover {
+            background: var(--ent-bg-hover);
+        }
+
+        .ent-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .ent-menu-item i {
+            width: 20px;
+            text-align: center;
+            color: var(--ent-text-muted);
+        }
+
+        .ent-menu-item:hover i {
+            color: var(--ent-text-main);
+        }
+
+        .ent-menu-item.danger i {
+            color: var(--ent-accent-red);
+        }
+
+        /* --- Header Stats --- */
+        .ent-stats-bar {
+            background: var(--ent-bg-panel);
+            border-bottom: 1px solid var(--ent-border);
+            padding: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .ent-stat-card {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .ent-stat-value {
+            font-size: 1.75rem;
+            font-weight: 300;
+            font-family: var(--ent-font-code);
+            line-height: 1;
+        }
+
+        .ent-stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--ent-text-muted);
+            font-weight: 600;
+        }
+
+        /* --- Grid Layout --- */
+        .ent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            padding: 24px;
+        }
+
+        .ent-card {
+            background: var(--ent-bg-panel);
+            border: 1px solid var(--ent-border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s;
+        }
+
+        .ent-card:hover {
+            border-color: var(--ent-text-muted);
+        }
+
+        .ent-card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--ent-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .ent-card-title {
+            font-family: var(--ent-font-ui);
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--ent-text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ent-card-body {
+            padding: 0;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        /* Custom Scrollbar */
+        .ent-card-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .ent-card-body::-webkit-scrollbar-track {
+            background: var(--ent-bg-panel);
+        }
+
+        .ent-card-body::-webkit-scrollbar-thumb {
+            background: var(--ent-border);
+            border-radius: 3px;
+        }
+
+        .ent-card-body::-webkit-scrollbar-thumb:hover {
+            background: var(--ent-text-muted);
+        }
+
+        .ent-list-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--ent-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.1s;
+        }
+
+        .ent-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .ent-list-item:hover {
+            background: var(--ent-bg-hover);
+        }
+
+        .ent-item-name {
+            font-family: var(--ent-font-code);
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
+        .ent-btn-icon {
+            background: transparent;
+            border: 1px solid var(--ent-border);
+            color: var(--ent-text-muted);
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .ent-btn-icon:hover {
+            background: var(--ent-accent-blue);
+            border-color: var(--ent-accent-blue);
+            color: white;
+        }
+
+        /* --- Draggable Console (Termux Style) --- */
+        #console-drawer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--ent-drawer-height);
+            background: #000;
+            /* Deep Black for terminal */
+            border-top: 1px solid var(--ent-border);
+            z-index: 2000;
+            transform: translateY(calc(100% - 32px));
+            /* Show only handle */
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #console-drawer.open {
+            transform: translateY(0);
+        }
+
+        .drawer-handle-bar {
+            height: 32px;
+            background: var(--ent-bg-panel);
+            border-bottom: 1px solid var(--ent-border);
+            cursor: grab;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .drawer-handle-bar:active {
+            cursor: grabbing;
+        }
+
+        .handle-pill {
+            width: 40px;
+            height: 4px;
+            background: var(--ent-border);
+            border-radius: 2px;
+        }
+
+        .console-controls {
+            position: absolute;
+            right: 12px;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #console-content {
+            flex-grow: 1;
+            padding: 16px;
+            font-family: var(--ent-font-code);
+            font-size: 0.85rem;
+            color: #ccc;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .cmd-line {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 0 16px 16px;
+            border-top: 1px solid #333;
+            padding-top: 8px;
+        }
+
+        .cmd-prompt {
+            color: var(--ent-accent-green);
+            font-weight: bold;
+        }
+
+        .cmd-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: var(--ent-font-code);
+            flex-grow: 1;
+            outline: none;
+        }
+
+        /* --- Settings Modal (Simple Enterprise) --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .ent-modal {
+            background: var(--ent-bg-panel);
+            border: 1px solid var(--ent-border);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .ent-modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--ent-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ent-modal-body {
+            padding: 24px;
+        }
+
+        .ent-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--ent-border);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .switch-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+    </style>
 </head>
 
-<body class="pb-5">
+<body>
 
-    <!-- HEADER -->
-    <header
-        class="py-3 px-4 border-bottom border-secondary border-opacity-25 bg-dark d-flex justify-content-between align-items-center sticky-top shadow-sm">
-        <div class="d-flex align-items-center gap-3">
-            <i class="fa-solid fa-microchip text-primary fs-4"></i>
-            <div>
-                <h6 class="mb-0 fw-bold text-white uppercase tracking-wider">TOOLKIT ENGINE</h6>
-                <div class="small text-muted" style="font-size: 0.75rem;">Compact Grid Edition •
-                    <?php echo $totalTestsCount; ?> Tests
-                </div>
-            </div>
+    <!-- NAVBAR -->
+    <nav class="ent-navbar">
+        <div class="ent-brand">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>MCAG TOOLKIT</span>
+            <span class="ent-version">v5.5.0</span>
         </div>
-        <div class="d-flex gap-2">
-            <button onclick="window.toggleTerminal()"
-                class="btn btn-sm btn-dark border-secondary border-opacity-25 text-light px-3">
-                <i class="fa-solid fa-terminal me-2 text-info"></i>Console
+
+        <!-- EMERGENCY / SYSTEM ACTIONS -->
+        <div class="ent-actions">
+            <button class="btn-emergency" id="system-actions-btn" onclick="toggleMenu()">
+                SYSTEM ACTIONS <i class="fa-solid fa-chevron-down"></i>
             </button>
-            <a href="../../public/devtools" class="btn btn-sm btn-outline-warning px-3" title="Developer Tools">
-                <i class="fa-solid fa-toolbox me-2"></i>DevTools
-            </a>
-            <button class="btn btn-sm btn-warning shadow-sm border-0 px-3 fw-bold d-flex align-items-center gap-2"
-                data-bs-toggle="modal" data-bs-target="#modal-settings" title="Configurazione Toolkit">
-                <i class="fa-solid fa-gears"></i> CONFIGURA <span id="header-status-badge"
-                    class="badge bg-white bg-opacity-20 text-white rounded-pill"
-                    style="font-size: 0.65rem; display: none;">0</span>
-            </button>
-            <?php
-            $baseUrl = (function () {
-                $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-                // Se siamo in bin/debug_tools, dobbiamo risalire di 2 livelli per arrivare alla root, 
-                // poi aggiungere /public se necessario (assumendo che il router sia in public/index.php)
-                // Ma in questo progetto, public/ è la cartella dove vive il router.
-                $rootPath = str_replace('/bin/debug_tools', '', $scriptDir);
-                return rtrim($rootPath, '/') . '/public';
-            })();
-            ?>
-            <a href="<?php echo $baseUrl; ?>/impostazioni" class="btn btn-sm btn-outline-light px-3"
-                title="Impostazioni Sistema">
-                <i class="fa-solid fa-cog me-2"></i>Impostazioni
-            </a>
-            <a href="<?php echo $baseUrl; ?>/" class="btn btn-sm btn-primary px-3" title="Torna alla Dashboard">
-                <i class="fa-solid fa-home me-2"></i>Home
-            </a>
-        </div>
-    </header>
+            <div class="ent-dropdown" id="system-menu">
+                <div class="ent-menu-header">Critical Operations</div>
 
-    <!-- MAIN GRID CONTAINER -->
-    <div class="container-fluid px-4 py-4">
+                <a href="#" class="ent-menu-item" onclick="runAll(); closeMenu(); return false;">
+                    <i class="fa-solid fa-play-circle" style="color: var(--ent-accent-green)"></i> Run All Tests
+                </a>
+                <button class="ent-menu-item" onclick="clearLog(); closeMenu();">
+                    <i class="fa-solid fa-eraser"></i> Clear Console
+                </button>
 
-        <div class="row g-3"> <!-- G-3 = Compact Gap -->
+                <div class="ent-menu-header">Navigation</div>
+                <?php
+                $baseUrl = (function () {
+                    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                    $rootPath = str_replace('/bin/debug_tools', '', $scriptDir);
+                    return rtrim($rootPath, '/') . '/public';
+                })();
+                ?>
+                <a href="<?php echo $baseUrl; ?>/" class="ent-menu-item">
+                    <i class="fa-solid fa-home"></i> Dashboard Home
+                </a>
+                <a href="<?php echo $baseUrl; ?>/devtools" class="ent-menu-item">
+                    <i class="fa-solid fa-toolbox"></i> DevTools
+                </a>
 
-            <!-- --- AUTOMATION SCRIPTS CARD --- -->
-            <?php if (!empty($binScripts)): ?>
-                <div class="col-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="suite-card glass-panel" style="border-top: 3px solid #f59e0b;"> <!-- Amber -->
-                        <div class="suite-header">
-                            <span class="suite-title text-warning"><i class="fa-solid fa-bolt me-2"></i>Automation
-                                Scripts</span>
-                            <span class="badge bg-white bg-opacity-10 text-white"><?php echo count($binScripts); ?></span>
-                            <button class="btn btn-sm btn-outline-warning ms-auto border-0" onclick="runAll()"
-                                title="Esegui Safe Runner (Tutti i Test)"><i class="fa-solid fa-play-circle fa-lg"></i> Run
-                                All</button>
-                        </div>
-                        <div class="suite-body custom-scrollbar">
-                            <?php foreach ($binScripts as $script): ?>
-                                <div class="test-item">
-                                    <div class="d-flex align-items-center gap-2 overflow-hidden">
-                                        <span class="badge bg-dark border border-secondary border-opacity-25 text-muted"
-                                            style="font-size:0.65rem; width: 40px; text-align:center;"><?php echo $script['type']; ?></span>
-                                        <div class="test-name" title="<?php echo $script['name']; ?>">
-                                            <?php echo $script['name']; ?>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="text-muted"
-                                            style="font-size: 0.7rem;"><?php echo $script['last_mod']; ?></span>
-                                        <button class="btn-run-mini" onclick="runTest('<?php echo $script['rel_path']; ?>')"
-                                            title="Run">
-                                            <i class="fa-solid fa-play fa-xs"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <!-- --- TEST SUITES LOOP --- -->
-            <?php foreach ($grouped as $cat => $tests): ?>
-                <div class="col-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="suite-card glass-panel" style="border-top: 3px solid #3b82f6;"> <!-- Blue -->
-                        <div class="suite-header">
-                            <span class="suite-title text-primary"><i
-                                    class="fa-solid fa-folder-open me-2 opacity-50"></i><?php echo $cat; ?></span>
-                            <span class="badge bg-white bg-opacity-10 text-white"><?php echo count($tests); ?></span>
-                        </div>
-                        <div class="suite-body custom-scrollbar">
-                            <?php foreach ($tests as $t): ?>
-                                <div class="test-item">
-                                    <div class="d-flex align-items-center gap-2 overflow-hidden">
-                                        <i class="fa-regular fa-file-code text-muted opacity-50" style="font-size: 0.8rem;"></i>
-                                        <div class="test-name" title="<?php echo $t['name']; ?>"><?php echo $t['name']; ?></div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-dark text-muted border border-secondary border-opacity-10"
-                                            style="font-size: 0.65rem; min-width:25px;"><?php echo $t['count']; ?></span>
-                                        <button class="btn-run-mini" onclick="runTest('<?php echo $t['rel_path']; ?>')"
-                                            title="Run Test">
-                                            <i class="fa-solid fa-flask fa-xs"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-
-        </div> <!-- End Row -->
-    </div>
-
-    <!-- CONSOLE DRAWER -->
-    <div id="terminal-drawer">
-        <div id="terminal-drag-handle">
-            <span class="fw-bold small text-light"><i class="fa-solid fa-terminal me-2"></i>SYSTEM CONSOLE</span>
-            <div>
-                <button class="term-btn" onclick="clearLog()" title="Clear"><i class="fa-solid fa-eraser"></i></button>
-                <button class="term-btn term-btn-close" onclick="window.toggleTerminal()" title="Close"><i
-                        class="fa-solid fa-times"></i></button>
+                <div class="ent-menu-header">Configuration</div>
+                <button class="ent-menu-item" onclick="openSettings(); closeMenu();">
+                    <i class="fa-solid fa-sliders"></i> Toolkit Settings
+                </button>
+                <a href="<?php echo $baseUrl; ?>/impostazioni" class="ent-menu-item">
+                    <i class="fa-solid fa-cog"></i> System Settings
+                </a>
             </div>
         </div>
-        <div id="terminal-content">
-            <div class="text-muted opacity-50">// Console initialized. Ready for output.</div>
+    </nav>
+
+    <!-- KEY METRICS -->
+    <div class="ent-stats-bar">
+        <div class="ent-stat-card">
+            <div class="ent-stat-value" style="color: var(--ent-accent-blue)"><?php echo $totalTestsCount; ?></div>
+            <div class="ent-stat-label">Total Tests</div>
         </div>
-        <div class="d-flex align-items-center p-2 border-top border-secondary border-opacity-25 bg-black">
-            <span class="text-success fw-bold me-2 font-monospace" style="font-size: 0.8rem;" id="term-prompt">PS
-                ></span>
-            <input type="text" id="term-input" class="bg-transparent border-0 text-white w-100 font-monospace"
-                style="outline:none; font-size: 0.8rem;" autocomplete="off" placeholder="Type command...">
+        <div class="ent-stat-card">
+            <div class="ent-stat-value" style="color: var(--ent-accent-amber)"><?php echo count($binScripts); ?></div>
+            <div class="ent-stat-label">Automation Scripts</div>
+        </div>
+        <div class="ent-stat-card">
+            <div class="ent-stat-value" style="color: var(--ent-accent-green)"><?php echo count($grouped); ?></div>
+            <div class="ent-stat-label">Active Suites</div>
         </div>
     </div>
 
-    <!-- OUTPUT MODAL (Fullscreen Overlay for Detailed Results) -->
-    <div id="outputModal"
-        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10000; padding:40px;">
-        <div class="h-100 w-100 bg-dark border border-secondary rounded shadow-lg d-flex flex-column overflow-hidden">
-            <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center bg-black">
-                <h5 class="m-0 text-white font-monospace">EXECUTION RESULT</h5>
-                <button onclick="closeModal()" class="btn btn-danger btn-sm px-4">CLOSE</button>
+    <!-- MAIN GRID -->
+    <main class="ent-grid">
+
+        <!-- Automation Scripts Panel -->
+        <?php if (!empty($binScripts)): ?>
+            <div class="ent-card" style="border-top: 3px solid var(--ent-accent-amber);">
+                <div class="ent-card-header">
+                    <div class="ent-card-title">
+                        <i class="fa-solid fa-bolt text-warning"></i> Scripts
+                    </div>
+                    <button class="ent-btn-icon" onclick="runAll()" title="Run All"><i
+                            class="fa-solid fa-play"></i></button>
+                </div>
+                <div class="ent-card-body">
+                    <?php foreach ($binScripts as $script): ?>
+                        <div class="ent-list-item">
+                            <div>
+                                <div class="ent-item-name"><?php echo $script['name']; ?></div>
+                                <div style="font-size: 0.7rem; color: var(--ent-text-muted);"><?php echo $script['last_mod']; ?>
+                                    • <?php echo $script['type']; ?></div>
+                            </div>
+                            <button class="ent-btn-icon" onclick="runTest('<?php echo $script['rel_path']; ?>')"><i
+                                    class="fa-solid fa-caret-right"></i></button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-            <div id="termOutput" class="p-3 flex-grow-1 overflow-auto font-monospace text-light"
-                style="font-size:0.9rem; white-space:pre-wrap;"></div>
+        <?php endif; ?>
+
+        <!-- Test Suites Loop -->
+        <?php foreach ($grouped as $cat => $tests): ?>
+            <div class="ent-card" style="border-top: 3px solid var(--ent-accent-blue);">
+                <div class="ent-card-header">
+                    <div class="ent-card-title">
+                        <i class="fa-regular fa-folder-open text-primary"></i> <?php echo $cat; ?>
+                    </div>
+                    <span
+                        style="font-size: 0.75rem; background: rgba(59, 130, 246, 0.1); color: var(--ent-accent-blue); padding: 2px 6px; border-radius: 4px;"><?php echo count($tests); ?></span>
+                </div>
+                <div class="ent-card-body">
+                    <?php foreach ($tests as $t): ?>
+                        <div class="ent-list-item">
+                            <div class="ent-item-name text-truncate" style="max-width: 200px;"
+                                title="<?php echo $t['name']; ?>"><?php echo $t['name']; ?></div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span style="font-size: 0.7rem; color: var(--ent-text-muted);"><?php echo $t['count']; ?>
+                                    tests</span>
+                                <button class="ent-btn-icon" onclick="runTest('<?php echo $t['rel_path']; ?>')"><i
+                                        class="fa-solid fa-flask"></i></button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+    </main>
+
+    <!-- DRAGGABLE CONSOLE DRAWER -->
+    <div id="console-drawer">
+        <div class="drawer-handle-bar" id="console-handle">
+            <div class="handle-pill"></div>
+            <div class="console-controls">
+                <button class="ent-btn-icon" onclick="clearLog()" style="border:none; height:24px; width:24px;"><i
+                        class="fa-solid fa-eraser"></i></button>
+                <button class="ent-btn-icon" onclick="toggleConsole()" style="border:none; height:24px; width:24px;"><i
+                        class="fa-solid fa-chevron-down"></i></button>
+            </div>
+        </div>
+        <div id="console-content">
+            // MCAG Enterprise Toolkit v5.5 initialized.
+            // Ready for execution.
+        </div>
+        <div class="cmd-line">
+            <span class="cmd-prompt">ADMIN@MCAG:~#</span>
+            <input type="text" class="cmd-input" placeholder="Enter command..." disabled
+                title="Read-only in compact mode">
         </div>
     </div>
 
-    <!-- SETTINGS MODAL (Redesigned) -->
-    <div class="modal fade" id="modal-settings" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div
-                class="modal-content bg-dark border border-secondary border-opacity-50 glass-panel shadow-2xl overflow-hidden">
-                <!-- Header con gradiente -->
-                <div
-                    class="modal-header bg-gradient-to-r from-blue-900 to-transparent border-bottom border-secondary border-opacity-25 py-3">
-                    <h5 class="modal-title text-white fw-bold d-flex align-items-center">
-                        <div class="bg-primary p-2 rounded me-3 shadow-blue-glow"><i
-                                class="fa-solid fa-sliders text-white"></i></div>
-                        CONFIGURAZIONE TOOLKIT
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body p-4">
-                    <!-- Gruppo: Parametri Esecuzione -->
-                    <div class="mb-4">
-                        <label class="text-secondary small fw-bold uppercase-tracking mb-3 d-block"><i
-                                class="fa-solid fa-terminal me-2"></i>PARAMETRI DI ESECUZIONE</label>
-
-                        <div class="card bg-black bg-opacity-30 border-secondary border-opacity-25 p-3 mb-2 hover-bg-primary-fade transition-all cursor-pointer"
-                            onclick="document.getElementById('setting-verbose').click()">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="text-white mb-0 small fw-bold">Modalità Verbosa</h6>
-                                    <p class="text-muted mb-0" style="font-size: 0.75rem;">Mostra log dettagliati e
-                                        output completi dei test.</p>
-                                </div>
-                                <div class="form-check form-switch m-0">
-                                    <input class="form-check-input" type="checkbox" id="setting-verbose">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card bg-black bg-opacity-30 border-secondary border-opacity-25 p-3 hover-bg-danger-fade transition-all cursor-pointer"
-                            onclick="document.getElementById('setting-stop-failure').click()">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="text-white mb-0 small fw-bold">Stop On Failure</h6>
-                                    <p class="text-muted mb-0" style="font-size: 0.75rem;">Interrompe la suite al primo
-                                        errore riscontrato.</p>
-                                </div>
-                                <div class="form-check form-switch m-0">
-                                    <input class="form-check-input" type="checkbox" id="setting-stop-failure">
-                                </div>
-                            </div>
-                        </div>
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="ent-modal">
+            <div class="ent-modal-header">
+                <div class="ent-card-title"><i class="fa-solid fa-sliders"></i> Configuration</div>
+                <button class="ent-btn-icon" onclick="closeSettings()"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="ent-modal-body">
+                <div class="switch-row">
+                    <div>
+                        <div style="font-weight:600;">Verbose Mode</div>
+                        <div style="font-size:0.8rem; color:var(--ent-text-muted);">Show detailed output logs</div>
                     </div>
-
-                    <!-- Gruppo: Interfaccia -->
-                    <div class="mb-4">
-                        <label class="text-secondary small fw-bold uppercase-tracking mb-3 d-block"><i
-                                class="fa-solid fa-desktop me-2"></i>PREFERENZE INTERFACCIA</label>
-
-                        <div class="card bg-black bg-opacity-30 border-secondary border-opacity-25 p-3 hover-bg-primary-fade transition-all cursor-pointer"
-                            onclick="document.getElementById('setting-auto-clear').click()">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="text-white mb-0 small fw-bold">Auto-Pulisci Console</h6>
-                                    <p class="text-muted mb-0" style="font-size: 0.75rem;">Svuota il terminale prima di
-                                        ogni nuova esecuzione.</p>
-                                </div>
-                                <div class="form-check form-switch m-0">
-                                    <input class="form-check-input" type="checkbox" id="setting-auto-clear" checked>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="alert alert-warning bg-warning bg-opacity-10 border-warning border-opacity-25 text-warning small mb-0 px-3 py-2 d-flex align-items-center">
-                        <i class="fa-solid fa-floppy-disk me-3 fs-5"></i>
-                        <span>Le preferenze vengono salvate nel browser per le prossime sessioni.</span>
-                    </div>
+                    <input type="checkbox" id="setting-verbose">
                 </div>
-
-                <div class="modal-footer border-top border-secondary border-opacity-25 p-3">
-                    <button type="button" class="btn btn-primary w-100 fw-bold py-2 shadow-sm" data-bs-dismiss="modal">
-                        <i class="fa-solid fa-check-circle me-2"></i>APPLICA CONFIGURAZIONE
-                    </button>
+                <div class="switch-row">
+                    <div>
+                        <div style="font-weight:600;">Stop On Failure</div>
+                        <div style="font-size:0.8rem; color:var(--ent-text-muted);">Halt execution on first error</div>
+                    </div>
+                    <input type="checkbox" id="setting-stop-failure">
                 </div>
+                <div class="switch-row">
+                    <div>
+                        <div style="font-weight:600;">Auto-Clear Console</div>
+                        <div style="font-size:0.8rem; color:var(--ent-text-muted);">Clear output before run</div>
+                    </div>
+                    <input type="checkbox" id="setting-auto-clear" checked>
+                </div>
+            </div>
+            <div class="ent-modal-footer">
+                <button class="btn-emergency" onclick="closeSettings()"
+                    style="background: var(--ent-accent-blue); color:white; border:none;">SAVE CHANGES</button>
             </div>
         </div>
     </div>
 
-    <script src="../../public/js/lib/bootstrap.bundle.min.js"></script>
+    <!-- Scripts (Bootstrap for util if needed, Custom Logic) -->
     <script src="../../public/js/components/toolkit.js?v=<?php echo time(); ?>"></script>
+    <script>
+        // --- Emergency Menu Logic ---
+        function toggleMenu() {
+            const menu = document.getElementById('system-menu');
+            const btn = document.getElementById('system-actions-btn');
+            menu.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            document.getElementById('system-menu').classList.remove('open');
+            document.getElementById('system-actions-btn').classList.remove('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function (e) {
+            const menu = document.querySelector('.ent-actions');
+            if (menu && !menu.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        // --- Console Logic (Draggable) ---
+        const drawer = document.getElementById('console-drawer');
+        const handle = document.getElementById('console-handle');
+        let startY = 0;
+        let currentY = 0;
+        let isDragging = false;
+        const threshold = 100;
+
+        function toggleConsole() {
+            drawer.classList.toggle('open');
+        }
+
+        // Touch/Mouse Events for Drag
+        handle.addEventListener('mousedown', startDrag);
+        handle.addEventListener('touchstart', startDrag, { passive: false });
+
+        function startDrag(e) {
+            isDragging = true;
+            startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('touchmove', onDrag, { passive: false });
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function onDrag(e) {
+            if (!isDragging) return;
+            e.preventDefault(); // Prevent scrolling
+            currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            const delta = startY - currentY;
+
+            // Logic to visually move drawer (simplified for CSS transition reliance)
+            // Ideally we'd map this 1:1, but toggle is safer for cross-browser without big libs.
+            // If dragged UP significantly, open. If DOWN significantly, close.
+        }
+
+        function endDrag(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            const delta = startY - currentY;
+
+            if (delta > 50) { // Dragged UP
+                drawer.classList.add('open');
+            } else if (delta < -50) { // Dragged DOWN
+                drawer.classList.remove('open');
+            }
+
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('touchmove', onDrag);
+            document.removeEventListener('mouseup', endDrag);
+            document.removeEventListener('touchend', endDrag);
+        }
+
+        // --- Settings Modal ---
+        function openSettings() {
+            document.getElementById('settings-modal').classList.add('show');
+        }
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.remove('show');
+        }
+    </script>
 </body>
 
 </html>
