@@ -115,7 +115,9 @@ function countTestsInFile($path)
     $content = file_get_contents($path);
     $phpunitCount = preg_match_all('/public\s+function\s+test\w+/i', $content);
     $pestCount = preg_match_all('/(test|it)\s*\(/', $content);
-    return $phpunitCount + $pestCount;
+    // Attribute support
+    $attrCount = preg_match_all('/#\[Test\]/i', $content); // PHPUnit 10+
+    return $phpunitCount + $pestCount + $attrCount;
 }
 
 
@@ -719,7 +721,7 @@ ksort($grouped);
         <div class="ent-brand">
             <i class="fa-solid fa-layer-group"></i>
             <span>MCAG TOOLKIT</span>
-            <span class="ent-version">v5.5.0</span>
+            <span class="ent-version">v5.5.1 (<?php echo date('H:i:s'); ?>)</span>
         </div>
 
         <!-- EMERGENCY / SYSTEM ACTIONS -->
