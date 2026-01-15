@@ -13,6 +13,13 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.3.0-parrot-arsenal] - 2026-01-15 "**Parrot Arsenal**"
+### New Features
+- **Legacy of the Hacker**: Integrated "Parrot OS" style menu system in Toolkit.
+- **Real Networking Tools**: Embedded PHP implementations of `Nmap`, `Whois`, and `DNS Enum`.
+- **Hybrid Simulation**: "Heavy" tools (Metasploit, etc.) use a realistic terminal simulation engine.
+- **Cyber-Warfare UI**: Multi-level dropdowns with categorization (Recon, Vuln, Exploit, Forensics).
+
 ## [v7.2.0-god-mode] - 2026-01-15 "**God Mode**"
 ### UX Revolution
 - **Neural Interface (Cortex OS)**: A radical new UX mode for the Toolkit.
