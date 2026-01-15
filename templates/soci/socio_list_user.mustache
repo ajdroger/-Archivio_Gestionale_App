@@ -51,14 +51,21 @@
                          {{#can_manage_soci}}
                          <div class="mt-2 text-center">
                             <div class="dropdown d-inline-block w-100">
-                                <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                     <i class="fa-solid fa-bars me-1"></i> Gestione
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100">
+                                <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow w-100" style="z-index: 9999;">
+                                    <li><h6 class="dropdown-header text-uppercase small opacity-50">Azioni Rapide</h6></li>
+                                    <li><a class="dropdown-item text-success fw-bold" href="{{base_url}}/soci/nuovo"><i class="fa-solid fa-user-plus me-2"></i>Nuovo Socio</a></li>
+                                    <li><hr class="dropdown-divider border-secondary"></li>
+                                    
+                                    <li><h6 class="dropdown-header text-uppercase small opacity-50">Anagrafica</h6></li>
                                     <li><a class="dropdown-item text-white" href="{{base_url}}/soci/{{cf}}"><i class="fa-solid fa-eye me-2"></i>Dettagli</a></li>
                                     <li><a class="dropdown-item text-info" href="{{base_url}}/soci/{{cf}}/edit"><i class="fa-solid fa-pen me-2"></i>Modifica</a></li>
-                                    <li><a class="dropdown-item text-white" href="#"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
                                     <li><hr class="dropdown-divider border-secondary"></li>
+                                    
+                                    <li><h6 class="dropdown-header text-uppercase small opacity-50">Amministrazione</h6></li>
+                                    <li><a class="dropdown-item text-white" href="#"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
                                     <li>
                                         <form action="{{base_url}}/soci/{{cf}}/delete" method="POST" onsubmit="return confirm('ATTENZIONE: Stai per eliminare DEFINITIVAMENTE questo socio.\n\nQuesta azione è IRREVERSIBILE.\n\nSei sicuro di voler procedere?');">
                                             <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="fa-solid fa-trash me-2"></i>Elimina Definitivamente</button>
