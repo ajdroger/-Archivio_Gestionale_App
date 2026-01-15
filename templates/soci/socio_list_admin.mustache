@@ -38,13 +38,14 @@
                 </button>
             </div>
 
-            <form action="" method="GET" class="d-flex">
-                 {{#view_mode}}<input type="hidden" name="view" value="{{view_mode}}">{{/view_mode}}
-                <div class="input-group">
-                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" name="q" class="form-control bg-dark border-secondary text-white" placeholder="Cerca socio..." value="{{search_query}}">
-                </div>
-            </form>
+            <!-- UNIVERSAL SEARCH BAR -->
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="global-search-bar" class="form-control bg-dark border-secondary text-white" 
+                       placeholder="Cerca tutto (CF, Nome, Gruppo Sanguigno...)" 
+                       style="min-width: 300px;">
+            </div>
+
              {{#is_admin}}
              <a href="{{base_url}}/soci/nuovo" class="btn btn-success d-flex align-items-center gap-2 rounded-pill px-4">
                  <i class="fa-solid fa-plus"></i> <span class="d-none d-md-inline">Nuovo</span>
@@ -66,6 +67,7 @@
                         <th>Stato</th>
                         <th>Contatti</th>
                         <th class="text-end pe-4">Azioni</th>
+                        <th class="d-none">SearchData</th> <!-- Hidden Column for Search Index -->
                     </tr>
                 </thead>
                 <tbody>
@@ -118,6 +120,7 @@
                                 </ul>
                             </div>
                         </td>
+                        <td class="d-none">{{search_blob}}</td> <!-- Hidden Data for Search -->
                     </tr>
                     {{/soci}}
                 </tbody>
@@ -323,7 +326,7 @@
                         infoFiltered:   "(filtrati da _MAX_ elementi totali)",
                         infoPostFix:    "",
                         loadingRecords: "Caricamento...",
-                        zeroRecords:    "La ricerca non ha portato alcun risultato.",
+                        zeroRecords:    "<div class='text-center py-5'><i class='fa-solid fa-magnifying-glass fa-2x mb-3 opacity-50'></i><br>Nessun risultato trovato.<br><small class='text-secondary'>Prova a cercare per Codice Fiscale, Nome, o Gruppo Sanguigno.</small></div>",
                         emptyTable:     "Nessun dato presente nella tabella.",
                         paginate: {
                             first:      "Inizio",
@@ -339,16 +342,24 @@
                     paging: true,
                     info: true,
                     ordering: true,
-                    searching: true,
+                    searching: true, // Internal searching logic enabled
                     responsive: true,
                     destroy: true, // Allow re-initialization if needed
                     columnDefs: [
-                        { orderable: false, targets: 5 }
+                        { orderable: false, targets: 5 }, // Actions
+                        { visible: false, targets: 6 } // Hidden Search Column
                     ],
-                    dom: '<"d-flex justify-content-between align-items-center mb-3"f<"d-flex align-items-center"l>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+                    // Removed 'f' (filtering input) from DOM because we use #global-search-bar
+                    dom: '<"d-flex justify-content-end align-items-center mb-3"<"d-flex align-items-center"l>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
                     initComplete: function() {
                         console.log("MCAG: DataTables Initialized Successfully");
-                        $('.dataTables_filter input').addClass('form-control bg-dark border-secondary text-white');
+                        
+                        // Bind Global Search
+                        const table = this.api();
+                        $('#global-search-bar').on('keyup', function() {
+                            table.search(this.value).draw();
+                        });
+
                         $('.dataTables_length select').addClass('form-select bg-dark border-secondary text-white');
                     }
                 });

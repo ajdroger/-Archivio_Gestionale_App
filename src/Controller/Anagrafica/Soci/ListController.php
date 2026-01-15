@@ -75,6 +75,20 @@ class ListController
                     'stato' => $socio->Stato->name,
                     'is_attivo' => $socio->Stato->name === 'ATTIVO', // ENUM comparison logic
                     'is_moroso' => $socio->verificaMorosita(),
+                    // Universal Search Blob (Hidden Metadata)
+                    'search_blob' => trim(sprintf(
+                        "%s %s %s %s %s %s %s %s %s %s",
+                        $socio->DatiPersonali->Nome,
+                        $socio->DatiPersonali->Cognome,
+                        $socio->CodiceFiscale,
+                        $socio->Matricola,
+                        $socio->DatiPersonali->Email,
+                        $socio->DatiPersonali->Telefono,
+                        $socio->Grado ?? '',
+                        $socio->CorpoAppartenenza ?? '',
+                        $socio->GruppoSanguigno ?? '',
+                        $socio->DatiPersonali->Professione ?? ''
+                    ))
                 ];
             }, $soci),
             'search_query' => $query,
