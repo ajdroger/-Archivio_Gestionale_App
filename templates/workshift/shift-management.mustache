@@ -84,31 +84,31 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
-                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="grid" class="w-4 h-4"></i> Dashboard
                     </a>
                    
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
                     
-                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="home" class="w-4 h-4"></i> Home
                     </a>
-                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
                         <i data-feather="calendar" class="w-4 h-4"></i> Turni
                     </a>
-                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="users" class="w-4 h-4"></i> Team
                     </a>
-                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="sun" class="w-4 h-4"></i> Ferie
                     </a>
                     
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
 
-                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="list" class="w-4 h-4"></i> Taskflow
                     </a>
-                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="dollar-sign" class="w-4 h-4"></i> Expensebar
                     </a>
                 </div>
@@ -156,11 +156,12 @@
 
             <!-- View Switcher -->
             <!-- View Switcher -->
-            <div class="bg-slate-900/50 p-1 rounded-xl flex items-center border border-white/10 backdrop-blur-md mb-2">
-                <button class="view-switch-btn px-6 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all" data-view="day">Giorno</button>
-                <button class="view-switch-btn px-6 py-2 rounded-lg text-sm font-bold text-white bg-indigo-500 shadow-lg shadow-indigo-500/20" data-view="week">Settimana</button>
-                <button class="view-switch-btn px-6 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all" data-view="month">Mese</button>
-                <button class="view-switch-btn px-6 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all" data-view="year">Anno</button>
+            <div class="bg-slate-900/50 p-1 rounded-2xl flex items-center border border-white/10 backdrop-blur-md mb-2">
+                <button class="view-switch-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all" data-view="day">Giorno</button>
+                <button class="view-switch-btn px-6 py-2 rounded-xl text-sm font-bold text-white bg-indigo-500 shadow-lg shadow-indigo-500/20" data-view="week">Settimana</button>
+                <button class="view-switch-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all" data-view="month">Mese</button>
+                <button class="view-switch-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all" data-view="year">Anno</button>
+                <button class="view-switch-btn px-6 py-2 rounded-xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all" data-view="list">Lista</button>
             </div>
 
             <!-- 3. Week Navigator Capsule -->
@@ -291,89 +292,88 @@
 
     </main>
 
-    <!-- Create Shift Modal (Updated Look) -->
-    <div id="createShiftModal" class="fixed inset-0 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="z-index: 9999;">
-        <div class="fixed inset-0 bg-[#000000]/90 backdrop-blur-md transition-opacity opacity-0" id="modalBackdrop"></div>
+    <!-- Create Shift Modal (Ultimate Glass) -->
+    <div id="createShiftModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 9999 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop with direct click handler -->
+        <div class="fixed inset-0 bg-[#000000]/90 backdrop-blur-md transition-opacity opacity-0" id="modalBackdrop" onclick="toggleCreateShiftModal()"></div>
 
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-center justify-center p-4" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-                <div class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all sm:w-full sm:max-w-lg opacity-0 scale-95" id="modalPanel" style="background-color: #0f172a; color: white;">
-                    
-                    <div class="p-8 border-b border-white/5 bg-white/5">
-                        <div class="flex items-center gap-4">
-                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30">
-                                <i data-feather="clock" class="h-6 w-6"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-bold text-white">Nuovo Turno</h3>
-                                <p class="text-sm text-slate-400">Assegna un turno alla pianificazione.</p>
-                            </div>
+        <div class="flex min-h-screen items-center justify-center p-4 text-center" onclick="if(event.target === this) toggleCreateShiftModal()">
+            <div class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-2xl opacity-0 scale-95" id="modalPanel" style="background-color: #0f172a; color: white;" onclick="event.stopPropagation()">
+                
+                <div class="p-8 border-b border-white/5 bg-white/5">
+                    <div class="flex items-center gap-4">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30">
+                            <i data-feather="clock" class="h-6 w-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Nuovo Turno</h3>
+                            <p class="text-sm text-slate-400">Assegna un turno alla pianificazione.</p>
                         </div>
                     </div>
+                </div>
 
-                    <form id="shiftForm" class="p-8 space-y-6">
-                        <input type="hidden" id="shiftId">
-                        
+                <form id="shiftForm" class="p-8 space-y-6">
+                    <input type="hidden" id="shiftId">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Dipendente</label>
+                        <select id="shiftEmployee" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-900">
+                            {{#employees}}
+                            <option value="{{id}}">{{name}}</option>
+                            {{/employees}}
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Dipendente</label>
-                            <select id="shiftEmployee" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-900">
-                                {{#employees}}
-                                <option value="{{id}}">{{name}}</option>
-                                {{/employees}}
+                            <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Tipo Turno</label>
+                            <select id="shiftType" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-900" onchange="updateTimeInputs()">
+                                <option value="Morning">Morning (08-16)</option>
+                                <option value="Day">Day (09-17)</option>
+                                <option value="Evening">Evening (16-00)</option>
+                                <option value="Night">Night (00-08)</option>
+                                <option value="Custom">Custom</option>
                             </select>
                         </div>
-                        
-                        <div class="grid grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Tipo Turno</label>
-                                <select id="shiftType" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-900" onchange="updateTimeInputs()">
-                                    <option value="Morning">Morning (08-16)</option>
-                                    <option value="Day">Day (09-17)</option>
-                                    <option value="Evening">Evening (16-00)</option>
-                                    <option value="Night">Night (00-08)</option>
-                                    <option value="Custom">Custom</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Giorno</label>
-                                <select id="shiftDay" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-900">
-                                    <option value="Monday">Lunedì</option>
-                                    <option value="Tuesday">Martedì</option>
-                                    <option value="Wednesday">Mercoledì</option>
-                                    <option value="Thursday">Giovedì</option>
-                                    <option value="Friday">Venerdì</option>
-                                    <option value="Saturday">Sabato</option>
-                                    <option value="Sunday">Domenica</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Giorno</label>
+                            <select id="shiftDay" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-900">
+                                <option value="Monday">Lunedì</option>
+                                <option value="Tuesday">Martedì</option>
+                                <option value="Wednesday">Mercoledì</option>
+                                <option value="Thursday">Giovedì</option>
+                                <option value="Friday">Venerdì</option>
+                                <option value="Saturday">Sabato</option>
+                                <option value="Sunday">Domenica</option>
+                            </select>
                         </div>
-
-                        <!-- Custom Time Range -->
-                        <div class="grid grid-cols-2 gap-6 bg-white/5 p-4 rounded-xl border border-white/5">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Inizio</label>
-                                <input type="time" id="shiftStart" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500" value="08:00">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Fine</label>
-                                <input type="time" id="shiftEnd" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500" value="16:00">
-                            </div>
-                        </div>
-
-                         <div>
-                            <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Note</label>
-                            <input type="text" id="shiftNotes" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-slate-600 transition-all hover:bg-slate-900" placeholder="Es: Sostituzione...">
-                        </div>
-                    </form>
-
-                    <div class="bg-slate-900/50 px-8 py-6 border-t border-white/5 flex gap-4">
-                        <button type="button" id="confirmCreateShift" class="flex-1 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-indigo-500 transition-all hover:scale-105 active:scale-95">
-                            Salva Turno
-                        </button>
-                        <button type="button" id="cancelCreateShift" class="flex-1 rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all hover:text-white">
-                            Annulla
-                        </button>
                     </div>
+
+                    <!-- Custom Time Range -->
+                    <div class="grid grid-cols-2 gap-6 bg-white/5 p-4 rounded-xl border border-white/5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Inizio</label>
+                            <input type="time" id="shiftStart" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500" value="08:00">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Fine</label>
+                            <input type="time" id="shiftEnd" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-white focus:ring-2 focus:ring-indigo-500" value="16:00">
+                        </div>
+                    </div>
+
+                        <div>
+                        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Note</label>
+                        <input type="text" id="shiftNotes" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-slate-600 transition-all hover:bg-slate-900" placeholder="Es: Sostituzione...">
+                    </div>
+                </form>
+
+                <div class="bg-slate-900/50 px-8 py-6 border-t border-white/5 flex gap-4">
+                    <button type="button" id="confirmCreateShift" class="flex-1 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-indigo-500 transition-all hover:scale-105 active:scale-95">
+                        Salva Turno
+                    </button>
+                    <button type="button" id="cancelCreateShift" class="flex-1 rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all hover:text-white">
+                        Annulla
+                    </button>
                 </div>
             </div>
         </div>
@@ -384,7 +384,7 @@
         <div class="fixed inset-0 bg-black/90 backdrop-blur-md transition-opacity opacity-0" id="aiModalBackdrop"></div>
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-screen items-center justify-center p-4 text-center">
-                <div class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all sm:w-full sm:max-w-lg opacity-0 scale-95" id="aiModalPanel">
+                <div class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all sm:w-full sm:max-w-sm opacity-0 scale-95" id="aiModalPanel">
                     
                     <div class="p-8 border-b border-white/5 bg-gradient-to-r from-violet-500/10 to-transparent">
                         <div class="flex items-center gap-4">
@@ -474,5 +474,92 @@
         feather.replace();
     </script>
     <script src="{{base_url}}/js/components/scroll_navigator.js"></script>
+
+    <!-- Quick Move Modal -->
+    <div id="quickMoveModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 9999 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-[#000000]/90 backdrop-blur-md transition-opacity opacity-0" id="quickMoveBackdrop" onclick="closeQuickMoveModal()"></div>
+
+        <div class="flex min-h-screen items-center justify-center p-4" onclick="if(event.target === this) closeQuickMoveModal()">
+            <div id="quickMovePanel" class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-2xl opacity-0 scale-95" onclick="event.stopPropagation()">
+                
+                <div class="bg-indigo-600 px-4 py-3 border-b border-white/10">
+                    <h3 class="text-base font-bold leading-6 text-white" id="modal-title">Sposta Turno</h3>
+                </div>
+
+                <!-- Context Summary -->
+                <div class="px-6 py-4 bg-white/5 border-b border-white/5">
+                    <div class="flex items-center gap-4">
+                        <div class="h-10 w-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold" id="quickMoveAvatar">
+                            <!-- Initials -->
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-white" id="quickMoveEmployeeName">Nome Dipendente</h4>
+                            <p class="text-xs text-indigo-400" id="quickMoveShiftDetails">Turno: Morning (08:00 - 16:00)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-6 space-y-4">
+                    <input type="hidden" id="quickMoveShiftId">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Seleziona Giorno</label>
+                        <select id="quickMoveDay" class="w-full bg-slate-800 border-0 text-white text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 py-2.5">
+                            <option value="Monday">Lunedì</option>
+                            <option value="Tuesday">Martedì</option>
+                            <option value="Wednesday">Mercoledì</option>
+                            <option value="Thursday">Giovedì</option>
+                            <option value="Friday">Venerdì</option>
+                            <option value="Saturday">Sabato</option>
+                            <option value="Sunday">Domenica</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">O Data Specifica</label>
+                        <input type="date" id="quickMoveDate" class="w-full bg-slate-800 border-0 text-white text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 py-2.5">
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 px-4 py-3 flex flex-row-reverse gap-2 border-t border-white/5">
+                    <button type="button" id="confirmQuickMove" class="inline-flex w-full justify-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-500 sm:w-auto transition-all">Sposta</button>
+                    <button type="button" onclick="closeQuickMoveModal()" class="inline-flex w-full justify-center rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-slate-300 shadow-sm hover:bg-white/10 sm:w-auto transition-all">Annulla</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Shift Modal (New Custom Alert) -->
+    <div id="deleteShiftModal" class="fixed inset-0 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="z-index: 9999;">
+        <div id="deleteShiftBackdrop" class="fixed inset-0 bg-[#000000]/90 backdrop-blur-md transition-opacity opacity-0"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+                <div id="deleteShiftPanel" class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-xs opacity-0 scale-95">
+                    
+                    <div class="bg-red-600/10 px-6 py-6 border-b border-white/5 flex items-center justify-center">
+                        <div class="h-12 w-12 rounded-full bg-red-600/20 flex items-center justify-center text-red-500">
+                            <i data-feather="trash-2" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 text-center">
+                        <h3 class="text-lg font-bold text-white mb-2">Rimuovi Turno?</h3>
+                        <p class="text-sm text-slate-400">Questa azione non può essere annullata.</p>
+                        <input type="hidden" id="deleteShiftId">
+                    </div>
+
+                    <div class="bg-slate-900/50 px-6 py-4 flex gap-3 border-t border-white/5">
+                        <button type="button" id="confirmDeleteShift" class="flex-1 rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-red-500 transition-all">Sì, Rimuovi</button>
+                        <button type="button" onclick="closeDeleteShiftModal()" class="flex-1 rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all">Annulla</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{base_url}}/js/pages/workshift-shift-management.js?v=7.9.2"></script>
 </body>
 </html>

@@ -32,31 +32,31 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
-                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="grid" class="w-4 h-4"></i> Dashboard
                     </a>
                    
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
                     
-                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="home" class="w-4 h-4"></i> Home
                     </a>
-                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="calendar" class="w-4 h-4"></i> Turni
                     </a>
-                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
                         <i data-feather="users" class="w-4 h-4"></i> Team
                     </a>
-                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="sun" class="w-4 h-4"></i> Ferie
                     </a>
 
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
 
-                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="list" class="w-4 h-4"></i> Taskflow
                     </a>
-                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="dollar-sign" class="w-4 h-4"></i> Expensebar
                     </a>
                 </div>
@@ -85,7 +85,7 @@
             </div>
             
             <div class="flex gap-4 relative z-10 w-auto">
-                 <button onclick="openModal()" class="group relative px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-[0_4px_20px_rgba(79,70,229,0.4)] transition-all duration-300 overflow-hidden flex justify-center items-center gap-2 text-sm">
+                 <button onclick="openModal()" class="group relative px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-[0_4px_20px_rgba(79,70,229,0.4)] transition-all duration-300 overflow-hidden flex justify-center items-center gap-2 text-sm">
                     <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     <i data-feather="user-plus" class="w-4 h-4"></i>
                     <span>Nuovo Membro</span>
@@ -126,7 +126,7 @@
         <!-- Ultimate Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {{#employees}}
-            <div class="group relative h-full employee-card" data-role="{{role}}" data-department="{{department}}">
+            <div class="group relative h-full employee-card" data-name="{{name}}" data-role="{{role}}" data-department="{{department}}">
                 <!-- Card Background & Glow -->
                 <div class="absolute -inset-[1px] bg-gradient-to-b from-indigo-500/20 to-transparent rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="border-radius: 48px !important;"></div>
                 
@@ -236,7 +236,7 @@
                     <!-- Rows Per Page -->
                     <div class="flex items-center gap-2">
                         <label class="text-slate-500 text-xs uppercase font-bold tracking-wider">Mostra</label>
-                        <select id="rowsPerPage" onchange="changeRowsPerPage(this.value)" class="bg-slate-900 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2">
+                        <select id="rowsPerPage" onchange="changeRowsPerPage(this.value)" class="bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2">
                             <option value="8">8</option>
                             <option value="16">16</option>
                             <option value="24">24</option>
@@ -245,8 +245,8 @@
                     </div>
 
                     <!-- Pagination Buttons -->
-                    <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                        <button onclick="changePage('prev')" id="btnPrev" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-slate-700 hover:bg-slate-700/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <nav class="isolate inline-flex -space-x-px rounded-xl shadow-sm" aria-label="Pagination">
+                        <button onclick="changePage('prev')" id="btnPrev" class="relative inline-flex items-center rounded-l-xl px-2 py-2 text-gray-400 ring-1 ring-inset ring-slate-700 hover:bg-slate-700/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span class="sr-only">Precedente</span>
                             <i data-feather="chevron-left" class="h-5 w-5"></i>
                         </button>
@@ -254,7 +254,7 @@
                         <!-- Page Numbers (Dynamic) -->
                         <div id="pageNumbers" class="flex"></div>
 
-                        <button onclick="changePage('next')" id="btnNext" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-slate-700 hover:bg-slate-700/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button onclick="changePage('next')" id="btnNext" class="relative inline-flex items-center rounded-r-xl px-2 py-2 text-gray-400 ring-1 ring-inset ring-slate-700 hover:bg-slate-700/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span class="sr-only">Successivo</span>
                             <i data-feather="chevron-right" class="h-5 w-5"></i>
                         </button>
@@ -500,7 +500,7 @@
     <script src="{{base_url}}/js/workshift-api.js"></script>
     <script src="{{base_url}}/js/lib/sweetalert2.all.min.js"></script>
     <script src="{{base_url}}/js/fiscal-code-data.js?v=1.2"></script>
-    <script src="{{base_url}}/js/pages/workshift-team-management.js?v=7.7.1"></script>
+    <script src="{{base_url}}/js/pages/workshift-team-management.js?v=7.7.1-fix"></script>
     <script>
         feather.replace();
     </script>

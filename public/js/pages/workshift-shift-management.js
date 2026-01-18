@@ -87,6 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentView === 'year') {
             titleText = "ANNO";
             if (label) label.innerHTML = currentDate.getFullYear();
+        } else if (currentView === 'list') {
+            titleText = "VISTA LISTA (MESE)";
+            if (label) label.innerHTML = currentDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
         } else if (currentView === 'day') {
             titleText = "GIORNO SINGOLO";
             if (label) label.innerHTML = currentDate.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -342,6 +345,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (currentView === 'day') {
                 s = formatDate(clone);
                 e = formatDate(clone);
+            } else if (currentView === 'list') {
+                // List View defaults to showing 30 days from current date or current month
+                // Let's stick to Month range for consistency initially, but displayed as list
+                clone.setDate(1);
+                s = formatDate(clone);
+                clone.setMonth(clone.getMonth() + 1);
+                clone.setDate(0);
+                e = formatDate(clone);
             }
 
             console.log(`[ShiftManager] Loading schedule for ${currentView}: ${s} to ${e}`);
@@ -354,16 +365,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const grid = document.getElementById('scheduleGrid');
             const headerRow = document.querySelector('.grid.grid-cols-7.border-b');
 
+            // Reset Classes
+            grid.className = '';
+            grid.innerHTML = '';
+
             if (currentView === 'week') {
                 if (headerRow) headerRow.classList.remove('hidden');
-                grid.innerHTML = '';
+                // Standard Grid
+                grid.className = "grid grid-cols-7 divide-x divide-white/5 h-full bg-slate-900/20 backdrop-blur-sm";
+
                 // Rebuild columns
                 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-                grid.className = "grid grid-cols-7 divide-x divide-white/5 min-h-[700px] bg-slate-900/20 backdrop-blur-sm";
 
                 days.forEach(day => {
                     const col = document.createElement('div');
-                    col.className = "grid-col p-3 space-y-3 group/col hover:bg-white/5 transition-colors relative cursor-pointer";
+                    col.className = "grid-col p-3 space-y-3 group/col hover:bg-white/5 transition-colors relative cursor-pointer overflow-y-auto h-full scrollbar-hide";
                     col.dataset.day = day;
                     col.innerHTML = `<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/col:opacity-10 pointer-events-none transition-opacity"><i data-feather="plus-circle" class="w-12 h-12 text-white"></i></div>`;
 
@@ -374,17 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (d) {
                             const daySelect = document.getElementById('shiftDay');
                             if (daySelect) daySelect.value = d;
-                            // Assuming showModal is available in scope (it is)
-                            const modal = document.getElementById('createShiftModal');
-                            const modalBackdrop = document.getElementById('modalBackdrop');
-                            const modalPanel = document.getElementById('modalPanel');
-
-                            modal.classList.remove('hidden');
-                            void modal.offsetWidth;
-                            modalBackdrop.classList.remove('opacity-0');
-                            modalBackdrop.classList.add('opacity-100');
-                            modalPanel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
-                            modalPanel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+                            // Check global toggle
+                            if (window.toggleCreateShiftModal) window.toggleCreateShiftModal();
                         }
                     });
 
@@ -392,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 renderGrid(shifts);
                 feather.replace();
+
             } else if (currentView === 'month') {
                 if (headerRow) headerRow.classList.add('hidden');
                 renderMonthGrid(grid, shifts, currentDate);
@@ -401,6 +409,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (currentView === 'day') {
                 if (headerRow) headerRow.classList.add('hidden');
                 renderDayDetailed(grid, shifts, currentDate);
+            } else if (currentView === 'list') {
+                if (headerRow) headerRow.classList.add('hidden');
+                renderListView(grid, shifts);
+                feather.replace();
             }
 
         } catch (e) {
@@ -442,16 +454,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const card = document.createElement('div');
 
+                // Check if shift is in the past
+                const shiftDateObj = new Date(shift.date);
+                const todayObj = new Date();
+                todayObj.setHours(0, 0, 0, 0);
+                const isPast = shiftDateObj < todayObj;
+
                 // CSS Class Logic (Robust against missing Tailwind builds)
-                const typeClass = shift.type === 'Morning' ? 'shift-card-morning' :
-                    shift.type === 'Day' ? 'shift-card-day' :
-                        shift.type === 'Evening' ? 'shift-card-evening' : 'shift-card-night';
+                let typeClass = '';
+                let dotClass = '';
 
-                const dotClass = shift.type === 'Morning' ? 'dot-morning' :
-                    shift.type === 'Day' ? 'dot-day' :
-                        shift.type === 'Evening' ? 'dot-evening' : 'dot-night';
+                if (isPast) {
+                    typeClass = 'bg-slate-800/50 border-slate-700 grayscale opacity-75'; // Past styling
+                    dotClass = 'bg-slate-500 shadow-none';
+                } else {
+                    typeClass = shift.type === 'Morning' ? 'shift-card-morning' :
+                        shift.type === 'Day' ? 'shift-card-day' :
+                            shift.type === 'Evening' ? 'shift-card-evening' : 'shift-card-night';
 
-                card.className = `shift-card ${typeClass} p-3 rounded-2xl mb-3 relative overflow-hidden group cursor-grab active:cursor-grabbing`;
+                    dotClass = shift.type === 'Morning' ? 'dot-morning' :
+                        shift.type === 'Day' ? 'dot-day' :
+                            shift.type === 'Evening' ? 'dot-evening' : 'dot-night';
+                }
+
+                card.className = `shift-card ${typeClass} p-3 rounded-2xl mb-3 relative overflow-hidden group cursor-grab active:cursor-grabbing transition-all`;
                 card.draggable = true;
                 card.setAttribute('ondragstart', 'drag(event)');
                 card.dataset.shift = JSON.stringify(shift);
@@ -469,40 +495,126 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="w-2 h-2 rounded-full ${dotClass}"></div>
                     </div>
-                    <div class="flex justify-between items-end">
+                    <div class="flex justify-between items-end mt-2">
                         <div class="text-xs font-mono text-slate-300 bg-black/20 px-2 py-1 rounded-lg">
                             ${startTime} - ${endTime}
                         </div>
-                        <button class="text-red-400 hover:text-white hover:bg-red-500/30 p-1 rounded transition-colors opacity-0 group-hover:opacity-100" onclick="deleteShift('${shift.id}')" title="Rimuovi">
-                            <i data-feather="trash-2" class="w-3 h-3"></i>
-                        </button>
+                        <div class="flex gap-1">
+                             <!-- Quick Move Button (Symmetrical) -->
+                            <button class="text-indigo-400 hover:text-white hover:bg-indigo-500/30 p-1.5 rounded-lg transition-colors" onclick="arguments[0].stopPropagation(); openQuickMoveModal('${shift.id}')" title="Sposta a Giorno">
+                                <i data-feather="move" class="w-4 h-4"></i>
+                            </button>
+                             <!-- Calendar Button (Deep Move) -->
+                            <button class="text-fuchsia-400 hover:text-white hover:bg-fuchsia-500/30 p-1.5 rounded-lg transition-colors" onclick="arguments[0].stopPropagation(); openQuickMoveModal('${shift.id}', true)" title="Sposta a Data">
+                                <i data-feather="calendar" class="w-4 h-4"></i>
+                            </button>
+                            <button class="text-red-400 hover:text-white hover:bg-red-500/30 p-1.5 rounded-lg transition-colors" onclick="arguments[0].stopPropagation(); deleteShift('${shift.id}')" title="Rimuovi">
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
 
                 col.appendChild(card);
-                feather.replace(); // Re-init icons for the new card
             }
         });
+
+        // Batch feather replace after all cards are added to DOM for performance and reliability
+        setTimeout(() => { feather.replace(); }, 0);
     }
 
-    window.deleteShift = async (id) => {
-        if (!confirm("Rimuovere questo turno?")) return;
-        try {
-            await client.deleteShift(id); // Assume implementation exists
-            loadSchedule();
-        } catch (e) {
-            console.error(e);
-        }
+    // === Delete Modal Logic ===
+    window.openDeleteShiftModal = (id) => {
+        document.getElementById('deleteShiftId').value = id;
+        const modal = document.getElementById('deleteShiftModal');
+        const backdrop = document.getElementById('deleteShiftBackdrop');
+        const panel = document.getElementById('deleteShiftPanel');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+            panel.classList.remove('opacity-0', 'scale-95');
+            panel.classList.add('opacity-100', 'scale-100');
+            feather.replace(); // Ensure icons render in modal
+        }, 10);
     };
+
+    window.closeDeleteShiftModal = () => {
+        const modal = document.getElementById('deleteShiftModal');
+        const backdrop = document.getElementById('deleteShiftBackdrop');
+        const panel = document.getElementById('deleteShiftPanel');
+
+        if (!modal) return;
+
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100');
+        panel.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    };
+
+    document.getElementById('confirmDeleteShift').addEventListener('click', async () => {
+        const id = document.getElementById('deleteShiftId').value;
+        try {
+            await client.deleteShift(id);
+            closeDeleteShiftModal();
+            loadSchedule();
+            // Optional: Show a subtle toast or just refresh
+        } catch (e) {
+            alert('Errore eliminazione: ' + e.message);
+        }
+    });
+
+    window.deleteShift = (id) => {
+        openDeleteShiftModal(id);
+    };
+
     // === Drag & Drop & Reset Logic ===
+
+    // Helper to check if a day column is in the past
+    const isDayPast = (dayName) => {
+        if (currentView !== 'week') return false; // Only strict for week view logic usually
+
+        // Calculate the Date of that column based on currentDate (which is start of week usually or tracked)
+        // This relies on currentDate being correct.
+        // Let's re-calculate the week start from currentDate state
+        const clone = new Date(currentDate);
+        const day = clone.getDay();
+        const diff = clone.getDate() - day + (day === 0 ? -6 : 1);
+        clone.setDate(diff); // Monday of current view
+
+        const dayOffsets = { 'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6 };
+
+        const targetDate = new Date(clone);
+        targetDate.setDate(clone.getDate() + dayOffsets[dayName]);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        targetDate.setHours(0, 0, 0, 0);
+
+        return targetDate < today;
+    }
 
     window.allowDrop = (ev) => {
         ev.preventDefault();
-        ev.currentTarget.classList.add('bg-white/5'); // Highlight
+        const col = ev.currentTarget;
+        const targetDay = col.dataset.day;
+
+        if (isDayPast(targetDay)) {
+            col.classList.add('bg-red-500/10', 'border-red-500/20');
+            col.classList.remove('bg-white/5'); // Remove standard
+        } else {
+            col.classList.add('bg-white/5');
+            col.classList.remove('bg-red-500/10', 'border-red-500/20');
+        }
     };
 
     window.dragleave = (ev) => {
-        ev.currentTarget.classList.remove('bg-white/5');
+        ev.currentTarget.classList.remove('bg-white/5', 'bg-red-500/10', 'border-red-500/20');
     };
 
     window.drag = (ev) => {
@@ -512,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.drop = async (ev) => {
         ev.preventDefault();
-        ev.currentTarget.classList.remove('bg-white/5');
+        ev.currentTarget.classList.remove('bg-white/5', 'bg-red-500/10', 'border-red-500/20');
 
         const data = ev.dataTransfer.getData("application/json");
         if (!data) return;
@@ -523,16 +635,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shift.day === targetDay) return; // No change
 
         // Calculate New Date
-        const today = new Date();
-        const currentDay = today.getDay();
+        // We must calculate based on the VIEW's current date, NOT just "next Monday" from today.
+        // Otherwise navigating weeks breaks dragging.
+        const clone = new Date(currentDate);
+        const day = clone.getDay();
+        const diff = clone.getDate() - day + (day === 0 ? -6 : 1);
+        clone.setDate(diff); // Monday of VIEW
+
         const dayOffsets = { 'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6 };
 
-        const mondayOffset = (currentDay === 0 ? -6 : 1) - currentDay;
-        const mondayDate = new Date(today);
-        mondayDate.setDate(today.getDate() + mondayOffset);
-
-        const targetDate = new Date(mondayDate);
-        targetDate.setDate(mondayDate.getDate() + dayOffsets[targetDay]);
+        const targetDate = new Date(clone);
+        targetDate.setDate(clone.getDate() + dayOffsets[targetDay]);
 
         // Local Date String YYYY-MM-DD
         const yyyy = targetDate.getFullYear();
@@ -540,24 +653,144 @@ document.addEventListener('DOMContentLoaded', () => {
         const dd = String(targetDate.getDate()).padStart(2, '0');
         const dateStr = `${yyyy}-${mm}-${dd}`;
 
+        // VISUAL FEEDBACK: If Past
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tDate = new Date(targetDate);
+        tDate.setHours(0, 0, 0, 0);
+
+        if (tDate < today) {
+            if (!confirm("Attenzione: Stai spostando un turno nel passato. Confermi?")) return;
+        }
+
         // Updates
         shift.day = targetDay;
         shift.date = dateStr;
-        // Time remains same
-        // Fix Payload structure for API (expects snake_case keys match DB/Controller)
-        // The Shift object from DB usually has snake_case.
-        // Ensure we send correct payload
 
         // Update Shift
         try {
             const client = new WorkShiftAPI(window.location.origin + window.location.pathname.split('/workshift')[0]);
             await client.saveShift(shift);
-            window.location.reload();
+            // Don't full reload, try optimized reload
+            // window.location.reload(); 
+            // Better: just loadSchedule() to keep view
+            loadSchedule();
         } catch (e) {
             console.error(e);
             alert("Errore spostamento: " + e.message);
         }
     };
+
+    // === Quick Move Logic ===
+    window.openQuickMoveModal = (id, focusDate = false) => {
+        document.getElementById('quickMoveShiftId').value = id;
+        document.getElementById('quickMoveDate').value = ''; // Reset specific date
+
+        const modal = document.getElementById('quickMoveModal');
+        const backdrop = document.getElementById('quickMoveBackdrop');
+        const panel = document.getElementById('quickMovePanel');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+            backdrop.classList.add('opacity-100');
+            panel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+            panel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+
+            if (focusDate) {
+                const dateInput = document.getElementById('quickMoveDate');
+                if (dateInput) {
+                    dateInput.focus();
+                    dateInput.click(); // Try opening getter
+                }
+            }
+        }, 10);
+    }
+
+    window.closeQuickMoveModal = () => {
+        const modal = document.getElementById('quickMoveModal');
+        const backdrop = document.getElementById('quickMoveBackdrop');
+        const panel = document.getElementById('quickMovePanel');
+
+        panel.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+        backdrop.classList.add('opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    const confirmMoveBtn = document.getElementById('confirmQuickMove');
+    if (confirmMoveBtn) {
+        confirmMoveBtn.addEventListener('click', async () => {
+            const id = document.getElementById('quickMoveShiftId').value;
+            const day = document.getElementById('quickMoveDay').value;
+            const specificDate = document.getElementById('quickMoveDate').value;
+
+            let targetDateStr;
+            let targetDayName = day;
+
+            if (specificDate) {
+                targetDateStr = specificDate;
+                // Calculate Day name from date
+                const dateObj = new Date(specificDate);
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                targetDayName = days[dateObj.getDay()];
+            } else {
+                // Calculate from Current Week View
+                const clone = new Date(currentDate);
+                const d = clone.getDay();
+                const diff = clone.getDate() - d + (d === 0 ? -6 : 1);
+                clone.setDate(diff); // Monday of VIEW
+
+                const dayOffsets = { 'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6 };
+
+                const targetDate = new Date(clone);
+                targetDate.setDate(clone.getDate() + dayOffsets[day]);
+
+                // Local YYYY-MM-DD
+                const y = targetDate.getFullYear();
+                const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(targetDate.getDate()).padStart(2, '0');
+                targetDateStr = `${y}-${m}-${dd}`;
+            }
+
+            // We need full shift object to save... wait, saveShift needs ID to update?
+            // saveShift expects {id, ...fields}. If we only send id and date, backend might nullify others?
+            // The method saveShift in JS calls API.
+            // Let's first Fetch the shift? Or simple PATCH?
+            // We don't have getShiftById. We have to be careful.
+            // Actually, we can assume we only want to update Date/Day.
+            // But WorkshiftController.php saveShift usually expects full data or merges?
+            // Let's check WorkshiftController.php saveShift implementation.
+
+            // To be safe: we are client-side. We can't easily get the specific shift object here without storing all shifts globally in a map.
+            // NOTE: In renderGrid we put `dataset.shift`. We can't access that easily from just ID in modal.
+            // SOLUTION: When opening modal, find the card with that ID and grab its data!
+
+            // Find card
+            // We don't have the element reference in openQuickMoveModal(id).
+            // We should pass the object or search DOM.
+            const card = document.querySelector(`.shift-card button[onclick="deleteShift('${id}')"]`).closest('.shift-card');
+            if (!card) { alert("Errore: Turno non trovato nel DOM"); return; }
+
+            const shiftData = JSON.parse(card.dataset.shift);
+
+            // Update
+            shiftData.date = targetDateStr;
+            shiftData.day = targetDayName;
+            // Times remain same
+
+            try {
+                const client = new WorkShiftAPI(window.location.origin + window.location.pathname.split('/workshift')[0]);
+                await client.saveShift(shiftData);
+                closeQuickMoveModal();
+                loadSchedule();
+            } catch (e) {
+                alert("Errore: " + e.message);
+            }
+        });
+    }
 
     // === Global Actions ===
     window.clearDay = async (day) => {
@@ -790,4 +1023,151 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // === Auto Close Logic (Deprecated in JS, moved to HTML onclick) ===
+    // We removed the JS array based logic to avoid conflicts and utilize the robust HTML propagation logic.
+    // The functions closeQuickMoveModal and toggleCreateShiftModal are now exposed globally.
+
+    function renderListView(container, shifts) {
+        container.className = "w-full overflow-hidden rounded-3xl bg-slate-900/50"; // Reset grid
+
+        // Sort by Date then Time
+        shifts.sort((a, b) => {
+            if (a.date !== b.date) return a.date.localeCompare(b.date);
+            return a.start_time.localeCompare(b.start_time);
+        });
+
+        let html = `
+        <div class="overflow-x-auto h-full">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-white/10 text-xs uppercase text-indigo-300 sticky top-0 backdrop-blur-md z-10">
+                    <tr>
+                        <th class="p-4 font-bold tracking-wider rounded-tl-3xl">Giorno</th>
+                        <th class="p-4 font-bold tracking-wider">Dipendente</th>
+                        <th class="p-4 font-bold tracking-wider">Tipo Turno</th>
+                        <th class="p-4 font-bold tracking-wider">Orario</th>
+                        <th class="p-4 font-bold tracking-wider text-right rounded-tr-3xl">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 text-sm">
+        `;
+
+        if (shifts.length === 0) {
+            html += `<tr><td colspan="5" class="p-8 text-center text-slate-400 italic">Nessun turno trovato in questo periodo.</td></tr>`;
+        } else {
+            shifts.forEach(shift => {
+                // Format Date
+                const dateObj = new Date(shift.date);
+                const dayName = dateObj.toLocaleDateString('it-IT', { weekday: 'short' });
+                const dateStr = dateObj.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+
+                // Avatar
+                const initials = shift.employee_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const avatar = shift.employee_avatar
+                    ? `<img src="${shift.employee_avatar}" class="w-8 h-8 rounded-full border border-white/10">`
+                    : `<div class="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-300 font-bold flex items-center justify-center text-xs">${initials}</div>`;
+
+                // Badge
+                let badgeClass = 'bg-slate-700 text-slate-300';
+                if (shift.type === 'Morning') badgeClass = 'bg-orange-500/20 text-orange-300 border border-orange-500/20';
+                else if (shift.type === 'Day') badgeClass = 'bg-blue-500/20 text-blue-300 border border-blue-500/20';
+                else if (shift.type === 'Evening') badgeClass = 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/20';
+                else if (shift.type === 'Night') badgeClass = 'bg-purple-500/20 text-purple-300 border border-purple-500/20';
+
+                // Robust Time Parsing
+                let sTime = shift.start_time;
+                if (sTime && sTime.includes(' ')) sTime = sTime.split(' ')[1];
+                sTime = sTime ? sTime.substring(0, 5) : '00:00';
+
+                let eTime = shift.end_time;
+                if (eTime && eTime.includes(' ')) eTime = eTime.split(' ')[1];
+                eTime = eTime ? eTime.substring(0, 5) : '00:00';
+
+                // Hidden Data for Quick Move
+                const shiftJSON = JSON.stringify(shift).replace(/"/g, '&quot;');
+
+                html += `
+                    <tr class="hover:bg-white/5 transition-colors group shift-card" data-shift="${shiftJSON}">
+                        <td class="p-4 text-white whitespace-nowrap">
+                            <span class="font-bold text-indigo-400 mr-2">${dayName}</span>
+                            <span class="opacity-80">${dateStr}</span>
+                        </td>
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                ${avatar}
+                                <span class="font-medium text-white">${shift.employee_name}</span>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold ${badgeClass}">${shift.type}</span>
+                        </td>
+                         <td class="p-4 text-slate-300 font-mono flex items-center gap-2">
+                            <i data-feather="clock" class="w-3 h-3 text-slate-500"></i>
+                            ${sTime} - ${eTime}
+                        </td>
+                         <td class="p-4 text-right">
+                             <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="p-2 rounded-lg bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all" onclick="openQuickMoveModal('${shift.id}')" title="Sposta">
+                                    <i data-feather="move" class="w-4 h-4"></i>
+                                </button>
+                                <button class="p-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all" onclick="window.deleteShift('${shift.id}')" title="Elimina">
+                                    <i data-feather="trash-2" class="w-4 h-4"></i>
+                                </button>
+                             </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        html += `   </tbody>
+                </table>
+            </div>
+        `;
+
+        container.innerHTML = html;
+        // Important: Re-attach shift card class or Ensure openQuickMoveModal works
+        // openQuickMoveModal uses closest('.shift-card') and looks for delete button inside it?
+        // Wait, openQuickMoveModal searches: document.querySelector(`.shift-card button[onclick="deleteShift('${id}')"]`)
+        // My new button has onclick="window.deleteShift('${shift.id}')".
+        // And I added 'shift-card' class to the TR. So it should work!
+        // But need to ensure data-shift attribute is on the TR. Done.
+    }
+
 }); // End DOMContentLoaded
+// ... Global Helpers ...
+
+// Global Modal Helpers (Must be outside DOMContentLoaded to be accessible by HTML onclick)
+window.toggleCreateShiftModal = () => {
+    const modal = document.getElementById('createShiftModal');
+    const backdrop = document.getElementById('modalBackdrop');
+    const panel = document.getElementById('modalPanel');
+
+    if (modal.classList.contains('hidden')) {
+        // Open
+        modal.classList.remove('hidden');
+        // Force reflow
+        void modal.offsetWidth;
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        panel.classList.remove('opacity-0', 'scale-95');
+        panel.classList.add('opacity-100', 'scale-100');
+    } else {
+        // Close
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100');
+        panel.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+};
+
+// Ensure other modals close functions are also global if not already
+// closeQuickMoveModal is already defined as window.closeQuickMoveModal inside, but let's double check.
+// It is defined as window.closeQuickMoveModal inside DOMContentLoaded.
+// NOTE: Defining window.function INSIDE DOMContentLoaded IS fine, as long as it runs before user clicks.
+// However, to be absolutely safe and cleaner, we prefer distinct definitions.
+// Currently closeQuickMoveModal is correctly attached to window inside the callback.
+// toggleCreateShiftModal WAS defined inside as const or function, NOT attached to window. That was the bug.

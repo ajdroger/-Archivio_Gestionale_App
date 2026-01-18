@@ -29,15 +29,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Main Page Filter Logic (Team Management)
+    // Main Search Bar Logic (Cerca Team) - Surgical Fix
+    const mainSearchInput = document.getElementById('teamSearchInput');
+
+    if (mainSearchInput) {
+        // Debounce for performance if list is large, but direct input is fine for < 100 items
+        mainSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            // Query selector inside event to ensure freshness (though list is static mostly)
+            const cards = document.querySelectorAll('.employee-card');
+
+            cards.forEach(card => {
+                // DATA-DRIVEN CHECK (Robust)
+                // We added data-name="{{name}}" to template to ensure this works perfectly
+                const name = (card.getAttribute('data-name') || card.innerText).toLowerCase();
+                const role = (card.getAttribute('data-role') || '').toLowerCase();
+                const department = (card.getAttribute('data-department') || '').toLowerCase();
+
+                // 1. Check Search Query
+                const matchesSearch = name.includes(query) || role.includes(query) || department.includes(query);
+
+                // 2. Check Active Tab (Context Awareness)
+                const activeTab = document.querySelector('.tab-btn[data-filter].bg-indigo-600');
+                const activeFilter = activeTab ? activeTab.getAttribute('data-filter') : 'all';
+
+                let matchesTab = false;
+                switch (activeFilter) {
+                    case 'all':
+                        matchesTab = true;
+                        break;
+                    case 'management':
+                        matchesTab = role.includes('manager') || role.includes('dirett') || role.includes('coordinatore') || role.includes('capo');
+                        break;
+                    case 'hr_admin':
+                        matchesTab = department.includes('amministrazione') || department.includes('risorse umane') || department.includes('security') || role.includes('admin');
+                        break;
+                    case 'operations':
+                        const isMgmt = role.includes('manager') || role.includes('dirett') || role.includes('coordinatore') || role.includes('capo');
+                        const isHr = department.includes('amministrazione') || department.includes('risorse umane') || department.includes('security') || role.includes('admin');
+                        matchesTab = !isMgmt && !isHr;
+                        break;
+                }
+
+                // Final Visibility Decision
+                if (matchesSearch && matchesTab) {
+                    card.classList.remove('hidden');
+                    // If card is wrapped in a grid col div (which mustache logic implies it isn't directly, but just in case of future layout changes)
+                    // The current template has card as the direct grid item, so this is fine. 
+                    // However, sometimes grid items are wrappers. Let's check parent.
+                    // In the template: <div class="employee-card ..."> IS the grid item.
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+    }
+
+    // Main Page Filter Logic (Team Management - Tabs)
+    // Updated to re-trigger search input logic on tab click so they stay synced
     const filterBtns = document.querySelectorAll('.tab-btn[data-filter]');
-    const employeeCards = document.querySelectorAll('.employee-card');
 
     if (filterBtns.length > 0) {
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                const filter = btn.getAttribute('data-filter');
-
                 // UI Update
                 filterBtns.forEach(b => {
                     b.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
@@ -46,37 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.remove('text-slate-400');
                 btn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
 
-                // Filter Logic
-                employeeCards.forEach(card => {
-                    const role = (card.getAttribute('data-role') || '').toLowerCase();
-                    const dept = (card.getAttribute('data-department') || '').toLowerCase();
-                    let show = false;
-
-                    switch (filter) {
-                        case 'all':
-                            show = true;
-                            break;
-                        case 'management':
-                            show = role.includes('manager') || role.includes('dirett') || role.includes('coordinatore') || role.includes('capo');
-                            break;
-                        case 'hr_admin':
-                            show = dept.includes('amministrazione') || dept.includes('risorse umane') || dept.includes('security') || role.includes('admin');
-                            break;
-                        case 'operations':
-                            // Show if NOT management AND NOT hr_admin
-                            const isMgmt = role.includes('manager') || role.includes('dirett') || role.includes('coordinatore') || role.includes('capo');
-                            const isHr = dept.includes('amministrazione') || dept.includes('risorse umane') || dept.includes('security') || role.includes('admin');
-                            show = !isMgmt && !isHr;
-                            break;
-                    }
-
-                    if (show) {
-                        card.classList.remove('hidden');
-                        card.parentElement && card.parentElement.classList.remove('hidden'); // Ensure parent grid item is visible if needed
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
+                // Trigger Search Input Event to re-calc visibility
+                if (mainSearchInput) {
+                    mainSearchInput.dispatchEvent(new Event('input'));
+                } else {
+                    // Fallback if no search input exists (should not happen in this version)
+                    // But for safety:
+                    const filter = btn.getAttribute('data-filter');
+                    const employeeCards = document.querySelectorAll('.employee-card');
+                    // ... (basic fallback logic omitted as we rely on search bar existence now)
+                }
             });
         });
     }

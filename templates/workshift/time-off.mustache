@@ -26,31 +26,31 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
-                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="grid" class="w-4 h-4"></i> Dashboard
                     </a>
                    
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
                     
-                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="home" class="w-4 h-4"></i> Home
                     </a>
-                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="calendar" class="w-4 h-4"></i> Turni
                     </a>
-                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="users" class="w-4 h-4"></i> Team
                     </a>
-                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
                         <i data-feather="sun" class="w-4 h-4"></i> Ferie
                     </a>
                     
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
 
-                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="list" class="w-4 h-4"></i> Taskflow
                     </a>
-                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="dollar-sign" class="w-4 h-4"></i> Expensebar
                     </a>
                 </div>
@@ -114,7 +114,7 @@
             {{#requests}}
             <div class="group relative bg-slate-800/40 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 transition-all hover:bg-slate-800/60 hover:border-indigo-500/30 hover:shadow-xl">
                  <!-- Status Color Bar -->
-                 <div class="absolute left-0 top-6 bottom-6 w-1 rounded-r-lg 
+                 <div class="absolute left-0 top-6 bottom-6 w-1 rounded-r-xl 
                     {{#is_approved}}bg-emerald-500{{/is_approved}}
                     {{#is_rejected}}bg-red-500{{/is_rejected}}
                     {{#is_pending}}bg-amber-500{{/is_pending}}
@@ -213,8 +213,8 @@
                 </div>
             </div>
             <div class="p-6 border-t border-slate-700/50 flex justify-end gap-3">
-                <button onclick="document.getElementById('requestModal').classList.add('hidden')" class="px-4 py-2 bg-transparent hover:bg-white/5 text-gray-400 hover:text-white rounded-lg transition-colors">Annulla</button>
-                <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-colors">Invia Richiesta</button>
+                <button onclick="document.getElementById('requestModal').classList.add('hidden')" class="px-4 py-2 bg-transparent hover:bg-white/5 text-gray-400 hover:text-white rounded-xl transition-colors">Annulla</button>
+                <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-colors">Invia Richiesta</button>
             </div>
         </div>
     </div>

@@ -165,13 +165,70 @@ class WorkshiftController
 
     public function optimizeSchedule(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        // Placeholder for AI Optimization Logic
-        // In a real scenario, this would call an AI service or algorithm
+        $data = $request->getParsedBody();
+        $startStr = $data['start'] ?? date('Y-m-d');
+        $endStr = $data['end'] ?? date('Y-m-d', strtotime($startStr . ' +6 days'));
+
+        $employees = $this->repository->findAllEmployees();
+
+        if (empty($employees)) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => 'Nessun operatore disponibile nel Team.']));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+
+        // Heuristic Configuration (Italian Standard)
+        $shiftsDef = [
+            ['type' => 'Morning', 'start' => '06:00', 'end' => '14:00', 'need' => 2],
+            ['type' => 'Afternoon', 'start' => '14:00', 'end' => '22:00', 'need' => 2],
+            ['type' => 'Night', 'start' => '22:00', 'end' => '06:00', 'need' => 1] // Min 1 for night
+        ];
+
+        $startDate = new \DateTime($startStr);
+        $endDate = new \DateTime($endStr);
+        $interval = new \DateInterval('P1D');
+        $period = new \DatePeriod($startDate, $interval, $endDate->modify('+1 day'));
+
+        $generatedCount = 0;
+        $empIndex = 0; // Round-robin pointer
+        $totalEmps = count($employees);
+
+        // Shuffle initially for randomness in start point
+        shuffle($employees);
+
+        foreach ($period as $dt) {
+            $dateSql = $dt->format('Y-m-d');
+            $dayName = $dt->format('l'); // e.g., Monday
+
+            // Skip if schedule exists? For "Optimize", we usually overwrite or fill gaps. 
+            // Here we assume "Auto-Schedule" means filling empty slots or generating from scratch.
+            // For safety in this version, we append (user can Reset first if they want full clean slate).
+
+            foreach ($shiftsDef as $shift) {
+                // Assign 'need' number of operators
+                for ($i = 0; $i < $shift['need']; $i++) {
+                    $emp = $employees[$empIndex % $totalEmps];
+
+                    // Simple constraint: ID assignment
+                    $shiftData = [
+                        'employee_id' => $emp['id'],
+                        'date' => $dateSql,
+                        'day' => $dayName,
+                        'start_time' => $shift['start'],
+                        'end_time' => $shift['end'],
+                        'type' => $shift['type']
+                    ];
+
+                    $this->repository->save($shiftData);
+                    $generatedCount++;
+                    $empIndex++;
+                }
+            }
+        }
 
         $response->getBody()->write(json_encode([
             'success' => true,
-            'message' => 'Ottimizzazione non ancora implementata (Placeholder)',
-            'optimized_count' => 0
+            'message' => "Pianificazione completata: generati $generatedCount turni ottimizzati (Standard IT).",
+            'optimized_count' => $generatedCount
         ]));
         return $response->withHeader('Content-Type', 'application/json');
     }
