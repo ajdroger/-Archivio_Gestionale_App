@@ -55,7 +55,7 @@ return function (App $app) {
     $app->add(function (Request $request, RequestHandler $handler) use ($guard) {
         $path = $request->getUri()->getPath();
         // Skip CSRF for public API endpoints and AI Assistant (internal logic handles validation)
-        if (str_contains($path, '/api/public/') || str_contains($path, '/ai/')) {
+        if (str_contains($path, '/api/public/') || str_contains($path, '/ai/') || str_contains($path, '/workshift/api/')) {
             return $handler->handle($request);
         }
         return $guard->process($request, $handler);

@@ -63,4 +63,33 @@ class WorkshiftController
         $response->getBody()->write($html);
         return $response;
     }
+
+    public function saveShift(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+
+        // Validate required fields
+        if (empty($data['employee_id']) || empty($data['start_time']) || empty($data['end_time'])) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => 'Missing required fields']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+
+        // Save using repository
+        $id = $this->repository->save([
+            'employee_id' => $data['employee_id'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'type' => $data['type'] ?? 'Standard',
+            'day' => $data['day'] ?? '',
+            'date' => $data['date'] ?? date('Y-m-d')
+        ]);
+
+        $response->getBody()->write(json_encode([
+            'success' => true,
+            'id' => $id,
+            'message' => 'Shift saved successfully'
+        ]));
+
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 }

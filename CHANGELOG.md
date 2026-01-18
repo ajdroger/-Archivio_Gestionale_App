@@ -13,6 +13,13 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.6.1] - 2026-01-18 "**Sovereign State (Hotfix)**"
+### Risolto
+- **Workshift API**: Risolto errore 404/403 nell'endpoint `/workshift/api/shifts/save` tramite esenzione CSRF in `middleware.php`.
+- **Database Repository**: Implementati metodi mancanti `saveEmployee`, `findAllEmployees`, `deleteEmployee`, `getAllShifts` in `PDOWorkshiftRepository` per supportare i test.
+- **Dependency Injection**: Corretta iniezione mancante di `ConfigurationService` in `DashboardActionController`.
+- **Testing**: Aggiornato `WorkshiftTest.php` per creazione dinamica tabelle e type hinting corretto per evitare warning IDE.
+
 ## [v7.6.0-sovereign-state] - 2026-01-18 "**Sovereign State**"
 ### Legal & Policy Framework (Compliance 100%)
 - **PolicyController Engine**: Nuovo controller `src/Controller/PolicyController.php` per la gestione dinamica dei documenti legali (Privacy, Cookie, EULA).

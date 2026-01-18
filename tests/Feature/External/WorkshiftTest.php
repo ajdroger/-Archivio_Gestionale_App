@@ -3,7 +3,39 @@
 use MCAG\InfrastrutturaIT\Persistence\PDOWorkshiftRepository;
 use MCAG\Controller\External\WorkshiftController;
 
+beforeEach(function () {
+    /** @var \Tests\TestCase $this */
+    $this->loginAs();
+
+    $driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+    $autoInc = $driver === 'sqlite' ? 'AUTOINCREMENT' : 'AUTO_INCREMENT';
+    $primaryKey = $driver === 'sqlite' ? 'INTEGER PRIMARY KEY' : 'INT PRIMARY KEY';
+
+    // Create tables
+    // Employees
+    $this->db->exec("CREATE TABLE IF NOT EXISTS workshift_employees (
+        id $primaryKey $autoInc,
+        name TEXT,
+        role TEXT,
+        department TEXT,
+        email TEXT
+    )");
+
+    // Shifts
+    $this->db->exec("CREATE TABLE IF NOT EXISTS workshift_shifts (
+        id $primaryKey $autoInc,
+        employee_id INTEGER,
+        start_time DATETIME,
+        end_time DATETIME,
+        type TEXT,
+        day TEXT,
+        date DATE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+});
+
 test('PDOWorkshiftRepository can save and retrieve an employee', function () {
+    /** @var \Tests\TestCase $this */
     /** @var PDOWorkshiftRepository $repo */
     $repo = $this->app->getContainer()->get(PDOWorkshiftRepository::class);
 
@@ -32,6 +64,7 @@ test('PDOWorkshiftRepository can save and retrieve an employee', function () {
 });
 
 test('Workshift Dashboard loads correctly', function () {
+    /** @var \Tests\TestCase $this */
     $request = $this->createRequest('GET', '/workshift');
     // Mock session if needed, but the controller handles missing session gracefully
 
@@ -41,6 +74,7 @@ test('Workshift Dashboard loads correctly', function () {
 });
 
 test('Workshift API can create a shift', function () {
+    /** @var \Tests\TestCase $this */
     $this->loginAs();
     /** @var PDOWorkshiftRepository $repo */
     $repo = $this->app->getContainer()->get(PDOWorkshiftRepository::class);

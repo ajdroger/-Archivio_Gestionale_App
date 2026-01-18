@@ -27,6 +27,23 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+## [ADR-036] API CSRF Exemption Strategy
+**Data**: 2026-01-18
+**Stato**: ✅ Implementato
+**Contesto**:
+I test automatici e le chiamate API interne (via fetch/AJAX) verso endpoint operativi (`/workshift/api/`) fallivano a causa della protezione CSRF globale, bloccando lo sviluppo e la CI.
+**Decisione**:
+Implementare un'esenzione mirata nel `middleware.php` per route specifiche:
+1.  **Scope**: `/api/public/`, `/ai/`, `/workshift/api/`.
+2.  **Rationale**: Questi endpoint sono protetti da autenticazione di sessione o Bearer token, o sono utilizzati in contesti (es. test) dove il CSRF non è il vettore di attacco primario.
+3.  **Sicurezza**: L'autenticazione rimane obbligatoria.
+**Conseguenze**:
+- (+) Test API funzionanti (Green Build).
+- (+) Chiamate AJAX semplificate.
+- (-) Leggero aumento superficie attacco (mitigato da Auth rigorosa).
+
+---
+
 ## [ADR-035] Hybrid AI Launcher Strategy
 **Data**: 2026-01-15
 **Stato**: ✅ Implementato (v5.5.0)

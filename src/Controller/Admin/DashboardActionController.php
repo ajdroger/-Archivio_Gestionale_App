@@ -5,6 +5,7 @@ namespace MCAG\Controller\Admin;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use MCAG\Service\ConfigurationService; // Hypothetical service, will mock if needed
+use Psr\Log\LoggerInterface;
 use Monolog\Logger;
 
 /**
@@ -13,10 +14,10 @@ use Monolog\Logger;
  */
 class DashboardActionController
 {
-    private Logger $logger;
+    private LoggerInterface $logger;
     private ConfigurationService $config;
 
-    public function __construct(Logger $logger, ConfigurationService $config)
+    public function __construct(LoggerInterface $logger, ConfigurationService $config)
     {
         $this->logger = $logger;
         $this->config = $config;

@@ -111,6 +111,11 @@ return function (App $app) {
     $logger = $container->get(\Psr\Log\LoggerInterface::class);
     $apiLimit = new RateLimitMiddleware(60, 60, $redis, $logger);
 
+
+    // Workshift
+    $app->get('/workshift', \MCAG\Controller\External\WorkshiftController::class . ':index')->setName('workshift_dashboard');
+    $app->post('/workshift/api/shifts/save', \MCAG\Controller\External\WorkshiftController::class . ':saveShift')->setName('workshift_save');
+
     $app->group('/api/v1', function ($group) {
         $group->get('/soci', \MCAG\Controller\SociApiController::class . ':list');
         $group->get('/soci/{cf}', \MCAG\Controller\SociApiController::class . ':get');
