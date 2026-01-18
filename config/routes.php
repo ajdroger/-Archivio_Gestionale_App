@@ -121,6 +121,16 @@ return function (App $app) {
     $app->get('/workshift/reports', \MCAG\Controller\External\WorkshiftController::class . ':reports')->setName('workshift_reports');
     $app->get('/workshift/info/{page}', \MCAG\Controller\External\WorkshiftController::class . ':info')->setName('workshift_info');
     $app->post('/workshift/api/shifts/save', \MCAG\Controller\External\WorkshiftController::class . ':saveShift')->setName('workshift_save');
+    $app->get('/workshift/api/shifts', \MCAG\Controller\External\WorkshiftController::class . ':getShifts');
+    $app->delete('/workshift/api/shifts/{id}', \MCAG\Controller\External\WorkshiftController::class . ':deleteShift');
+    $app->post('/workshift/api/shifts/reset', \MCAG\Controller\External\WorkshiftController::class . ':resetShifts');
+    $app->post('/workshift/api/optimize', \MCAG\Controller\External\WorkshiftController::class . ':optimizeSchedule');
+
+    // Team API
+    $app->get('/workshift/api/employees', \MCAG\Controller\External\WorkshiftController::class . ':getEmployees');
+    $app->post('/workshift/api/employees/save', \MCAG\Controller\External\WorkshiftController::class . ':saveEmployee');
+    $app->delete('/workshift/api/employees/{id}', \MCAG\Controller\External\WorkshiftController::class . ':deleteEmployee');
+    $app->get('/workshift/api/candidates', \MCAG\Controller\External\WorkshiftController::class . ':searchCandidates');
 
     $app->group('/api/v1', function ($group) {
         $group->get('/soci', \MCAG\Controller\SociApiController::class . ':list');

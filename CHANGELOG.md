@@ -13,6 +13,16 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.6.3] - 2026-01-18 "**Global Identity Update**"
+### Workshift Core Restoration
+- **Unified Search**: Ripristinata e potenziata la ricerca operatori ("New Operator").
+    - **Dual Source**: Ricerca simultanea su Team corrente e Security Center.
+    - **UX**: Supporto "Click-to-Show" per visualizzare candidati recenti senza digitare.
+- **Fiscal Code Engine**: Implementazione algoritmo ufficiale Calcolo Codice Fiscale.
+    - **Logic**: Calcolo esatto di consonanti/vocali, data e CIN controllo.
+    - **Global Database**: Inclusione di tutti i Codici Belfiore esteri ('Z' codes) per supporto mondiale (es. Cina Z210, USA Z404).
+- **UI Fixes**: Risolto problema `z-index` che nascondeva gli alert SweetAlert dietro i modali.
+
 ## [v7.6.1] - 2026-01-18 "**Sovereign State (Hotfix)**"
 ### Risolto
 - **Workshift API**: Risolto errore 404/403 nell'endpoint `/workshift/api/shifts/save` tramite esenzione CSRF in `middleware.php`.

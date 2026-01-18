@@ -27,6 +27,24 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+## [ADR-037] Global City Codes Database Strategy
+**Data**: 2026-01-18
+**Stato**: ✅ Attivo
+**Contesto**:
+Il calcolo del Codice Fiscale richiede il "Codice Catastale" (Belfiore) del comune o stato di nascita. Affidarsi ad API esterne per ogni calcolo è lento e inaffidabile per un sistema mission-critical.
+**Decisione**:
+1.  **Embedded Database**: Includere un dizionario statico JS (`fiscal-code-data.js`) con:
+    - Principali capoluoghi italiani (per velocità).
+    - **TUTTI** gli stati esteri (Z-codes) per garantire supporto mondiale immediato.
+2.  **Versioning**: Gestire il file con versionamento query string (`?v=1.x`) per forzare l'aggiornamento cache sui client.
+**Conseguenze**:
+1.  (+) Calcolo istantaneo (0ms latency).
+2.  (+) Funzionamento offline/intranet.
+3.  (+) Copertura 100% per personale nato all'estero.
+4.  (-) Necessità di aggiornare manualmente in caso di nuovi comuni italiani (accettabile, cambiano raramente).
+
+---
+
 ## [ADR-036] API CSRF Exemption Strategy
 **Data**: 2026-01-18
 **Stato**: ✅ Implementato

@@ -53,7 +53,31 @@ class WorkshiftController
 
     public function teamManagement(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('workshift/team-management.mustache', $this->getCommonData('Gestione Team'));
+        $data = $this->getCommonData('Gestione Team');
+
+        // Fetch employees
+        $employees = $this->repository->findAllEmployees();
+
+        // Decorate for template
+        foreach ($employees as &$emp) {
+            // Initials for avatar fallback
+            $parts = explode(' ', $emp['name']);
+            $initials = '';
+            foreach ($parts as $part) {
+                $initials .= strtoupper(substr($part, 0, 1));
+            }
+            $emp['user_initial'] = substr($initials, 0, 2);
+
+            // Mock code if missing
+            if (empty($emp['employee_code'])) {
+                $emp['employee_code'] = 'EMP-' . str_pad((string) $emp['id'], 3, '0', STR_PAD_LEFT);
+            }
+        }
+        unset($emp);
+
+        $data['employees'] = $employees;
+
+        $html = $this->mustache->render('workshift/team-management.mustache', $data);
         $response->getBody()->write($html);
         return $response;
     }
@@ -130,6 +154,170 @@ class WorkshiftController
             'message' => 'Shift saved successfully'
         ]));
 
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    // === API ENDPOINTS ===
+
+    public function getShifts(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $params = $request->getQueryParams();
+        $start = $params['start'] ?? date('Y-m-d');
+        $end = $params['end'] ?? date('Y-m-d');
+
+        $shifts = $this->repository->findShiftsByRange($start, $end);
+
+        $response->getBody()->write(json_encode(['schedule' => $shifts]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function deleteShift(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $id = (int) $args['id'];
+        $success = $this->repository->delete($id);
+
+        $response->getBody()->write(json_encode(['success' => $success]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function resetShifts(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+        $scope = $data['scope'] ?? 'day';
+        $dateOrStart = $data['date'] ?? $data['start_date'] ?? date('Y-m-d');
+        $end = $data['end_date'] ?? null;
+
+        $deleted = $this->repository->deleteAllShifts($scope, $dateOrStart, $end);
+
+        $response->getBody()->write(json_encode(['success' => true, 'deleted' => $deleted]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function optimizeSchedule(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+        $mode = $data['mode'] ?? 'current_week';
+
+        // 1. Get Real Employees Only
+        $employees = $this->repository->findAllEmployees();
+
+        // STRICT REAL MODE: No Dummies.
+        if (empty($employees)) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'error' => 'Nessun dipendente trovato nel database. Aggiungi il personale nella sezione "Team" prima di generare i turni.'
+            ]));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+
+        // 2. Determine Date Range
+        $start = new \DateTime();
+        if ($mode === 'next_week') {
+            $start->modify('+1 week');
+        }
+        // Align to Monday
+        if ($start->format('N') != 1) {
+            $start->modify('last monday');
+        }
+
+        $shiftsGenerated = 0;
+        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        $shiftTypes = [
+            ['type' => 'Morning', 'start' => '08:00', 'end' => '16:00'],
+            ['type' => 'Day', 'start' => '09:00', 'end' => '17:00'],
+            ['type' => 'Evening', 'start' => '16:00', 'end' => '00:00'],
+            // Night shift logic simplifed for same-day storage, usually crosses midnight
+            ['type' => 'Night', 'start' => '00:00', 'end' => '08:00']
+        ];
+
+        // Clear existing shifts for this week to avoid duplication/clutter (Optional, but cleaner for "Optimize")
+        // $this->repository->deleteAllShifts('week', $start->format('Y-m-d'), (clone $start)->modify('+6 days')->format('Y-m-d'));
+
+        // 3. Generate Shifts
+        for ($i = 0; $i < 7; $i++) {
+            $currentDate = clone $start;
+            $currentDate->modify("+$i days");
+            $dateStr = $currentDate->format('Y-m-d');
+            $dayName = $days[$i];
+
+            // Determine coverage based on headcount
+            // If few employees (e.g. 3), schedule 1-2 shifts max per day to avoid burnout
+            // If many, schedule more.
+            $headCount = count($employees);
+            $maxShifts = max(1, min($headCount, 3)); // Max 3 or headcount
+
+            $numShifts = rand(1, $maxShifts);
+            $dailyEmployees = $employees;
+            shuffle($dailyEmployees);
+
+            for ($j = 0; $j < $numShifts; $j++) {
+                if (empty($dailyEmployees))
+                    break;
+
+                $emp = array_pop($dailyEmployees);
+                $typeConfig = $shiftTypes[array_rand($shiftTypes)];
+
+                $this->repository->save([
+                    'employee_id' => $emp['id'],
+                    'start_time' => "$dateStr " . $typeConfig['start'] . ":00",
+                    'end_time' => "$dateStr " . $typeConfig['end'] . ":00",
+                    'type' => $typeConfig['type'],
+                    'day' => $dayName,
+                    'date' => $dateStr
+                ]);
+                $shiftsGenerated++;
+            }
+        }
+
+        $response->getBody()->write(json_encode([
+            'success' => true,
+            'status' => 'optimized',
+            'generated' => $shiftsGenerated,
+            'message' => "Pianificati $shiftsGenerated turni utilizzando " . count($employees) . " operatori attivi."
+        ]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function getEmployees(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $employees = $this->repository->findAllEmployees();
+        $response->getBody()->write(json_encode($employees));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function saveEmployee(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+
+        if (empty($data['name']) || empty($data['role'])) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => 'Name and Role are required']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+
+        $id = $this->repository->saveEmployee($data);
+
+        $response->getBody()->write(json_encode(['success' => true, 'id' => $id]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function deleteEmployee(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $id = (int) $args['id'];
+        $success = $this->repository->deleteEmployee($id);
+
+        $response->getBody()->write(json_encode(['success' => $success]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function searchCandidates(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $queryParams = $request->getQueryParams();
+        $query = $queryParams['q'] ?? '';
+
+        // Allow empty query to fetch "All" (limit handled in Repo)
+        $results = $this->repository->findCandidates($query);
+
+        $response->getBody()->write(json_encode($results));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
