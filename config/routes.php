@@ -119,6 +119,7 @@ return function (App $app) {
     $app->get('/workshift/team-management', \MCAG\Controller\External\WorkshiftController::class . ':teamManagement')->setName('workshift_team');
     $app->get('/workshift/time-off', \MCAG\Controller\External\WorkshiftController::class . ':timeOff')->setName('workshift_timeoff');
     $app->get('/workshift/reports', \MCAG\Controller\External\WorkshiftController::class . ':reports')->setName('workshift_reports');
+    $app->get('/workshift/info/{page}', \MCAG\Controller\External\WorkshiftController::class . ':info')->setName('workshift_info');
     $app->post('/workshift/api/shifts/save', \MCAG\Controller\External\WorkshiftController::class . ':saveShift')->setName('workshift_save');
 
     $app->group('/api/v1', function ($group) {

@@ -71,6 +71,38 @@ class WorkshiftController
         return $response;
     }
 
+    public function info(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $page = $args['page'];
+        $templateMap = [
+            'support' => 'info/support',
+            'hr-policy' => 'info/hr-policy',
+            'system-status' => 'info/status',
+            'labor-laws' => 'info/labor-laws',
+            'privacy' => 'info/privacy',
+            'terms' => 'info/terms',
+        ];
+
+        if (!array_key_exists($page, $templateMap)) {
+            // Simple 404 handling if not found
+            $response->getBody()->write("Page not found");
+            return $response->withStatus(404);
+        }
+
+        $titleMap = [
+            'support' => 'Supporto',
+            'hr-policy' => 'HR Policy',
+            'system-status' => 'Stato del Sistema',
+            'labor-laws' => 'Normative Lavoro',
+            'privacy' => 'Privacy Policy',
+            'terms' => 'Termini di Servizio',
+        ];
+
+        $html = $this->mustache->render('workshift/' . $templateMap[$page] . '.mustache', $this->getCommonData($titleMap[$page]));
+        $response->getBody()->write($html);
+        return $response;
+    }
+
     public function saveShift(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = $request->getParsedBody();
