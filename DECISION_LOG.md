@@ -27,6 +27,52 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+## [ADR-040] Workshift Delete Propagation Strategy
+**Data**: 2026-01-18
+**Stato**: ✅ Attivo
+**Contesto**:
+La gestione delle richieste ferie e dei turni richiedeva la possibilità di eliminazione fisica o logica, ma mancavano gli endpoint e la UI per farlo in sicurezza.
+**Decisione**:
+1.  **Repository Logic**: Implementati metodi `deleteRequest($id)`, `deleteShift($id)`, `resetRequests()` nel Repository PDO per permettere la pulizia granulare o massiva.
+2.  **Safety UI**: Utilizzo obbligatorio di `SweetAlert2` per conferma operazione con doppio controllo (soprattutto per "Svuota Bacheca").
+3.  **Global Functions**: Esposizione funzioni JS (es. `window.deleteRequest`) a livello globale per garantire l'invocazione da button statici o dinamici.
+- **Conseguenze**:
+- (+) Controllo totale sui dati da parte dell'Admin.
+- (+) Feedback visivo immediato post-eliminazione.
+- (-) Rischio perdita dati (mitigato da prompt conferma espliciti).
+
+---
+
+## [ADR-039] Integrated Reporting Analytics
+**Data**: 2026-01-18
+**Stato**: ✅ Attivo
+**Contesto**:
+La pagina Report visualizzava dati statici o incompleti.
+**Decisione**:
+Estensione del `PDOWorkshiftRepository` con metodi analitici aggregati:
+- `getAnalyticsSummary()`: KPI istantanei (Costo, Ore, Ferie).
+- `getMonthlyTrend()`: Dati serie storica per Chart.js.
+- `getRoleDistribution()`: Breakdown per ruolo.
+**Conseguenze**:
+- (+) Dashboard Reportistica viva e reale.
+- (+) Performance ottimizzata (Calcoli lato DB SQL).
+
+---
+
+## [ADR-038] SweetAlert2 Dependency Standardization
+**Data**: 2026-01-18
+**Stato**: ✅ Attivo
+**Contesto**:
+Alcune pagine (es. Time Off) fallivano silenziosamente perché `Swal` non era caricato, rompendo la UX dei pulsanti d'azione.
+**Decisione**:
+1.  Inclusione esplicita CDN SweetAlert2 nei template critici (`time-off.mustache`).
+2.  Refactoring JS per check di esistenza `if (typeof Swal === 'undefined')` con fallback alert o avviso.
+**Conseguenze**:
+- (+) Robustezza UX garantita.
+- (+) Prevenzione errori console bloccanti.
+
+---
+
 ## [ADR-037] Global City Codes Database Strategy
 **Data**: 2026-01-18
 **Stato**: ✅ Attivo

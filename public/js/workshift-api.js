@@ -129,6 +129,50 @@ class WorkShiftAPI {
             method: 'DELETE'
         });
     }
+
+    /**
+     * Get Requests
+     */
+    async getRequests() {
+        return this._request('/workshift/api/requests');
+    }
+
+    /**
+     * Save Request
+     */
+    async saveRequest(data) {
+        return this._request('/workshift/api/requests/save', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    /**
+     * Update Request Status
+     */
+    async updateRequestStatus(id, status) {
+        return this._request(`/workshift/api/requests/${id}/status`, {
+            method: 'POST',
+            body: JSON.stringify({ status })
+        });
+    }
+    /**
+     * Delete Request
+     */
+    async deleteRequest(id) {
+        return this._request(`/workshift/api/requests/${id}`, {
+            method: 'DELETE'
+        });
+    }
+
+    /**
+     * Delete All Requests (Reset)
+     */
+    async resetRequests() {
+        return this._request('/workshift/api/requests/reset', {
+            method: 'POST'
+        });
+    }
 }
 
 // Expose to window

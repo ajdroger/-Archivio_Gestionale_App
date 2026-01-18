@@ -132,6 +132,13 @@ return function (App $app) {
     $app->delete('/workshift/api/employees/{id}', \MCAG\Controller\External\WorkshiftController::class . ':deleteEmployee');
     $app->get('/workshift/api/candidates', \MCAG\Controller\External\WorkshiftController::class . ':searchCandidates');
 
+    // Time Off API
+    $app->get('/workshift/api/requests', \MCAG\Controller\External\WorkshiftController::class . ':getRequests');
+    $app->post('/workshift/api/requests/save', \MCAG\Controller\External\WorkshiftController::class . ':saveRequest');
+    $app->post('/workshift/api/requests/{id}/status', \MCAG\Controller\External\WorkshiftController::class . ':updateRequestStatus');
+    $app->delete('/workshift/api/requests/{id}', \MCAG\Controller\External\WorkshiftController::class . ':deleteRequest');
+    $app->post('/workshift/api/requests/reset', \MCAG\Controller\External\WorkshiftController::class . ':resetRequests');
+
     $app->group('/api/v1', function ($group) {
         $group->get('/soci', \MCAG\Controller\SociApiController::class . ':list');
         $group->get('/soci/{cf}', \MCAG\Controller\SociApiController::class . ':get');
