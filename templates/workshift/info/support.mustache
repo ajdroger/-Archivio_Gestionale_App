@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/style.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/premium.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="{{base_url}}/js/components/user-status.js"></script>
+</head>
+<body class="bg-mcag-slate text-mcag-text min-h-screen flex flex-col font-sans selection:bg-mcag-accent/30">
+    
+    <!-- Navbar -->
+    <nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 text-xl font-bold text-white hover:text-indigo-400 transition-colors">
+                    <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                    <span>WorkShift</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="home" class="w-4 h-4"></i> Home
+                    </a>
+                </div>
+
+                <!-- User/Identity Bar -->
+                <div class="hidden md:flex items-center gap-4">
+                     <user-status-bar role="{{user_role}}" user="{{username}}"></user-status-bar>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 relative z-10">
+        <div class="glass-panel rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
+            <div class="flex items-center gap-4 mb-8 border-b border-white/10 pb-6">
+                <div class="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30">
+                    <i data-feather="life-buoy" class="w-8 h-8 text-indigo-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Supporto & Assistenza</h1>
+                    <p class="text-slate-400 mt-1">Siamo qui per aiutarti a gestire al meglio i tuoi turni.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Contact Channels -->
+                <div class="space-y-6">
+                    <h2 class="text-xl font-semibold text-white mb-4">Canali di Contatto</h2>
+                    
+                    <div class="group p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-all">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i data-feather="phone" class="text-green-400 w-5 h-5"></i>
+                            <h3 class="font-bold text-white">Linea Diretta HR</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-2">Per urgenze relative ai turni o malattie.</p>
+                        <a href="tel:+39000123456" class="text-indigo-400 font-mono hover:text-indigo-300">+39 000 123 456</a>
+                    </div>
+
+                    <div class="group p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-all">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i data-feather="mail" class="text-blue-400 w-5 h-5"></i>
+                            <h3 class="font-bold text-white">Email Supporto Tecnico</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-2">Per problemi con l'applicazione WorkShift.</p>
+                        <a href="mailto:support@mcag.it" class="text-indigo-400 font-mono hover:text-indigo-300">support@mcag.it</a>
+                    </div>
+                </div>
+
+                <!-- FAQ / Quick Help -->
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold text-white mb-4">Domande Frequenti</h2>
+                    
+                    <details class="bg-slate-800/30 rounded-lg open:bg-slate-800/50 transition-colors">
+                        <summary class="p-4 cursor-pointer font-medium text-slate-200 hover:text-white flex items-center justify-between">
+                            Come cambio un turno assegnato?
+                            <i data-feather="chevron-down" class="w-4 h-4"></i>
+                        </summary>
+                        <div class="px-4 pb-4 text-slate-400 text-sm">
+                            Non puoi modificare un turno da solo. Invia una richiesta di cambio turno al tuo manager tramite la sezione "Turni".
+                        </div>
+                    </details>
+
+                    <details class="bg-slate-800/30 rounded-lg open:bg-slate-800/50 transition-colors">
+                        <summary class="p-4 cursor-pointer font-medium text-slate-200 hover:text-white flex items-center justify-between">
+                            Come richiedo le ferie?
+                            <i data-feather="chevron-down" class="w-4 h-4"></i>
+                        </summary>
+                        <div class="px-4 pb-4 text-slate-400 text-sm">
+                            Vai alla sezione "Ferie" nel menu principale e clicca su "Nuova Richiesta".
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {{> workshift/footer}}
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>

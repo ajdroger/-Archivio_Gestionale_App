@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/style.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/premium.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="{{base_url}}/js/components/user-status.js"></script>
+</head>
+<body class="bg-mcag-slate text-mcag-text min-h-screen flex flex-col font-sans selection:bg-mcag-accent/30">
+    
+    <nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex items-center justify-between h-16">
+             <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 text-xl font-bold text-white hover:text-indigo-400 transition-colors">
+                <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                <span>WorkShift</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 relative z-10">
+        <div class="glass-panel rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold text-white mb-2">Privacy Policy (GDPR)</h1>
+            <p class="text-slate-400 mb-8 border-b border-white/10 pb-6">Ultimo aggiornamento: 01 Gennaio 2026</p>
+
+            <div class="prose prose-invert max-w-none text-slate-300">
+                <h3>Trattamento dei Dati Personali</h3>
+                <p>In conformità al Regolamento UE 2016/679 (GDPR), ti informiamo che i tuoi dati personali (nome, email, ruolo, orari di lavoro) vengono trattati esclusivamente per finalità legate alla gestione operativa dei turni e del personale.</p>
+
+                <h3>Finalità del Trattamento</h3>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>Pianificazione ordianaria dei turni di lavoro.</li>
+                    <li>Gestione delle richieste di ferie e permessi.</li>
+                    <li>Comunicazioni di servizio urgenti.</li>
+                    <li>Analisi statistica aggregata per l'ottimizzazione delle risorse (Reportistica).</li>
+                </ul>
+
+                <h3>Sicurezza dei Dati</h3>
+                <p>I dati sono conservati su server protetti all'interno dell'Unione Europea. L'accesso è limitato esclusivamente al personale autorizzato (Manager, HR, Amministrazione).</p>
+
+                <h3>I tuoi Diritti</h3>
+                 <p>Hai il diritto di accedere ai tuoi dati, richiederne la rettifica o la cancellazione (ove compatibile con gli obblighi di legge), e di opporti al trattamento. Per esercitare tali diritti, contatta il DPO all'indirizzo <a href="mailto:privacy@mcag.it" class="text-indigo-400">privacy@mcag.it</a>.</p>
+            </div>
+        </div>
+    </main>
+
+    {{> workshift/footer}}
+    <script>feather.replace();</script>
+</body>
+</html>

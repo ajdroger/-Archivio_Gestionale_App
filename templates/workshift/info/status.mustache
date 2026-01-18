@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/style.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/premium.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="{{base_url}}/js/components/user-status.js"></script>
+</head>
+<body class="bg-mcag-slate text-mcag-text min-h-screen flex flex-col font-sans selection:bg-mcag-accent/30">
+    
+    <nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex items-center justify-between h-16">
+             <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 text-xl font-bold text-white hover:text-indigo-400 transition-colors">
+                <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                <span>WorkShift</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 relative z-10">
+        <div class="glass-panel rounded-2xl p-8 md:p-12 max-w-4xl mx-auto text-center">
+            
+            <div class="inline-flex items-center justify-center p-6 bg-green-500/10 rounded-full border border-green-500/20 mb-6 pulse-glow">
+                <i data-feather="check-circle" class="w-12 h-12 text-green-500"></i>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-white mb-2">Tutti i sistemi operativi</h1>
+            <p class="text-slate-400 mb-10">Ultimo controllo: Oggi, {{date}}</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+                <!-- Status Item -->
+                <div class="p-4 bg-slate-800/50 border border-slate-700 rounded-xl flex items-center justify-between">
+                    <span class="text-slate-300 font-medium">Database Core</span>
+                    <span class="flex items-center gap-2 text-green-400 text-sm font-bold bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">
+                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Operativo
+                    </span>
+                </div>
+                
+                 <div class="p-4 bg-slate-800/50 border border-slate-700 rounded-xl flex items-center justify-between">
+                    <span class="text-slate-300 font-medium">Scheduler AI</span>
+                    <span class="flex items-center gap-2 text-green-400 text-sm font-bold bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">
+                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Operativo
+                    </span>
+                </div>
+
+                 <div class="p-4 bg-slate-800/50 border border-slate-700 rounded-xl flex items-center justify-between">
+                    <span class="text-slate-300 font-medium">Notifiche Email</span>
+                    <span class="flex items-center gap-2 text-green-400 text-sm font-bold bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">
+                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Operativo
+                    </span>
+                </div>
+
+                 <div class="p-4 bg-slate-800/50 border border-slate-700 rounded-xl flex items-center justify-between">
+                    <span class="text-slate-300 font-medium">API Gateway</span>
+                    <span class="flex items-center gap-2 text-green-400 text-sm font-bold bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">
+                        <span class="w-2 h-2 rounded-full bg-green-400"></span> Operativo
+                    </span>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-white/5 text-slate-500 text-sm">
+                Nessun incidente segnalato negli ultimi 30 giorni.
+            </div>
+        </div>
+    </main>
+
+    {{> workshift/footer}}
+    <script>feather.replace();</script>
+</body>
+</html>
