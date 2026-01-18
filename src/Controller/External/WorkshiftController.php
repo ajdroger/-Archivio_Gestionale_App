@@ -31,8 +31,8 @@ class WorkshiftController
             'base_url' => $this->baseUrl,
             'title' => $title,
             'user' => $_SESSION['user'] ?? null,
-            'user_role' => $_SESSION['user_role'] ?? 'GUEST',
-            'username' => $_SESSION['user']['username'] ?? 'Ospite',
+            'user_role' => $_SESSION['user_role'] ?? $_SESSION['temp_user_role'] ?? 'GUEST',
+            'username' => $_SESSION['username'] ?? $_SESSION['user']['username'] ?? $_SESSION['temp_username'] ?? 'Ospite',
         ];
     }
 
