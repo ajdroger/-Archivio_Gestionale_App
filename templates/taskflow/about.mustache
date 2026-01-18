@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <!-- <link rel="icon" type="image/x-icon" href="/favicon.ico"> -->
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        window.MCAG_BASE_URL = "{{base_url}}";
+    </script>
+</head>
+<body class="animated-gradient min-h-screen flex flex-col">
+    <div id="particles-js" class="fixed inset-0 z-0"></div>
+    
+    <!-- Global MCAG Navbar (Tailwind Port) -->
+    <nav class="bg-gray-900/90 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="{{base_url}}/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-violet-400 transition-colors">
+                    <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                    <span>{{title}}</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                    <!-- Global Links -->
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="grid" class="w-4 h-4"></i> Dashboard
+                    </a>
+                    <a href="{{base_url}}/soci" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="users" class="w-4 h-4"></i> Soci
+                    </a>
+                    <a href="{{base_url}}/statistiche" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="pie-chart" class="w-4 h-4"></i> Report
+                    </a>
+                    <a href="{{base_url}}/impostazioni" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="settings" class="w-4 h-4"></i> Impostazioni
+                    </a>
+                    <a href="{{base_url}}/devtools" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="terminal" class="w-4 h-4"></i> DevTools
+                    </a>
+                    
+                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                    
+                    <!-- App Specific Links -->
+                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="check-square" class="w-4 h-4"></i> Attività
+                    </a>
+                    <a href="{{base_url}}/taskflow/about" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 text-white shadow-lg shadow-violet-500/20 text-sm font-medium">
+                        <i data-feather="info" class="w-4 h-4"></i> Info
+                    </a>
+                </div>
+
+                <!-- User/Logout -->
+                <div class="hidden md:flex items-center gap-4">
+                     <span class="text-sm text-gray-400">
+                        <i data-feather="user" class="inline w-3 h-3 mr-1"></i> {{username}}
+                    </span>
+                    <a href="{{base_url}}/logout" class="flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white transition-all text-sm font-bold">
+                        <i data-feather="power" class="w-4 h-4"></i> Esci
+                    </a>
+                </div>
+                
+                 <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg text-gray-400 hover:bg-gray-800 focus:outline-none">
+                    <i data-feather="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="relative z-10 flex-grow">
+        
+        <main class="container mx-auto px-4 py-8 max-w-4xl">
+            <header class="text-center mb-12 pt-8">
+                <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                    About TaskFlow Pro
+                    <span class="block text-2xl font-light text-violet-200 mt-2">Gestisci le tue attività con stile</span>
+                </h1>
+                <div class="w-24 h-1 bg-gradient-to-r from-violet-400 to-fuchsia-400 mx-auto rounded-full"></div>
+            </header>
+
+            <div class="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <section class="mb-8">
+                        <h2 class="text-3xl font-bold text-violet-100 mb-4 flex items-center gap-3">
+                            <i data-feather="info" class="w-8 h-8 text-violet-400"></i>
+                            Cos'è TaskFlow Pro?
+                        </h2>
+                        <p class="text-violet-200/90 text-lg leading-relaxed mb-4">
+                            TaskFlow Pro è un'applicazione web moderna e intuitiva per la gestione delle attività quotidiane. 
+                            Con un'interfaccia elegante e funzionalità potenti, ti aiuta a organizzare la tua vita in modo efficiente.
+                        </p>
+                        <p class="text-violet-200/90 text-lg leading-relaxed">
+                            Sviluppata con le tecnologie web più recenti, TaskFlow Pro offre un'esperienza fluida e reattiva 
+                            su tutti i dispositivi, dal desktop al mobile.
+                        </p>
+                    </section>
+
+                    <section class="mb-8">
+                        <h2 class="text-3xl font-bold text-violet-100 mb-4 flex items-center gap-3">
+                            <i data-feather="zap" class="w-8 h-8 text-violet-400"></i>
+                            Funzionalità Principali
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <feature-card icon="check-square" title="Gestione Attività" description="Aggiungi, modifica e elimina le tue attività in modo semplice e veloce"></feature-card>
+                            <feature-card icon="filter" title="Filtri Intelligenti" description="Visualizza tutte le attività, solo quelle attive o completate con un click"></feature-card>
+                            <feature-card icon="trending-up" title="Statistiche in Tempo Reale" description="Monitora il tuo progresso con le statistiche aggiornate automaticamente"></feature-card>
+                            <feature-card icon="save" title="Salvataggio Automatico" description="Le tue attività sono salvate localmente nel browser (o nel cloud MCAG)"></feature-card>
+                            <feature-card icon="smartphone" title="Design Responsivo" description="Usa TaskFlow Pro su qualsiasi dispositivo, ovunque tu sia"></feature-card>
+                            <feature-card icon="gift" title="Esempi Predefiniti" description="Inizia subito con attività di esempio per scoprire tutte le funzionalità"></feature-card>
+                        </div>
+                    </section>
+
+                    <section class="mb-8">
+                        <h2 class="text-3xl font-bold text-violet-100 mb-4 flex items-center gap-3">
+                            <i data-feather="heart" class="w-8 h-8 text-violet-400"></i>
+                            Tecnologie Utilizzate
+                        </h2>
+                        <div class="bg-white/5 rounded-2xl p-6 border border-violet-300/20">
+                            <ul class="space-y-3 text-violet-200/90">
+                                <li class="flex items-center gap-3"><i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i> <strong>Mustache & Slim PHP</strong> - Backend solido</li>
+                                <li class="flex items-center gap-3"><i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i> <strong>Tailwind CSS</strong> - Styling moderno</li>
+                                <li class="flex items-center gap-3"><i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i> <strong>JavaScript ES6+</strong> - Logica interattiva</li>
+                                <li class="flex items-center gap-3"><i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i> <strong>Web Components</strong> - Modularità</li>
+                                <li class="flex items-center gap-3"><i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i> <strong>Particles.js</strong> - Effetti visuali</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section class="text-center">
+                        <a href="{{base_url}}/taskflow" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-semibold rounded-2xl hover:from-violet-600 hover:to-fuchsia-600 transition-all duration-300 transform hover:scale-105 shadow-xl">
+                            <i data-feather="arrow-left" class="w-5 h-5"></i>
+                            Torna alla App
+                        </a>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <custom-footer></custom-footer>
+    </div>
+
+    <!-- Web Components -->
+    <script src="{{base_url}}/assets/taskflow/components/navbar.js"></script>
+    <script src="{{base_url}}/assets/taskflow/components/feature-card.js"></script>
+    <script src="{{base_url}}/assets/taskflow/components/footer.js"></script>
+    
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- Main Script -->
+    <script src="{{base_url}}/assets/taskflow/script.js"></script>
+    <script>feather.replace();</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <!-- <link rel="icon" type="image/x-icon" href="/favicon.ico"> -->
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/expensebar/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { primary: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81', 950: '#1e1b4b' }, secondary: { 50: '#f9fafb', 100: '#f3f4f6', 200: '#e5e7eb', 300: '#d1d5db', 400: '#9ca3af', 500: '#6b7280', 600: '#4b5563', 700: '#374151', 800: '#1f2937', 900: '#111827', 950: '#030712' } } } } }
+        window.MCAG_BASE_URL = "{{base_url}}";
+        window.MCAG_API_URL = "{{base_url}}/expensebar/api";
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-secondary-950 text-gray-900 dark:text-gray-100 transition-colors duration-300 flex flex-col min-h-screen">
+    
+    <!-- Global MCAG Navbar (Tailwind Port) -->
+    <nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="{{base_url}}/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-indigo-400 transition-colors">
+                    <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                    <span>{{title}}</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                    <!-- Global Links -->
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="grid" class="w-4 h-4"></i> Dashboard
+                    </a>
+                    <a href="{{base_url}}/soci" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="users" class="w-4 h-4"></i> Soci
+                    </a>
+                    <a href="{{base_url}}/statistiche" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="pie-chart" class="w-4 h-4"></i> Report
+                    </a>
+                    <a href="{{base_url}}/impostazioni" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="settings" class="w-4 h-4"></i> Impostazioni
+                    </a>
+                    <a href="{{base_url}}/devtools" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="terminal" class="w-4 h-4"></i> DevTools
+                    </a>
+                    
+                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                    
+                    <!-- App Specific Links -->
+                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="home" class="w-4 h-4"></i> Dashboard
+                    </a>
+                    <a href="{{base_url}}/expensebar/analytics" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                        <i data-feather="bar-chart-2" class="w-4 h-4"></i> Analytics
+                    </a>
+                </div>
+
+                <!-- User/Logout -->
+                <div class="hidden md:flex items-center gap-4">
+                     <span class="text-sm text-gray-400">
+                        <i data-feather="user" class="inline w-3 h-3 mr-1"></i> {{username}}
+                    </span>
+                    <a href="{{base_url}}/logout" class="flex items-center gap-2 px-4 py-2 rounded-full border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white transition-all text-sm font-bold">
+                        <i data-feather="power" class="w-4 h-4"></i> Esci
+                    </a>
+                </div>
+                 <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg text-gray-400 hover:bg-gray-800 focus:outline-none">
+                    <i data-feather="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="mb-8 animate-fade-in">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent mb-2">
+                Advanced Analytics
+            </h1>
+            <p class="text-secondary-600 dark:text-secondary-400 text-lg">
+                Deep insights into your spending patterns
+            </p>
+        </div>
+
+        <!-- Analytics Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Category Breakdown -->
+            <div class="bg-white dark:bg-secondary-900 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-secondary-700 hover:shadow-2xl transition-all duration-300 animate-slide-up">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+                    <span class="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center"><i data-feather="pie-chart" class="w-5 h-5 text-primary-600 dark:text-primary-400"></i></span>
+                    Category Breakdown
+                </h2>
+                <div class="relative h-80"><canvas id="categoryChart"></canvas></div>
+            </div>
+
+            <!-- Yearly Trend -->
+            <div class="bg-white dark:bg-secondary-900 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-secondary-700 hover:shadow-2xl transition-all duration-300 animate-slide-up" style="animation-delay: 0.1s">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+                    <span class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center"><i data-feather="trending-up" class="w-5 h-5 text-green-600 dark:text-green-400"></i></span>
+                    Yearly Trend
+                </h2>
+                <div class="relative h-80"><canvas id="yearlyChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Detailed Stats -->
+        <div class="bg-white dark:bg-secondary-900 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-secondary-700 hover:shadow-2xl transition-all duration-300 animate-slide-up" style="animation-delay: 0.2s">
+            <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center"><i data-feather="list" class="w-5 h-5 text-purple-600 dark:text-purple-400"></i></span>
+                Category Statistics
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 dark:bg-secondary-800 sticky top-0">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Category</th>
+                            <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Total Amount</th>
+                            <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Transaction Count</th>
+                            <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Average</th>
+                            <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryStatsTable" class="divide-y divide-gray-200 dark:divide-secondary-800">
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-secondary-500 dark:text-secondary-400">
+                                <div class="flex flex-col items-center gap-3"><i data-feather="inbox" class="w-12 h-12 opacity-50"></i> No data available</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <expense-footer></expense-footer>
+    <div id="toast" class="fixed bottom-6 right-6 bg-white dark:bg-secondary-900 rounded-lg shadow-lg border-l-4 border-transparent p-4 pr-6 hidden z-50 transition-all duration-300 transform translate-y-4 opacity-0"><div class="flex items-center gap-3"><div id="toastIcon" class="w-10 h-10 rounded-full flex items-center justify-center"></div><div><p id="toastTitle" class="font-semibold"></p><p id="toastMessage" class="text-sm text-secondary-600 dark:text-secondary-400"></p></div></div></div>
+
+    <!-- Components -->
+    <script src="{{base_url}}/assets/expensebar/components/navbar.js"></script>
+    <script src="{{base_url}}/assets/expensebar/components/footer.js"></script>
+    <script src="{{base_url}}/assets/expensebar/components/stats-card.js"></script>
+    <script src="{{base_url}}/assets/expensebar/script.js"></script>
+    <script src="{{base_url}}/assets/expensebar/analytics.js"></script>
+    <script>feather.replace(); document.addEventListener('DOMContentLoaded', () => { if(window.initAnalytics) window.initAnalytics(); });</script>
+</body>
+</html>

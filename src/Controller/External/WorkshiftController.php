@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MCAG\Controller\External;
+
+use MCAG\InfrastrutturaIT\Persistence\PDOWorkshiftRepository;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Mustache_Engine;
+
+class WorkshiftController
+{
+    private Mustache_Engine $mustache;
+    private PDOWorkshiftRepository $repository;
+    private string $baseUrl;
+
+    public function __construct(Mustache_Engine $mustache, PDOWorkshiftRepository $repository)
+    {
+        $this->mustache = $mustache;
+        $this->repository = $repository;
+
+        // Determine base URL dynamically
+        $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        $this->baseUrl = $scriptDir === '/' ? '' : $scriptDir;
+    }
+
+    private function getCommonData(string $title): array
+    {
+        return [
+            'base_url' => $this->baseUrl,
+            'title' => $title,
+            'user' => $_SESSION['user'] ?? null,
+            'user_role' => $_SESSION['user_role'] ?? 'GUEST',
+            'username' => $_SESSION['user']['username'] ?? 'Ospite',
+        ];
+    }
+
+    public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('workshift/index.mustache', $this->getCommonData('Workshift Dashboard'));
+        $response->getBody()->write($html);
+        return $response;
+    }
+
+    public function shiftManagement(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('workshift/shift-management.mustache', $this->getCommonData('Gestione Turni'));
+        $response->getBody()->write($html);
+        return $response;
+    }
+
+    public function teamManagement(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('workshift/team-management.mustache', $this->getCommonData('Gestione Team'));
+        $response->getBody()->write($html);
+        return $response;
+    }
+
+    public function timeOff(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('workshift/time-off.mustache', $this->getCommonData('Richiesta Ferie'));
+        $response->getBody()->write($html);
+        return $response;
+    }
+}

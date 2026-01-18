@@ -111,4 +111,24 @@ abstract class TestCase extends BaseTestCase
             ->withAttribute(\Slim\Routing\RouteContext::ROUTING_RESULTS, $routingResults)
             ->withAttribute(\Slim\Routing\RouteContext::ROUTE, null);
     }
+    protected function createRequest(string $method, string $path, array $headers = [], array $cookies = [], array $serverParams = []): \Psr\Http\Message\ServerRequestInterface
+    {
+        $uri = new \Slim\Psr7\Uri('', '', 80, $path);
+        $handle = fopen('php://temp', 'w+');
+        $stream = (new \Slim\Psr7\Factory\StreamFactory())->createStreamFromResource($handle);
+
+        $h = new \Slim\Psr7\Headers($headers);
+        $c = $cookies;
+        $s = $serverParams;
+
+        return new \Slim\Psr7\Request($method, $uri, $h, $c, $s, $stream);
+    }
+
+    protected function loginAs(string $role = 'ADMIN', int $id = 1, string $username = 'admin'): void
+    {
+        $_SESSION['user_id'] = $id;
+        $_SESSION['user'] = ['id' => $id, 'username' => $username, 'role' => $role];
+        $_SESSION['role'] = $role;
+        $_SESSION['user_role'] = $role;
+    }
 }

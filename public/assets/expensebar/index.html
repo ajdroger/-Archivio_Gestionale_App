@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpenseBar Dashboard - Monthly Expense Tracker</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='1' x2='12' y2='23'%3E%3C/line%3E%3Cpath d='M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'%3E%3C/path%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b'
+                        },
+                        secondary: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827',
+                            950: '#030712'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-secondary-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <expense-navbar></expense-navbar>
+
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header Section -->
+        <div class="mb-8 animate-fade-in">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent mb-2">
+                ExpenseBar Dashboard
+            </h1>
+            <p class="text-secondary-600 dark:text-secondary-400 text-lg">
+                Track your monthly expenses with visual insights
+            </p>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <expense-stats-card 
+                title="Total This Month" 
+                value="€0.00" 
+                icon="dollar-sign"
+                color="primary">
+            </expense-stats-card>
+            <expense-stats-card 
+                title="Average Monthly" 
+                value="€0.00" 
+                icon="trending-up"
+                color="green">
+            </expense-stats-card>
+            <expense-stats-card 
+                title="Total Categories" 
+                value="0" 
+                icon="grid"
+                color="purple">
+            </expense-stats-card>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Add Expense Form -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-secondary-900 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-secondary-700 hover:shadow-2xl transition-all duration-300 animate-slide-up">
+                    <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+                        <span class="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                            <i data-feather="plus-circle" class="w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </span>
+                        Add New Expense
+                    </h2>
+                    <form id="expenseForm" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
+                                Category
+                            </label>
+                            <select id="category" required class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                <option value="">Select category...</option>
+                                <option value="Food & Dining">🍽️ Food & Dining</option>
+                                <option value="Transportation">🚗 Transportation</option>
+                                <option value="Shopping">🛍️ Shopping</option>
+                                <option value="Entertainment">🎬 Entertainment</option>
+                                <option value="Bills & Utilities">📄 Bills & Utilities</option>
+                                <option value="Healthcare">🏥 Healthcare</option>
+                                <option value="Travel">✈️ Travel</option>
+                                <option value="Education">📚 Education</option>
+                                <option value="Other">📦 Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
+                                Amount (€)
+                            </label>
+                            <input type="number" id="amount" step="0.01" min="0.01" required placeholder="0.00"
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
+                                    Month
+                                </label>
+                                <select id="month" required class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
+                                    Year
+                                </label>
+                                <input type="number" id="year" min="2020" max="2030" required placeholder="2024"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
+                                    Day
+                                </label>
+                                <input type="number" id="day" min="1" max="31" required placeholder="15"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
+                                    Time (Optional)
+                                </label>
+                                <input type="time" id="time" 
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+<button type="submit" class="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-secondary-900">
+                            <span class="flex items-center justify-center gap-2">
+                                <i data-feather="save" class="w-4 h-4"></i>
+                                Save Expense
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-secondary-900 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-secondary-700 hover:shadow-2xl transition-all duration-300 animate-slide-up" style="animation-delay: 0.1s">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <h2 class="text-2xl font-semibold flex items-center gap-3">
+                            <span class="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                                <i data-feather="bar-chart-2" class="w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                            </span>
+                            Monthly Expense Chart
+                        </h2>
+                        <div class="flex gap-3">
+                            <select id="chartYear" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-secondary-700 bg-white dark:bg-secondary-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                            </select>
+<button id="refreshChart" class="px-4 py-2 bg-secondary-100 dark:bg-secondary-800 hover:bg-secondary-200 dark:hover:bg-secondary-700 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm">
+                                <i data-feather="refresh-cw" class="w-4 h-4"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative h-96">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Expenses Table -->
+                <div class="bg-white dark:bg-secondary-900 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-secondary-700 hover:shadow-2xl transition-all duration-300 mt-8 animate-slide-up" style="animation-delay: 0.2s">
+                    <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+                        <span class="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                            <i data-feather="list" class="w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+                        </span>
+                        Recent Expenses
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 dark:bg-secondary-800 sticky top-0">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Date</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Category</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Amount</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-secondary-700 dark:text-secondary-300">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTable" class="divide-y divide-gray-200 dark:divide-secondary-800">
+                                <tr>
+                                    <td colspan="4" class="px-4 py-8 text-center text-secondary-500 dark:text-secondary-400">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <i data-feather="inbox" class="w-12 h-12 opacity-50"></i>
+                                            No expenses recorded yet. Add your first expense!
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <expense-footer></expense-footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-white dark:bg-secondary-900 rounded-lg shadow-lg border-l-4 border-transparent p-4 pr-6 hidden z-50 transition-all duration-300 transform translate-y-4 opacity-0">
+        <div class="flex items-center gap-3">
+            <div id="toastIcon" class="w-10 h-10 rounded-full flex items-center justify-center"></div>
+            <div>
+                <p id="toastTitle" class="font-semibold"></p>
+                <p id="toastMessage" class="text-sm text-secondary-600 dark:text-secondary-400"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Components -->
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="components/stats-card.js"></script>
+    <script src="script.js"></script>
+    <script>feather.replace(); document.addEventListener('DOMContentLoaded', () => { initApp(); });</script>
+<script src="https://huggingface.co/deepsite/deepsite-badge.js"></script>
+</body>
+</html>

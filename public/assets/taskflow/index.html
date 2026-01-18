@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RicordamiDi</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a78bfa'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="animated-gradient min-h-screen">
+    <div id="particles-js" class="fixed inset-0 z-0"></div>
+    
+    <div class="relative z-10">
+        <taskflow-nav></taskflow-nav>
+        
+        <main class="container mx-auto px-4 py-8 max-w-4xl" id="main-content">
+            <header class="text-center mb-12 pt-8" id="home-section">
+                <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                    RicordamiDi
+                    <span class="block text-2xl font-light text-violet-200 mt-2">Gestisci le tue attività con stile</span>
+                </h1>
+                <div class="w-24 h-1 bg-gradient-to-r from-violet-400 to-fuchsia-400 mx-auto rounded-full"></div>
+            </header>
+
+            <div id="tasks-section" class="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+<div class="p-6 md:p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <stats-card icon="target" color="violet" count="0" label="Totali"></stats-card>
+                        <stats-card icon="check-circle" color="emerald" count="0" label="Completate"></stats-card>
+                        <stats-card icon="clock" color="amber" count="0" label="Da Fare"></stats-card>
+                    </div>
+
+                    <div class="mb-8">
+                        <form id="task-form" class="flex flex-col sm:flex-row gap-4">
+                            <div class="relative flex-grow">
+                                <input 
+                                    type="text" 
+                                    id="task-input"
+                                    placeholder="Aggiungi una nuova attività..." 
+                                    class="w-full px-6 py-4 bg-white/5 border-2 border-violet-300/30 rounded-2xl text-white placeholder-violet-200/50 focus:outline-none focus:border-violet-400 focus:bg-white/10 transition-all duration-300 shadow-lg backdrop-blur-sm"
+                                    required
+                                >
+                                <i data-feather="edit-3" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-violet-300 w-5 h-5 pointer-events-none"></i>
+                            </div>
+                            <button 
+                                type="submit"
+                                class="px-8 py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-semibold rounded-2xl hover:from-violet-600 hover:to-fuchsia-600 focus:outline-none focus:ring-4 focus:ring-violet-400/50 transition-all duration-300 transform hover:scale-105 shadow-xl flex items-center justify-center gap-2"
+                            >
+                                <i data-feather="plus-circle" class="w-5 h-5"></i>
+                                <span>Aggiungi</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex flex-wrap gap-3 justify-center">
+                            <button 
+                                id="filter-all" 
+                                class="filter-btn active px-6 py-2 rounded-full bg-violet-500/30 text-violet-100 border border-violet-400/50 hover:bg-violet-500/50 transition-all duration-300 backdrop-blur-sm"
+                                data-filter="all"
+                            >
+                                Tutte
+                            </button>
+                            <button 
+                                id="filter-active"
+                                class="filter-btn px-6 py-2 rounded-full bg-white/5 text-violet-100 border border-violet-300/30 hover:bg-violet-500/30 transition-all duration-300 backdrop-blur-sm"
+                                data-filter="active"
+                            >
+                                Da Fare
+                            </button>
+                            <button 
+                                id="filter-completed"
+                                class="filter-btn px-6 py-2 rounded-full bg-white/5 text-violet-100 border border-violet-300/30 hover:bg-violet-500/30 transition-all duration-300 backdrop-blur-sm"
+                                data-filter="completed"
+                            >
+                                Completate
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <button 
+                            id="add-sample-tasks"
+                            class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-2xl hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-4 focus:ring-emerald-400/50 transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2 shadow-lg"
+                        >
+                            <i data-feather="zap" class="w-5 h-5"></i>
+                            Aggiungi Attività di Esempio
+                        </button>
+                    </div>
+
+                    <div id="tasks-container" class="space-y-4 min-h-64">
+                        <div id="empty-state" class="text-center py-16">
+                            <div class="w-24 h-24 mx-auto mb-6 bg-violet-500/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                                <i data-feather="check-square" class="w-12 h-12 text-violet-300"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold text-violet-100 mb-2">Nessuna attività</h3>
+                            <p class="text-violet-200/70">Aggiungi la tua prima attività per iniziare!</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center mt-8">
+                        <button 
+                            id="clear-completed"
+                            class="px-8 py-3 bg-gradient-to-r from-red-500 to-rose-500 text-white font-semibold rounded-2xl hover:from-red-600 hover:to-rose-600 focus:outline-none focus:ring-4 focus:ring-red-400/50 transition-all duration-300 transform hover:scale-105 shadow-xl flex items-center justify-center gap-2"
+                        >
+                            <i data-feather="trash-2" class="w-5 h-5"></i>
+                            Elimina Completate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <confirm-modal></confirm-modal>
+    </div>
+
+    <!-- Web Components -->
+    <script src="components/navbar.js"></script>
+    <script src="components/stats-card.js"></script>
+    <script src="components/confirm-modal.js"></script>
+    
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- Main Script -->
+    <script src="script.js"></script>
+    <script>feather.replace();</script>
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+<script src="https://huggingface.co/deepsite/deepsite-badge.js"></script>
+</body>
+</html>
