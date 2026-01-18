@@ -64,6 +64,13 @@ class WorkshiftController
         return $response;
     }
 
+    public function reports(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('workshift/reports.mustache', $this->getCommonData('Reportistica'));
+        $response->getBody()->write($html);
+        return $response;
+    }
+
     public function saveShift(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = $request->getParsedBody();
