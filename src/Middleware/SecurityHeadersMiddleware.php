@@ -24,7 +24,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
             "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.datatables.net",
             "font-src 'self' fonts.gstatic.com cdn.jsdelivr.net https://cdnjs.cloudflare.com https://r2cdn.perplexity.ai",
             "img-src 'self' data: https: https://cdn.datatables.net",
-            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com",
             "frame-ancestors 'none'",
             "base-uri 'self'",
             "form-action 'self'"
