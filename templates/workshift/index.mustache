@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/style.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/premium.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="{{base_url}}/js/components/user-status.js"></script>
+    <style>
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="bg-[#020617] text-slate-200 min-h-screen flex flex-col font-sans selection:bg-indigo-500/30 overflow-x-hidden">
+    
+    <!-- Ambient Background -->
+    <div class="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,_rgba(79,70,229,0.15),_transparent_70%)]"></div>
+    <div class="fixed top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"></div>
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="{{base_url}}/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-indigo-400 transition-colors">
+                    <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                    <span>{{title}}</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="grid" class="w-4 h-4"></i> Dashboard
+                    </a>
+                   
+                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                    
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                        <i data-feather="home" class="w-4 h-4"></i> Home
+                    </a>
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="calendar" class="w-4 h-4"></i> Turni
+                    </a>
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="users" class="w-4 h-4"></i> Team
+                    </a>
+                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="sun" class="w-4 h-4"></i> Ferie
+                    </a>
+                </div>
+
+                <!-- User/Identity Bar -->
+                <div class="hidden md:flex items-center gap-4">
+                     <user-status-bar role="{{user_role}}" user="{{username}}"></user-status-bar>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-6 py-12 relative z-10">
+        
+        <!-- Welcome HUD -->
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6 animate-fade-in">
+            <div>
+                <h2 class="text-5xl md:text-7xl font-black text-white mb-4 tracking-tight">
+                    Bentornato, {{username}}.
+                </h2>
+                <p class="text-xl text-slate-200 max-w-2xl font-light">
+                    Il centro di comando è attivo. Hai <strong class="text-white">{{stats.pending_requests}} richieste</strong> in attesa di revisione.
+                </p>
+            </div>
+            
+            <!-- Live Ticker -->
+            <div class="glass-panel rounded-2xl p-6 flex items-center gap-8 min-w-[300px]">
+                <div class="text-right">
+                    <div class="text-xs font-mono text-slate-300 uppercase tracking-widest mb-1">Turni Attivi</div>
+                    <div class="text-4xl font-black text-white neon-text">{{stats.active_shifts}}</div>
+                </div>
+                <div class="h-10 w-[1px] bg-white/10"></div>
+                 <div class="text-right">
+                    <div class="text-xs font-mono text-slate-300 uppercase tracking-widest mb-1">Dipendenti</div>
+                    <div class="text-4xl font-black text-white">{{stats.employees_count}}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Command Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Card 1: Team Management -->
+            <a href="{{base_url}}/workshift/team-management" class="group relative h-[400px] rounded-[3rem] overflow-hidden border border-white/5 bg-slate-900/40 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:border-indigo-500/30 flex flex-col justify-between p-8">
+                <!-- Background Effects -->
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent pointer-events-none"></div>
+                
+                <!-- Top: Icon -->
+                <div class="relative z-10 w-16 h-16 p-4 bg-white/5 rounded-2xl backdrop-blur-md border border-white/10 group-hover:bg-indigo-500/20 transition-colors flex items-center justify-center">
+                    <i data-feather="users" class="w-8 h-8 text-indigo-300"></i>
+                </div>
+
+                <!-- Bottom: Text -->
+                <div class="relative z-10">
+                    <h3 class="text-3xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">Gestione Team</h3>
+                    <p class="text-slate-200 mb-6 group-hover:text-white transition-colors">Gestisci anagrafiche, ruoli e permessi del personale.</p>
+                    <span class="inline-flex items-center gap-2 text-indigo-400 font-bold tracking-wider uppercase text-sm">
+                        Accedi <i data-feather="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-2"></i>
+                    </span>
+                </div>
+                
+                <!-- Abstract Visual -->
+                <div class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 opacity-20 group-hover:opacity-40 transition-all duration-700 pointer-events-none">
+                    <div class="w-64 h-64 border-[30px] border-indigo-500 rounded-full blur-[60px]"></div>
+                </div>
+            </a>
+
+            <!-- Card 2: Shift Planner (Centerpiece) -->
+            <a href="{{base_url}}/workshift/shift-management" class="group relative h-[400px] rounded-[3rem] overflow-hidden border border-indigo-500/20 bg-gradient-to-b from-indigo-950/30 to-slate-900/40 backdrop-blur-md shadow-2xl shadow-indigo-900/20 transition-all duration-500 hover:shadow-indigo-600/30 hover:-translate-y-2">
+                <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+                
+                <!-- Floating Icon -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-float">
+                    <div class="w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl absolute inset-0"></div>
+                    <i data-feather="calendar" class="w-24 h-24 text-white relative z-10 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]"></i>
+                </div>
+
+                <div class="absolute bottom-10 left-0 w-full text-center">
+                    <h3 class="text-4xl font-black text-white mb-2 tracking-tight group-hover:scale-105 transition-transform">PIANIFICAZIONE</h3>
+                    <p class="text-indigo-200/90 font-mono text-sm uppercase tracking-[0.2em]">Weekly Roster</p>
+                </div>
+            </a>
+
+            <!-- Card 3: Reports & Requests -->
+            <div class="flex flex-col gap-6 h-[400px]">
+                
+                 <!-- Requests -->
+                <a href="{{base_url}}/workshift/time-off" class="group relative flex-1 rounded-[2.5rem] bg-slate-900/40 backdrop-blur-sm border border-white/5 p-8 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div>
+                        <div class="text-slate-300 text-xs font-bold uppercase tracking-wider mb-1">Richieste Ferie</div>
+                        <div class="text-3xl font-bold text-white group-hover:text-amber-400 transition-colors">{{stats.pending_requests}} <span class="text-lg text-slate-300 font-normal">in attesa</span></div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                        <i data-feather="sun" class="w-6 h-6"></i>
+                    </div>
+                </a>
+
+                <!-- Reports -->
+                <a href="{{base_url}}/workshift/reports" class="group relative flex-1 rounded-[2.5rem] bg-slate-900/40 backdrop-blur-sm border border-white/5 p-8 flex items-center justify-between hover:bg-white/5 transition-all">
+                    <div>
+                        <div class="text-slate-300 text-xs font-bold uppercase tracking-wider mb-1">Reportistica</div>
+                        <div class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">Analisi Costi & Ore</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                        <i data-feather="pie-chart" class="w-6 h-6"></i>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- System Footer -->
+        <div class="mt-20 border-t border-white/5 pt-8 flex justify-between items-center text-slate-500 text-xs font-mono">
+             <div>
+                STATUS: <span class="text-emerald-500">NOMINAL</span>
+            </div>
+            <div>
+                &copy; 2026 MCAG WORKSHIFT MODULE
+            </div>
+        </div>
+
+    </main>
+
+    {{> workshift/footer}}
+
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>

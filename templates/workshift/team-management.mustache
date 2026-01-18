@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/style.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/premium.css">
+    <link rel="stylesheet" href="{{base_url}}/css/components/scroll_navigator.css">
+    <link href="{{base_url}}/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="{{base_url}}/js/components/user-status.js"></script>
+</head>
+<body class="bg-mcag-slate text-mcag-text min-h-screen flex flex-col font-sans selection:bg-mcag-accent/30">
+    
+    <!-- Navbar -->
+    <nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="{{base_url}}/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-indigo-400 transition-colors">
+                    <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                    <span>{{title}}</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="grid" class="w-4 h-4"></i> Dashboard
+                    </a>
+                   
+                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                    
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="home" class="w-4 h-4"></i> Home
+                    </a>
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="calendar" class="w-4 h-4"></i> Turni
+                    </a>
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                        <i data-feather="users" class="w-4 h-4"></i> Team
+                    </a>
+                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="sun" class="w-4 h-4"></i> Ferie
+                    </a>
+                </div>
+
+                <!-- User/Identity Bar -->
+                <div class="hidden md:flex items-center gap-4">
+                     <user-status-bar role="{{user_role}}" user="{{username}}"></user-status-bar>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl animate-fade-in">
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl animate-fade-in text-sm">
+        <!-- Ultimate Header -->
+        <div class="glass-panel p-8 rounded-[2rem] mb-10 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+            <div class="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-indigo-500/10 to-transparent"></div>
+            
+            <div class="relative z-10">
+                <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mb-2">
+                    Gestione Team
+                </h1>
+                <p class="text-gray-400 text-lg">
+                    Amministra il personale e i dettagli operativi.
+                </p>
+            </div>
+            
+            <div class="flex gap-4 relative z-10 w-auto">
+                 <button onclick="openModal()" class="group relative px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-[0_4px_20px_rgba(79,70,229,0.4)] transition-all duration-300 overflow-hidden flex justify-center items-center gap-2 text-sm">
+                    <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                    <i data-feather="user-plus" class="w-4 h-4"></i>
+                    <span>Nuovo Membro</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Advanced Filter & Tabs -->
+        <!-- Advanced Filter & Tabs -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+            <!-- Animated Tabs -->
+            <div class="flex p-1 bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-700/50 w-full md:w-auto overflow-x-auto custom-scrollbar">
+                <button class="tab-btn px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/20 text-sm whitespace-nowrap transition-all" data-filter="all">
+                    Tutti ({{employees.length}})
+                </button>
+                <button class="tab-btn px-6 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all" data-filter="management">
+                    Management
+                </button>
+                <button class="tab-btn px-6 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all" data-filter="operations">
+                    Operativi
+                </button>
+                 <button class="tab-btn px-6 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-medium text-sm whitespace-nowrap transition-all" data-filter="hr_admin">
+                    HR & Admin
+                </button>
+            </div>
+
+            <!-- Enhanced Search -->
+            <div class="relative w-full lg:max-w-xs group">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                <div class="relative flex items-center bg-slate-900 rounded-xl">
+                    <i data-feather="search" class="absolute left-4 text-slate-500 w-5 h-5 group-focus-within:text-indigo-400 transition-colors"></i>
+                    <input type="text" placeholder="Cerca nel team..." class="w-full bg-transparent border-0 text-white search-input-padded pr-4 py-2.5 focus:ring-0 placeholder-slate-600 font-medium">
+                </div>
+            </div>
+        </div>
+
+        <!-- Ultimate Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {{#employees}}
+            <div class="group relative h-full employee-card" data-role="{{role}}" data-department="{{department}}">
+                <!-- Card Background & Glow -->
+                <div class="absolute -inset-[1px] bg-gradient-to-b from-indigo-500/20 to-transparent rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="border-radius: 48px !important;"></div>
+                
+                <div class="relative h-full bg-slate-800/90 backdrop-blur-md border border-slate-700/50 rounded-[3rem] p-8 hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center overflow-hidden" style="border-radius: 48px !important;">
+                    
+                    <div class="absolute top-0 w-full h-32 bg-gradient-to-b from-white/5 to-transparent opacity-50"></div>
+                    
+                    <div class="absolute top-0 w-full h-32 bg-gradient-to-b from-white/5 to-transparent opacity-50"></div>
+                     
+                    <div class="relative mb-2 mt-8 flex flex-col items-center">
+                         <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 bg-slate-900/80 px-3 py-1 rounded-full border border-slate-700/50 backdrop-blur-sm shadow-sm mb-4">
+                            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                            <span>ID: {{employee_code}}</span>
+                         </div>
+                         
+                         <!-- Status Dot (Center/Relative) -->
+                         <div class="w-24 h-24 rounded-full bg-slate-800 border-2 border-slate-700/50 flex items-center justify-center relative shadow-xl overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                             {{#avatar}}
+                             <img src="{{avatar}}" alt="{{name}}" class="w-full h-full object-cover">
+                             {{/avatar}}
+                             {{^avatar}}
+                             <span class="text-3xl font-bold text-white">{{user_initial}}</span>
+                             {{/avatar}}
+                         </div>
+                    </div>
+
+                    <!-- Info -->
+                    <h3 class="text-xl font-bold text-white mb-1 tracking-tight mt-2">{{name}}</h3>
+                    <p class="text-indigo-400 font-medium text-sm mb-6">{{department}} &bull; {{role}}</p>
+
+                    <!-- Stats / Mini Info -->
+                    <div class="grid grid-cols-2 gap-3 w-full mb-6">
+                        <div class="bg-slate-900/50 rounded-xl p-3 border border-slate-700/30">
+                            <span class="block text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1">Turni</span>
+                            <span class="block text-white font-bold">12</span>
+                        </div>
+                        <div class="bg-slate-900/50 rounded-xl p-3 border border-slate-700/30">
+                            <span class="block text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1">Ferie</span>
+                            <span class="block text-white font-bold">2.5gg</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 w-full text-left mb-6 relative z-10">
+                        <div class="flex items-center gap-3 text-slate-400 text-xs px-2 py-1.5 rounded-lg hover:bg-white/5 transition-colors">
+                            <div class="w-6 h-6 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
+                                <i data-feather="mail" class="w-3 h-3"></i>
+                            </div>
+                            <span class="truncate font-medium">{{email}}</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-auto w-full grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
+                         <button onclick="openEditModal(
+                            {{id}}, 
+                            '{{name}}', 
+                            '{{role}}', 
+                            '{{email}}', 
+                            '{{department}}', 
+                            '{{auth_grade}}', 
+                            '{{employee_code}}', 
+                            '{{fiscal_code}}',
+                            '{{birth_date}}',
+                            '{{birth_place}}',
+                            '{{gender}}',
+                            '{{address}}',
+                            '{{city}}',
+                            '{{zip}}',
+                            '{{phone}}',
+                            '{{mobile}}',
+                            '{{contract_type}}',
+                            '{{contract_start}}',
+                            '',
+                            '{{notes}}',
+                            '{{skills}}'
+                         )" class="py-3 rounded-3xl bg-white/5 hover:bg-white/10 text-white text-sm font-bold uppercase tracking-wider transition-colors border border-white/5 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200">
+                            Modifica
+                         </button>
+                         <button onclick="deleteEmployee({{id}}, '{{name}}')" class="py-3 rounded-3xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 text-sm font-bold uppercase tracking-wider transition-colors border border-red-500/10 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200">
+                            Elimina
+                         </button>
+                    </div>
+                </div>
+            </div>
+            {{/employees}}
+            
+            {{^employees}}
+            <div class="col-span-full py-20 text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-800 mb-6">
+                    <i data-feather="users" class="w-10 h-10 text-slate-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Nessun dipendente trovato</h3>
+                <p class="text-gray-400">Inizia aggiungendo il tuo primo membro del team.</p>
+            </div>
+            {{/employees}}
+        </div>
+            <!-- Pagination Controls (Bootstrap-style Data Table) -->
+            <div id="paginationControls" class="col-span-full mt-8 bg-slate-800/50 rounded-2xl p-4 border border-slate-700/50 flex flex-col md:flex-row justify-between items-center gap-4 backdrop-blur-sm">
+                
+                <!-- Information -->
+                <div class="text-slate-400 text-sm font-medium">
+                    Mostrando <span id="startRange" class="text-white">1</span> a <span id="endRange" class="text-white">8</span> di <span id="totalItems" class="text-white">0</span> operatori
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center gap-4">
+                    <!-- Rows Per Page -->
+                    <div class="flex items-center gap-2">
+                        <label class="text-slate-500 text-xs uppercase font-bold tracking-wider">Mostra</label>
+                        <select id="rowsPerPage" onchange="changeRowsPerPage(this.value)" class="bg-slate-900 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2">
+                            <option value="8">8</option>
+                            <option value="16">16</option>
+                            <option value="24">24</option>
+                            <option value="48">48</option>
+                        </select>
+                    </div>
+
+                    <!-- Pagination Buttons -->
+                    <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                        <button onclick="changePage('prev')" id="btnPrev" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-slate-700 hover:bg-slate-700/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="sr-only">Precedente</span>
+                            <i data-feather="chevron-left" class="h-5 w-5"></i>
+                        </button>
+                        
+                        <!-- Page Numbers (Dynamic) -->
+                        <div id="pageNumbers" class="flex"></div>
+
+                        <button onclick="changePage('next')" id="btnNext" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-slate-700 hover:bg-slate-700/50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="sr-only">Successivo</span>
+                            <i data-feather="chevron-right" class="h-5 w-5"></i>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </main>
+
+    <!-- New Employee Modal (Ultimate Glass) -->
+    <div id="newEmployeeModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 99999 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            <!-- Modal Card: Max height constrained to viewport, internal scroll only -->
+            <div class="inline-block w-full max-w-2xl p-0 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#0f172a] shadow-2xl rounded-2xl border border-white/10 relative" style="color-scheme: dark;">
+                
+                <!-- Modal Header -->
+                <div class="px-6 py-4 bg-[#0f172a] border-b border-white/5 flex items-center justify-between">
+                     <h3 class="text-lg font-bold text-white flex items-center gap-2" id="modalTitle">
+                        <div class="p-2 bg-indigo-500/20 rounded-lg">
+                            <i data-feather="user-plus" class="w-5 h-5 text-indigo-400"></i>
+                        </div>
+                        Nuovo Operatore
+                     </h3>
+                     <button onclick="closeModal()" class="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+                         <i data-feather="x" class="w-5 h-5"></i>
+                     </button>
+                </div>
+
+                <!-- Modal Tabs Header -->
+                <div class="px-6 pt-4 border-b border-white/5 flex gap-4 overflow-x-auto">
+                    <button type="button" class="modal-tab-btn px-4 py-2 text-sm font-medium text-white border-b-2 border-indigo-500 transition-colors" data-tab="tab-anagrafica">
+                         Anagrafica
+                    </button>
+                    <button type="button" class="modal-tab-btn px-4 py-2 text-sm font-medium text-slate-400 hover:text-white border-b-2 border-transparent transition-colors" data-tab="tab-contatti">
+                         Contatti
+                    </button>
+                    <button type="button" class="modal-tab-btn px-4 py-2 text-sm font-medium text-slate-400 hover:text-white border-b-2 border-transparent transition-colors" data-tab="tab-contratto">
+                         Contratto
+                    </button>
+                    <button type="button" class="modal-tab-btn px-4 py-2 text-sm font-medium text-slate-400 hover:text-white border-b-2 border-transparent transition-colors" data-tab="tab-sistema">
+                         Sistema
+                    </button>
+                </div>
+
+                <!-- Modal Body (Scrollable) -->
+                <div class="px-6 py-5 space-y-6 overflow-y-auto custom-scrollbar" style="max-height: 60vh;">
+                    
+                    <div id="tab-anagrafica" class="tab-content space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Nome Completo</label>
+                                <div class="relative w-full">
+                                    <input type="text" id="employeeName" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all" 
+                                        placeholder="Es. Mario Rossi" oninput="searchCandidates(this.value)" onfocus="searchCandidates(this.value)" autocomplete="off">
+                                    
+                                    <!-- Autocomplete Dropdown -->
+                                    <div id="candidateDropdown" class="absolute left-0 right-0 top-full mt-1 w-full border border-slate-600 rounded-xl hidden z-[60] shadow-2xl overflow-y-auto custom-scrollbar ring-1 ring-white/10" style="background-color: #0f172a !important; max-height: 192px; overflow-y: auto !important;">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Codice Fiscale</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="employeeFiscalCode" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white font-mono uppercase" placeholder="RSSMRA85..." maxlength="16">
+                                    <button type="button" onclick="generateFiscalCode()" class="px-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl border border-slate-600" title="Calcola Codice Fiscale">
+                                        <i data-feather="cpu" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Genere</label>
+                                <select id="employeeGender" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                                    <option value="">Seleziona...</option>
+                                    <option value="M">Maschio</option>
+                                    <option value="F">Femmina</option>
+                                    <option value="Other">Altro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Data di Nascita</label>
+                                <input type="date" id="employeeBirthDate" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Luogo di Nascita</label>
+                                <input type="text" id="employeeBirthPlace" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white" placeholder="Città (Prov)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: CONTATTI -->
+                    <div id="tab-contatti" class="tab-content hidden space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Indirizzo Residenza</label>
+                                <input type="text" id="employeeAddress" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white" placeholder="Via Roma 1, 00100">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Città</label>
+                                <input type="text" id="employeeCity" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">CAP</label>
+                                <input type="text" id="employeeZip" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white" maxlength="5">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Email Personale / Lavoro</label>
+                                <input type="email" id="employeeEmail" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white" placeholder="email@mcag.it">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Cellulare</label>
+                                <input type="tel" id="employeeMobile" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                            </div>
+                             <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Telefono Fisso</label>
+                                <input type="tel" id="employeePhone" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: CONTRATTO -->
+                    <div id="tab-contratto" class="tab-content hidden space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Ruolo / Mansione</label>
+                                <input type="text" id="employeeRole" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Reparto</label>
+                                <select id="employeeDepartment" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                                    <option value="Medicina Generale">Medicina Generale</option>
+                                    <option value="Chirurgia">Chirurgia</option>
+                                    <option value="Terapia Intensiva">Terapia Intensiva</option>
+                                    <option value="Pronto Soccorso">Pronto Soccorso</option>
+                                    <option value="Amministrazione">Amministrazione</option>
+                                    <option value="Risorse Umane">Risorse Umane</option>
+                                    <option value="Logistica & Supporto">Logistica & Supporto</option>
+                                    <option value="Sicurezza & IT">Sicurezza & IT</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Tipo Contratto</label>
+                                <select id="employeeContractType" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                                    <option value="">Seleziona...</option>
+                                    <option value="Indeterminato">Indeterminato</option>
+                                    <option value="Determinato">Determinato</option>
+                                    <option value="Apprendistato">Apprendistato</option>
+                                    <option value="Collaborazione">Collaborazione / P.IVA</option>
+                                    <option value="Volontario">Volontario</option>
+                                    <option value="Stage">Stage / Tirocinio</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Inizio Contratto</label>
+                                <input type="date" id="employeeContractStart" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                            </div>
+                             <div class="col-span-2">
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Note & Skills</label>
+                                <textarea id="employeeNotes" rows="3" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white" placeholder="Competenze specifiche, note su orari..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: SISTEMA -->
+                    <div id="tab-sistema" class="tab-content hidden space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                 <label class="block text-sm font-medium text-slate-200 mb-1">Matricola / ID Univoco</label>
+                                 <div class="flex gap-2">
+                                     <input type="text" id="employeeCode" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white font-mono" placeholder="OP-XXXX" readonly>
+                                     <button type="button" onclick="generateEmployeeCode()" class="px-4 bg-slate-700 hover:bg-slate-600 text-white rounded-xl border border-slate-600">
+                                         <i data-feather="refresh-cw" class="w-4 h-4"></i>
+                                     </button>
+                                 </div>
+                                 <p class="text-xs text-slate-500 mt-1">Generato automaticamente dal Codice Fiscale.</p>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-slate-200 mb-1">Livello di Accesso</label>
+                                <select id="authGrade" class="block w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl text-white">
+                                    <option value="Staff">Livello 1 - Staff (Base)</option>
+                                    <option value="Coordinatore">Livello 2 - Coordinatore (Lead)</option>
+                                    <option value="Manager">Livello 3 - Manager (Approvatore)</option>
+                                    <option value="Direzione">Livello 4 - Direzione (Audit)</option>
+                                    <option value="Admin">Livello 5 - Amministratore (System)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-[#0f172a] px-6 py-4 flex justify-end gap-3 border-t border-slate-700">
+                    <button type="button" onclick="closeModal()" 
+                        class="px-5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-all font-medium border border-transparent hover:border-white/10">
+                        Annulla
+                    </button>
+                    <button type="button" onclick="saveEmployee()" 
+                        class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 font-medium flex items-center gap-2">
+                        <i data-feather="check" class="w-4 h-4"></i>
+                        Salva Scheda
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteEmployeeModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 100000 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="closeDeleteModal()"></div>
+    
+    <div class="flex min-h-screen items-center justify-center p-4 text-center">
+        <div class="relative transform rounded-2xl bg-slate-900 border border-red-500/30 text-left shadow-2xl shadow-red-900/20 transition-all w-full max-w-sm p-6">
+            <div class="flex flex-col items-center text-center">
+                <div class="p-3 bg-red-500/10 rounded-full border border-red-500/20 mb-4">
+                    <i data-feather="alert-triangle" class="text-red-500 w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Elimina Operatore</h3>
+                <p class="text-slate-400 text-sm mb-6">
+                    Sei sicuro di voler eliminare <span id="deleteEmployeeName" class="font-bold text-white"></span>?<br>
+                    Questa azione non può essere annullata.
+                </p>
+                
+                <div class="flex gap-3 w-full">
+                    <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors font-medium border border-slate-700">
+                        Annulla
+                    </button>
+                    <button id="confirmDeleteBtn" onclick="confirmDelete()" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-colors font-medium shadow-lg shadow-red-500/20">
+                        Elimina
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> workshift/footer}}
+
+    <script>
+        window.WorkShiftBaseUrl = "{{base_url}}/workshift";
+    </script>
+    <script src="{{base_url}}/js/workshift-api.js"></script>
+    <script src="{{base_url}}/js/lib/sweetalert2.all.min.js"></script>
+    <script src="{{base_url}}/js/fiscal-code-data.js"></script>
+    <script src="{{base_url}}/js/pages/workshift-team-management.js"></script>
+    <script>
+        feather.replace();
+    </script>
+    <script src="{{base_url}}/js/components/scroll_navigator.js"></script>
+</body>
+</html>

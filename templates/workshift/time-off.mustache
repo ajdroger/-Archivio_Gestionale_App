@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permessi - WorkShift Wizard</title>
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/style.css">
+    <link rel="stylesheet" href="{{base_url}}/assets/workshift/premium.css">
+    <link rel="stylesheet" href="{{base_url}}/css/components/scroll_navigator.css">
+    <link href="{{base_url}}/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="{{base_url}}/js/components/user-status.js"></script>
+</head>
+<body class="bg-mcag-slate text-mcag-text min-h-screen flex flex-col font-sans selection:bg-mcag-accent/30 transition-colors duration-500">
+    
+    <!-- Navbar -->
+    <nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50 text-white sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand -->
+                <a href="{{base_url}}/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-indigo-400 transition-colors">
+                    <i data-feather="shield" class="text-yellow-500 w-6 h-6"></i>
+                    <span>{{title}}</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="grid" class="w-4 h-4"></i> Dashboard
+                    </a>
+                   
+                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                    
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="home" class="w-4 h-4"></i> Home
+                    </a>
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="calendar" class="w-4 h-4"></i> Turni
+                    </a>
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                        <i data-feather="users" class="w-4 h-4"></i> Team
+                    </a>
+                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                        <i data-feather="sun" class="w-4 h-4"></i> Ferie
+                    </a>
+                </div>
+
+                <!-- User/Identity Bar -->
+                <div class="hidden md:flex items-center gap-4">
+                     <user-status-bar role="{{user_role}}" user="{{username}}"></user-status-bar>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl animate-fade-in">
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl animate-fade-in text-sm">
+
+        <!-- Ultimate Header & Balance -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <!-- Title Section -->
+            <div class="md:col-span-2 glass-panel p-8 rounded-[2rem] flex flex-col justify-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/20 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                <h1 class="text-3xl font-black text-white mb-2">Ferie & Permessi</h1>
+                <p class="text-indigo-200/80 mb-6">Visualizza e gestisci le richieste del tuo team.</p>
+                
+                <button onclick="document.getElementById('requestModal').classList.remove('hidden')" class="w-fit group relative px-8 py-3 bg-white text-indigo-950 font-bold rounded-xl shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2">
+                     <i data-feather="plus" class="w-4 h-4"></i> Nuova Richiesta
+                </button>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="glass-panel p-6 rounded-[2rem] bg-gradient-to-b from-slate-800/80 to-slate-900/80 border border-slate-700/50 flex flex-col items-center justify-center text-center">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Giorni Ferie Residui</h3>
+                
+                <div class="relative w-32 h-32 mb-4">
+                     <!-- Circular Progress CSS Mock -->
+                    <svg class="w-full h-full transform -rotate-90">
+                        <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-700" />
+                        <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="351.86" stroke-dashoffset="80" class="text-amber-400" stroke-linecap="round" />
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center flex-col">
+                        <span class="text-4xl font-black text-white">22</span>
+                        <span class="text-[10px] text-gray-400 font-bold uppercase">Giorni</span>
+                    </div>
+                </div>
+                <div class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                    +2 maturati questo mese
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex gap-4 mb-6 overflow-x-auto pb-2">
+            <button class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-600/20 whitespace-nowrap">Tutte le Richieste</button>
+            <button class="px-5 py-2 rounded-xl bg-slate-800 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-700 transition-colors whitespace-nowrap">In Attesa</button>
+             <button class="px-5 py-2 rounded-xl bg-slate-800 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-700 transition-colors whitespace-nowrap">Approvate</button>
+        </div>
+
+        <!-- Requests List (Ultimate Card Style) -->
+        <div class="space-y-4">
+            
+            {{#requests}}
+            <div class="group relative bg-slate-800/40 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 transition-all hover:bg-slate-800/60 hover:border-indigo-500/30 hover:shadow-xl">
+                 <!-- Status Color Bar -->
+                 <div class="absolute left-0 top-6 bottom-6 w-1 rounded-r-lg 
+                    {{#is_approved}}bg-emerald-500{{/is_approved}}
+                    {{#is_rejected}}bg-red-500{{/is_rejected}}
+                    {{#is_pending}}bg-amber-500{{/is_pending}}
+                 "></div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pl-4">
+                    
+                    <!-- User & Info -->
+                    <div class="flex items-center gap-4">
+                         <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center shrink-0 shadow-inner">
+                            <span class="font-black text-xl text-gray-500 group-hover:text-white transition-colors">{{employee_initials}}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg flex items-center gap-2">
+                                {{employee_name}}
+                                <span class="px-2 py-0.5 rounded-md bg-white/5 text-[10px] uppercase tracking-wider text-gray-400 border border-white/5">{{type}}</span>
+                            </h4>
+                            <div class="flex items-center gap-2 text-gray-400 text-sm mt-1">
+                                <i data-feather="calendar" class="w-3 h-3"></i>
+                                <span class="font-medium text-indigo-300">{{start_date}} - {{end_date}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reason -->
+                    <div class="flex-1 md:pl-8 text-gray-400 italic text-sm line-clamp-2 md:line-clamp-1">
+                        &ldquo;{{reason}}&rdquo;
+                    </div>
+
+                    <!-- Actions / Status -->
+                    <div class="flex items-center gap-4 shrink-0">
+                         {{#is_pending}}
+                         <div class="flex gap-2">
+                            <button onclick="updateRequest({{id}}, 'Approved')" class="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all border border-emerald-500/20">Approva</button>
+                            <button onclick="updateRequest({{id}}, 'Rejected')" class="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all border border-red-500/20">Rifiuta</button>
+                         </div>
+                         {{/is_pending}}
+
+                         {{^is_pending}}
+                         <span class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border 
+                            {{#is_approved}}bg-emerald-500/10 text-emerald-400 border-emerald-500/20{{/is_approved}}
+                            {{#is_rejected}}bg-red-500/10 text-red-400 border-red-500/20{{/is_rejected}}
+                         ">
+                            {{status}}
+                         </span>
+                         {{/is_pending}}
+                    </div>
+
+                </div>
+            </div>
+            {{/requests}}
+
+            {{^requests}}
+            <div class="py-20 text-center glass-panel rounded-3xl border-dashed border-2 border-slate-700/50">
+                <div class="inline-flex p-6 rounded-full bg-slate-800/50 mb-4 text-slate-500 ring-4 ring-slate-800/30">
+                    <i data-feather="coffee" class="w-10 h-10"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Tutto Tranquillo</h3>
+                <p class="text-gray-500">Non ci sono richieste di ferie al momento.</p>
+            </div>
+            {{/requests}}
+            
+        </div>
+    </main>
+
+    <!-- Modal "Nuova Richiesta" -->
+    <div id="requestModal" class="fixed inset-0 z-[100] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl relative">
+            <div class="p-6 border-b border-slate-700/50">
+                <h3 class="text-xl font-bold text-white">Nuova Richiesta Ferie</h3>
+                <p class="text-gray-400 text-sm">Inserisci i dettagli dell'assenza.</p>
+            </div>
+            <div class="p-6 space-y-4">
+                 <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">Dipendente</label>
+                    <select class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500">
+                        <option>Seleziona...</option>
+                        <!-- Should be populated dynamically -->
+                        <option>Mario Rossi</option>
+                        <option>Luigi Verdi</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Dal</label>
+                        <input type="date" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm">
+                    </div>
+                    <div>
+                         <label class="block text-sm font-medium text-gray-300 mb-1">Al</label>
+                        <input type="date" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm">
+                    </div>
+                </div>
+                <div>
+                     <label class="block text-sm font-medium text-gray-300 mb-1">Motivazione</label>
+                     <textarea class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm h-24 placeholder-gray-600" placeholder="Es. Ferie estive..."></textarea>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-700/50 flex justify-end gap-3">
+                <button onclick="document.getElementById('requestModal').classList.add('hidden')" class="px-4 py-2 bg-transparent hover:bg-white/5 text-gray-400 hover:text-white rounded-lg transition-colors">Annulla</button>
+                <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-colors">Invia Richiesta</button>
+            </div>
+        </div>
+    </div>
+
+
+    {{> workshift/footer}}
+    <script src="{{base_url}}/js/pages/workshift-time-off.js"></script>
+    <script>
+        feather.replace();
+        
+        // Mock Update Function
+        window.updateRequest = (id, status) => {
+            if(confirm('Confermi di voler impostare lo stato a: ' + status + '?')) {
+                // API Call would go here
+                // For demo, we just reload
+                fetch(`${window.WorkShiftBaseUrl || '/workshift'}/api/requests/${id}/status`, {
+                    method: 'POST',
+                    body: JSON.stringify({status: status})
+                }).then(() => location.reload());
+            }
+        };
+    </script>
+    <script src="{{base_url}}/js/components/scroll_navigator.js"></script>
+</body>
+</html>

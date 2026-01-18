@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- CSS -->
+    {{#extra_css}}
+    <link rel="stylesheet" href="{{.}}">
+    {{/extra_css}}
+</head>
+<body class="{{body_class}} font-outfit text-slate-300 selection:bg-indigo-500/30">
+
+    <!-- Navbar -->
+    {{> workshift/nav}}
+
+    <main class="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+
+        <!-- Back Link -->
+        <div class="flex items-center gap-2 mb-4">
+            <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group">
+                <div class="p-2 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors">
+                    <i data-feather="arrow-left" class="w-4 h-4"></i>
+                </div>
+                <span class="text-sm font-medium">Torna al Team</span>
+            </a>
+        </div>
+
+        {{#employee}}
+        <!-- Hero Profile Card -->
+        <div class="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-700/50 shadow-2xl shadow-indigo-500/10">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-emerald-500/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
+
+            <div class="relative z-10 p-8 md:p-12">
+                <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-center">
+                    
+                    <!-- Avatar -->
+                    <div class="relative shrink-0 group">
+                        <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-slate-800 to-slate-900 border-4 border-slate-700/50 shadow-2xl flex items-center justify-center text-4xl font-bold text-slate-500 relative overflow-hidden group-hover:border-indigo-500/50 transition-colors duration-300">
+                             {{#avatar}}
+                                <img src="{{avatar}}" alt="{{name}}" class="w-full h-full object-cover">
+                            {{/avatar}}
+                            {{^avatar}}
+                                <span class="bg-gradient-to-br from-indigo-400 to-purple-400 bg-clip-text text-transparent">{{name.0}}</span>
+                            {{/avatar}}
+                        </div>
+                        <div class="absolute bottom-2 right-2 w-8 h-8 bg-emerald-500 rounded-full border-4 border-slate-900 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                            <i data-feather="check" class="w-3 h-3 text-white stroke-[4px]"></i>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="flex-1 space-y-4 w-full">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">{{name}}</h1>
+                                    <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-wider rounded-full border border-indigo-500/20">
+                                        {{auth_grade}}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-4 text-slate-400 text-sm">
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-feather="briefcase" class="w-4 h-4 text-slate-500"></i>
+                                        {{role}}
+                                    </span>
+                                    <span class="hidden sm:block text-slate-600">•</span>
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-feather="layers" class="w-4 h-4 text-slate-500"></i>
+                                        {{department}}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-center gap-3">
+                                <button class="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-all border border-white/5 hover:border-white/10 flex items-center gap-2">
+                                    <i data-feather="download" class="w-4 h-4"></i>
+                                    <span class="hidden sm:inline">Export</span>
+                                </button>
+                                <button onclick="openEditModal({{id}}, '{{name}}', '{{role}}', '{{email}}', '{{department}}', '{{auth_grade}}', '{{employee_code}}')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium shadow-lg shadow-indigo-500/20 transition-all hover:scale-105 flex items-center gap-2">
+                                    <i data-feather="edit-2" class="w-4 h-4"></i>
+                                    Modifica
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ID Badge -->
+                        <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 inline-flex flex-col sm:flex-row sm:items-center gap-3 md:gap-8 max-w-full">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700">
+                                    <i data-feather="hash" class="w-5 h-5 text-indigo-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Matricola ID</p>
+                                    <p class="text-lg font-mono font-bold text-white tracking-wide">{{employee_code}}</p>
+                                </div>
+                            </div>
+                            <div class="w-px h-10 bg-slate-700/50 hidden sm:block"></div>
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700">
+                                    <i data-feather="mail" class="w-5 h-5 text-purple-400"></i>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Email Aziendale</p>
+                                    <p class="text-base font-medium text-white truncate">{{email}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Metrics -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Stats Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="p-5 bg-slate-900 border border-slate-700/50 rounded-2xl hover:bg-slate-800/50 transition-colors">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-2 bg-blue-500/10 rounded-lg">
+                                <i data-feather="clock" class="w-5 h-5 text-blue-400"></i>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">+12%</span>
+                        </div>
+                        <h4 class="text-3xl font-bold text-white mb-1">142h</h4>
+                        <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Ore Mensili</p>
+                    </div>
+
+                    <div class="p-5 bg-slate-900 border border-slate-700/50 rounded-2xl hover:bg-slate-800/50 transition-colors">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-2 bg-purple-500/10 rounded-lg">
+                                <i data-feather="calendar" class="w-5 h-5 text-purple-400"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-500 bg-slate-700/50 px-2 py-1 rounded-full">Active</span>
+                        </div>
+                        <h4 class="text-3xl font-bold text-white mb-1">18</h4>
+                        <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Turni Assegnati</p>
+                    </div>
+
+                    <div class="p-5 bg-slate-900 border border-slate-700/50 rounded-2xl hover:bg-slate-800/50 transition-colors">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-2 bg-amber-500/10 rounded-lg">
+                                <i data-feather="star" class="w-5 h-5 text-amber-400"></i>
+                            </div>
+                            <span class="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-1 rounded-full">Top 5%</span>
+                        </div>
+                        <h4 class="text-3xl font-bold text-white mb-1">9.8</h4>
+                        <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Performance Score</p>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Timeline -->
+                <div class="p-6 bg-slate-900 border border-slate-700/50 rounded-2xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-feather="activity" class="w-5 h-5 text-indigo-400"></i>
+                            Attività Recente
+                        </h3>
+                        <button class="text-xs text-indigo-400 font-medium hover:text-indigo-300 transition-colors">Vedi tutto</button>
+                    </div>
+                    
+                    <div class="space-y-6 md:pl-4 border-l border-slate-800 md:ml-2">
+                        <!-- Item 1 -->
+                        <div class="relative pl-6 md:pl-8">
+                            <div class="absolute left-[-5px] md:left-[-5px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-slate-900"></div>
+                            <h4 class="text-sm font-semibold text-white">Check-in Turno Mattina</h4>
+                            <p class="text-xs text-slate-400 mt-1">Oggi, 07:55 - Reparto Chirurgia</p>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="relative pl-6 md:pl-8">
+                            <div class="absolute left-[-5px] md:left-[-5px] top-1 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-slate-900"></div>
+                            <h4 class="text-sm font-semibold text-white">Assegnazione Turno Extra</h4>
+                            <p class="text-xs text-slate-400 mt-1">Ieri, 14:30 - Approvato da Manager</p>
+                        </div>
+                        <!-- Item 3 -->
+                        <div class="relative pl-6 md:pl-8">
+                            <div class="absolute left-[-5px] md:left-[-5px] top-1 w-2.5 h-2.5 rounded-full bg-purple-500 ring-4 ring-slate-900"></div>
+                            <h4 class="text-sm font-semibold text-white">Aggiornamento Profilo</h4>
+                            <p class="text-xs text-slate-400 mt-1">2 giorni fa - Modifica anagrafica</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Details & Security -->
+            <div class="space-y-6">
+                <!-- Security Card -->
+                <div class="p-6 bg-slate-900/50 border border-slate-700/50 rounded-2xl relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent pointer-events-none"></div>
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2 relative z-10">
+                        <i data-feather="shield" class="w-5 h-5 text-red-400"></i>
+                        Area Sicurezza
+                    </h3>
+                    
+                    <div class="space-y-3 relative z-10">
+                        <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                             <span class="text-sm text-slate-300">Stato Account</span>
+                             <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">ATTIVO</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                             <span class="text-sm text-slate-300">2FA</span>
+                             <span class="text-xs font-bold text-slate-500 bg-slate-700/50 px-2 py-1 rounded">NON ATTIVO</span>
+                        </div>
+                        <div class="pt-2">
+                             <button onclick="deleteEmployee({{id}}, '{{name}}')" class="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors border border-red-500/20">
+                                Disabilita Operatore
+                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes / Meta -->
+                <div class="p-6 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
+                    <h3 class="text-lg font-bold text-white mb-4">Note System</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        L'utente è stato creato il {{created_at}} tramite Security Center.
+                        Possiede permessi di livello {{auth_grade}}.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        {{/employee}}
+
+    </main>
+    
+    <!-- Footer -->
+    {{> workshift/footer}}
+
+    <!-- Include Modals (Re-using Team Management Modal Logic) -->
+    {{> workshift/team-management-modals}} 
+    <!-- Note: We need to make sure team-management-modals is accessible or included. 
+         Wait, team-management.mustache has snippets inline. 
+         I should create a partial or just duplicate the modal code here for strict isolation if partial isn't ready.
+         Since I can't easily extract partials without modifying other files extensively, I'll assume I need to copy the modal code here OR direct edits to team page.
+         Actually, the "Modifica" button calls JS `openEditModal`. Use `workshift-team-management.js`?
+         Yes, I should include the JS file.
+    -->
+    <script>
+        window.WorkShiftBaseUrl = '{{base_url}}';
+    </script>
+    <script src="{{base_url}}/js/pages/workshift-team-management.js"></script>
+    <script>
+        feather.replace();
+    </script>
+    
+    <!-- Copy of Modal Structure for Edit -->
+    <div id="newEmployeeModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 99999 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+            <div class="relative transform rounded-2xl bg-slate-900 border border-slate-700 text-left shadow-2xl transition-all w-full flex flex-col max-h-[90vh]" style="max-width: 450px !important;">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 px-6 py-4 border-b border-white/5 flex justify-between items-center shrink-0">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-indigo-500/20 rounded-lg border border-indigo-500/30">
+                            <i data-feather="user-plus" class="text-indigo-400 w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white" id="modalTitle">Modifica Operatore</h3>
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
+                        <i data-feather="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <!-- Body -->
+                <div class="px-5 py-3 space-y-3 overflow-visible">
+                    <div class="group">
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Nome Completo</label>
+                        <input type="text" id="employeeName" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Ruolo</label>
+                            <input type="text" id="employeeRole" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1">Reparto</label>
+                            <select id="employeeDepartment" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white">
+                                <option value="Medicina Generale">Medicina Generale</option>
+                                <option value="Chirurgia">Chirurgia</option>
+                                <option value="Terapia Intensiva">Terapia Intensiva</option>
+                                <option value="Pronto Soccorso">Pronto Soccorso</option>
+                                <option value="Amministrazione">Amministrazione</option>
+                                <option value="Sicurezza & IT">Sicurezza & IT</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-2">
+                             <label for="employeeCode" class="block text-sm font-medium text-slate-300 mb-1">Matricola / ID</label>
+                             <input type="text" id="employeeCode" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white font-mono">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" onclick="generateEmployeeCode()" class="w-full py-3 bg-slate-700 text-white rounded-xl text-sm border border-slate-600">Genera</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Livello</label>
+                        <select id="authGrade" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white">
+                            <option value="Staff">Staff</option>
+                            <option value="Coordinatore">Coordinatore</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
+                        <input type="email" id="employeeEmail" class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white">
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="p-5 border-t border-white/5 bg-slate-900/50 rounded-b-2xl">
+                    <button onclick="saveEmployee()" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-indigo-500/25 transition-all">
+                        Salva
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

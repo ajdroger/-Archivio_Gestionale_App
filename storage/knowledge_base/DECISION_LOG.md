@@ -21,6 +21,108 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+## [ADR-050] Workshift Hub Architecture
+**Data**: 2026-01-18 04:00
+**Stato**: ✅ Implementato (v7.6)
+**Contesto**:
+Il modulo Workshift necessitava di espandersi oltre la semplice gestione turni per diventare un HR Hub completo.
+**Decisione**:
+Espandere il dominio `Workshift` con controller verticali:
+1.  **ReportsController**: Isolamento logica export per non appesantire il controller turni.
+2.  **SettingsController**: Configurazione parametri business (non tecnici) gestibile da HR Manager.
+3.  **InfoHub**: Pagine statiche (`hr-policy`, `labor-laws`) renderizzate via Mustache per coerenza grafica ma contenuto statico.
+**Conseguenze**:
+- (+) Workshift diventa una suite HR completa.
+- (+) Separazione netta tra gestione operativa (Shift) e amministrativa (Settings/Reports).
+
+---
+
+## [ADR-049] Static Legal Compliance Strategy
+**Data**: 2026-01-18 02:00
+**Stato**: ✅ Implementato (v7.6)
+**Contesto**:
+Le pagine legali (SLA, EULA) devono essere accessibili anche in caso di crash DB o errori backend, e devono essere indicizzabili SEO/AI.
+**Decisione**:
+Mantenere versioni **Statiche HTML** pure (`public/landing/legal/*.html`) come "Golden Copy" accessibile pubblicamente, e utilizzare `PolicyController` solo per injectarle nel layout applicativo se l'utente è loggato.
+**Conseguenze**:
+- (+) Resilienza massima (file statici serviti da qualsiasi webserver).
+- (+) Compliance visuale garantita (nessun rendering errato).
+
+---
+
+## [ADR-048] Policy Management Engine
+**Data**: 2026-01-17 22:00
+**Stato**: ✅ Implementato (v7.6)
+**Contesto**:
+La gestione di Privacy, Cookie e Terms richiedeva logica dinamica (es. nascondere info login se sloggato, mostrare nome utente).
+**Decisione**:
+Creare `PolicyController` che agisce da content-negotiator:
+- Se richiesta via API/Auth: Arricchisce il contenuto con `ai_context` e dati sessione.
+- Se richiesta pubblica: Serve la versione base o ridireziona alla landing statica.
+**Conseguenze**:
+- (+) Esperienza utente fluida tra app e documentazione.
+- (+) Context-aware AI responses ("Cosa dice la privacy?" -> L'AI legge il contesto iniettato).
+
+## [ADR-047] Python Forecasting Bridge (ExpenseBar)
+**Data**: 2026-01-17 18:00
+**Stato**: ✅ Implementato (v7.5)
+**Contesto**:
+Il modulo ExpenseBar necessitava di funzionalità analitiche avanzate (previsione spese future) non facilmente realizzabili in PHP puro in modo performante/statistico.
+**Decisione**:
+Utilizzare un'architettura **Hybrid PHP-Python**:
+1.  **Backend**: `ExpensebarController` prepara il dataset JSON.
+2.  **Bridge**: Esecuzione stream-based tramite `proc_open` dello script Python `expense_forecast.py`.
+3.  **IO**: Stdin per i dati, Stdout per le predizioni JSON.
+**Conseguenze**:
+- (+) Accesso a librerie ML/Data Science (Pandas, Prophet) di Python.
+- (+) Decoupling della logica di calcolo complessa.
+- (-) Richiede environment Python configurato sul server.
+
+---
+
+## [ADR-046] External Modules Modularization
+**Data**: 2026-01-17 10:00
+**Stato**: ✅ Implementato (v7.5)
+**Contesto**:
+L'aggiunta di tool ausiliari come ExpenseBar e TaskFlow rischiava di inquinare i namespace core (`MCAG\Controller\Admin` o `\Service`).
+**Decisione**:
+Creare un namespace dedicato `MCAG\Controller\External` per moduli "Satellite" che non fanno parte del dominio core (Gestione Soci), ma offrono utilità laterali.
+- Controller dedicati (`ExpensebarController`, `TaskflowController`).
+- Asset separati (`assets/expensebar`, `assets/taskflow`).
+**Conseguenze**:
+- (+) Separazione netta delle responsabilità.
+- (+) Facilità di rimozione/disattivazione dei moduli opzionali.
+
+## [ADR-045] Universal Scroll HUD Adoption
+**Data**: 2026-01-18 06:00
+**Stato**: ✅ Implementato (v7.5)
+**Contesto**:
+Le pagine interne di Workshift avevano stili di navigazione inconsistenti rispetto alla "Genius Dashboard".
+**Decisione**:
+Estendere il componente `ScrollNavigator` (anello di progresso + controlli pagina) a tutte le viste operative (Turni, Team, Ferie).
+- Iniezione automatica JS/CSS in tutti i template mustache corretti.
+- Inclusione esplicita di FontAwesome per garantire rendering icone.
+
+**Conseguenze**:
+- (+) UX/UI coerente e "Premium" in tutto l'applicativo.
+- (+) Navigazione rapida su tabelle lunghe (es. liste turni).
+
+---
+
+## [ADR-044] Workshift Visual Standardization
+**Data**: 2026-01-18 05:30
+**Stato**: ✅ Implementato (v7.5)
+**Contesto**:
+Il modulo "Gestione Turni" utilizzava ancora vecchi pattern visuali (Navbar legacy, decorazioni background obsolete).
+**Decisione**:
+1.  **Header Unification**: Adozione dello standard Navbar definito in `team-management` (sfondo dark, backdrop-blur, breadcrumb logici).
+2.  **Clean Aesthetics**: Rimozione elementi decorativi rumorosi ("Glow Balls") per massimizzare la leggibilità dei dati.
+3.  **View Switcher**: Standardizzazione dei selettori vista (Giorno/Settimana/Mese/Anno) con logica JS unificata.
+
+**Conseguenze**:
+- (+) Riduzione debito tecnico frontend.
+- (+) Percezione utente di un sistema integrato e non modulare.
+
 ## [ADR-043] Contextual Workflows & Role Extension
 **Data**: 2026-01-15 21:00
 **Stato**: ✅ Attivo

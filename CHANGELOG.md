@@ -13,6 +13,49 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.6.0-sovereign-state] - 2026-01-18 "**Sovereign State**"
+### Legal & Policy Framework (Compliance 100%)
+- **PolicyController Engine**: Nuovo controller `src/Controller/PolicyController.php` per la gestione dinamica dei documenti legali (Privacy, Cookie, EULA).
+    - **Dynamic Injection**: Iniezione contestuale (`ai_context`) per istruire l'AI su come rispondere a domande legali.
+    - **HTML Purge**: Rendering pulito di `SLA_MAINTENANCE`, `PRIVACY_POLICY` e `TERMS_OF_SERVICE` dalla directory `public/landing/legal/`.
+- **Enterprise SLA**: Pagina statica `SLA_MAINTENANCE.html` con definizione livelli di servizio (P1/P2/P3/P4) e penali.
+- **GDPR Core**: Informative strutturate per Art. 13/14 GDPR con tabelle di retention policy.
+
+### Workshift Core Expansion
+- **Reports Module**: Nuovo `ReportsController` e template `reports.mustache` per generazione PDF/CSV turni.
+- **Settings & Config**: Pannello `settings.mustache` per configurazione globale (Ferie default, Ore target).
+- **Operator Profile**: Scheda `operator-profile.mustache` per gestione skills e preferenze turni.
+- **Info Hub**: Pagine informative interne (`hr-policy`, `labor-laws`) per consultazione normativa.
+
+### External Modules Integration (Final)
+- **TaskFlow & ExpenseBar PRO**: Finalizzazione integrazione DB (`install_taskflow_db.php`) e asset (`public/assets/taskflow`).
+    - **Tests**: Aggiunti `TaskflowTest.php`, `ExpensebarTest.php` e `WorkshiftTest.php` alla suite.
+
+## [v7.5.0-strategic-ops] - 2026-01-18 "**Strategic Operations Suite**"
+### New Module: ExpenseBar (Financial Intelligence)
+- **Dashboard Finanziaria**: Nuova interfaccia `External/ExpensebarController` per la gestione spese e budget.
+    - **Analytics Core**: Vista dedicata per analisi trend di spesa.
+    - **Python Forecasting Bridge**: Integrazione nativa (`proc_open`) con script Python (`expense_forecast.py`) per proiezioni finanziarie ML-based.
+    - **CRUD Operativo**: API `addExpense`, `getExpenses` supportate da Repository PDO dedicato.
+    - **Architecture**: Controller isolato in `src/Controller/External` per modularità pulita.
+
+### New Module: TaskFlow (Project Management)
+- **Tactical Task Manager**: Sistema Kanban/Lista per gestione task operativi.
+    - **Fluid Interface**: UI reattiva con gestione stato completamento immediata.
+    - **Bulk Actions**: Funzionalità `clearCompleted` per pulizia rapida backlog.
+    - **Persistence**: Storage su DB (`taskflow_tasks`) tramite `PDOTaskflowRepository`.
+
+### Workshift Evolution (Shift Commander)
+- **Unified Command Interface**: Standardizzazione visuale completa dei moduli Turni, Team e Ferie (`header`, `navbar`) per coerenza "Squadron".
+- **Tactical Navigation**: Implementazione logica di navigazione temporale (Settimana/Mese/Anno) nel calendario turni.
+    - **Logic Core**: Algoritmo `updateDate` che gestisce incrementi differenziali in base alla vista attiva.
+- **Universal Scroll HUD**: Estensione del componente `ScrollNavigator` (Progress Ring) a tutte le view operative.
+    - **Iconography**: Iniezione FontAwesome per fix icone frecce direzionali.
+
+### Risolto
+- **JS Runtime**: Corretto selettore CSS non valido (`.text-[10px]`) che bloccava il parsing in `workshift-shift-management.js`.
+- **API Endpoint**: Corretto URL endpoint per l'ottimizzatore AI.
+
 ## [v7.4.0-operational-command] - 2026-01-15 "**Operational Command**"
 ### Core Evolution: AI & Shell
 - **AI Coding Core**: Connettore Ollama locale (deepseek-coder/llama3) per assistenza coding offline.
