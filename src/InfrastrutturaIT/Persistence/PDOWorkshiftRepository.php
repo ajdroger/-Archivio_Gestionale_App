@@ -13,6 +13,23 @@ class PDOWorkshiftRepository
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
+        $this->createRequestsTableIfNotExists();
+    }
+
+    private function createRequestsTableIfNotExists(): void
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS workshift_requests (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            employee_id INT NOT NULL,
+            type VARCHAR(50) DEFAULT 'Ferie',
+            start_date DATE NOT NULL,
+            end_date DATE NOT NULL,
+            reason TEXT,
+            status VARCHAR(20) DEFAULT 'Pending',
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (employee_id) REFERENCES workshift_employees(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        $this->pdo->exec($sql);
     }
 
     public function findAll(): array
@@ -188,5 +205,130 @@ class PDOWorkshiftRepository
     {
         $stmt = $this->pdo->prepare("DELETE FROM workshift_employees WHERE id = :id");
         return $stmt->execute(['id' => $id]);
+    }
+
+    // --- Request Methods ---
+
+    public function findAllRequests(?int $employeeId = null, ?string $status = null): array
+    {
+        $sql = "SELECT r.*, e.name as employee_name, e.role as employee_role 
+                FROM workshift_requests r 
+                LEFT JOIN workshift_employees e ON r.employee_id = e.id 
+                WHERE 1=1";
+        $params = [];
+
+        if ($employeeId) {
+            $sql .= " AND r.employee_id = :employee_id";
+            $params['employee_id'] = $employeeId;
+        }
+
+        if ($status) {
+            $sql .= " AND r.status = :status";
+            $params['status'] = $status;
+        }
+
+        $sql .= " ORDER BY r.created_at DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Decorate with initials if missing from DB join (user_initial might not be in DB)
+        foreach ($results as &$row) {
+            if (empty($row['user_initial']) && !empty($row['employee_name'])) {
+                $parts = explode(' ', $row['employee_name']);
+                $initials = '';
+                foreach ($parts as $part) {
+                    $initials .= strtoupper(substr($part, 0, 1));
+                }
+                $row['employee_initials'] = substr($initials, 0, 2); // Matched with template {{employee_initials}}
+            }
+            // Helper bools for mustache
+            $row['is_pending'] = ($row['status'] === 'Pending');
+            $row['is_approved'] = ($row['status'] === 'Approved');
+            $row['is_rejected'] = ($row['status'] === 'Rejected');
+        }
+
+        return $results ?: [];
+    }
+
+    public function saveRequest(array $data): int
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO workshift_requests (employee_id, type, start_date, end_date, reason, status) VALUES (:employee_id, :type, :start_date, :end_date, :reason, :status)");
+        $stmt->execute([
+            'employee_id' => $data['employee_id'],
+            'type' => $data['type'] ?? 'Ferie',
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'reason' => $data['reason'] ?? '',
+            'status' => $data['status'] ?? 'Pending'
+        ]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function updateRequestStatus(int $id, string $status): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE workshift_requests SET status = :status WHERE id = :id");
+        return $stmt->execute(['id' => $id, 'status' => $status]);
+    }
+
+    public function deleteRequest(int $id): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM workshift_requests WHERE id = :id");
+        return $stmt->execute(['id' => $id]);
+    }
+
+    public function deleteAllRequests(): int
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM workshift_requests");
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    // --- Analytics Methods ---
+
+    public function getAnalyticsSummary(): array
+    {
+        // Simple aggregate of all time
+        $sql = "SELECT 
+                    COUNT(*) as total_shifts,
+                    SUM(TIMESTAMPDIFF(HOUR, start_time, end_time)) as total_hours,
+                    (SELECT COUNT(*) FROM workshift_requests WHERE status = 'Pending') as pending_requests
+                FROM workshift_shifts";
+        $stmt = $this->pdo->query($sql);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Calculate hypothetical cost (e.g. 20€/hour avg)
+        $totalHours = (int) ($result['total_hours'] ?? 0);
+        $cost = $totalHours * 20;
+
+        return [
+            'total_shifts' => (int) ($result['total_shifts'] ?? 0),
+            'total_hours' => $totalHours,
+            'total_cost' => $cost,
+            'pending_requests' => (int) ($result['pending_requests'] ?? 0)
+        ];
+    }
+
+    public function getMonthlyTrend(): array
+    {
+        // Get last 30 days
+        $sql = "SELECT date, SUM(TIMESTAMPDIFF(HOUR, start_time, end_time)) as hours
+                FROM workshift_shifts
+                WHERE date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                GROUP BY date
+                ORDER BY date ASC";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function getRoleDistribution(): array
+    {
+        $sql = "SELECT e.role, COUNT(*) as count
+                FROM workshift_shifts s
+                JOIN workshift_employees e ON s.employee_id = e.id
+                GROUP BY e.role";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 }

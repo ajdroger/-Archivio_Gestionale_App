@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{base_url}}/css/components/scroll_navigator.css">
     <link href="{{base_url}}/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{base_url}}/js/components/user-status.js"></script>
 </head>
 <body class="bg-mcag-slate text-mcag-text min-h-screen flex flex-col font-sans selection:bg-mcag-accent/30 transition-colors duration-500">
@@ -26,31 +27,31 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
-                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="grid" class="w-4 h-4"></i> Dashboard
                     </a>
                    
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
                     
-                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="home" class="w-4 h-4"></i> Home
                     </a>
-                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="calendar" class="w-4 h-4"></i> Turni
                     </a>
-                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="users" class="w-4 h-4"></i> Team
                     </a>
-                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                    <a href="{{base_url}}/workshift/time-off" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
                         <i data-feather="sun" class="w-4 h-4"></i> Ferie
                     </a>
                     
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
 
-                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="list" class="w-4 h-4"></i> Taskflow
                     </a>
-                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="dollar-sign" class="w-4 h-4"></i> Expensebar
                     </a>
                 </div>
@@ -75,7 +76,7 @@
                 <h1 class="text-3xl font-black text-white mb-2">Ferie & Permessi</h1>
                 <p class="text-indigo-200/80 mb-6">Visualizza e gestisci le richieste del tuo team.</p>
                 
-                <button onclick="document.getElementById('requestModal').classList.remove('hidden')" class="w-fit group relative px-8 py-3 bg-white text-indigo-950 font-bold rounded-xl shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2">
+                <button onclick="document.getElementById('requestModal').classList.remove('hidden')" class="w-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2">
                      <i data-feather="plus" class="w-4 h-4"></i> Nuova Richiesta
                 </button>
             </div>
@@ -101,20 +102,27 @@
             </div>
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="flex gap-4 mb-6 overflow-x-auto pb-2">
-            <button class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-600/20 whitespace-nowrap">Tutte le Richieste</button>
-            <button class="px-5 py-2 rounded-xl bg-slate-800 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-700 transition-colors whitespace-nowrap">In Attesa</button>
-             <button class="px-5 py-2 rounded-xl bg-slate-800 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-700 transition-colors whitespace-nowrap">Approvate</button>
+        <!-- Filter Tabs & Actions -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                <button id="btnFilterAll" class="filter-btn px-5 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-600/20 whitespace-nowrap active" data-filter="all">Tutte le Richieste</button>
+                <button id="btnFilterPending" class="filter-btn px-5 py-2 rounded-xl bg-slate-800 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-700 transition-colors whitespace-nowrap" data-filter="Pending">In Attesa</button>
+                <button id="btnFilterApproved" class="filter-btn px-5 py-2 rounded-xl bg-slate-800 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-700 transition-colors whitespace-nowrap" data-filter="Approved">Approvate</button>
+                <button id="btnFilterRejected" class="filter-btn px-5 py-2 rounded-xl bg-slate-800 text-gray-400 hover:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-700 transition-colors whitespace-nowrap" data-filter="Rejected">Rifiutate</button>
+            </div>
+            
+            <button onclick="clearAllRequests()" class="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all border border-red-500/20 flex items-center gap-2">
+                <i data-feather="trash-2" class="w-4 h-4"></i> Svuota Bacheca
+            </button>
         </div>
 
         <!-- Requests List (Ultimate Card Style) -->
-        <div class="space-y-4">
+        <div id="requestsList" class="space-y-4">
             
             {{#requests}}
-            <div class="group relative bg-slate-800/40 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 transition-all hover:bg-slate-800/60 hover:border-indigo-500/30 hover:shadow-xl">
+            <div class="request-item group relative bg-slate-800/40 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 transition-all hover:bg-slate-800/60 hover:border-indigo-500/30 hover:shadow-xl" data-status="{{status}}">
                  <!-- Status Color Bar -->
-                 <div class="absolute left-0 top-6 bottom-6 w-1 rounded-r-lg 
+                 <div class="absolute left-0 top-6 bottom-6 w-1 rounded-r-xl 
                     {{#is_approved}}bg-emerald-500{{/is_approved}}
                     {{#is_rejected}}bg-red-500{{/is_rejected}}
                     {{#is_pending}}bg-amber-500{{/is_pending}}
@@ -161,6 +169,11 @@
                             {{status}}
                          </span>
                          {{/is_pending}}
+
+                         <!-- Delete Button -->
+                         <button onclick="deleteRequest({{id}})" class="p-2 text-slate-500 hover:text-red-400 transition-colors" title="Elimina Richiesta">
+                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                         </button>
                     </div>
 
                 </div>
@@ -181,62 +194,65 @@
     </main>
 
     <!-- Modal "Nuova Richiesta" -->
-    <div id="requestModal" class="fixed inset-0 z-[100] hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl relative">
-            <div class="p-6 border-b border-slate-700/50">
-                <h3 class="text-xl font-bold text-white">Nuova Richiesta Ferie</h3>
-                <p class="text-gray-400 text-sm">Inserisci i dettagli dell'assenza.</p>
+    <!-- Modal "Nuova Richiesta" (Standardized) -->
+    <!-- Modal "Nuova Richiesta" (Standardized to Team Management) -->
+    <div id="requestModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 99999 !important;">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black transition-opacity" style="opacity: 0.95;" onclick="document.getElementById('requestModal').classList.add('hidden')"></div>
+
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
+             <div class="inline-block w-full max-w-2xl p-0 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#0f172a] shadow-2xl rounded-2xl border border-white/10 relative" style="color-scheme: dark;">
+            
+            <div class="px-6 py-4 bg-[#0f172a] border-b border-white/5 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <div class="p-2 bg-indigo-500/20 rounded-lg">
+                        <i data-feather="calendar" class="w-5 h-5 text-indigo-400"></i>
+                    </div>
+                    Nuova Richiesta Ferie
+                 </h3>
+                 <button onclick="document.getElementById('requestModal').classList.add('hidden')" class="p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+                     <i data-feather="x" class="w-5 h-5"></i>
+                 </button>
             </div>
             <div class="p-6 space-y-4">
                  <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">Dipendente</label>
-                    <select class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500">
-                        <option>Seleziona...</option>
-                        <!-- Should be populated dynamically -->
-                        <option>Mario Rossi</option>
-                        <option>Luigi Verdi</option>
+                    <select id="reqEmployee" class="w-full rounded-xl bg-slate-800 border border-slate-600 px-4 py-3 text-white outline-none focus:border-indigo-500 transition-colors">
+                        <option value="">Seleziona...</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-1">Dal</label>
-                        <input type="date" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm">
+                        <input id="reqStart" type="date" class="w-full rounded-xl bg-slate-800 border border-slate-600 px-4 py-3 text-white outline-none focus:border-indigo-500 text-sm transition-colors">
                     </div>
                     <div>
                          <label class="block text-sm font-medium text-gray-300 mb-1">Al</label>
-                        <input type="date" class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm">
+                        <input id="reqEnd" type="date" class="w-full rounded-xl bg-slate-800 border border-slate-600 px-4 py-3 text-white outline-none focus:border-indigo-500 text-sm transition-colors">
                     </div>
                 </div>
                 <div>
                      <label class="block text-sm font-medium text-gray-300 mb-1">Motivazione</label>
-                     <textarea class="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2 text-white outline-none focus:border-indigo-500 text-sm h-24 placeholder-gray-600" placeholder="Es. Ferie estive..."></textarea>
+                     <textarea id="reqReason" class="w-full rounded-xl bg-slate-800 border border-slate-600 px-4 py-3 text-white outline-none focus:border-indigo-500 text-sm h-32 placeholder-slate-500 transition-colors" placeholder="Es. Ferie estive..."></textarea>
                 </div>
             </div>
-            <div class="p-6 border-t border-slate-700/50 flex justify-end gap-3">
-                <button onclick="document.getElementById('requestModal').classList.add('hidden')" class="px-4 py-2 bg-transparent hover:bg-white/5 text-gray-400 hover:text-white rounded-lg transition-colors">Annulla</button>
-                <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-lg shadow-indigo-500/20 transition-colors">Invia Richiesta</button>
+            <div class="px-6 py-4 flex justify-end gap-3 border-t border-white/5 bg-[#0f172a]">
+                <button onclick="document.getElementById('requestModal').classList.add('hidden')" class="px-5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-all font-medium border border-transparent hover:border-white/10">Annulla</button>
+                <button id="btnSaveRequest" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 font-medium flex items-center gap-2">
+                    <i data-feather="check" class="w-4 h-4"></i>
+                    Invia Richiesta
+                </button>
+            </div>
             </div>
         </div>
     </div>
 
 
     {{> workshift/footer}}
+    <script src="{{base_url}}/js/workshift-api.js"></script>
     <script src="{{base_url}}/js/pages/workshift-time-off.js"></script>
     <script>
         feather.replace();
-        
-        // Mock Update Function
-        window.updateRequest = (id, status) => {
-            if(confirm('Confermi di voler impostare lo stato a: ' + status + '?')) {
-                // API Call would go here
-                // For demo, we just reload
-                fetch(`${window.WorkShiftBaseUrl || '/workshift'}/api/requests/${id}/status`, {
-                    method: 'POST',
-                    body: JSON.stringify({status: status})
-                }).then(() => location.reload());
-            }
-        };
     </script>
-    <script src="{{base_url}}/js/components/scroll_navigator.js"></script>
 </body>
 </html>

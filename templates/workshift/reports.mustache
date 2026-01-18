@@ -25,30 +25,31 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-1 lg:space-x-4">
-                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="grid" class="w-4 h-4"></i> Dashboard
                     </a>
                    
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
                     
-                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="home" class="w-4 h-4"></i> Home
                     </a>
-                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/shift-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="calendar" class="w-4 h-4"></i> Turni
                     </a>
-                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/workshift/team-management" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="users" class="w-4 h-4"></i> Team
                     </a>
-                        <i data-feather="bar-chart-2" class="w-4 h-4"></i> Report
+                    <a href="{{base_url}}/workshift/reports" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 text-sm font-medium">
+                         <i data-feather="bar-chart-2" class="w-4 h-4"></i> Report
                     </a>
                     
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
 
-                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/taskflow" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="list" class="w-4 h-4"></i> Taskflow
                     </a>
-                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                    <a href="{{base_url}}/expensebar" class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
                         <i data-feather="dollar-sign" class="w-4 h-4"></i> Expensebar
                     </a>
                 </div>
@@ -94,11 +95,11 @@
             <div class="col-span-1 md:col-span-1 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-3xl p-6 flex flex-col justify-between group h-40 relative overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div>
-                     <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Costo Totale</h3>
-                     <p class="text-4xl font-black text-white">€ 24.5k</p>
+                     <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Costo Stimato</h3>
+                     <p class="text-4xl font-black text-white">€ {{kpi.cost}}</p>
                 </div>
                  <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs bg-emerald-500/10 px-2 py-1 rounded-lg w-fit">
-                    <i data-feather="arrow-up-right" class="w-3 h-3"></i> +5.2%
+                    <i data-feather="arrow-up-right" class="w-3 h-3"></i> {{kpi.avg_cost_growth}}
                 </div>
             </div>
 
@@ -106,22 +107,22 @@
              <div class="col-span-1 md:col-span-1 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-3xl p-6 flex flex-col justify-between group h-40">
                 <div>
                      <h3 class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Ore Lavorate</h3>
-                     <p class="text-4xl font-black text-white">1,240 <span class="text-sm font-medium text-gray-500">h</span></p>
+                     <p class="text-4xl font-black text-white">{{kpi.hours}} <span class="text-sm font-medium text-gray-500">h</span></p>
                 </div>
                  <div class="w-full bg-slate-700/50 h-1.5 rounded-full overflow-hidden">
                      <div class="bg-cyan-400 h-full w-[85%] rounded-full shadow-[0_0_10px_rgba(34,211,238,0.5)]"></div>
                  </div>
             </div>
 
-            <!-- KPI 3: Overtime Problem -->
-             <div class="col-span-1 md:col-span-1 bg-slate-800/40 backdrop-blur-md border border-red-500/20 rounded-3xl p-6 flex flex-col justify-between group h-40 relative overflow-hidden">
-                 <div class="absolute -right-6 -top-6 w-24 h-24 bg-red-500/20 rounded-full blur-xl animate-pulse"></div>
+            <!-- KPI 3: Requests Alert -->
+             <div class="col-span-1 md:col-span-1 bg-slate-800/40 backdrop-blur-md border border-amber-500/20 rounded-3xl p-6 flex flex-col justify-between group h-40 relative overflow-hidden">
+                 <div class="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/20 rounded-full blur-xl animate-pulse"></div>
                 <div>
-                     <h3 class="text-red-300/70 text-[10px] font-bold uppercase tracking-widest mb-1">Alert Straordinari</h3>
-                     <p class="text-4xl font-black text-white">86 <span class="text-sm font-medium text-gray-500">h</span></p>
+                     <h3 class="text-amber-300/70 text-[10px] font-bold uppercase tracking-widest mb-1">Richieste in Attesa</h3>
+                     <p class="text-4xl font-black text-white">{{kpi.overtime_alert}}</p>
                 </div>
-                 <div class="text-red-400 text-xs font-medium flex items-center gap-1">
-                    <i data-feather="alert-triangle" class="w-3 h-3"></i> +12% vs norma
+                 <div class="text-amber-400 text-xs font-medium flex items-center gap-1">
+                    <i data-feather="clock" class="w-3 h-3"></i> Da approvare
                 </div>
             </div>
 
@@ -129,12 +130,8 @@
             <div class="col-span-1 md:col-span-3 lg:col-span-3 lg:row-span-2 bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-3xl p-8 relative">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i data-feather="activity" class="text-cyan-400"></i> Trend Produttività & Straordinari
+                        <i data-feather="activity" class="text-cyan-400"></i> Trend Ore Lavorate (30gg)
                     </h3>
-                    <div class="flex gap-2">
-                        <span class="w-3 h-3 rounded-full bg-cyan-400"></span><span class="text-xs text-gray-400">Ore Regolari</span>
-                         <span class="w-3 h-3 rounded-full bg-indigo-500 ml-2"></span><span class="text-xs text-gray-400">Straordinari</span>
-                    </div>
                 </div>
                 <div class="h-[350px] w-full">
                      <canvas id="overtimeChart"></canvas>
@@ -192,6 +189,9 @@
     </main>
 
     {{> workshift/footer}}
+    <script>
+        const REPORT_DATA = {{{chart_data_json}}};
+    </script>
     <script src="{{base_url}}/js/pages/workshift-reports.js"></script>
 </body>
 </html>
