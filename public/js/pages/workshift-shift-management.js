@@ -195,6 +195,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const startTimeStr = document.getElementById('shiftStart').value;
             const endTimeStr = document.getElementById('shiftEnd').value;
 
+            // Enhanced Validation
+            const missingFields = [];
+            if (!empId) missingFields.push('Dipendente');
+            if (!shiftType) missingFields.push('Tipo Turno');
+            if (!day) missingFields.push('Giorno');
+            if (!startTimeStr) missingFields.push('Ora Inizio');
+            if (!endTimeStr) missingFields.push('Ora Fine');
+
+            if (missingFields.length > 0) {
+                const listHtml = `<ul style="text-align: left; margin-top: 10px; margin-left: 20px;">${missingFields.map(f => `<li>• <b>${f}</b></li>`).join('')}</ul>`;
+
+                Swal.fire({
+                    title: 'Dati Mancanti',
+                    html: `Per favore compila i seguenti campi obbligatori:<br>${listHtml}`,
+                    icon: 'warning',
+                    background: '#0f172a',
+                    color: '#fff',
+                    confirmButtonColor: '#4f46e5'
+                });
+                return;
+            }
+
             // Date Calculation
             const today = new Date();
             const currentDay = today.getDay();

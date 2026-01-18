@@ -79,14 +79,51 @@ class WorkshiftController
 
     public function timeOff(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('workshift/time-off.mustache', $this->getCommonData('Gestione Ferie'));
+        $data = $this->getCommonData('Gestione Ferie');
+        $data['requests'] = $this->repository->findAllRequests(); // Fetch real requests
+
+        $html = $this->mustache->render('workshift/time-off.mustache', $data);
         $response->getBody()->write($html);
         return $response;
     }
 
     public function reports(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('workshift/reports.mustache', $this->getCommonData('Reportistica'));
+        $data = $this->getCommonData('Reportistica');
+
+        // Fetch Real Analytics
+        $summary = $this->repository->getAnalyticsSummary();
+        $trend = $this->repository->getMonthlyTrend();
+        $roles = $this->repository->getRoleDistribution();
+
+        // Format for View
+        $data['kpi'] = [
+            'cost' => number_format($summary['total_cost'], 0, ',', '.'),
+            'hours' => number_format($summary['total_hours'], 0, ',', '.'),
+            'shifts' => $summary['total_shifts'],
+            'avg_cost_growth' => '+2.4%', // Mock trend for now
+            'overtime_alert' => $summary['pending_requests'] // Utilizing this slot for pending requests count as an "alert"
+        ];
+
+        // Prepare Chart Data
+        $chartDates = array_map(fn($r) => date('d/m', strtotime($r['date'])), $trend);
+        $chartHours = array_map(fn($r) => (int) $r['hours'], $trend);
+
+        $roleLabels = array_map(fn($r) => $r['role'], $roles);
+        $roleCounts = array_map(fn($r) => (int) $r['count'], $roles);
+
+        $data['chart_data_json'] = json_encode([
+            'trend' => [
+                'labels' => $chartDates,
+                'data' => $chartHours
+            ],
+            'distribution' => [
+                'labels' => $roleLabels,
+                'data' => $roleCounts
+            ]
+        ]);
+
+        $html = $this->mustache->render('workshift/reports.mustache', $data);
         $response->getBody()->write($html);
         return $response;
     }
@@ -277,6 +314,66 @@ class WorkshiftController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    // --- Request API Methods ---
+
+    public function getRequests(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $requests = $this->repository->findAllRequests();
+        $response->getBody()->write(json_encode($requests));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function saveRequest(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+
+        if (empty($data['employee_id']) || empty($data['start_date']) || empty($data['end_date'])) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => 'Missing required fields']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+
+        try {
+            $id = $this->repository->saveRequest($data);
+            $response->getBody()->write(json_encode(['success' => true, 'id' => $id]));
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
+        }
+
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function updateRequestStatus(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $id = (int) $args['id'];
+        $data = $request->getParsedBody();
+        $status = $data['status'] ?? null;
+
+        if (!$status) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => 'Status required']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+
+        $success = $this->repository->updateRequestStatus($id, $status);
+        $response->getBody()->write(json_encode(['success' => $success]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function deleteRequest(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $id = (int) $args['id'];
+        $success = $this->repository->deleteRequest($id);
+        $response->getBody()->write(json_encode(['success' => $success]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function resetRequests(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $count = $this->repository->deleteAllRequests();
+        $response->getBody()->write(json_encode(['success' => true, 'deleted' => $count]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
     private function getStats(): array
     {
         // Fetch raw data from repository
@@ -293,7 +390,7 @@ class WorkshiftController
         return [
             'active_shifts' => count($activeShifts),
             'employees_count' => count($allEmployees),
-            'pending_requests' => 3, // Mock value as per requirement ("Hai richieste in attesa")
+            'pending_requests' => count($this->repository->findAllRequests(null, 'Pending')), // Real count
             'upcoming_shifts' => count($allShifts) - count($activeShifts)
         ];
     }

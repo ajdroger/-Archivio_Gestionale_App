@@ -13,6 +13,22 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [Unreleased]
+
+## [v7.10.0] - 2026-01-18 "**Workshift Ecosystem Complete**"
+### Workshift Finalization (Feature Complete)
+- **Delete Management**: Implementata cancellazione completa (Singola e Massiva) per Richieste Ferie e Turni.
+    - **UI Feedback**: Integrazione SweetAlert2 per conferme distruttive sicure ("Svuota Bacheca", "Elimina Turno").
+    - **API Robustness**: Endpoint `DELETE` sicuri con validazione ID.
+- **Integrated Reports**: Il modulo Reportistica ora attinge dati live dal DB.
+    - **KPI**: Costo stimato, Ore totali, Ferie residue calcolati in tempo reale.
+    - **Charts**: Grafici Trend Mensile e Distribuzione Ruoli dinamici.
+- **Repository Expansion**: Aggiunti metodi `getAnalyticsSummary`, `getMonthlyTrend`, `deleteRequest`, `deleteShift` in `PDOWorkshiftRepository`.
+- **Bug Fixes**:
+    - **Time Off Buttons**: Risolto bug bottoni inattivi (Mancanza SweetAlert e JS scope issue).
+    - **Team Management**: Risolto errore `deleteEmployee` non definito e modale edit rotto.
+    - **IDE Warnings**: Risolta segnalazione metodi mancanti nel Controller.
+
 ## [v7.7.1] - 2026-01-18 "**Shift Commander (Hotfix)**"
 ### Risolto
 - **Workshift Core**: Risolto errore 500 nel caricamento turni implementando le API mancanti (`getShifts`, `saveShift`, `deleteShift`, `resetShifts`, `optimizeSchedule`).

@@ -295,7 +295,7 @@
     <!-- Create Shift Modal (Ultimate Glass) -->
     <div id="createShiftModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 9999 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Backdrop with direct click handler -->
-        <div class="fixed inset-0 bg-[#000000]/90 backdrop-blur-md transition-opacity opacity-0" id="modalBackdrop" onclick="toggleCreateShiftModal()"></div>
+        <div class="fixed inset-0 bg-black transition-opacity opacity-0" id="modalBackdrop" style="--tw-bg-opacity: 0.95;" onclick="toggleCreateShiftModal()"></div>
 
         <div class="flex min-h-screen items-center justify-center p-4 text-center" onclick="if(event.target === this) toggleCreateShiftModal()">
             <div class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-2xl opacity-0 scale-95" id="modalPanel" style="background-color: #0f172a; color: white;" onclick="event.stopPropagation()">
@@ -381,7 +381,7 @@
 
     <!-- AI Options Modal -->
     <div id="aiOptionsModal" class="fixed inset-0 hidden" style="z-index: 10000;">
-        <div class="fixed inset-0 bg-black/90 backdrop-blur-md transition-opacity opacity-0" id="aiModalBackdrop"></div>
+        <div class="fixed inset-0 bg-black transition-opacity opacity-0" id="aiModalBackdrop" style="--tw-bg-opacity: 0.95;"></div>
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-screen items-center justify-center p-4 text-center">
                 <div class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all sm:w-full sm:max-w-sm opacity-0 scale-95" id="aiModalPanel">
@@ -478,7 +478,7 @@
     <!-- Quick Move Modal -->
     <div id="quickMoveModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 9999 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-[#000000]/90 backdrop-blur-md transition-opacity opacity-0" id="quickMoveBackdrop" onclick="closeQuickMoveModal()"></div>
+        <div class="fixed inset-0 bg-black transition-opacity opacity-0" id="quickMoveBackdrop" style="--tw-bg-opacity: 0.95;" onclick="closeQuickMoveModal()"></div>
 
         <div class="flex min-h-screen items-center justify-center p-4" onclick="if(event.target === this) closeQuickMoveModal()">
             <div id="quickMovePanel" class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-2xl opacity-0 scale-95" onclick="event.stopPropagation()">
@@ -532,7 +532,7 @@
 
     <!-- Delete Shift Modal (New Custom Alert) -->
     <div id="deleteShiftModal" class="fixed inset-0 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="z-index: 9999;">
-        <div id="deleteShiftBackdrop" class="fixed inset-0 bg-[#000000]/90 backdrop-blur-md transition-opacity opacity-0"></div>
+        <div id="deleteShiftBackdrop" class="fixed inset-0 bg-black transition-opacity opacity-0" style="--tw-bg-opacity: 0.95;"></div>
 
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-full items-center justify-center p-4" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">

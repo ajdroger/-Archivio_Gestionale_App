@@ -161,9 +161,26 @@ window.saveEmployee = function () {
         notes: document.getElementById('employeeNotes').value
     };
 
-    // Validation
-    if (!data.name || !data.role) {
-        Swal.fire('Errore', 'Compila almeno Nome e Ruolo.', 'warning');
+    // Enhanced Validation
+    const missingFields = [];
+    if (!data.name) missingFields.push('Nome e Cognome');
+    if (!data.role) missingFields.push('Ruolo');
+    if (!data.department) missingFields.push('Dipartimento');
+
+    // Add more required fields based on business logic if needed
+    // if (!data.email) missingFields.push('Email'); 
+
+    if (missingFields.length > 0) {
+        const listHtml = `<ul style="text-align: left; margin-top: 10px; margin-left: 20px;">${missingFields.map(f => `<li>• <b>${f}</b></li>`).join('')}</ul>`;
+
+        Swal.fire({
+            title: 'Dati Mancanti',
+            html: `Per favore compila i seguenti campi obbligatori:<br>${listHtml}`,
+            icon: 'warning',
+            background: '#0f172a',
+            color: '#fff',
+            confirmButtonColor: '#4f46e5'
+        });
         return;
     }
 
@@ -218,7 +235,8 @@ window.openEditModal = function (
         idInput = document.createElement('input');
         idInput.type = 'hidden';
         idInput.id = 'employeeId';
-        document.getElementById('newEmployeeModal').querySelector('form').appendChild(idInput);
+        // Fix: Append to the modal body container instead of non-existent form
+        document.querySelector('#newEmployeeModal .custom-scrollbar').appendChild(idInput);
     }
     idInput.value = id;
 
@@ -252,7 +270,60 @@ window.openEditModal = function (
     // if (skills) document.getElementById('employeeNotes').value += "\nSKILLS: " + skills;
 }
 
-// ... (delete logic remains same)
+// Delete Employee Logic
+let employeeToDeleteId = null;
+
+window.deleteEmployee = function (id, name) {
+    employeeToDeleteId = id;
+    document.getElementById('deleteEmployeeName').innerText = name;
+    document.getElementById('deleteEmployeeModal').classList.remove('hidden');
+}
+
+window.closeDeleteModal = function () {
+    document.getElementById('deleteEmployeeModal').classList.add('hidden');
+    employeeToDeleteId = null;
+}
+
+window.confirmDelete = function () {
+    if (!employeeToDeleteId) return;
+
+    const btn = document.getElementById('confirmDeleteBtn');
+    const originalText = btn.innerText;
+    btn.innerText = 'Eliminazione...';
+    btn.disabled = true;
+
+    fetch(`${window.WorkShiftBaseUrl}/workshift/api/employees/${employeeToDeleteId}`, {
+        method: 'DELETE'
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Use Swal if available, else alert
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire('Eliminato', 'Dipendente rimosso con successo.', 'success')
+                        .then(() => location.reload());
+                } else {
+                    alert('Dipendente eliminato.');
+                    location.reload();
+                }
+            } else {
+                throw new Error(data.error || 'Errore durante l\'eliminazione');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            if (typeof Swal !== 'undefined') {
+                Swal.fire('Errore', err.message, 'error');
+            } else {
+                alert('Errore: ' + err.message);
+            }
+        })
+        .finally(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+            closeDeleteModal();
+        });
+}
 
 // ... (fiscal code calculation remains same)
 
