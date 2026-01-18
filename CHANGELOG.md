@@ -13,6 +13,20 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.7.1] - 2026-01-18 "**Shift Commander (Hotfix)**"
+### Risolto
+- **Workshift Core**: Risolto errore 500 nel caricamento turni implementando le API mancanti (`getShifts`, `saveShift`, `deleteShift`, `resetShifts`, `optimizeSchedule`).
+- **Team Management**: Implementata logica di filtro operatore (Management, Operativi, HR) e barra di ricerca "Cerca Team" in tempo reale.
+- **Navigation**: Corretti link interrotti ("Ferie") nei template.
+- **Stability**: Prevenzione errori 500 su pagine informative (Policy, Info) e Report.
+- **UI**: Centratura layout barra strumenti Gestione Team.
+
+## [v7.7.0] - 2026-01-18 "**Data Integrity**"
+### Persistence Engine
+- **Full Operator Profile**: Estensione massiva `PDOWorkshiftRepository` per salvare TUTTI i campi del modulo "Nuovo Operatore" (Indirizzo, Contratto, Note, Auth Grade).
+- **Frontend Sync**: Aggiornamento `workshift-team-management.js` per raccolta completa dati form.
+- **Edit Mode**: Popolamento corretto di tutti i campi in fase di modifica.
+
 ## [v7.6.3] - 2026-01-18 "**Global Identity Update**"
 ### Workshift Core Restoration
 - **Unified Search**: Ripristinata e potenziata la ricerca operatori ("New Operator").
