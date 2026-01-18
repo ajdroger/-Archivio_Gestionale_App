@@ -33,6 +33,7 @@ class WorkshiftController
             'user' => $_SESSION['user'] ?? null,
             'user_role' => $_SESSION['user_role'] ?? $_SESSION['temp_user_role'] ?? 'GUEST',
             'username' => $_SESSION['username'] ?? $_SESSION['user']['username'] ?? $_SESSION['temp_username'] ?? 'Ospite',
+            'stats' => $this->getStats()
         ];
     }
 
@@ -130,5 +131,26 @@ class WorkshiftController
         ]));
 
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    private function getStats(): array
+    {
+        // Fetch raw data from repository
+        $allShifts = $this->repository->getAllShifts();
+        $allEmployees = $this->repository->findAllEmployees();
+
+        // Calculate basic stats
+        // Logic: Active shifts = shifts for today. Pending requests = (dummy logic or future implementation)
+        $today = date('Y-m-d');
+        $activeShifts = array_filter($allShifts, function ($shift) use ($today) {
+            return ($shift['date'] ?? '') === $today;
+        });
+
+        return [
+            'active_shifts' => count($activeShifts),
+            'employees_count' => count($allEmployees),
+            'pending_requests' => 3, // Mock value as per requirement ("Hai richieste in attesa")
+            'upcoming_shifts' => count($allShifts) - count($activeShifts)
+        ];
     }
 }
