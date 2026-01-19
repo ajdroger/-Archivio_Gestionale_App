@@ -40,7 +40,7 @@ test('Expensebar Dashboard loads correctly', function () {
 
 test('Expensebar API can add an expense', function () {
     $this->loginAs();
-    $request = $this->createRequest('POST', '/expensebar/api/expenses')
+    $request = $this->createRequest('POST', '/expensebar/api/expenses/add')
         ->withHeader('Content-Type', 'application/json')
         ->withParsedBody([
             'description' => 'API Expense Test',

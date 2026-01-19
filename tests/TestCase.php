@@ -124,8 +124,11 @@ abstract class TestCase extends BaseTestCase
         return new \Slim\Psr7\Request($method, $uri, $h, $c, $s, $stream);
     }
 
-    protected function loginAs(string $role = 'ADMIN', int $id = 1, string $username = 'admin'): void
+    protected function loginAs(string $role = 'admin', int $id = 1, string $username = 'admin'): void
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $_SESSION['user_id'] = $id;
         $_SESSION['user'] = ['id' => $id, 'username' => $username, 'role' => $role];
         $_SESSION['role'] = $role;

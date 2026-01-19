@@ -13,6 +13,18 @@ class PDOTaskflowRepository
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
+        $this->createTasksTableIfNotExists();
+    }
+
+    private function createTasksTableIfNotExists(): void
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS taskflow_tasks (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            text TEXT NOT NULL,
+            completed TINYINT(1) DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        $this->pdo->exec($sql);
     }
 
     public function findAll(): array

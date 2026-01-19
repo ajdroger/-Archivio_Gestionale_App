@@ -17,7 +17,16 @@ test('home dashboard renders correctly', function () {
         ->method('getStatistics')
         ->willReturn(['totale' => 10, 'attivi' => 5, 'morosi' => 5]);
 
-    $controller = new HomeController($mustache, $repo);
+    // Mock ResilienceMonitor
+    $resilience = $this->createMock(\MCAG\Debug\ResilienceMonitor::class);
+
+    // Mock HealthCheckService
+    $health = $this->createMock(\MCAG\Service\HealthCheckService::class);
+
+    // Mock ConfigurationService
+    $config = $this->createMock(\MCAG\Service\ConfigurationService::class);
+
+    $controller = new HomeController($mustache, $repo, $resilience, $health, $config);
 
     $request = (new ServerRequestFactory())->createServerRequest('GET', '/');
     $response = (new ResponseFactory())->createResponse();

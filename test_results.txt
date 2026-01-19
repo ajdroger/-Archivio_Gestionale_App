@@ -1,322 +1,545 @@
+PHP Warning:  The use statement with non-compound name 'Mustache_Engine' has no effect in C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\tests\Feature\AdminSecurityTest.php on line 6
+PHP Stack trace:
+PHP   1. {main}() C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\bin\pest:0
+PHP   2. include() C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\bin\pest:119
+PHP   3. {closure:C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest:18-192}() C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest:192
+PHP   4. Pest\Kernel->handle($originalArguments = [0 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\bin\\/pest'], $arguments = [0 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\bin\\/pest']) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest:184
+PHP   5. PHPUnit\TextUI\Application->run($argv = [0 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\bin\\/pest', 1 => '--cache-directory', 2 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp', 3 => '--cache-result', 4 => '--no-output']) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Kernel.php:103
+PHP   6. PHPUnit\TextUI\Application->buildTestSuite($configuration = class PHPUnit\TextUI\Configuration\Configuration { private readonly array $cliArguments = []; private readonly ?string $configurationFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\phpunit.xml'; private readonly ?string $bootstrap = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor/autoload.php'; private readonly bool $cacheResult = TRUE; private readonly ?string $cacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp'; private readonly ?string $coverageCacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\code-coverage'; private readonly PHPUnit\TextUI\Configuration\Source $source = class PHPUnit\TextUI\Configuration\Source { private readonly ?string $baseline = NULL; private readonly bool $ignoreBaseline = FALSE; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $includeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $includeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $excludeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $excludeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly bool $restrictDeprecations = FALSE; private readonly bool $restrictNotices = FALSE; private readonly bool $restrictWarnings = FALSE; private readonly bool $ignoreSuppressionOfDeprecations = FALSE; private readonly bool $ignoreSuppressionOfPhpDeprecations = FALSE; private readonly bool $ignoreSuppressionOfErrors = FALSE; private readonly bool $ignoreSuppressionOfNotices = FALSE; private readonly bool $ignoreSuppressionOfPhpNotices = FALSE; private readonly bool $ignoreSuppressionOfWarnings = FALSE; private readonly bool $ignoreSuppressionOfPhpWarnings = FALSE; private readonly bool $ignoreSelfDeprecations = FALSE; private readonly bool $ignoreDirectDeprecations = FALSE; private readonly bool $ignoreIndirectDeprecations = FALSE; private readonly array $deprecationTriggers = [...] }; private readonly bool $pathCoverage = FALSE; private readonly ?string $coverageClover = NULL; private readonly ?string $coverageCobertura = NULL; private readonly ?string $coverageCrap4j = NULL; private readonly int $coverageCrap4jThreshold = 30; private readonly ?string $coverageHtml = NULL; private readonly int $coverageHtmlLowUpperBound = 50; private readonly int $coverageHtmlHighLowerBound = 90; private readonly string $coverageHtmlColorSuccessLow = '#dff0d8'; private readonly string $coverageHtmlColorSuccessMedium = '#c3e3b5'; private readonly string $coverageHtmlColorSuccessHigh = '#99cb84'; private readonly string $coverageHtmlColorWarning = '#fcf8e3'; private readonly string $coverageHtmlColorDanger = '#f2dede'; private readonly ?string $coverageHtmlCustomCssFile = NULL; private readonly ?string $coveragePhp = NULL; private readonly ?string $coverageText = NULL; private readonly bool $coverageTextShowUncoveredFiles = FALSE; private readonly bool $coverageTextShowOnlySummary = FALSE; private readonly ?string $coverageXml = NULL; private readonly string $testResultCacheFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\test-results'; private readonly bool $ignoreDeprecatedCodeUnitsFromCodeCoverage = FALSE; private readonly bool $disableCodeCoverageIgnore = FALSE; private readonly bool $failOnAllIssues = FALSE; private readonly bool $failOnDeprecation = FALSE; private readonly bool $failOnPhpunitDeprecation = FALSE; private readonly bool $failOnPhpunitWarning = TRUE; private readonly bool $failOnEmptyTestSuite = FALSE; private readonly bool $failOnIncomplete = FALSE; private readonly bool $failOnNotice = FALSE; private readonly bool $failOnRisky = FALSE; private readonly bool $failOnSkipped = FALSE; private readonly bool $failOnWarning = FALSE; private readonly bool $doNotFailOnDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitWarning = FALSE; private readonly bool $doNotFailOnEmptyTestSuite = FALSE; private readonly bool $doNotFailOnIncomplete = FALSE; private readonly bool $doNotFailOnNotice = FALSE; private readonly bool $doNotFailOnRisky = FALSE; private readonly bool $doNotFailOnSkipped = FALSE; private readonly bool $doNotFailOnWarning = FALSE; private readonly bool $stopOnDefect = FALSE; private readonly bool $stopOnDeprecation = FALSE; private readonly ?string $specificDeprecationToStopOn = NULL; private readonly bool $stopOnError = FALSE; private readonly bool $stopOnFailure = FALSE; private readonly bool $stopOnIncomplete = FALSE; private readonly bool $stopOnNotice = FALSE; private readonly bool $stopOnRisky = FALSE; private readonly bool $stopOnSkipped = FALSE; private readonly bool $stopOnWarning = FALSE; private readonly bool $outputToStandardErrorStream = FALSE; private readonly int $columns = 80; private readonly bool $noExtensions = FALSE; private readonly ?string $pharExtensionDirectory = NULL; private readonly array $extensionBootstrappers = []; private readonly bool $backupGlobals = FALSE; private readonly bool $backupStaticProperties = FALSE; private readonly bool $beStrictAboutChangesToGlobalState = FALSE; private readonly bool $colors = FALSE; private readonly bool $processIsolation = FALSE; private readonly bool $enforceTimeLimit = FALSE; private readonly int $defaultTimeLimit = 1; private readonly int $timeoutForSmallTests = 1; private readonly int $timeoutForMediumTests = 10; private readonly int $timeoutForLargeTests = 60; private readonly bool $reportUselessTests = TRUE; private readonly bool $strictCoverage = FALSE; private readonly bool $disallowTestOutput = FALSE; private readonly bool $displayDetailsOnAllIssues = FALSE; private readonly bool $displayDetailsOnIncompleteTests = FALSE; private readonly bool $displayDetailsOnSkippedTests = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerDeprecations = FALSE; private readonly bool $displayDetailsOnPhpunitDeprecations = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerErrors = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerNotices = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerWarnings = FALSE; private readonly bool $reverseDefectList = FALSE; private readonly bool $requireCoverageMetadata = FALSE; private readonly bool $noProgress = FALSE; private readonly bool $noResults = FALSE; private readonly bool $noOutput = TRUE; private readonly int $executionOrder = 0; private readonly int $executionOrderDefects = 0; private readonly bool $resolveDependencies = TRUE; private readonly ?string $logfileTeamcity = NULL; private readonly ?string $logfileJunit = NULL; private readonly ?string $logfileTestdoxHtml = NULL; private readonly ?string $logfileTestdoxText = NULL; private readonly ?string $logEventsText = NULL; private readonly ?string $logEventsVerboseText = NULL; private readonly ?array $testsCovering = NULL; private readonly ?array $testsUsing = NULL; private readonly ?array $testsRequiringPhpExtension = NULL; private readonly bool $teamCityOutput = FALSE; private readonly bool $testDoxOutput = FALSE; private readonly bool $testDoxOutputSummary = FALSE; private readonly ?string $filter = NULL; private readonly ?string $excludeFilter = NULL; private readonly array $groups = []; private readonly array $excludeGroups = []; private readonly int $randomOrderSeed = 1768858428; private readonly bool $includeUncoveredFiles = TRUE; private readonly PHPUnit\TextUI\Configuration\TestSuiteCollection $testSuite = class PHPUnit\TextUI\Configuration\TestSuiteCollection { private readonly array $testSuites = [...] }; private readonly string $includeTestSuite = ''; private readonly string $excludeTestSuite = ''; private readonly ?string $defaultTestSuite = NULL; private readonly array $testSuffixes = [0 => 'Test.php', 1 => '.phpt']; private readonly PHPUnit\TextUI\Configuration\Php $php = class PHPUnit\TextUI\Configuration\Php { private readonly PHPUnit\TextUI\Configuration\DirectoryCollection $includePaths = class PHPUnit\TextUI\Configuration\DirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\IniSettingCollection $iniSettings = class PHPUnit\TextUI\Configuration\IniSettingCollection { ... }; private readonly PHPUnit\TextUI\Configuration\ConstantCollection $constants = class PHPUnit\TextUI\Configuration\ConstantCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $globalVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $envVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $postVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $getVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $cookieVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $serverVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $filesVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $requestVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... } }; private readonly bool $controlGarbageCollector = FALSE; private readonly int $numberOfTestsBeforeGarbageCollection = 100; private readonly ?string $generateBaseline = NULL; private readonly bool $debug = FALSE; private readonly int $shortenArraysForExportThreshold = 0 }) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Application.php:182
+PHP   7. PHPUnit\TextUI\Configuration\TestSuiteBuilder->build($configuration = class PHPUnit\TextUI\Configuration\Configuration { private readonly array $cliArguments = []; private readonly ?string $configurationFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\phpunit.xml'; private readonly ?string $bootstrap = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor/autoload.php'; private readonly bool $cacheResult = TRUE; private readonly ?string $cacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp'; private readonly ?string $coverageCacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\code-coverage'; private readonly PHPUnit\TextUI\Configuration\Source $source = class PHPUnit\TextUI\Configuration\Source { private readonly ?string $baseline = NULL; private readonly bool $ignoreBaseline = FALSE; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $includeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $includeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $excludeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $excludeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly bool $restrictDeprecations = FALSE; private readonly bool $restrictNotices = FALSE; private readonly bool $restrictWarnings = FALSE; private readonly bool $ignoreSuppressionOfDeprecations = FALSE; private readonly bool $ignoreSuppressionOfPhpDeprecations = FALSE; private readonly bool $ignoreSuppressionOfErrors = FALSE; private readonly bool $ignoreSuppressionOfNotices = FALSE; private readonly bool $ignoreSuppressionOfPhpNotices = FALSE; private readonly bool $ignoreSuppressionOfWarnings = FALSE; private readonly bool $ignoreSuppressionOfPhpWarnings = FALSE; private readonly bool $ignoreSelfDeprecations = FALSE; private readonly bool $ignoreDirectDeprecations = FALSE; private readonly bool $ignoreIndirectDeprecations = FALSE; private readonly array $deprecationTriggers = [...] }; private readonly bool $pathCoverage = FALSE; private readonly ?string $coverageClover = NULL; private readonly ?string $coverageCobertura = NULL; private readonly ?string $coverageCrap4j = NULL; private readonly int $coverageCrap4jThreshold = 30; private readonly ?string $coverageHtml = NULL; private readonly int $coverageHtmlLowUpperBound = 50; private readonly int $coverageHtmlHighLowerBound = 90; private readonly string $coverageHtmlColorSuccessLow = '#dff0d8'; private readonly string $coverageHtmlColorSuccessMedium = '#c3e3b5'; private readonly string $coverageHtmlColorSuccessHigh = '#99cb84'; private readonly string $coverageHtmlColorWarning = '#fcf8e3'; private readonly string $coverageHtmlColorDanger = '#f2dede'; private readonly ?string $coverageHtmlCustomCssFile = NULL; private readonly ?string $coveragePhp = NULL; private readonly ?string $coverageText = NULL; private readonly bool $coverageTextShowUncoveredFiles = FALSE; private readonly bool $coverageTextShowOnlySummary = FALSE; private readonly ?string $coverageXml = NULL; private readonly string $testResultCacheFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\test-results'; private readonly bool $ignoreDeprecatedCodeUnitsFromCodeCoverage = FALSE; private readonly bool $disableCodeCoverageIgnore = FALSE; private readonly bool $failOnAllIssues = FALSE; private readonly bool $failOnDeprecation = FALSE; private readonly bool $failOnPhpunitDeprecation = FALSE; private readonly bool $failOnPhpunitWarning = TRUE; private readonly bool $failOnEmptyTestSuite = FALSE; private readonly bool $failOnIncomplete = FALSE; private readonly bool $failOnNotice = FALSE; private readonly bool $failOnRisky = FALSE; private readonly bool $failOnSkipped = FALSE; private readonly bool $failOnWarning = FALSE; private readonly bool $doNotFailOnDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitWarning = FALSE; private readonly bool $doNotFailOnEmptyTestSuite = FALSE; private readonly bool $doNotFailOnIncomplete = FALSE; private readonly bool $doNotFailOnNotice = FALSE; private readonly bool $doNotFailOnRisky = FALSE; private readonly bool $doNotFailOnSkipped = FALSE; private readonly bool $doNotFailOnWarning = FALSE; private readonly bool $stopOnDefect = FALSE; private readonly bool $stopOnDeprecation = FALSE; private readonly ?string $specificDeprecationToStopOn = NULL; private readonly bool $stopOnError = FALSE; private readonly bool $stopOnFailure = FALSE; private readonly bool $stopOnIncomplete = FALSE; private readonly bool $stopOnNotice = FALSE; private readonly bool $stopOnRisky = FALSE; private readonly bool $stopOnSkipped = FALSE; private readonly bool $stopOnWarning = FALSE; private readonly bool $outputToStandardErrorStream = FALSE; private readonly int $columns = 80; private readonly bool $noExtensions = FALSE; private readonly ?string $pharExtensionDirectory = NULL; private readonly array $extensionBootstrappers = []; private readonly bool $backupGlobals = FALSE; private readonly bool $backupStaticProperties = FALSE; private readonly bool $beStrictAboutChangesToGlobalState = FALSE; private readonly bool $colors = FALSE; private readonly bool $processIsolation = FALSE; private readonly bool $enforceTimeLimit = FALSE; private readonly int $defaultTimeLimit = 1; private readonly int $timeoutForSmallTests = 1; private readonly int $timeoutForMediumTests = 10; private readonly int $timeoutForLargeTests = 60; private readonly bool $reportUselessTests = TRUE; private readonly bool $strictCoverage = FALSE; private readonly bool $disallowTestOutput = FALSE; private readonly bool $displayDetailsOnAllIssues = FALSE; private readonly bool $displayDetailsOnIncompleteTests = FALSE; private readonly bool $displayDetailsOnSkippedTests = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerDeprecations = FALSE; private readonly bool $displayDetailsOnPhpunitDeprecations = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerErrors = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerNotices = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerWarnings = FALSE; private readonly bool $reverseDefectList = FALSE; private readonly bool $requireCoverageMetadata = FALSE; private readonly bool $noProgress = FALSE; private readonly bool $noResults = FALSE; private readonly bool $noOutput = TRUE; private readonly int $executionOrder = 0; private readonly int $executionOrderDefects = 0; private readonly bool $resolveDependencies = TRUE; private readonly ?string $logfileTeamcity = NULL; private readonly ?string $logfileJunit = NULL; private readonly ?string $logfileTestdoxHtml = NULL; private readonly ?string $logfileTestdoxText = NULL; private readonly ?string $logEventsText = NULL; private readonly ?string $logEventsVerboseText = NULL; private readonly ?array $testsCovering = NULL; private readonly ?array $testsUsing = NULL; private readonly ?array $testsRequiringPhpExtension = NULL; private readonly bool $teamCityOutput = FALSE; private readonly bool $testDoxOutput = FALSE; private readonly bool $testDoxOutputSummary = FALSE; private readonly ?string $filter = NULL; private readonly ?string $excludeFilter = NULL; private readonly array $groups = []; private readonly array $excludeGroups = []; private readonly int $randomOrderSeed = 1768858428; private readonly bool $includeUncoveredFiles = TRUE; private readonly PHPUnit\TextUI\Configuration\TestSuiteCollection $testSuite = class PHPUnit\TextUI\Configuration\TestSuiteCollection { private readonly array $testSuites = [...] }; private readonly string $includeTestSuite = ''; private readonly string $excludeTestSuite = ''; private readonly ?string $defaultTestSuite = NULL; private readonly array $testSuffixes = [0 => 'Test.php', 1 => '.phpt']; private readonly PHPUnit\TextUI\Configuration\Php $php = class PHPUnit\TextUI\Configuration\Php { private readonly PHPUnit\TextUI\Configuration\DirectoryCollection $includePaths = class PHPUnit\TextUI\Configuration\DirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\IniSettingCollection $iniSettings = class PHPUnit\TextUI\Configuration\IniSettingCollection { ... }; private readonly PHPUnit\TextUI\Configuration\ConstantCollection $constants = class PHPUnit\TextUI\Configuration\ConstantCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $globalVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $envVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $postVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $getVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $cookieVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $serverVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $filesVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $requestVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... } }; private readonly bool $controlGarbageCollector = FALSE; private readonly int $numberOfTestsBeforeGarbageCollection = 100; private readonly ?string $generateBaseline = NULL; private readonly bool $debug = FALSE; private readonly int $shortenArraysForExportThreshold = 0 }) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Application.php:412
+PHP   8. PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map($xmlConfigurationFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\phpunit.xml', $configuredTestSuites = class PHPUnit\TextUI\Configuration\TestSuiteCollection { private readonly array $testSuites = [0 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 1 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 2 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 3 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 4 => class PHPUnit\TextUI\Configuration\TestSuite { ... }] }, $namesOfIncludedTestSuites = '', $namesOfExcludedTestSuites = '') C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Configuration\TestSuiteBuilder.php:75
+PHP   9. PHPUnit\Framework\TestSuite->addTestFile($filename = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\tests\\Feature\\AdminSecurityTest.php', $groups = []) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Configuration\Xml\TestSuiteMapper.php:105
+PHP  10. PHPUnit\Runner\TestSuiteLoader->load($suiteClassFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\tests\\Feature\\AdminSecurityTest.php') C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestSuite.php:231
+PHP  11. PHPUnit\Runner\TestSuiteLoader::PHPUnit\Runner\{closure:C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\overrides\Runner\TestSuiteLoader.php:90-98}() C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\overrides\Runner\TestSuiteLoader.php:98
+
+  [44;1m INFO [49;22m Warning: The use statement with non-compound name 'Mustache_Engine' has no effect in C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\tests\Feature\AdminSecurityTest.php on line 6 Call Stack: 0.4167 365552 1. {main}() C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\bin\pest:0 0.4177 365944 2. include('C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest') C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\bin\pest:119 0.4177 366328 3. {closure:C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest:18-192}() C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest:192 0.4937 1910480 4. Pest\Kernel->handle($originalArguments = [0 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\bin\\/pest'], $arguments = [0 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\bin\\/pest']) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest:184 0.5054 2263776 5. PHPUnit\TextUI\Application->run($argv = [0 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\bin\\/pest', 1 => '--cache-directory', 2 => 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp', 3 => '--cache-result', 4 => '--no-output']) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Kernel.php:103 0.6043 2576704 6. PHPUnit\TextUI\Application->buildTestSuite($configuration = class PHPUnit\TextUI\Configuration\Configuration { private readonly array $cliArguments = []; private readonly ?string $configurationFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\phpunit.xml'; private readonly ?string $bootstrap = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor/autoload.php'; private readonly bool $cacheResult = TRUE; private readonly ?string $cacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp'; private readonly ?string $coverageCacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\code-coverage'; private readonly PHPUnit\TextUI\Configuration\Source $source = class PHPUnit\TextUI\Configuration\Source { private readonly ?string $baseline = NULL; private readonly bool $ignoreBaseline = FALSE; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $includeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $includeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $excludeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $excludeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly bool $restrictDeprecations = FALSE; private readonly bool $restrictNotices = FALSE; private readonly bool $restrictWarnings = FALSE; private readonly bool $ignoreSuppressionOfDeprecations = FALSE; private readonly bool $ignoreSuppressionOfPhpDeprecations = FALSE; private readonly bool $ignoreSuppressionOfErrors = FALSE; private readonly bool $ignoreSuppressionOfNotices = FALSE; private readonly bool $ignoreSuppressionOfPhpNotices = FALSE; private readonly bool $ignoreSuppressionOfWarnings = FALSE; private readonly bool $ignoreSuppressionOfPhpWarnings = FALSE; private readonly bool $ignoreSelfDeprecations = FALSE; private readonly bool $ignoreDirectDeprecations = FALSE; private readonly bool $ignoreIndirectDeprecations = FALSE; private readonly array $deprecationTriggers = [...] }; private readonly bool $pathCoverage = FALSE; private readonly ?string $coverageClover = NULL; private readonly ?string $coverageCobertura = NULL; private readonly ?string $coverageCrap4j = NULL; private readonly int $coverageCrap4jThreshold = 30; private readonly ?string $coverageHtml = NULL; private readonly int $coverageHtmlLowUpperBound = 50; private readonly int $coverageHtmlHighLowerBound = 90; private readonly string $coverageHtmlColorSuccessLow = '#dff0d8'; private readonly string $coverageHtmlColorSuccessMedium = '#c3e3b5'; private readonly string $coverageHtmlColorSuccessHigh = '#99cb84'; private readonly string $coverageHtmlColorWarning = '#fcf8e3'; private readonly string $coverageHtmlColorDanger = '#f2dede'; private readonly ?string $coverageHtmlCustomCssFile = NULL; private readonly ?string $coveragePhp = NULL; private readonly ?string $coverageText = NULL; private readonly bool $coverageTextShowUncoveredFiles = FALSE; private readonly bool $coverageTextShowOnlySummary = FALSE; private readonly ?string $coverageXml = NULL; private readonly string $testResultCacheFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\test-results'; private readonly bool $ignoreDeprecatedCodeUnitsFromCodeCoverage = FALSE; private readonly bool $disableCodeCoverageIgnore = FALSE; private readonly bool $failOnAllIssues = FALSE; private readonly bool $failOnDeprecation = FALSE; private readonly bool $failOnPhpunitDeprecation = FALSE; private readonly bool $failOnPhpunitWarning = TRUE; private readonly bool $failOnEmptyTestSuite = FALSE; private readonly bool $failOnIncomplete = FALSE; private readonly bool $failOnNotice = FALSE; private readonly bool $failOnRisky = FALSE; private readonly bool $failOnSkipped = FALSE; private readonly bool $failOnWarning = FALSE; private readonly bool $doNotFailOnDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitWarning = FALSE; private readonly bool $doNotFailOnEmptyTestSuite = FALSE; private readonly bool $doNotFailOnIncomplete = FALSE; private readonly bool $doNotFailOnNotice = FALSE; private readonly bool $doNotFailOnRisky = FALSE; private readonly bool $doNotFailOnSkipped = FALSE; private readonly bool $doNotFailOnWarning = FALSE; private readonly bool $stopOnDefect = FALSE; private readonly bool $stopOnDeprecation = FALSE; private readonly ?string $specificDeprecationToStopOn = NULL; private readonly bool $stopOnError = FALSE; private readonly bool $stopOnFailure = FALSE; private readonly bool $stopOnIncomplete = FALSE; private readonly bool $stopOnNotice = FALSE; private readonly bool $stopOnRisky = FALSE; private readonly bool $stopOnSkipped = FALSE; private readonly bool $stopOnWarning = FALSE; private readonly bool $outputToStandardErrorStream = FALSE; private readonly int $columns = 80; private readonly bool $noExtensions = FALSE; private readonly ?string $pharExtensionDirectory = NULL; private readonly array $extensionBootstrappers = []; private readonly bool $backupGlobals = FALSE; private readonly bool $backupStaticProperties = FALSE; private readonly bool $beStrictAboutChangesToGlobalState = FALSE; private readonly bool $colors = FALSE; private readonly bool $processIsolation = FALSE; private readonly bool $enforceTimeLimit = FALSE; private readonly int $defaultTimeLimit = 1; private readonly int $timeoutForSmallTests = 1; private readonly int $timeoutForMediumTests = 10; private readonly int $timeoutForLargeTests = 60; private readonly bool $reportUselessTests = TRUE; private readonly bool $strictCoverage = FALSE; private readonly bool $disallowTestOutput = FALSE; private readonly bool $displayDetailsOnAllIssues = FALSE; private readonly bool $displayDetailsOnIncompleteTests = FALSE; private readonly bool $displayDetailsOnSkippedTests = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerDeprecations = FALSE; private readonly bool $displayDetailsOnPhpunitDeprecations = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerErrors = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerNotices = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerWarnings = FALSE; private readonly bool $reverseDefectList = FALSE; private readonly bool $requireCoverageMetadata = FALSE; private readonly bool $noProgress = FALSE; private readonly bool $noResults = FALSE; private readonly bool $noOutput = TRUE; private readonly int $executionOrder = 0; private readonly int $executionOrderDefects = 0; private readonly bool $resolveDependencies = TRUE; private readonly ?string $logfileTeamcity = NULL; private readonly ?string $logfileJunit = NULL; private readonly ?string $logfileTestdoxHtml = NULL; private readonly ?string $logfileTestdoxText = NULL; private readonly ?string $logEventsText = NULL; private readonly ?string $logEventsVerboseText = NULL; private readonly ?array $testsCovering = NULL; private readonly ?array $testsUsing = NULL; private readonly ?array $testsRequiringPhpExtension = NULL; private readonly bool $teamCityOutput = FALSE; private readonly bool $testDoxOutput = FALSE; private readonly bool $testDoxOutputSummary = FALSE; private readonly ?string $filter = NULL; private readonly ?string $excludeFilter = NULL; private readonly array $groups = []; private readonly array $excludeGroups = []; private readonly int $randomOrderSeed = 1768858428; private readonly bool $includeUncoveredFiles = TRUE; private readonly PHPUnit\TextUI\Configuration\TestSuiteCollection $testSuite = class PHPUnit\TextUI\Configuration\TestSuiteCollection { private readonly array $testSuites = [...] }; private readonly string $includeTestSuite = ''; private readonly string $excludeTestSuite = ''; private readonly ?string $defaultTestSuite = NULL; private readonly array $testSuffixes = [0 => 'Test.php', 1 => '.phpt']; private readonly PHPUnit\TextUI\Configuration\Php $php = class PHPUnit\TextUI\Configuration\Php { private readonly PHPUnit\TextUI\Configuration\DirectoryCollection $includePaths = class PHPUnit\TextUI\Configuration\DirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\IniSettingCollection $iniSettings = class PHPUnit\TextUI\Configuration\IniSettingCollection { ... }; private readonly PHPUnit\TextUI\Configuration\ConstantCollection $constants = class PHPUnit\TextUI\Configuration\ConstantCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $globalVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $envVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $postVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $getVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $cookieVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $serverVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $filesVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $requestVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... } }; private readonly bool $controlGarbageCollector = FALSE; private readonly int $numberOfTestsBeforeGarbageCollection = 100; private readonly ?string $generateBaseline = NULL; private readonly bool $debug = FALSE; private readonly int $shortenArraysForExportThreshold = 0 }) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Application.php:182 0.6045 2576936 7. PHPUnit\TextUI\Configuration\TestSuiteBuilder->build($configuration = class PHPUnit\TextUI\Configuration\Configuration { private readonly array $cliArguments = []; private readonly ?string $configurationFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\phpunit.xml'; private readonly ?string $bootstrap = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor/autoload.php'; private readonly bool $cacheResult = TRUE; private readonly ?string $cacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp'; private readonly ?string $coverageCacheDirectory = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\code-coverage'; private readonly PHPUnit\TextUI\Configuration\Source $source = class PHPUnit\TextUI\Configuration\Source { private readonly ?string $baseline = NULL; private readonly bool $ignoreBaseline = FALSE; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $includeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $includeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FilterDirectoryCollection $excludeDirectories = class PHPUnit\TextUI\Configuration\FilterDirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\FileCollection $excludeFiles = class PHPUnit\TextUI\Configuration\FileCollection { ... }; private readonly bool $restrictDeprecations = FALSE; private readonly bool $restrictNotices = FALSE; private readonly bool $restrictWarnings = FALSE; private readonly bool $ignoreSuppressionOfDeprecations = FALSE; private readonly bool $ignoreSuppressionOfPhpDeprecations = FALSE; private readonly bool $ignoreSuppressionOfErrors = FALSE; private readonly bool $ignoreSuppressionOfNotices = FALSE; private readonly bool $ignoreSuppressionOfPhpNotices = FALSE; private readonly bool $ignoreSuppressionOfWarnings = FALSE; private readonly bool $ignoreSuppressionOfPhpWarnings = FALSE; private readonly bool $ignoreSelfDeprecations = FALSE; private readonly bool $ignoreDirectDeprecations = FALSE; private readonly bool $ignoreIndirectDeprecations = FALSE; private readonly array $deprecationTriggers = [...] }; private readonly bool $pathCoverage = FALSE; private readonly ?string $coverageClover = NULL; private readonly ?string $coverageCobertura = NULL; private readonly ?string $coverageCrap4j = NULL; private readonly int $coverageCrap4jThreshold = 30; private readonly ?string $coverageHtml = NULL; private readonly int $coverageHtmlLowUpperBound = 50; private readonly int $coverageHtmlHighLowerBound = 90; private readonly string $coverageHtmlColorSuccessLow = '#dff0d8'; private readonly string $coverageHtmlColorSuccessMedium = '#c3e3b5'; private readonly string $coverageHtmlColorSuccessHigh = '#99cb84'; private readonly string $coverageHtmlColorWarning = '#fcf8e3'; private readonly string $coverageHtmlColorDanger = '#f2dede'; private readonly ?string $coverageHtmlCustomCssFile = NULL; private readonly ?string $coveragePhp = NULL; private readonly ?string $coverageText = NULL; private readonly bool $coverageTextShowUncoveredFiles = FALSE; private readonly bool $coverageTextShowOnlySummary = FALSE; private readonly ?string $coverageXml = NULL; private readonly string $testResultCacheFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\vendor\\pestphp\\pest\\.temp\\test-results'; private readonly bool $ignoreDeprecatedCodeUnitsFromCodeCoverage = FALSE; private readonly bool $disableCodeCoverageIgnore = FALSE; private readonly bool $failOnAllIssues = FALSE; private readonly bool $failOnDeprecation = FALSE; private readonly bool $failOnPhpunitDeprecation = FALSE; private readonly bool $failOnPhpunitWarning = TRUE; private readonly bool $failOnEmptyTestSuite = FALSE; private readonly bool $failOnIncomplete = FALSE; private readonly bool $failOnNotice = FALSE; private readonly bool $failOnRisky = FALSE; private readonly bool $failOnSkipped = FALSE; private readonly bool $failOnWarning = FALSE; private readonly bool $doNotFailOnDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitDeprecation = FALSE; private readonly bool $doNotFailOnPhpunitWarning = FALSE; private readonly bool $doNotFailOnEmptyTestSuite = FALSE; private readonly bool $doNotFailOnIncomplete = FALSE; private readonly bool $doNotFailOnNotice = FALSE; private readonly bool $doNotFailOnRisky = FALSE; private readonly bool $doNotFailOnSkipped = FALSE; private readonly bool $doNotFailOnWarning = FALSE; private readonly bool $stopOnDefect = FALSE; private readonly bool $stopOnDeprecation = FALSE; private readonly ?string $specificDeprecationToStopOn = NULL; private readonly bool $stopOnError = FALSE; private readonly bool $stopOnFailure = FALSE; private readonly bool $stopOnIncomplete = FALSE; private readonly bool $stopOnNotice = FALSE; private readonly bool $stopOnRisky = FALSE; private readonly bool $stopOnSkipped = FALSE; private readonly bool $stopOnWarning = FALSE; private readonly bool $outputToStandardErrorStream = FALSE; private readonly int $columns = 80; private readonly bool $noExtensions = FALSE; private readonly ?string $pharExtensionDirectory = NULL; private readonly array $extensionBootstrappers = []; private readonly bool $backupGlobals = FALSE; private readonly bool $backupStaticProperties = FALSE; private readonly bool $beStrictAboutChangesToGlobalState = FALSE; private readonly bool $colors = FALSE; private readonly bool $processIsolation = FALSE; private readonly bool $enforceTimeLimit = FALSE; private readonly int $defaultTimeLimit = 1; private readonly int $timeoutForSmallTests = 1; private readonly int $timeoutForMediumTests = 10; private readonly int $timeoutForLargeTests = 60; private readonly bool $reportUselessTests = TRUE; private readonly bool $strictCoverage = FALSE; private readonly bool $disallowTestOutput = FALSE; private readonly bool $displayDetailsOnAllIssues = FALSE; private readonly bool $displayDetailsOnIncompleteTests = FALSE; private readonly bool $displayDetailsOnSkippedTests = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerDeprecations = FALSE; private readonly bool $displayDetailsOnPhpunitDeprecations = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerErrors = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerNotices = FALSE; private readonly bool $displayDetailsOnTestsThatTriggerWarnings = FALSE; private readonly bool $reverseDefectList = FALSE; private readonly bool $requireCoverageMetadata = FALSE; private readonly bool $noProgress = FALSE; private readonly bool $noResults = FALSE; private readonly bool $noOutput = TRUE; private readonly int $executionOrder = 0; private readonly int $executionOrderDefects = 0; private readonly bool $resolveDependencies = TRUE; private readonly ?string $logfileTeamcity = NULL; private readonly ?string $logfileJunit = NULL; private readonly ?string $logfileTestdoxHtml = NULL; private readonly ?string $logfileTestdoxText = NULL; private readonly ?string $logEventsText = NULL; private readonly ?string $logEventsVerboseText = NULL; private readonly ?array $testsCovering = NULL; private readonly ?array $testsUsing = NULL; private readonly ?array $testsRequiringPhpExtension = NULL; private readonly bool $teamCityOutput = FALSE; private readonly bool $testDoxOutput = FALSE; private readonly bool $testDoxOutputSummary = FALSE; private readonly ?string $filter = NULL; private readonly ?string $excludeFilter = NULL; private readonly array $groups = []; private readonly array $excludeGroups = []; private readonly int $randomOrderSeed = 1768858428; private readonly bool $includeUncoveredFiles = TRUE; private readonly PHPUnit\TextUI\Configuration\TestSuiteCollection $testSuite = class PHPUnit\TextUI\Configuration\TestSuiteCollection { private readonly array $testSuites = [...] }; private readonly string $includeTestSuite = ''; private readonly string $excludeTestSuite = ''; private readonly ?string $defaultTestSuite = NULL; private readonly array $testSuffixes = [0 => 'Test.php', 1 => '.phpt']; private readonly PHPUnit\TextUI\Configuration\Php $php = class PHPUnit\TextUI\Configuration\Php { private readonly PHPUnit\TextUI\Configuration\DirectoryCollection $includePaths = class PHPUnit\TextUI\Configuration\DirectoryCollection { ... }; private readonly PHPUnit\TextUI\Configuration\IniSettingCollection $iniSettings = class PHPUnit\TextUI\Configuration\IniSettingCollection { ... }; private readonly PHPUnit\TextUI\Configuration\ConstantCollection $constants = class PHPUnit\TextUI\Configuration\ConstantCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $globalVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $envVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $postVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $getVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $cookieVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $serverVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $filesVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... }; private readonly PHPUnit\TextUI\Configuration\VariableCollection $requestVariables = class PHPUnit\TextUI\Configuration\VariableCollection { ... } }; private readonly bool $controlGarbageCollector = FALSE; private readonly int $numberOfTestsBeforeGarbageCollection = 100; private readonly ?string $generateBaseline = NULL; private readonly bool $debug = FALSE; private readonly int $shortenArraysForExportThreshold = 0 }) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Application.php:412 0.6048 2577168 8. PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map($xmlConfigurationFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\phpunit.xml', $configuredTestSuites = class PHPUnit\TextUI\Configuration\TestSuiteCollection { private readonly array $testSuites = [0 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 1 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 2 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 3 => class PHPUnit\TextUI\Configuration\TestSuite { ... }, 4 => class PHPUnit\TextUI\Configuration\TestSuite { ... }] }, $namesOfIncludedTestSuites = '', $namesOfExcludedTestSuites = '') C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Configuration\TestSuiteBuilder.php:75 0.6615 4887248 9. PHPUnit\Framework\TestSuite->addTestFile($filename = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\tests\\Feature\\AdminSecurityTest.php', $groups = []) C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Configuration\Xml\TestSuiteMapper.php:105 0.6615 4887288 10. PHPUnit\Runner\TestSuiteLoader->load($suiteClassFile = 'C:\\Program Files\\Ampps\\www\\MCAG_Militare-Civile-Archivio-Gestionale\\tests\\Feature\\AdminSecurityTest.php') C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestSuite.php:231 0.6615 4888176 11. PHPUnit\Runner\TestSuiteLoader::PHPUnit\Runner\{closure:C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\overrides\Runner\TestSuiteLoader.php:90-98}() C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\overrides\Runner\TestSuiteLoader.php:98.
+
 
    PASS  Tests\Unit\AmministratoreTest
-  ✓ crea utente                                                                                                              0.13s  
-  ✓ models                                                                                                                   0.01s  
-  ✓ crea utente amministratore                                                                                               0.06s  
-  ✓ revoca permessi                                                                                                          0.02s  
-  ✓ visualizza audit log                                                                                                     0.02s  
-  ✓ visualizza audit log senza filtri                                                                                        0.02s  
-  ✓ genera report audit                                                                                                      0.02s  
+  Γ£ô crea utente                                                                           0.11s  
+  Γ£ô models                                                                                0.01s  
+  Γ£ô crea utente amministratore                                                            0.06s  
+  Γ£ô revoca permessi                                                                       0.02s  
+  Γ£ô visualizza audit log                                                                  0.02s  
+  Γ£ô visualizza audit log senza filtri                                                     0.03s  
+  Γ£ô genera report audit                                                                   0.02s  
 
    PASS  Tests\Unit\BackupIntegrityTest
-  ✓ BackupService esegue la copia del database                                                                               0.13s  
-  ✓ BackupService ruota i vecchi backup correttamente                                                                        0.11s  
+  Γ£ô BackupService esegue la copia del database                                            0.23s  
+  Γ£ô BackupService ruota i vecchi backup correttamente                                     0.18s  
 
    PASS  Tests\Unit\CivilianRegistrationTest
-  ✓ register civilian ignores military data                                                                                  0.02s  
-  ✓ register foreign born user
+  Γ£ô register civilian ignores military data                                               0.02s  
+  Γ£ô register foreign born user
 
    PASS  Tests\Unit\Controller\DevTools\DevToolsDatabaseControllerTest
-  ✓ db query executes select                                                                                                 0.01s  
-  ✓ db query executes update
+  Γ£ô db query executes select                                                              0.01s  
+  Γ£ô db query executes update
 
    PASS  Tests\Unit\Controller\DevTools\DevToolsFileSystemControllerTest
-  ✓ fs list returns correct structure                                                                                        0.01s  
-  ✓ fs read reads content
-  ✓ fs save updates content
-  ✓ security cant traverse up
+  Γ£ô fs list returns correct structure                                                     0.01s  
+  Γ£ô fs read reads content
+  Γ£ô fs save updates content
+  Γ£ô security cant traverse up
 
    PASS  Tests\Unit\DatabaseInspectorTest
-  ✓ inspect returns connection status                                                                                        0.01s  
+  Γ£ô inspect returns connection status                                                     0.01s  
 
    PASS  Tests\Unit\DocumentoTest
-  ✓ verifica integrita documento                                                                                             0.01s  
+  Γ£ô verifica integrita documento                                                          0.01s  
 
    PASS  Tests\Unit\EmailServiceTest
-  ✓ email service writes to log file                                                                                         0.02s  
+  Γ£ô email service writes to log file                                                      0.02s  
 
    PASS  Tests\Unit\FiscalCodeBelfioreTest
-  ✓ it calculates fiscal code for complex cities                                                                             0.01s  
-  ✓ it calculates fiscal code for foreign countries                                                                          0.01s  
-  ✓ it is case insensitive for places                                                                                        0.01s  
+  Γ£ô it calculates fiscal code for complex cities                                          0.01s  
+  Γ£ô it calculates fiscal code for foreign countries                                       0.01s  
+  Γ£ô it is case insensitive for places                                                     0.01s  
 
    PASS  Tests\Unit\GlobalExceptionHandlerTest
-  ✓ handler can be instantiated                                                                                              0.01s  
+  Γ£ô handler can be instantiated                                                           0.01s  
 
    PASS  Tests\Unit\InfrastructureTest
-  ✓ google drive adapter uploads and downloads                                                                               0.01s  
-  ✓ ocr engine processes image                                                                                               0.01s  
+  Γ£ô google drive adapter uploads and downloads                                            0.01s  
+  Γ£ô ocr engine processes image                                                            0.08s  
 
    PASS  Tests\Unit\LogAnalyzerTest
-  ✓ analyze returns summary                                                                                                  0.01s  
+  Γ£ô analyze returns summary                                                               0.01s  
 
    PASS  Tests\Unit\OperatoreTest
-  ✓ carica pratica                                                                                                           0.02s  
-  ✓ carica pratica senza codice fiscale throws exception                                                                     0.01s  
-  ✓ carica pratica senza tipo throws exception                                                                               0.01s  
-  ✓ ricerca socio                                                                                                            0.02s  
-  ✓ ricerca socio per nome                                                                                                   0.02s  
-  ✓ ricerca socio per matricola                                                                                              0.02s  
-  ✓ stampa report                                                                                                            0.02s  
-  ✓ stampa report senza parametri                                                                                            0.02s  
+  Γ£ô carica pratica                                                                        0.02s  
+  Γ£ô carica pratica senza codice fiscale throws exception                                  0.01s  
+  Γ£ô carica pratica senza tipo throws exception                                            0.01s  
+  Γ£ô ricerca socio                                                                         0.02s  
+  Γ£ô ricerca socio per nome                                                                0.02s  
+  Γ£ô ricerca socio per matricola                                                           0.02s  
+  Γ£ô stampa report                                                                         0.03s  
+  Γ£ô stampa report senza parametri                                                         0.02s  
 
    PASS  Tests\Unit\QueryBuilderTest
-  ✓ select basic query                                                                                                       0.02s  
-  ✓ select with where clause                                                                                                 0.01s  
-  ✓ pagination adds limit and offset                                                                                         0.01s  
-  ✓ complex query with joins and ordering                                                                                    0.01s  
+  Γ£ô select basic query                                                                    0.03s  
+  Γ£ô select with where clause                                                              0.01s  
+  Γ£ô pagination adds limit and offset                                                      0.01s  
+  Γ£ô complex query with joins and ordering                                                 0.01s  
 
    PASS  Tests\Unit\RedisSessionHandlerTest
-  ✓ read returns data from redis                                                                                             0.02s  
-  ✓ read returns empty string if key missing                                                                                 0.01s  
-  ✓ write saves data to redis with TTL                                                                                       0.01s  
-  ✓ destroy deletes key from redis                                                                                           0.01s  
+  Γ£ô read returns data from redis                                                          0.02s  
+  Γ£ô read returns empty string if key missing                                              0.01s  
+  Γ£ô write saves data to redis with TTL                                                    0.01s  
+  Γ£ô destroy deletes key from redis                                                        0.01s  
 
    PASS  Tests\Unit\ResilienceMonitorTest
-  ✓ monitor health returns array                                                                                             0.03s  
-  ✓ monitor checks disk space                                                                                                0.01s  
+  Γ£ô monitor health returns array                                                          0.03s  
+  Γ£ô monitor checks disk space                                                             0.02s  
 
    PASS  Tests\Unit\Service\CacheServiceTest
-  ✓ get returns value from redis
-  ✓ get returns null on miss
-  ✓ set delegates to redis
-  ✓ remember returns cached value
-  ✓ invalidate soci calls delete pattern
-  ✓ remember soci list generates correct key
+  Γ£ô get returns value from redis
+  Γ£ô get returns null on miss
+  Γ£ô set delegates to redis
+  Γ£ô remember returns cached value
+  Γ£ô invalidate soci calls delete pattern
+  Γ£ô remember soci list generates correct key
 
    PASS  Tests\Unit\Service\QueueServiceTest
-  ✓ push inserts job                                                                                                         0.01s  
-  ✓ pop returns null if no job
-  ✓ pop returns job and reserves it
-  ✓ complete deletes job
+  Γ£ô push inserts job                                                                      0.01s  
+  Γ£ô pop returns null if no job
+  Γ£ô pop returns job and reserves it
+  Γ£ô complete deletes job
+Redis GET error: Redis down
 
    PASS  Tests\Unit\Service\RedisServiceTest
-  ✓ get deserializes value                                                                                                   0.01s  
-  ✓ get returns null on failure
-  ✓ set serializes value
-  ✓ set with ttl
-  ✓ delete delegates to client
-  ✓ remember returns cached value
-  ✓ remember computes and stores value
-  ✓ disabled service returns defaults
+  Γ£ô get deserializes value                                                                0.01s  
+  Γ£ô get returns null on failure
+  Γ£ô set serializes value
+  Γ£ô set with ttl
+  Γ£ô delete delegates to client
+  Γ£ô remember returns cached value
+  Γ£ô remember computes and stores value
+  Γ£ô disabled service returns defaults
 
    PASS  Tests\Unit\Service\ValidationServiceTest
-  ✓ valid codice fiscale                                                                                                     0.01s  
-  ✓ invalid codice fiscale length
-  ✓ invalid codice fiscale format
-  ✓ valid email
-  ✓ invalid email
-  ✓ valid pdf upload
-  ✓ valid image upload
-  ✓ invalid mime type
-  ✓ file too large
+  Γ£ô valid codice fiscale                                                                  0.01s  
+  Γ£ô invalid codice fiscale length
+  Γ£ô invalid codice fiscale format
+  Γ£ô valid email
+  Γ£ô invalid email
+  Γ£ô valid pdf upload
+  Γ£ô valid image upload
+  Γ£ô invalid mime type
+  Γ£ô file too large
 
    PASS  Tests\Unit\SessionInspectorTest
-  ✓ inspect returns session data structure                                                                                   0.02s  
+  Γ£ô inspect returns session data structure                                                0.02s  
 
    PASS  Tests\Unit\SocioProfileTest
-  ✓ register new member maps all profile fields
+  Γ£ô register new member maps all profile fields
 
    PASS  Tests\Unit\SocioTest
-  ✓ socio can be instantiated                                                                                                0.01s  
-  ✓ aggiorna anagrafica                                                                                                      0.01s  
-  ✓ verifica morosita                                                                                                        0.01s  
+  Γ£ô socio can be instantiated                                                             0.01s  
+  Γ£ô aggiorna anagrafica                                                                   0.01s  
+  Γ£ô verifica morosita                                                                     0.01s  
 
    PASS  Tests\Unit\SystemCheckTest
-  ✓ check returns system status                                                                                              0.01s  
+  Γ£ô check returns system status                                                           0.01s  
+
+   PASS  Tests\Unit\Toolkit\ToolkitHyperGridTest
+  Γ£ô toolkit script exists
+  Γ£ô toolkit contains new backend functions
+  Γ£ô toolkit contains hyper grid u i
 
    PASS  Tests\Feature\AI\RAGTest
-  ✓ SimpleVectorStore stores and retrieves documents                                                                         0.01s  
-  ✓ OllamaProvider handles unavailability gracefully                                                                         3.03s  
+  Γ£ô SimpleVectorStore stores and retrieves documents                                      0.01s  
+  Γ£ô OllamaProvider handles unavailability gracefully                                      3.05s  
+
+   FAIL  AdminSecurityTest
+  Γ¿» admin settings page receives soc data                                                 0.01s  
+  Γ£ô soc methods existence
+
+   PASS  DashboardGeniusTest
+  Γ£ô dashboard contains genius mode mock data                                              0.01s  
 
    PASS  Tests\Feature\Controller\HealthControllerTest
-  ✓ check returns200 when healthy                                                                                            0.01s  
-  ✓ check returns503 when unhealthy
+  Γ£ô check returns200 when healthy
+  Γ£ô check returns503 when unhealthy
 
    PASS  Tests\Feature\Controller\SettingsControllerTest
-  ✓ view renders settings template                                                                                           0.01s  
+  Γ£ô view renders settings template                                                        0.01s  
 
    PASS  Tests\Feature\CorrelationIdTest
-  ✓ request id is logged in context                                                                                          0.01s  
+  Γ£ô request id is logged in context                                                       0.01s  
+
+   PASS  Tests\Feature\DashboardInteractionTest
+  Γ£ô toggle config updates setting                                                         0.01s  
+  Γ£ô toggle config fails without setting                                                   0.01s  
+  Γ£ô send broadcast sends to target                                                        0.01s  
 
    PASS  Tests\Feature\DevToolsV4Test
-  ✓ v4.0 terminal endpoint executes commands via ScriptController                                                            0.20s  
-  ✓ v4.0 dashboard renders with new tabs                                                                                     0.01s  
+  Γ£ô v4.0 terminal endpoint executes commands via ScriptController                         0.23s  
+  Γ£ô v4.0 dashboard renders with new tabs                                                  0.02s  
 
    PASS  Tests\Feature\Docs\DocumentationTest
-  ✓ api docs ui loads correctly                                                                                              0.02s  
-  ✓ api docs json returns valid openapi spec                                                                                 0.14s  
+  Γ£ô api docs ui loads correctly                                                           0.02s  
+  Γ£ô api docs json returns valid openapi spec                                              0.19s  
 
    PASS  Tests\Feature\Errors\BadRequestTest
-  ✓ error 400 displays custom template                                                                                       0.02s  
+  Γ£ô error 400 displays custom template                                                    0.02s  
 
    PASS  Tests\Feature\Errors\ForbiddenTest
-  ✓ error 403 displays custom template                                                                                       0.01s  
+  Γ£ô error 403 displays custom template                                                    0.01s  
 
    PASS  Tests\Feature\Errors\MethodNotAllowedTest
-  ✓ error 405 displays custom template                                                                                       0.01s  
+  Γ£ô error 405 displays custom template                                                    0.02s  
 
    PASS  Tests\Feature\Errors\NotFoundTest
-  ✓ error 404 displays custom template                                                                                       0.01s  
+  Γ£ô error 404 displays custom template                                                    0.02s  
 
    PASS  Tests\Feature\Errors\PageExpiredTest
-  ✓ error 419 displays custom template                                                                                       0.01s  
+  Γ£ô error 419 displays custom template                                                    0.02s  
 
    PASS  Tests\Feature\Errors\ServerErrorTest
-  ✓ error 500 displays custom template                                                                                       0.01s  
+  Γ£ô error 500 displays custom template                                                    0.02s  
 
    PASS  Tests\Feature\Errors\ServiceUnavailableTest
-  ✓ error 503 displays custom template                                                                                       0.01s  
+  Γ£ô error 503 displays custom template                                                    0.01s  
 
    PASS  Tests\Feature\Errors\TooManyRequestsTest
-  ✓ error 429 displays custom template                                                                                       0.01s  
+  Γ£ô error 429 displays custom template                                                    0.02s  
 
    PASS  Tests\Feature\Errors\UnauthorizedTest
-  ✓ error 401 displays custom template                                                                                       0.01s  
+  Γ£ô error 401 displays custom template                                                    0.02s  
 
    PASS  Tests\Feature\ExampleTest
-  ✓ example                                                                                                                  0.01s  
+  Γ£ô example                                                                               0.01s  
+405 Method Not Allowed
+Type: Slim\Exception\HttpMethodNotAllowedException
+Code: 405
+Message: Method not allowed. Must be one of: GET
+File: C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\Middleware\RoutingMiddleware.php
+Line: 79
+Trace: #0 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\Middleware\RoutingMiddleware.php(44): Slim\Middleware\RoutingMiddleware->performRouting()
+#1 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\MiddlewareDispatcher.php(129): Slim\Middleware\RoutingMiddleware->process()
+#2 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\Middleware\BodyParsingMiddleware.php(64): Psr\Http\Server\RequestHandlerInterface@anonymous->handle()
+#3 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\MiddlewareDispatcher.php(129): Slim\Middleware\BodyParsingMiddleware->process()
+#4 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\src\Middleware\SentryMiddleware.php(49): Psr\Http\Server\RequestHandlerInterface@anonymous->handle()
+#5 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\MiddlewareDispatcher.php(129): MCAG\Middleware\SentryMiddleware->process()
+#6 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\Middleware\ErrorMiddleware.php(77): Psr\Http\Server\RequestHandlerInterface@anonymous->handle()
+#7 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\MiddlewareDispatcher.php(129): Slim\Middleware\ErrorMiddleware->process()
+#8 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\MiddlewareDispatcher.php(73): Psr\Http\Server\RequestHandlerInterface@anonymous->handle()
+#9 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\slim\slim\Slim\App.php(209): Slim\MiddlewareDispatcher->handle()
+#10 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\tests\Feature\External\ExpensebarTest.php(52): Slim\App->handle()
+#11 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Factories\TestCaseMethodFactory.php(168): P\Tests\Feature\External\ExpensebarTest->{closure}()
+#12 [internal function]: P\Tests\Feature\External\ExpensebarTest->Pest\Factories\{closure}()
+#13 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Concerns\Testable.php(419): call_user_func_array()
+#14 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Support\ExceptionTrace.php(26): P\Tests\Feature\External\ExpensebarTest->Pest\Concerns\{closure}()
+#15 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Concerns\Testable.php(419): Pest\Support\ExceptionTrace::ensure()
+#16 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Concerns\Testable.php(321): P\Tests\Feature\External\ExpensebarTest->__callClosure()
+#17 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Factories\TestCaseFactory.php(169) : eval()'d code(35): P\Tests\Feature\External\ExpensebarTest->__runTest()
+#18 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestCase.php(1656): P\Tests\Feature\External\ExpensebarTest->__pest_evaluable_Expensebar_API_can_add_an_expense()
+#19 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestCase.php(514): PHPUnit\Framework\TestCase->runTest()
+#20 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestRunner\TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#21 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestCase.php(361): PHPUnit\Framework\TestRunner->run()
+#22 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#23 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#24 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#25 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#26 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\phpunit\phpunit\src\TextUI\Application.php(211): PHPUnit\TextUI\TestRunner->run()
+#27 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\src\Kernel.php(103): PHPUnit\TextUI\Application->run()
+#28 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest(184): Pest\Kernel->handle()
+#29 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\pestphp\pest\bin\pest(192): {closure}()
+#30 C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\vendor\bin\pest(119): include('...')
+#31 {main}
+
+   FAIL  Tests\Feature\External\ExpensebarTest
+  Γ£ô PDOExpensebarRepository can save and retrieve an expense                              0.04s  
+  Γ£ô Expensebar Dashboard loads correctly                                                  0.03s  
+  Γ¿» Expensebar API can add an expense                                                     0.01s  
+
+   FAIL  Tests\Feature\External\TaskflowTest
+  Γ¿» PDOTaskflowRepository can save and retrieve a task                                    0.02s  
+  Γ£ô Taskflow Dashboard loads correctly                                                    0.02s  
+  Γ¿» Taskflow API can create and update a task                                             0.03s  
+
+   FAIL  Tests\Feature\External\WorkshiftTest
+  Γ¿» PDOWorkshiftRepository can save and retrieve an employee                              0.03s  
+  Γ£ô Workshift Dashboard loads correctly                                                   0.04s  
+  Γ¿» Workshift API can create a shift                                                      0.02s  
+
+   PASS  FinancialIntelTest
+  Γ£ô financial methods exist
+  Γ£ô view receives financial data
 
    PASS  Tests\Feature\GDPRComplianceTest
-  ✓ GDPR Compliance Tests → hardDelete removes all personal data permanently                                                 0.04s  
-  ✓ GDPR Compliance Tests → exportGDPRData returns complete personal data export                                             0.03s  
-  ✓ GDPR Compliance Tests → exportGDPRData handles non-existent socio gracefully                                             0.01s  
-  ✓ GDPR Compliance Tests → hardDelete creates audit log entry                                                               0.03s  
+  Γ£ô GDPR Compliance Tests ΓåÆ hardDelete removes all personal data permanently              0.05s  
+  Γ£ô GDPR Compliance Tests ΓåÆ exportGDPRData returns complete personal data export          0.04s  
+  Γ£ô GDPR Compliance Tests ΓåÆ exportGDPRData handles non-existent socio gracefully          0.01s  
+  Γ£ô GDPR Compliance Tests ΓåÆ hardDelete creates audit log entry                            0.05s  
 
    PASS  Tests\Feature\GraphQLTest
-  ✓ graphql endpoint returns json                                                                                            0.02s  
+  Γ£ô graphql endpoint returns json                                                         0.03s  
 
-   PASS  Tests\Feature\HomeControllerTest
-  ✓ home dashboard renders correctly                                                                                         0.01s  
+   FAIL  Tests\Feature\HomeControllerTest
+  Γ¿» home dashboard renders correctly                                                      0.01s  
 
-   PASS  Tests\Feature\LoginControllerTest
-  ✓ login form renders                                                                                                       0.01s  
-  ✓ login verify success redirects                                                                                           0.05s  
+   FAIL  Tests\Feature\LoginControllerTest
+  Γ¿» login form renders                                                                    0.01s  
+  Γ£ô login verify success redirects                                                        0.05s  
 
    PASS  Tests\Feature\Public\DemoRequestTest
-  ✓ demo request validation fails empty data                                                                                 0.01s  
-  ✓ demo request validation fails invalid email                                                                              0.01s  
-  ✓ demo request success                                                                                                     0.01s  
+  Γ£ô demo request validation fails empty data                                              0.01s  
+  Γ£ô demo request validation fails invalid email                                           0.04s  
+  Γ£ô demo request success                                                                  0.03s  
 
    PASS  Tests\Feature\Public\LandingPageTest
-  ✓ landing page loads correctly                                                                                             0.01s  
-  ✓ navbar contains demo request button                                                                                      0.01s  
-  ✓ benchmark pdf link exists                                                                                                0.01s  
-  ✓ legal links are present                                                                                                  0.01s  
+  Γ£ô landing page loads correctly                                                          0.01s  
+  Γ£ô navbar contains demo request button                                                   0.01s  
+  Γ£ô benchmark pdf link exists                                                             0.01s  
+  Γ£ô legal links are present                                                               0.01s  
 
    PASS  Tests\Feature\Security\DemoRestrictionTest
-  ✓ settings page returns 403 in demo mode                                                                                   0.01s  
-  ✓ devtools dashboard returns 403 in demo mode                                                                              0.01s  
+  Γ£ô settings page returns 403 in demo mode                                                0.02s  
+  Γ£ô devtools dashboard returns 403 in demo mode                                           0.01s  
+
+   PASS  Tests\Feature\Soci\DossierIntelligenceTest
+  Γ£ô dossier contains intelligence data                                                    0.01s  
 
    PASS  Tests\Feature\SocioControllerTest
-  ✓ socio list renders                                                                                                       0.01s  
-  ✓ socio create stores data                                                                                                 0.01s  
+  Γ£ô socio list renders                                                                    0.01s  
+  Γ£ô socio create stores data                                                              0.01s  
 
    PASS  Tests\Feature\StatisticsControllerTest
-  ✓ statistics view renders                                                                                                  0.01s  
+  Γ£ô statistics view renders                                                               0.01s  
 
    PASS  Tests\Feature\TestPdfGenerationTest
-  ✓ it generates physical pdf on socio creation with payment                                                                 0.08s  
+  Γ£ô it generates physical pdf on socio creation with payment                              0.09s  
 
    PASS  Tests\Feature\UserJourneyTest
-  ✓ User Journey: Complete Lifecycle of a Socio via Modulo Anagrafica                                                        0.06s  
+  Γ£ô User Journey: Complete Lifecycle of a Socio via Modulo Anagrafica                     0.06s  
 
    PASS  Tests\Integration\DatabaseSchemaTest
-  ✓ required tables exist                                                                                                    0.01s  
-  ✓ socio table schema                                                                                                       0.01s  
-  ✓ documenti table schema                                                                                                   0.01s  
+  Γ£ô required tables exist                                                                 0.01s  
+  Γ£ô socio table schema                                                                    0.01s  
+  Γ£ô documenti table schema                                                                0.01s  
 
    PASS  Tests\Integration\PersistenceTest
-  ✓ can save and retrieve socio                                                                                              0.02s  
+  Γ£ô can save and retrieve socio                                                           0.02s  
 
    PASS  Tests\Integration\RegistrationServicePestTest
-  ✓ registrazione fallisce se utente esiste gia                                                                              0.05s  
-  ✓ pdf generato solo se pagamento effettuato                                                                                0.02s  
-  ✓ pdf generato se pagamento presente                                                                                       0.05s  
+  Γ£ô registrazione fallisce se utente esiste gia                                           0.05s  
+  Γ£ô pdf generato solo se pagamento effettuato                                             0.02s  
+  Γ£ô pdf generato se pagamento presente                                                    0.05s  
 
    PASS  Tests\Integration\RegistrationServiceTest
-  ✓ Integration: Registration Service Register New Member Flow                                                               0.07s  
+  Γ£ô Integration: Registration Service Register New Member Flow                            0.07s  
 
    PASS  Tests\Integration\RepositoryEdgeCasesTest
-  ✓ repository handles special characters in search                                                                          0.01s  
-  ✓ repository handles unicode characters                                                                                    0.01s  
+  Γ£ô repository handles special characters in search                                       0.01s  
+  Γ£ô repository handles unicode characters                                                 0.01s  
 
    PASS  Tests\Integration\SearchRobustnessTest
-  ✓ search finds by first name only                                                                                          0.03s  
-  ✓ search finds by last name only                                                                                           0.02s  
-  ✓ search finds by combined first and last name                                                                             0.03s  
-  ✓ search finds by combined last and first name                                                                             0.03s  
-  ✓ search finds by partial codice fiscale                                                                                   0.03s  
-  ✓ search finds by full codice fiscale                                                                                      0.04s  
-  ✓ search finds by matricola                                                                                                0.03s  
-  ✓ search finds by email                                                                                                    0.03s  
-  ✓ search finds by phone                                                                                                    0.02s  
+  Γ£ô search finds by first name only                                                       0.02s  
+  Γ£ô search finds by last name only                                                        0.02s  
+  Γ£ô search finds by combined first and last name                                          0.02s  
+  Γ£ô search finds by combined last and first name                                          0.02s  
+  Γ£ô search finds by partial codice fiscale                                                0.02s  
+  Γ£ô search finds by full codice fiscale                                                   0.04s  
+  Γ£ô search finds by matricola                                                             0.03s  
+  Γ£ô search finds by email                                                                 0.03s  
+  Γ£ô search finds by phone                                                                 0.03s  
 
    PASS  Tests\Integration\SecurityWorkflowTest
-  ✓ workflow creazione utente e operazioni                                                                                   0.19s  
-  ✓ workflow verifica permessi negati                                                                                        0.02s  
-  ✓ workflow export audit trail                                                                                              0.03s  
-  ✓ workflow revoca permessi                                                                                                 0.02s  
-  ✓ workflow amministratore accesso totale                                                                                   0.01s  
+  Γ£ô workflow creazione utente e operazioni                                                0.09s  
+  Γ£ô workflow verifica permessi negati                                                     0.02s  
+  Γ£ô workflow export audit trail                                                           0.04s  
+  Γ£ô workflow revoca permessi                                                              0.02s  
+  Γ£ô workflow amministratore accesso totale                                                0.01s  
 
    PASS  Tests\Integration\TransactionResilienceTest
-  ✓ verifica rollback su errore durante il salvataggio dei documenti                                                         0.02s  
+  Γ£ô verifica rollback su errore durante il salvataggio dei documenti                      0.03s  
 
    PASS  Tests\Arch\ArchitectureTest
-  ✓ controllers                                                                                                              0.74s  
-  ✓ debug                                                                                                                    1.86s  
-  ✓ models                                                                                                                   0.79s  
+  Γ£ô controllers                                                                           1.14s  
+  Γ£ô debug                                                                                 2.35s  
+  Γ£ô models                                                                                1.15s  
 
    PASS  Tests\Security\AccessControlTest
-  ✓ operatore ha permessi base                                                                                               0.01s  
-  ✓ operatore non ha permessi amministrativi                                                                                 0.01s  
-  ✓ amministratore ha accesso completo                                                                                       0.01s  
-  ✓ grant permesso a nuovo ruolo                                                                                             0.01s  
-  ✓ grant non aggiunge duplicati                                                                                             0.01s  
+  Γ£ô operatore ha permessi base                                                            0.01s  
+  Γ£ô operatore non ha permessi amministrativi                                              0.01s  
+  Γ£ô amministratore ha accesso completo                                                    0.01s  
+  Γ£ô grant permesso a nuovo ruolo                                                          0.01s  
+  Γ£ô grant non aggiunge duplicati                                                          0.01s  
 
    PASS  Tests\Security\AuditTrailTest
-  ✓ log evento                                                                                                               0.03s  
-  ✓ esportazione json                                                                                                        0.02s  
-  ✓ esportazione csv                                                                                                         0.02s  
-  ✓ esportazione formato non supportato throws exception                                                                     0.01s  
-  ✓ ricerca azioni con filtri                                                                                                0.02s  
-  ✓ genera report today                                                                                                      0.02s  
-  ✓ scrittura su database                                                                                                    0.02s  
+  Γ£ô log evento                                                                            0.02s  
+  Γ£ô esportazione json                                                                     0.02s  
+  Γ£ô esportazione csv                                                                      0.02s  
+  Γ£ô esportazione formato non supportato throws exception                                  0.01s  
+  Γ£ô ricerca azioni con filtri                                                             0.03s  
+  Γ£ô genera report today                                                                   0.03s  
+  Γ£ô scrittura su database                                                                 0.02s  
 
    PASS  Tests\Security\DependencyVulnerabilityTest
-  ✓ composer packages have no known vulnerabilities                                                                          2.37s  
-  ✓ npm packages have no known vulnerabilities                                                                               1.08s  
-  ✓ composer.lock file exists and is valid                                                                                   0.05s  
-  ✓ package-lock.json file exists and is valid                                                                               0.02s  
-  ✓ no deprecated composer packages in production dependencies                                                               0.01s  
-  ✓ critical security packages are installed                                                                                 0.01s  
-  ✓ sensitive files are protected in .gitignore                                                                              0.01s  
-  ✓ defuse encryption library is installed for TOTP security                                                                 0.01s  
+  Γ£ô composer packages have no known vulnerabilities                                       2.84s  
+  Γ£ô npm packages have no known vulnerabilities                                            0.76s  
+  Γ£ô composer.lock file exists and is valid                                                0.07s  
+  Γ£ô package-lock.json file exists and is valid                                            0.02s  
+  Γ£ô no deprecated composer packages in production dependencies                            0.01s  
+  Γ£ô critical security packages are installed                                              0.01s  
+  Γ£ô sensitive files are protected in .gitignore                                           0.01s  
+  Γ£ô defuse encryption library is installed for TOTP security                              0.01s  
 
    PASS  Tests\Security\FileUploadTest
-  ✓ ValidationService individua spoofing estensione                                                                          0.03s  
-  ✓ ValidationService accetta file ZIP per compatibilità Office                                                              0.01s  
+  Γ£ô ValidationService individua spoofing estensione                                       0.03s  
+  Γ£ô ValidationService accetta file ZIP per compatibilit├á Office                           0.02s  
 
    PASS  Tests\Security\GDPRAnonymizationTest
-  ✓ cf anonymization                                                                                                         0.02s  
-  ✓ username anonymization                                                                                                   0.02s  
+  Γ£ô cf anonymization                                                                      0.03s  
+  Γ£ô username anonymization                                                                0.03s  
 
    PASS  Tests\Security\InputSanitizerTest
-  ✓ InputSanitizerMiddleware pulisce gli input da script malevoli                                                            0.02s  
-  ✓ InputSanitizerMiddleware ignora i campi password                                                                         0.01s  
+  Γ£ô InputSanitizerMiddleware pulisce gli input da script malevoli                         0.03s  
+  Γ£ô InputSanitizerMiddleware ignora i campi password                                      0.02s  
 
    PASS  Tests\Security\MiddlewareTest
-  ✓ security headers are added                                                                                               0.01s  
+  Γ£ô security headers are added                                                            0.02s  
 
    PASS  Tests\Security\ResilientSessionTest
-  ✓ SessionManager rigenera l'ID di sessione correttamente                                                                   0.01s  
-  ✓ verifica configurazione sicura dei cookie di sessione                                                                    0.01s  
+  Γ£ô SessionManager rigenera l'ID di sessione correttamente                                0.02s  
+  Γ£ô verifica configurazione sicura dei cookie di sessione                                 0.02s  
 
    PASS  Tests\Security\SecurityHeadersTest
-  ✓ SecurityHeadersMiddleware Tests → adds Content-Security-Policy header                                                    0.01s  
-  ✓ SecurityHeadersMiddleware Tests → adds X-Frame-Options DENY header                                                       0.01s  
-  ✓ SecurityHeadersMiddleware Tests → all security headers are present                                                       0.01s  
+  Γ£ô SecurityHeadersMiddleware Tests ΓåÆ adds Content-Security-Policy header                 0.02s  
+  Γ£ô SecurityHeadersMiddleware Tests ΓåÆ adds X-Frame-Options DENY header                    0.01s  
+  Γ£ô SecurityHeadersMiddleware Tests ΓåÆ all security headers are present                    0.01s  
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  AdminSecurityTest > admin settings page receives soc data                             
+  Expectation failed for method name is "render" when invoked 1 time.
+Method was expected to be called 1 time, actually called 0 times.
 
-  Tests:    180 passed (510 assertions)
-  Duration: 13.54s
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\External\ExpensebarTest > Expensebar API can add an expense             
+  Failed asserting that 405 is identical to 200.
+
+  at tests\Feature\External\ExpensebarTest.php:53
+     49Γûò             'date' => date('Y-m-d')
+     50Γûò         ]);
+     51Γûò 
+     52Γûò     $response = $this->app->handle($request);
+  Γ₧£  53Γûò     expect($response->getStatusCode())->toBe(200);
+     54Γûò     $body = json_decode((string) $response->getBody(), true);
+     55Γûò     expect($body['status'])->toBe('success');
+     56Γûò     expect($body['expense']['id'])->toBeInt();
+     57Γûò
+
+  1   tests\Feature\External\ExpensebarTest.php:53
+
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\External\TaskflowTest > PDOTaskflowRepository can saveΓÇª  PDOException   
+  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'fratellanza_test.taskflow_tasks' doesn't exist
+
+  at src\InfrastrutturaIT\Persistence\PDOTaskflowRepository.php:44
+     40Γûò             ]);
+     41Γûò             return (int) $data['id'];
+     42Γûò         } else {
+     43Γûò             $stmt = $this->pdo->prepare("INSERT INTO taskflow_tasks (text, completed) VALUES (:text, :completed)");
+  Γ₧£  44Γûò             $stmt->execute([
+     45Γûò                 'text' => $data['text'],
+     46Γûò                 'completed' => isset($data['completed']) ? (int) $data['completed'] : 0
+     47Γûò             ]);
+     48Γûò             return (int) $this->pdo->lastInsertId();
+
+  1   src\InfrastrutturaIT\Persistence\PDOTaskflowRepository.php:44
+  2   tests\Feature\External\TaskflowTest.php:14
+
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\External\TaskflowTest > Taskflow API can create and update a task       
+  Failed asserting that 403 is identical to 201.
+
+  at tests\Feature\External\TaskflowTest.php:50
+     46Γûò             'completed' => false
+     47Γûò         ]);
+     48Γûò 
+     49Γûò     $response = $this->app->handle($request);
+  Γ₧£  50Γûò     expect($response->getStatusCode())->toBe(201);
+     51Γûò     $body = json_decode((string) $response->getBody(), true);
+     52Γûò     $taskId = $body['task']['id'];
+     53Γûò     expect($taskId)->toBeInt();
+     54Γûò
+
+  1   tests\Feature\External\TaskflowTest.php:50
+
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\External\WorkshiftTest > PDOWorkshiftRepository can saΓÇª  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'employee_code' in 'field list'
+
+  at src\InfrastrutturaIT\Persistence\PDOWorkshiftRepository.php:161
+    157Γûò         $placeholders = implode(', ', array_map(fn($f) => ":$f", $fields));
+    158Γûò         $sql = "INSERT INTO workshift_employees ($columns) VALUES ($placeholders)";
+    159Γûò 
+    160Γûò         $stmt = $this->pdo->prepare($sql);
+  Γ₧£ 161Γûò         $stmt->execute($params);
+    162Γûò         return (int) $this->pdo->lastInsertId();
+    163Γûò     }
+    164Γûò 
+    165Γûò     public function findAllEmployees(): array
+
+  1   src\InfrastrutturaIT\Persistence\PDOWorkshiftRepository.php:161
+  2   tests\Feature\External\WorkshiftTest.php:49
+
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\External\WorkshiftTest > Workshift API can create a shΓÇª  PDOException   
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'employee_code' in 'field list'
+
+  at src\InfrastrutturaIT\Persistence\PDOWorkshiftRepository.php:161
+    157Γûò         $placeholders = implode(', ', array_map(fn($f) => ":$f", $fields));
+    158Γûò         $sql = "INSERT INTO workshift_employees ($columns) VALUES ($placeholders)";
+    159Γûò 
+    160Γûò         $stmt = $this->pdo->prepare($sql);
+  Γ₧£ 161Γûò         $stmt->execute($params);
+    162Γûò         return (int) $this->pdo->lastInsertId();
+    163Γûò     }
+    164Γûò 
+    165Γûò     public function findAllEmployees(): array
+
+  1   src\InfrastrutturaIT\Persistence\PDOWorkshiftRepository.php:161
+  2   tests\Feature\External\WorkshiftTest.php:83
+
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\HomeControllerTest > home dashboard renders corrΓÇª  ArgumentCountError   
+  Too few arguments to function MCAG\Controller\HomeController::__construct(), 2 passed in C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\tests\Feature\HomeControllerTest.php on line 20 and exactly 5 expected
+
+  at src\Controller\HomeController.php:23
+     19Γûò     private \MCAG\Debug\ResilienceMonitor $resilience;
+     20Γûò     private \MCAG\Service\HealthCheckService $health;
+     21Γûò     private \MCAG\Service\ConfigurationService $config;
+     22Γûò 
+  Γ₧£  23Γûò     public function __construct(
+     24Γûò         Mustache_Engine $mustache,
+     25Γûò         \MCAG\GestioneSoci\SocioRepository $repo,
+     26Γûò         \MCAG\Debug\ResilienceMonitor $resilience,
+     27Γûò         \MCAG\Service\HealthCheckService $health,
+
+  1   src\Controller\HomeController.php:23
+  2   tests\Feature\HomeControllerTest.php:20
+
+  ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ  
+   FAILED  Tests\Feature\LoginControllerTest > login form renders             RuntimeException   
+  Cannot create RouteContext before routing has been completed
+
+  at vendor\slim\slim\Slim\Routing\RouteContext.php:37
+     33Γûò         $routingResults = $serverRequest->getAttribute(self::ROUTING_RESULTS);
+     34Γûò         $basePath = $serverRequest->getAttribute(self::BASE_PATH);
+     35Γûò 
+     36Γûò         if ($routeParser === null || $routingResults === null) {
+  Γ₧£  37Γûò             throw new RuntimeException('Cannot create RouteContext before routing has been completed');
+     38Γûò         }
+     39Γûò 
+     40Γûò         /** @var RouteInterface|null $route */
+     41Γûò         /** @var RouteParserInterface $routeParser */
+
+  1   vendor\slim\slim\Slim\Routing\RouteContext.php:37
+  2   src\Controller\Auth\LoginFlowController.php:120
+
+
+  Tests:    8 failed, 193 passed (564 assertions)
+  Duration: 15.90s
 

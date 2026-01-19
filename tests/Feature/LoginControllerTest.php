@@ -14,7 +14,7 @@ test('login form renders', function () {
     $validator = new \MCAG\Service\InputValidator();
     $controller = new LoginFlowController($mustache, $validator);
 
-    $request = (new ServerRequestFactory())->createServerRequest('GET', '/login');
+    $request = $this->withRouting((new ServerRequestFactory())->createServerRequest('GET', '/login'));
     $response = (new ResponseFactory())->createResponse();
 
     $result = $controller->form($request, $response);

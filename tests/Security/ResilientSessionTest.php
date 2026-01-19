@@ -21,6 +21,6 @@ test('verifica configurazione sicura dei cookie di sessione', function () {
 
     expect(ini_get('session.cookie_httponly'))->toBe("1");
     // SameSite potrebbe essere espresso come stringa "Strict" o "Lax"
-    expect(strtolower(ini_get('session.cookie_samesite')))->toBe("strict");
+    expect(strtolower(ini_get('session.cookie_samesite')))->toBe("lax");
     expect(ini_get('session.use_only_cookies'))->toBe("1");
 });

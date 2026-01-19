@@ -13,7 +13,38 @@ class PDOWorkshiftRepository
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
+        $this->createEmployeesTableIfNotExists();
         $this->createRequestsTableIfNotExists();
+    }
+
+    private function createEmployeesTableIfNotExists(): void
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS workshift_employees (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            role VARCHAR(50),
+            department VARCHAR(50),
+            email VARCHAR(100),
+            employee_code VARCHAR(50) UNIQUE,
+            fiscal_code VARCHAR(16),
+            birth_date DATE,
+            birth_place VARCHAR(100),
+            gender VARCHAR(10),
+            address TEXT,
+            city VARCHAR(100),
+            zip VARCHAR(10),
+            phone VARCHAR(20),
+            mobile VARCHAR(20),
+            contract_type VARCHAR(50),
+            contract_start DATE,
+            contract_end DATE,
+            auth_grade INT DEFAULT 1,
+            notes TEXT,
+            skills TEXT,
+            avatar VARCHAR(255),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        $this->pdo->exec($sql);
     }
 
     private function createRequestsTableIfNotExists(): void

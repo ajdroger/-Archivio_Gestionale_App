@@ -176,15 +176,21 @@ function fetchLogs() {
 }
 
 // --- HYBRID ENGINE: REAL TOOLS + SIMULATION ---
+// --- HYBRID ENGINE: REAL TOOLS + SIMULATION ---
 function runSim(tool, title) {
     // LIST OF REAL TOOLS
-    const realTools = ['nmap', 'whois', 'dns'];
+    const realTools = ['nmap', 'whois', 'dns', 'ping', 'traceroute', 'netstat', 'ifconfig'];
 
     if (realTools.includes(tool)) {
-        const target = prompt(`ENTER TARGET FOR ${title}:`, 'localhost');
-        if (!target) return;
+        let target = '';
+        const noTargetTools = ['netstat', 'ifconfig'];
 
-        log(`>>> EXECUTING REAL ${title} TARGETING [${target}]...`, 'info');
+        if (!noTargetTools.includes(tool)) {
+            target = prompt(`ENTER TARGET FOR ${title}:`, 'localhost');
+            if (!target) return;
+        }
+
+        log(`>>> EXECUTING REAL ${title} TARGETING [${target || 'SYSTEM'}]...`, 'info');
         apiCall(tool, { target: target });
         return;
     }
@@ -409,4 +415,11 @@ setTimeout(() => {
         el.style.transform = `translate(calc(-50% + ${xPos}px), calc(-50% + ${yPos}px))`;
     }
 }, 500); // Delay slightly to ensure DOM is ready
+
+
+// --- MOBILE SIDEBAR TOGGLE ---
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+}
 

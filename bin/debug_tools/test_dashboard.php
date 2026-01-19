@@ -88,22 +88,34 @@ function scanTestsRecursive($dir)
 
     foreach ($iter as $f) {
         if ($f->isFile() && str_ends_with($f->getFilename(), 'Test.php')) {
-            $path = str_replace('\\', '/', $f->getRealPath());
+            $realPath = $f->getRealPath();
+            // NORMALIZE PATHS FOR WINDOWS/UNIX CONSISTENCY
+            $path = str_replace('\\', '/', $realPath);
+
             if (str_contains($path, '/vendor/') || str_contains($path, '/Archived/'))
                 continue;
 
-            $testCount = countTestsInFile($path);
+            $testCount = countTestsInFile($realPath);
             if ($testCount === 0)
                 continue; // Skip files with no actual tests
 
             $totalCount += $testCount;
 
-            $rel = str_replace($projectRoot . '/', '', $path);
-            $relFromTests = str_replace($projectRoot . '/tests/', '', $path);
+            // Calculate relative path for display/execution
+            // $projectRoot ends with slash now? No, realpath usually strips trailing slash
+            // Let's be safe
+            $rootNormalized = str_replace('\\', '/', $projectRoot);
+            $rel = str_replace($rootNormalized, '', $path);
+            $rel = ltrim($rel, '/'); // Remove leading slash if any
+
+            // Category Extraction
+            $relFromTests = str_replace($rootNormalized . '/tests/', '', $path);
             $category = dirname($relFromTests);
             if ($category === '.')
                 $category = 'Root';
-            $category = str_replace('\\', '/', $category);
+
+            // Cleanup category display
+            $category = str_replace('/', ' > ', $category);
 
             $files[] = [
                 'name' => $f->getFilename(),
@@ -388,6 +400,28 @@ if (isset($_GET['action'])) {
                 $res['output'] = implode("\n", doDnsEnum($input['target'] ?? ''));
                 break;
 
+            case 'ping':
+                $input = json_decode(file_get_contents('php://input'), true);
+                $target = $input['target'] ?? '127.0.0.1';
+                $target = escapeshellcmd($target);
+                $res['output'] = safe_utf8(shell_exec("ping -n 4 $target 2>&1"));
+                break;
+
+            case 'traceroute':
+                $input = json_decode(file_get_contents('php://input'), true);
+                $target = $input['target'] ?? 'google.com';
+                $target = escapeshellcmd($target);
+                $res['output'] = safe_utf8(shell_exec("tracert -d $target 2>&1"));
+                break;
+
+            case 'netstat':
+                $res['output'] = safe_utf8(shell_exec("netstat -an 2>&1"));
+                break;
+
+            case 'ifconfig':
+                $res['output'] = safe_utf8(shell_exec("ipconfig /all 2>&1"));
+                break;
+
             case 'ai_chat':
                 $input = json_decode(file_get_contents('php://input'), true);
                 $res['output'] = doAiChat($input['prompt'] ?? '');
@@ -430,13 +464,13 @@ foreach ($tests as $t) {
         rel="stylesheet">
     <link rel="stylesheet" href="../../public/css/all.min.css">
 
-    <link rel="stylesheet" href="../../public/css/debug_console.css">
+    <link rel="stylesheet" href="../../public/css/debug_console.css?v=<?= time() ?>">
 </head>
 
 <body>
 
     <!-- SIDEBAR -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="brand glitch">
             <i class="fa-solid fa-microchip"></i> HYPER-GRID
             <div style="font-size: 10px; color: var(--neon-blue); letter-spacing: 1px; margin-top: 5px;">
@@ -486,15 +520,133 @@ foreach ($tests as $t) {
             </div>
         </div>
     </div>
+    <!-- MOBILE OVERLAY -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <!-- MAIN DECK -->
     <div class="main-deck">
         <!-- TOOLBAR (New Features) -->
         <div class="top-bar">
+            <!-- MOBILE TOGGLE -->
+            <button class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
             <!-- PARROT ARSENAL MENUS -->
             <div class="nav-menu">
 
-                <!-- SYSTEM -->
+                <?php
+                // KALI & PARROT COMPLETE TOOL LIBRARY
+                $toolLibrary = [
+                    'INFORMATION GATHERING' => [
+                        'icon' => 'fa-solid fa-radar',
+                        'subcategories' => [
+                            'DNS Analysis' => ['dnsenum', 'dnsmap', 'dnsrecon', 'fierce', 'dnswalk', 'dnstracer'],
+                            'IDS/IPS Identification' => ['lbd', 'wafw00f', 'fragroute', 'fragrouter'],
+                            'Live Host Identification' => ['arping', 'fping', 'hping3', 'masscan', 'nmap', 'netdiscover', 'thcping6'],
+                            'Network & Port Scanners' => ['masscan', 'nmap', 'zenmap', 'unicornscan', 'angryip'],
+                            'OSINT Analysis' => ['maltego', 'spiderfoot', 'theharvester', 'recon-ng', 'dmitry', 'creepy', 'twofi'],
+                            'Route Analysis' => ['netmask', 'cutecom', 'miranda', '0trace', 'tctrace', 'traceroute'],
+                            'SMB Analysis' => ['enum4linux', 'nbtscan', 'smbmap', 'samrdump'],
+                            'SMTP Analysis' => ['smtp-user-enum', 'swaks'],
+                            'SNMP Analysis' => ['braa', 'onesixtyone', 'snmpcheck', 'snmpwalk'],
+                            'SSL Analysis' => ['sslyze', 'sslscan', 'tlssled'],
+                        ]
+                    ],
+                    'VULNERABILITY ANALYSIS' => [
+                        'icon' => 'fa-solid fa-shield-halved',
+                        'subcategories' => [
+                            'Fuzzing Tools' => ['bed', 'fuzz_ipv6', 'ohrwurm', 'powerfuzzer', 'sfuzz', 'spike-generic'],
+                            'VoIP Tools' => ['siparmyknife', 'sipp', 'siproxd'],
+                            'Web Vulnerability Scanners' => ['nikto', 'skipfish', 'wpscan', 'joomscan', 'uniscan', 'wapti', 'whatweb'],
+                            'Database Assessment' => ['sqlmap', 'sqlninja', 'tnscmd10g', 'hexorbase', 'mdk3'],
+                            'Cisco Tools' => ['cisco-auditing-tool', 'cisco-global-exploiter', 'cisco-ocs', 'cisco-torch'],
+                            'OpenVAS/Greenbone' => ['gvm-cli', 'openvas-nasl', 'openvas-scanner']
+                        ]
+                    ],
+                    'WEB APPLICATION ANALYSIS' => [
+                        'icon' => 'fa-solid fa-globe',
+                        'subcategories' => [
+                            'CMS & Framework Identification' => ['blindelephant', 'plecost', 'wpscan', 'joomscan'],
+                            'Web Crawlers' => ['apache-users', 'cutycapt', 'dirb', 'dirbuster', 'gobuster', 'webslayer'],
+                            'Web Proxies' => ['burpsuite', 'owasp-zap', 'paros', 'proxystrike', 'vega', 'webscarab'],
+                        ]
+                    ],
+                    'DATABASE ASSESSMENT' => [
+                        'icon' => 'fa-solid fa-database',
+                        'subcategories' => [
+                            'SQL Injection' => ['sqlmap', 'sqlninja', 'bbqsql', 'jsql', 'sqlus'],
+                            'Oracle' => ['oscanner', 'tnscmd10g'],
+                            'MySQL' => ['mysql-audit'],
+                        ]
+                    ],
+                    'PASSWORD ATTACKS' => [
+                        'icon' => 'fa-solid fa-key',
+                        'subcategories' => [
+                            'Online Attacks' => ['hydra', 'medusa', 'ncrack', 'patator', 'thc-pptp-bruter'],
+                            'Offline Attacks' => ['john', 'hashcat', 'ophcrack', 'rainbowcrack', 'chntpw', 'fcrackzip', 'hashid'],
+                            'Wordlists' => ['cewl', 'crunch', 'wordlists', 'rsmangler']
+                        ]
+                    ],
+                    'WIRELESS ATTACKS' => [
+                        'icon' => 'fa-solid fa-wifi',
+                        'subcategories' => [
+                            '802.11 Wireless' => ['aircrack-ng', 'kismet', 'wifite', 'pixiewps', 'reaver', 'fern-wifi-cracker'],
+                            'Bluetooth' => ['bluelog', 'bluemaho', 'btscanner', 'redfang', 'spooftooph'],
+                            'RFID/NFC' => ['mfcuk', 'mfoc', 'mifare-classic-format'],
+                            'SDR' => ['gnuradio', 'gqrx', 'kalibrate-rtl']
+                        ]
+                    ],
+                    'REVERSE ENGINEERING' => [
+                        'icon' => 'fa-solid fa-microchip',
+                        'subcategories' => [
+                            'Debuggers' => ['edb-debugger', 'ollydbg', 'valgrind'],
+                            'Disassemblers' => ['ida-pro', 'radare2', 'capstone', 'jadx'],
+                            'Decompilers' => ['apktool', 'dex2jar', 'jd-gui']
+                        ]
+                    ],
+                    'EXPLOITATION TOOLS' => [
+                        'icon' => 'fa-solid fa-skull',
+                        'subcategories' => [
+                            'Exploit Frameworks' => ['metasploit-framework', 'armitage', 'beef-xss', 'routersploit'],
+                            'Social Engineering' => ['setoolkit', 'maltego', 'msfpc'],
+                            'Payload Generators' => ['msfvenom', 'veil', 'shellter']
+                        ]
+                    ],
+                    'SNIFFING & SPOOFING' => [
+                        'icon' => 'fa-solid fa-mask',
+                        'subcategories' => [
+                            'Network Sniffers' => ['wireshark', 'tcpdump', 'dSniff', 'hamster-sidejack', 'netsniff-ng'],
+                            'Spoofing' => ['ettercap', 'arpspoof', 'macchanger', 'mitmproxy', 'responder', 'yersinia']
+                        ]
+                    ],
+                    'POST EXPLOITATION' => [
+                        'icon' => 'fa-solid fa-ghost',
+                        'subcategories' => [
+                            'OS Backdoors' => ['backdoor-factory', 'cymothoa', 'dbc', 'powersploit'],
+                            'Tunneling' => ['dns2tcp', 'iodine', 'miredo', 'proxychains', 'ptunnel', 'socat', 'sslh', 'stunnel4'],
+                            'Web Backdoors' => ['weevely', 'webacoo', 'laudanum']
+                        ]
+                    ],
+                    'FORENSICS' => [
+                        'icon' => 'fa-solid fa-magnifying-glass',
+                        'subcategories' => [
+                            'Disk Analysis' => ['autopsy', 'sleuthkit', 'dc3dd', 'guymager'],
+                            'Memory Forensics' => ['volatility', 'rekall'],
+                            'PDF Forensics' => ['pdfid', 'pdf-parser', 'peepdf'],
+                            'Carving' => ['binwalk', 'foremost', 'magicrescue', 'scalpel']
+                        ]
+                    ],
+                    'REPORTING TOOLS' => [
+                        'icon' => 'fa-solid fa-file-contract',
+                        'subcategories' => [
+                            'Documentation' => ['cutycapt', 'dradis', 'faraday', 'keepnote', 'magictree', 'pipal']
+                        ]
+                    ]
+                ];
+                ?>
+
+                <!-- SYSTEM (Always Visible) -->
                 <div class="dropdown">
                     <div class="dropdown-btn"><i class="fa-solid fa-server"></i> SYSTEM</div>
                     <div class="dropdown-content">
@@ -509,68 +661,39 @@ foreach ($tests as $t) {
                     </div>
                 </div>
 
-                <!-- RECONNAISSANCE -->
-                <div class="dropdown">
-                    <div class="dropdown-btn"><i class="fa-solid fa-radar"></i> RECON</div>
-                    <div class="dropdown-content">
-                        <div class="menu-item" onclick="runSim('nmap', 'NMAP NETWORK SCAN')"><i
-                                class="fa-solid fa-network-wired"></i> Nmap Port Scan</div>
-                        <div class="menu-item" onclick="runSim('whois', 'WHOIS DOMAIN LOOKUP')"><i
-                                class="fa-solid fa-id-card"></i> Whois Lookup</div>
-                        <div class="menu-item" onclick="runSim('dns', 'DNS ENUMERATION')"><i
-                                class="fa-solid fa-sitemap"></i> DNS Map</div>
-                        <div class="dropdown-submenu">
-                            <div class="menu-item"><i class="fa-solid fa-user-secret"></i> OSINT <i
-                                    class="fa-solid fa-caret-right" style="margin-left:auto"></i></div>
-                            <div class="dropdown-content">
-                                <div class="menu-item" onclick="runSim('harvester', 'THE HARVESTER')">The Harvester
-                                </div>
-                                <div class="menu-item" onclick="runSim('shodan', 'SHODAN QUERY')">Shodan Link</div>
+                <!-- DYNAMIC KALI/PARROT MENU GENERATION -->
+                <?php foreach ($toolLibrary as $category => $data): ?>
+                    <div class="dropdown">
+                        <div class="dropdown-btn"><i class="<?= $data['icon'] ?>"></i> <?= substr($category, 0, 4) ?>..
+                        </div>
+                        <div class="dropdown-content" style="width: 250px; left:0;">
+                            <!-- Header for Category -->
+                            <div class="menu-header"
+                                style="padding: 5px 10px; color: var(--neon-blue); font-size: 10px; border-bottom: 1px solid rgba(0,243,255,0.2); margin-bottom: 5px;">
+                                <?= $category ?>
                             </div>
+
+                            <?php foreach ($data['subcategories'] as $subCat => $tools): ?>
+                                <div class="dropdown-submenu">
+                                    <div class="menu-item" style="font-size: 0.85em;">
+                                        <?= $subCat ?> <i class="fa-solid fa-caret-right"
+                                            style="margin-left:auto; opacity: 0.5;"></i>
+                                    </div>
+                                    <div class="dropdown-content"
+                                        style="top:0; left:100%; width: 200px; max-height: 400px; overflow-y: auto;">
+                                        <?php foreach ($tools as $tool): ?>
+                                            <div class="menu-item"
+                                                onclick="runSim('<?= $tool ?>', '<?= strtoupper($tool) ?> SEQUENCE')">
+                                                <i class="fa-solid fa-terminal"
+                                                    style="font-size: 0.8em; margin-right: 5px; opacity: 0.7;"></i> <?= $tool ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
-                </div>
-
-                <!-- VULNERABILITY -->
-                <div class="dropdown">
-                    <div class="dropdown-btn"><i class="fa-solid fa-bug"></i> VULN</div>
-                    <div class="dropdown-content">
-                        <div class="menu-item" onclick="runSim('openvas', 'OPENVAS VULN SCAN')"><i
-                                class="fa-solid fa-shield-halved"></i> OpenVAS</div>
-                        <div class="menu-item" onclick="runSim('nikto', 'NIKTO WEB SCAN')"><i
-                                class="fa-solid fa-globe"></i> Nikto Scanner</div>
-                    </div>
-                </div>
-
-                <!-- EXPLOIT -->
-                <div class="dropdown">
-                    <div class="dropdown-btn"><i class="fa-solid fa-skull"></i> EXPLOIT</div>
-                    <div class="dropdown-content">
-                        <div class="menu-item" onclick="runSim('msf', 'METASPLOIT FRAMEWORK')"><i
-                                class="fa-solid fa-terminal"></i> MSF Console</div>
-                        <div class="menu-item" onclick="runSim('sql', 'SQLMAP INJECTION')"><i
-                                class="fa-solid fa-database"></i> SQLMap</div>
-                        <div class="menu-item" onclick="runSim('hydra', 'HYDRA BRUTEFORCE')"><i
-                                class="fa-solid fa-lock-open"></i> Hydra</div>
-                    </div>
-                </div>
-
-                <!-- FORENSICS -->
-                <div class="dropdown">
-                    <div class="dropdown-btn"><i class="fa-solid fa-magnifying-glass"></i> FORENSICS</div>
-                    <div class="dropdown-content">
-                        <div class="menu-item" onclick="runSim('autopsy', 'AUTOPSY FORENSIC')"><i
-                                class="fa-solid fa-hard-drive"></i> Autopsy</div>
-                        <div class="menu-item" onclick="runSim('binwalk', 'BINWALK ANALYSIS')"><i
-                                class="fa-solid fa-file-code"></i> Binwalk</div>
-                    </div>
-                </div>
-
-                <!-- WIRESHARK (Direct) -->
-                <div class="dropdown">
-                    <div class="dropdown-btn" onclick="runSim('wireshark', 'WIRESHARK SNIFFER')"><i
-                            class="fa-solid fa-wave-square"></i> WIRESHARK</div>
-                </div>
+                <?php endforeach; ?>
 
             </div>
 
@@ -675,7 +798,7 @@ foreach ($tests as $t) {
     <!-- NEURAL CANVAS -->
     <canvas id="neural-canvas"></canvas>
 
-    <script src="../../public/js/debug_console.js"></script>
+    <script src="../../public/js/debug_console.js?v=<?= time() ?>"></script>
 </body>
 
 </html>

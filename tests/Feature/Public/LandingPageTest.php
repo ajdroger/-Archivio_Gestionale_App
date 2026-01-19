@@ -34,12 +34,12 @@ class LandingPageTest extends TestCase
 
     public function test_benchmark_pdf_link_exists()
     {
-        $this->assertStringContainsString('MCAG_Benchmark_2026.pdf', $this->htmlContent);
+        $this->assertStringContainsString('reports/MCAG_Benchmark_2026_v5.4.0.pdf', $this->htmlContent);
     }
 
     public function test_legal_links_are_present()
     {
-        $this->assertStringContainsString('legal/PRIVACY_POLICY.md', $this->htmlContent);
-        $this->assertStringContainsString('legal/EULA.md', $this->htmlContent);
+        $this->assertStringContainsString('../privacy-policy', $this->htmlContent);
+        $this->assertStringContainsString('legal/EULA.html', $this->htmlContent);
     }
 }

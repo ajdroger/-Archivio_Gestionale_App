@@ -14,6 +14,7 @@ class AdminMiddleware implements MiddlewareInterface
     {
         $userRole = $_SESSION['user_role'] ?? '';
 
+
         if ($userRole !== 'admin') {
             $response = new SlimResponse();
 
