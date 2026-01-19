@@ -287,15 +287,25 @@ class PDOWorkshiftRepository
 
     // --- Analytics Methods ---
 
-    public function getAnalyticsSummary(): array
+    // --- Analytics Methods ---
+
+    public function getAnalyticsSummary(?string $start = null, ?string $end = null): array
     {
-        // Simple aggregate of all time
         $sql = "SELECT 
                     COUNT(*) as total_shifts,
                     SUM(TIMESTAMPDIFF(HOUR, start_time, end_time)) as total_hours,
                     (SELECT COUNT(*) FROM workshift_requests WHERE status = 'Pending') as pending_requests
-                FROM workshift_shifts";
-        $stmt = $this->pdo->query($sql);
+                FROM workshift_shifts
+                WHERE 1=1";
+
+        $params = [];
+        if ($start && $end) {
+            $sql .= " AND date BETWEEN :start AND :end";
+            $params = ['start' => $start, 'end' => $end];
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Calculate hypothetical cost (e.g. 20€/hour avg)
@@ -310,25 +320,44 @@ class PDOWorkshiftRepository
         ];
     }
 
-    public function getMonthlyTrend(): array
+    public function getMonthlyTrend(?string $start = null, ?string $end = null): array
     {
-        // Get last 30 days
         $sql = "SELECT date, SUM(TIMESTAMPDIFF(HOUR, start_time, end_time)) as hours
                 FROM workshift_shifts
-                WHERE date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-                GROUP BY date
-                ORDER BY date ASC";
-        $stmt = $this->pdo->query($sql);
+                WHERE 1=1";
+
+        $params = [];
+        if ($start && $end) {
+            $sql .= " AND date BETWEEN :start AND :end";
+            $params = ['start' => $start, 'end' => $end];
+        } else {
+            $sql .= " AND date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+        }
+
+        $sql .= " GROUP BY date ORDER BY date ASC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
-    public function getRoleDistribution(): array
+    public function getRoleDistribution(?string $start = null, ?string $end = null): array
     {
         $sql = "SELECT e.role, COUNT(*) as count
                 FROM workshift_shifts s
                 JOIN workshift_employees e ON s.employee_id = e.id
-                GROUP BY e.role";
-        $stmt = $this->pdo->query($sql);
+                WHERE 1=1";
+
+        $params = [];
+        if ($start && $end) {
+            $sql .= " AND s.date BETWEEN :start AND :end";
+            $params = ['start' => $start, 'end' => $end];
+        }
+
+        $sql .= " GROUP BY e.role";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 }

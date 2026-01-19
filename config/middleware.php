@@ -12,9 +12,6 @@ return function (App $app) {
     // 0. Request ID (Correlation ID) - Primo della lista per tracciabilità totale
     $app->add(new \MCAG\Middleware\RequestIdMiddleware());
 
-    // 0b. Body Parsing (JSON fields)
-    $app->addBodyParsingMiddleware();
-
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {
         ini_set('session.cookie_httponly', 1);
@@ -86,6 +83,9 @@ return function (App $app) {
     // Routing Middleware - Must be added LAST to run FIRST
     // This allows subsequent middleware (like Auth) to access RouteContext
     $app->addRoutingMiddleware();
+
+    // Body Parsing (JSON fields) - Must run BEFORE CSRF and Logic
+    $app->addBodyParsingMiddleware();
 
     // Sentry Monitoring (Runs first)
     $app->add(new \MCAG\Middleware\SentryMiddleware());

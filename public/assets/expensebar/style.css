@@ -1,162 +1,65 @@
-/* Custom animations and effects */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Expensebar Genius/Obsidian Theme */
+
+.glass-panel {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.6s ease-out;
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.animate-slide-up {
-    animation: slideUp 0.6s ease-out;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #1f2937;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #4f46e5;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #6366f1;
-}
-
-/* Chart.js tooltip customization */
-.chartjs-tooltip {
-    background: rgba(31, 41, 55, 0.95) !important;
-    border: 1px solid #4b5563 !important;
-    border-radius: 8px !important;
-    padding: 12px !important;
-    backdrop-filter: blur(4px);
-}
-
-.chartjs-tooltip .tooltip-title {
-    color: #e5e7eb !important;
-    font-weight: 600 !important;
-    margin-bottom: 4px !important;
-}
-
-.chartjs-tooltip .tooltip-body {
-    color: #9ca3af !important;
-}
-
-/* Form input focus states */
-input:focus, select:focus, textarea:focus {
-    outline: none !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
-}
-
-/* Button ripple effect */
-.btn-ripple {
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-ripple::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.btn-ripple:active::after {
-    width: 300px;
-    height: 300px;
-}
-
-/* Glassmorphism effect */
-.glass-card {
+.custom-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
 }
 
-/* Loading spinner */
-.spinner {
-    border: 3px solid rgba(99, 102, 241, 0.2);
-    border-top: 3px solid #6366f1;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+/* Animations */
+@keyframes pulse-slow {
 
-/* Delete button hover effect */
-.delete-btn {
-    transition: all 0.2s ease;
-}
-
-.delete-btn:hover {
-    transform: scale(1.1);
-    color: #ef4444;
-}
-
-/* Table row hover effect */
-tbody tr {
-    transition: all 0.2s ease;
-}
-
-tbody tr:hover {
-    background: rgba(99, 102, 241, 0.05);
-    transform: scale(1.01);
-}
-
-/* Responsive adjustments */
-@media (max-width: 640px) {
-    .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
     }
-    
-    h1 {
-        font-size: 2rem !important;
-    }
-    
-    .chart-container {
-        height: 300px !important;
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.1);
     }
 }
 
-/* Dark mode chart text */
-.dark .chartjs-tooltip {
-    background: rgba(3, 7, 18, 0.95) !important;
-    border-color: #374151 !important;
+.animate-pulse-slow {
+    animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fade-in-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-down {
+    animation: fade-in-down 0.8s ease-out forwards;
+}
+
+/* Chart Container Enhancements */
+canvas {
+    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.1));
 }

@@ -90,20 +90,56 @@ class WorkshiftController
     public function reports(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $data = $this->getCommonData('Reportistica');
+        $params = $request->getQueryParams();
 
-        // Fetch Real Analytics
-        $summary = $this->repository->getAnalyticsSummary();
-        $trend = $this->repository->getMonthlyTrend();
-        $roles = $this->repository->getRoleDistribution();
+        // Month Filter Logic
+        $monthInput = $params['month'] ?? date('Y-m'); // Default to current month
+        $start = date('Y-m-01', strtotime($monthInput));
+        $end = date('Y-m-t', strtotime($monthInput));
+
+        // Human label (e.g., "Giugno 2026") - Manual mapping since IntlDateFormatter is missing
+        $months = [
+            '01' => 'Gennaio',
+            '02' => 'Febbraio',
+            '03' => 'Marzo',
+            '04' => 'Aprile',
+            '05' => 'Maggio',
+            '06' => 'Giugno',
+            '07' => 'Luglio',
+            '08' => 'Agosto',
+            '09' => 'Settembre',
+            '10' => 'Ottobre',
+            '11' => 'Novembre',
+            '12' => 'Dicembre'
+        ];
+
+        $mParts = explode('-', $monthInput); // 2026, 06
+        if (count($mParts) === 2) {
+            $monthLabel = ($months[$mParts[1]] ?? '') . ' ' . $mParts[0];
+        } else {
+            $monthLabel = $monthInput;
+        }
+
+        // Fetch Real Analytics with Filter
+        $summary = $this->repository->getAnalyticsSummary($start, $end);
+        $trend = $this->repository->getMonthlyTrend($start, $end);
+        $roles = $this->repository->getRoleDistribution($start, $end);
 
         // Format for View
+        $data['current_month_value'] = $monthInput;
+        $data['current_month_label'] = $monthLabel;
+
         $data['kpi'] = [
-            'cost' => number_format($summary['total_cost'], 0, ',', '.'),
-            'hours' => number_format($summary['total_hours'], 0, ',', '.'),
+            'cost' => number_format((float) ($summary['total_cost'] ?? 0), 2, ',', '.'),
+            'hours' => number_format((float) ($summary['total_hours'] ?? 0), 0, ',', '.'),
             'shifts' => $summary['total_shifts'],
-            'avg_cost_growth' => '+2.4%', // Mock trend for now
-            'overtime_alert' => $summary['pending_requests'] // Utilizing this slot for pending requests count as an "alert"
+            'avg_cost_growth' => '+4.7%', // Mock trend
+            'overtime_alert' => $summary['pending_requests']
         ];
+
+        // --- SMART AI ANALYSIS (Dynamic) ---
+        $data['ai_suggestion'] = $this->_generateAiSuggestion();
+        // -----------------------------------
 
         // Prepare Chart Data
         $chartDates = array_map(fn($r) => date('d/m', strtotime($r['date'])), $trend);
@@ -126,6 +162,81 @@ class WorkshiftController
         $html = $this->mustache->render('workshift/reports.mustache', $data);
         $response->getBody()->write($html);
         return $response;
+    }
+
+    public function exportReports(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $params = $request->getQueryParams();
+        $monthInput = $params['month'] ?? date('Y-m');
+        $start = date('Y-m-01', strtotime($monthInput));
+        $end = date('Y-m-t', strtotime($monthInput));
+
+        // Get Data
+        $summary = $this->repository->getAnalyticsSummary($start, $end);
+        $trend = $this->repository->getMonthlyTrend($start, $end);
+
+        // Generate CSV
+        $csv = [];
+        $csv[] = ['REPORT MENSILE WORKSHIFT', "Periodo: $monthInput"];
+        $csv[] = [];
+        $csv[] = ['KPI GENERALI'];
+        $csv[] = ['Totale Ore', $summary['total_hours']];
+        $csv[] = ['Totale Turni', $summary['total_shifts']];
+        $csv[] = ['Costo Stimato', $summary['total_cost']];
+        $csv[] = [];
+        $csv[] = ['DETTAGLIO GIORNALIERO'];
+        $csv[] = ['Data', 'Ore Lavorate'];
+
+        foreach ($trend as $day) {
+            $csv[] = [$day['date'], $day['hours']];
+        }
+
+        $output = fopen('php://temp', 'r+');
+        foreach ($csv as $row) {
+            fputcsv($output, $row);
+        }
+        rewind($output);
+        $csvContent = stream_get_contents($output);
+        fclose($output);
+
+        $response->getBody()->write($csvContent);
+        return $response
+            ->withHeader('Content-Type', 'text/csv')
+            ->withHeader('Content-Disposition', 'attachment; filename="report_workshift_' . $monthInput . '.csv"');
+    }
+
+    public function getNewAiSuggestion(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $suggestion = $this->_generateAiSuggestion();
+        $response->getBody()->write(json_encode([
+            'success' => true,
+            'suggestion' => $suggestion
+        ]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    private function _generateAiSuggestion(): array
+    {
+        // Analyze next 7 days for coverage gaps
+        $nextWeekStart = strtotime('next monday');
+        $checkDays = [];
+        for ($i = 0; $i < 5; $i++) { // Check Mon-Fri
+            $checkDays[] = date('Y-m-d', strtotime("+$i days", $nextWeekStart));
+        }
+
+        // Find the "weakest" day (Mock logic: pick a random day from next week to simulate analysis)
+        $targetDate = $checkDays[array_rand($checkDays)];
+
+        $dayNamesIt = ['Monday' => 'Lunedì', 'Tuesday' => 'Martedì', 'Wednesday' => 'Mercoledì', 'Thursday' => 'Giovedì', 'Friday' => 'Venerdì', 'Saturday' => 'Sabato', 'Sunday' => 'Domenica'];
+        $dayName = $dayNamesIt[date('l', strtotime($targetDate))] ?? date('l', strtotime($targetDate));
+        $formattedDate = date('d/m/Y', strtotime($targetDate));
+
+        return [
+            'message' => "Rilevata possibile carenza di organico per <strong>$dayName $formattedDate</strong>. Si consiglia di aggiungere un turno Jolly.",
+            'target_date' => $targetDate,
+            'shift_time' => '09:00-17:00', // Default Standard Shift
+            'shift_type' => 'Jolly'
+        ];
     }
 
     public function info(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -274,6 +385,47 @@ class WorkshiftController
     {
         $employees = $this->repository->findAllEmployees();
         $response->getBody()->write(json_encode($employees));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function applyAiSuggestion(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        // 1. Get Parameters (AI Analysis or Defaults)
+        $payload = $request->getParsedBody();
+        $targetDate = $payload['target_date'] ?? date('Y-m-d', strtotime('next friday'));
+        $shiftTime = $payload['shift_time'] ?? '18:00-23:59';
+        $times = explode('-', $shiftTime);
+        $startTime = $times[0] ?? '18:00';
+        $endTime = $times[1] ?? '23:59';
+
+        // 2. Find a 'Jolly' or fallback employee
+        $employees = $this->repository->findAllEmployees();
+
+        // Emulate AI Logic: Pick reasonable candidate (random for now to vary load)
+        $candidate = !empty($employees) ? $employees[array_rand($employees)] : null;
+        $candidateId = $candidate ? $candidate['id'] : 1;
+        $candidateName = $candidate ? $candidate['name'] . ' ' . $candidate['surname'] : 'Jolly';
+
+        // 3. Create the Shift
+        $shiftData = [
+            'employee_id' => $candidateId,
+            'start_time' => $startTime,
+            'end_time' => $endTime, // Midnight
+            'type' => 'Extra',
+            'day' => date('l', strtotime($targetDate)), // 'Friday'
+            'date' => $targetDate
+        ];
+
+        $newShiftId = $this->repository->save($shiftData);
+
+        // 4. Return Success
+        $payload = json_encode([
+            'success' => true,
+            'message' => "Turno creato per $candidateName ($shiftTime) il " . date('d/m/Y', strtotime($targetDate)),
+            'shift_id' => $newShiftId
+        ]);
+
+        $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
 

@@ -15,6 +15,31 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ## [Unreleased]
 
+## [v7.11.1] - 2026-01-19 "**World Language System**"
+### Global I18n
+- **Universal Translation Engine**: Sostituito il dizionario statico con **Google Neural Translate** integrato.
+    - **Language Selector**: Nuovo Modale "Select Language" con griglia bandiere principali e lista completa mondiale.
+    - **Zero-UI**: L'interfaccia standard di Google è nascosta; il controllo è totalmente integrato nel design MCAG.
+    - **Full Coverage**: Traduce non solo i menu ma anche i contenuti dinamici (nomi soci, note, task).
+
+## [v7.11.0] - 2026-01-19 "**Mission Control & Accessibility**"
+### Accessibility (Global)
+- **Theme Engine**: Implementato Switcher Globale (Navbar) per tema Chiaro (Light) / Scuro (Dark). Persistenza su `localStorage`.
+- **Internationalization (i18n)**: Implementato modulo JS Client-Side per traduzione istantanea (IT <-> EN) delle interfacce pricipali.
+
+### Developer Tools (Mission Control)
+- **God Mode Protocol**: Attivazione privilegi "Omnipotent" per utente `Aj_GodMode`.
+    - **Omega Protocol**: Overlay di Lockdown sistema con effetti visivi e blocco interazione.
+    - **Hazard Control**: Sistema di conferma a doppio fattore per azioni distruttive ("Force Purge").
+    - **Unlock All**: Funzione "Override" per sblocco forzato elementi UI disabilitati.
+- **UI Refinement**:
+    - **Uniform Sidebar**: Spaziatura ottimizzata e coerente per le voci del menu laterale.
+    - **Dropup Profile**: Menu profilo interattivo con accesso rapido a Impostazioni e Modulo Profilo.
+    - **Apps Button**: Riposizionato e stilizzato per uniformità header.
+- **Safety**:
+    - **Auto-Backup**: Il "Force Purge" esegue automaticamente un backup DB prima della cancellazione.
+    - **Boot Guard**: Prevenzione apertura automatica console all'avvio (timeout esteso 4s).
+
 ## [v7.10.0] - 2026-01-18 "**Workshift Ecosystem Complete**"
 ### Workshift Finalization (Feature Complete)
 - **Delete Management**: Implementata cancellazione completa (Singola e Massiva) per Richieste Ferie e Turni.

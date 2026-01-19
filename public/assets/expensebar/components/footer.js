@@ -6,7 +6,7 @@ class ExpenseFooter extends HTMLElement {
 
     render() {
         const year = new Date().getFullYear();
-        
+
         this.shadowRoot.innerHTML = `
             <style>
                 :host {
@@ -109,15 +109,15 @@ class ExpenseFooter extends HTMLElement {
                             © ${year} ExpenseBar Dashboard. Built with Chart.js & TailwindCSS.
                         </div>
                         <div class="footer-links">
-                            <a href="#" class="footer-link">
+                            <a href="${window.MCAG_BASE_URL || ''}/api/docs" class="footer-link">
                                 <i data-feather="file-text" class="w-4 h-4"></i>
-                                Documentation
+                                API Docs
                             </a>
-                            <a href="#" class="footer-link">
-                                <i data-feather="github" class="w-4 h-4"></i>
-                                GitHub
+                            <a href="${window.MCAG_BASE_URL || ''}/taskflow" class="footer-link">
+                                <i data-feather="check-square" class="w-4 h-4"></i>
+                                Taskflow
                             </a>
-                            <button class="export-btn" onclick="exportData()">
+                            <button class="export-btn" onclick="alert('Export not configured in this demo.')">
                                 <i data-feather="download" class="w-4 h-4"></i>
                                 Export Data
                             </button>

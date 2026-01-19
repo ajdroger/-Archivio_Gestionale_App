@@ -29,9 +29,9 @@ class TaskflowController
         }
     }
 
-    private function getCommonData(string $title): array
+    private function getCommonData(string $title, ?ServerRequestInterface $request = null): array
     {
-        return [
+        $data = [
             'base_url' => $this->baseUrl,
             'title' => $title,
             'user' => $_SESSION['user'] ?? null,
@@ -45,11 +45,31 @@ class TaskflowController
                 $this->baseUrl . '/assets/taskflow/style.css'
             ]
         ];
+
+        if ($request) {
+            $nameKey = 'csrf_name';
+            $valueKey = 'csrf_value';
+            $name = $request->getAttribute($nameKey);
+            $value = $request->getAttribute($valueKey);
+
+            if ($name && $value) {
+                $data['csrf'] = [
+                    'keys' => [
+                        'name' => $nameKey,
+                        'value' => $valueKey
+                    ],
+                    'name' => $name,
+                    'value' => $value
+                ];
+            }
+        }
+
+        return $data;
     }
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $data = $this->getCommonData('Taskflow Pro');
+        $data = $this->getCommonData('Taskflow Pro', $request);
         // Initial tasks data can be passed to view if needed, but usually fetched via API
         $html = $this->mustache->render('taskflow/index.mustache', $data);
         $response->getBody()->write($html);
@@ -58,7 +78,7 @@ class TaskflowController
 
     public function about(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('taskflow/about.mustache', $this->getCommonData('About Taskflow'));
+        $html = $this->mustache->render('taskflow/about.mustache', $this->getCommonData('About Taskflow', $request));
         $response->getBody()->write($html);
         return $response;
     }

@@ -218,3 +218,83 @@
 .text-xs {
   font-size: 0.75rem;
 }
+
+/* --- THEME ENGINE --- */
+
+/* Cyberpunk Neon Theme */
+[data-theme="cyber"] {
+  --bs-body-bg: #050510 !important;
+  --bs-body-color: #00ff9d !important;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+[data-theme="cyber"] .bg-black {
+  background-color: #0a0a1f !important;
+}
+
+[data-theme="cyber"] .border-secondary {
+  border-color: #00ff9d !important;
+  opacity: 0.5;
+}
+
+[data-theme="cyber"] .text-white {
+  color: #e0f7fa !important;
+  text-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
+}
+
+[data-theme="cyber"] .btn-outline-light {
+  color: #00ff9d;
+  border-color: #00ff9d;
+  box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+}
+
+[data-theme="cyber"] .btn-outline-light:hover {
+  background-color: #00ff9d;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.6);
+}
+
+[data-theme="cyber"] .nav-link.active {
+  background: linear-gradient(90deg, #ff00ff, #00ffff) !important;
+  color: #000 !important;
+  border: none !important;
+}
+
+/* Light Theme (Clean) */
+[data-theme="light"] {
+  --bs-body-bg: #f8f9fa !important;
+  --bs-body-color: #212529 !important;
+}
+
+[data-theme="light"] .bg-black {
+  background-color: #ffffff !important;
+  color: #000 !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+[data-theme="light"] .text-white {
+  color: #212529 !important;
+}
+
+[data-theme="light"] .text-muted {
+  color: #6c757d !important;
+}
+
+[data-theme="light"] .nav-link {
+  color: #495057 !important;
+}
+
+[data-theme="light"] .nav-link.active {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+}
+
+[data-theme="light"] .btn-outline-light {
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+[data-theme="light"] .btn-outline-light:hover {
+  background-color: #0d6efd;
+  color: #fff;
+}

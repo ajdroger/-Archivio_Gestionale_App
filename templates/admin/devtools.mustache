@@ -34,7 +34,7 @@
 <!-- STILI PERSONALIZZATI & LOGICA CORE -->
 <!-- STILI PERSONALIZZATI & LOGICA CORE -->
 <link rel="stylesheet" href="{{base_url}}/css/components/devtools.css">
-<script src="{{base_url}}/js/components/devtools.js?v=3.2.4"></script>
+<script src="{{base_url}}/js/components/devtools.js?v=3.2.16"></script>
 
 <!-- CONFIGURAZIONE GLOBALE: Token CSRF per sicurezza chiamate AJAX -->
 <script>
@@ -74,7 +74,7 @@
     <div class="d-flex flex-column p-3 text-white bg-dark border-end border-secondary position-sticky top-0 vh-100 shadow-lg" style="width: 280px; z-index: 1000; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);">
         
         <!-- Intestazione Sidebar -->
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none p-2">
+        <a href="{{base_url}}/devtools" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none p-2" title="Ricarica Mission Control">
             <div class="rounded-3 bg-primary bg-opacity-25 p-2 me-3 shadow-sm border border-primary border-opacity-50">
                 <i class="fa-solid fa-layer-group text-primary fs-4"></i>
             </div>
@@ -87,7 +87,7 @@
         <hr class="border-secondary opacity-50 my-4">
         
         <!-- Elementi di Navigazione (Anchor Links) -->
-        <ul class="nav nav-pills flex-column mb-auto gap-2" id="devtools-nav" role="tablist">
+        <ul class="nav nav-pills flex-column mb-auto gap-3" id="devtools-nav" role="tablist">
             <!-- Dashboard -->
             <li class="nav-item" role="presentation">
                 <a href="#" class="nav-link text-white d-flex align-items-center px-3 py-2 rounded transition-base hover-bg-light-10 active" 
@@ -156,14 +156,31 @@
         
         <!-- User Profile -->
         <div class="mt-auto">
-            <div class="d-flex align-items-center gap-3 p-2 rounded hover-bg-light-5">
-                <div class="rounded-circle bg-gradient-primary d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #a855f7);">
-                    {{user_initial}}
+            <!-- User Profile (Dropup Menu) -->
+            <div class="dropup">
+                <div class="d-flex align-items-center gap-3 p-2 rounded hover-bg-light-5 cursor-pointer dropdown-toggle no-caret" data-bs-toggle="dropdown" aria-expanded="false" id="user-profile-trigger">
+                    <div class="rounded-circle bg-gradient-primary d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #a855f7);" id="user-avatar-circle">
+                        {{user_initial}}
+                    </div>
+                    <div class="overflow-hidden">
+                         <div class="small fw-bold text-white text-truncate" id="user-profile-name">{{username}}</div>
+                         <div class="x-small text-success d-flex align-items-center gap-1" id="user-status-text"><i class="fa-solid fa-circle" style="font-size: 6px;"></i> Online</div>
+                    </div>
                 </div>
-                <div class="overflow-hidden">
-                     <div class="small fw-bold text-white text-truncate">{{username}}</div>
-                     <div class="x-small text-success d-flex align-items-center gap-1"><i class="fa-solid fa-circle" style="font-size: 6px;"></i> Online</div>
-                </div>
+                <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-secondary border-opacity-50 p-2 mb-2 w-100" style="min-width: 200px;">
+                    <li><h6 class="dropdown-header text-uppercase text-muted x-small">Utente</h6></li>
+                    <li><a class="dropdown-item rounded small" href="#" data-bs-toggle="modal" data-bs-target="#modal-user-profile"><i class="fa-solid fa-user-circle me-2"></i>Profilo</a></li>
+                    <li><a class="dropdown-item rounded small" href="#" data-bs-toggle="modal" data-bs-target="#modal-app-settings"><i class="fa-solid fa-cog me-2"></i>Impostazioni</a></li>
+                    
+                    <!-- GOD MODE MENU (Hidden by default, enabled via JS for Aj_GodMode) -->
+                    <div id="god-mode-menu" style="display: none;">
+                        <li><hr class="dropdown-divider border-secondary opacity-50 my-2"></li>
+                        <li><h6 class="dropdown-header text-warning fw-bold uppercase-tracking text-center"><i class="fa-solid fa-bolt me-2"></i>GOD MODE</h6></li>
+                        <li><a class="dropdown-item rounded small text-warning fw-bold hover-bg-warning-10" href="#" onclick="window.activateGodMode()"><i class="fa-solid fa-dragon me-2"></i>Protocollo Omega</a></li>
+                        <li><a class="dropdown-item rounded small text-danger fw-bold hover-bg-danger-10" href="#" onclick="window.requestForcePurge()"><i class="fa-solid fa-radiation me-2"></i>Force Purge</a></li>
+                        <li><a class="dropdown-item rounded small text-info fw-bold hover-bg-info-10" href="#" onclick="window.unlockAllInputs()"><i class="fa-solid fa-key me-2"></i>Unlock All</a></li>
+                    </div>
+                </ul>
             </div>
             <a href="{{base_url}}/" class="btn btn-outline-light btn-sm w-100 mt-3 d-flex align-items-center justify-content-center gap-2 opacity-75 hover-opacity-100">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>Exit Support
@@ -182,8 +199,10 @@
         
         <!-- Top Bar Appiccicosa (Sticky) -->
         <header class="py-3 px-4 border-bottom border-secondary d-flex justify-content-between align-items-center" style="background-color: #0a0a0a;">
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center gap-3">
                 <h4 class="mb-0 text-white fw-bold tracking-tight" id="page-title">SISTEMA DI CONTROLLO v4.04</h4>
+                
+
             </div>
             <div class="d-flex gap-2">
                  <!-- Quick Links -->
@@ -215,6 +234,43 @@
                         <li><h6 class="dropdown-header text-secondary fw-bold uppercase-tracking"><i class="fa-solid fa-lock me-2"></i>LOCKDOWN</h6></li>
                         <li><a class="dropdown-item text-secondary hover-text-white" href="#"><i class="fa-solid fa-key me-2"></i>System Lock</a></li>
                     </ul>
+                 </div>
+
+                 <!-- APPS Dropdown -->
+                 <div class="dropdown">
+                     <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center px-3 py-2 fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                         <i class="fa-solid fa-cubes me-2"></i>APPS
+                     </button>
+                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg border-secondary border-opacity-50 mt-2">
+                         <li><h6 class="dropdown-header text-uppercase text-muted x-small">Productivity Suite</h6></li>
+                         <li>
+                             <a class="dropdown-item d-flex align-items-center py-2" href="{{base_url}}/workshift/dashboard">
+                                 <span class="rounded bg-primary bg-opacity-20 text-primary p-1 me-2"><i class="fa-solid fa-calendar-days"></i></span>
+                                 <div>
+                                     <div class="fw-bold">Workshift</div>
+                                     <div class="x-small text-muted">Gestione Turni & Ferie</div>
+                                 </div>
+                             </a>
+                         </li>
+                         <li>
+                             <a class="dropdown-item d-flex align-items-center py-2" href="{{base_url}}/taskflow">
+                                 <span class="rounded bg-success bg-opacity-20 text-success p-1 me-2"><i class="fa-solid fa-list-check"></i></span>
+                                 <div>
+                                     <div class="fw-bold">Taskflow</div>
+                                     <div class="x-small text-muted">Project Management</div>
+                                 </div>
+                             </a>
+                         </li>
+                         <li>
+                             <a class="dropdown-item d-flex align-items-center py-2" href="{{base_url}}/expensebar">
+                                 <span class="rounded bg-warning bg-opacity-20 text-warning p-1 me-2"><i class="fa-solid fa-money-bill-wave"></i></span>
+                                 <div>
+                                     <div class="fw-bold">Expensebar</div>
+                                     <div class="x-small text-muted">Finanza & Budget</div>
+                                 </div>
+                             </a>
+                         </li>
+                     </ul>
                  </div>
 
                  <div class="vr bg-secondary opacity-50 mx-2"></div>
@@ -1367,6 +1423,179 @@
     </div>
 </div>
 
+<!-- MODAL: USER PROFILE -->
+<div class="modal fade" id="modal-user-profile" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-black border border-secondary border-opacity-50 shadow-2xl">
+            <div class="modal-header border-bottom border-secondary border-opacity-25">
+                <h5 class="modal-title bg-gradient-primary bg-clip-text text-transparent fw-bold track-wide">
+                    <i class="fa-solid fa-id-card me-2 text-white"></i>OPERATOR PROFILE
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded-circle bg-gradient-primary d-flex align-items-center justify-content-center text-white display-4 fw-bold shadow-lg me-4" style="width: 80px; height: 80px; background: linear-gradient(135deg, #6366f1, #a855f7);">
+                        {{user_initial}}
+                    </div>
+                    <div>
+                        <h3 class="mb-0 text-white fw-bold">{{username}}</h3>
+                        <div class="text-success small uppercase-tracking"><i class="fa-solid fa-circle me-1"></i> Active Session</div>
+                        <div class="text-muted small mt-1">ID: #{{user_id}} | Region: EU-West</div>
+                    </div>
+                </div>
+                <div class="bg-dark bg-opacity-50 p-3 rounded border border-secondary border-opacity-25">
+                    <div class="d-flex justify-content-between mb-2 border-bottom border-secondary border-opacity-25 pb-2">
+                        <span class="text-secondary small">Role Clearance</span>
+                        <span class="text-info fw-bold font-monospace">{{user_role}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 border-bottom border-secondary border-opacity-25 pb-2">
+                        <span class="text-secondary small">Last Login</span>
+                        <span class="text-white font-monospace small">Today, 08:42:15</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-secondary small">Security 2FA</span>
+                        <span class="text-success fw-bold small"><i class="fa-solid fa-check-circle"></i> ENABLED</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary border-opacity-25">
+                <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: APP SETTINGS -->
+<div class="modal fade" id="modal-app-settings" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-black border border-secondary border-opacity-50 shadow-2xl">
+            <div class="modal-header border-bottom border-secondary border-opacity-25">
+                <h5 class="modal-title text-white fw-bold track-wide">
+                    <i class="fa-solid fa-sliders me-2 text-secondary"></i>SYSTEM PREFERENCES
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label text-secondary small fw-bold">Theme</label>
+                    <select class="form-select bg-dark text-white border-secondary border-opacity-50" id="theme-selector">
+                        <option value="dark" selected>Midnight Black (Default)</option>
+                        <option value="cyber">Cyberpunk Neon</option>
+                        <option value="light">Light Mode (Clean)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="setting-sound" checked>
+                        <label class="form-check-label text-white" for="setting-sound">Sound Effects</label>
+                    </div>
+                    <small class="text-muted">Enable UI feedback sounds (click, success, error).</small>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="setting-notify" checked>
+                        <label class="form-check-label text-white" for="setting-notify">Desktop Notifications</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary border-opacity-25">
+                <button type="button" class="btn btn-primary w-100 fw-bold" data-bs-dismiss="modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OVERLAY: OMEGA PROTOCOL (GOD MODE) -->
+<div id="omega-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-black d-none flex-column align-items-center justify-content-center" style="z-index: 10000;">
+    <div class="text-danger display-1 mb-4 pulsate"><i class="fa-solid fa-biohazard"></i></div>
+    <h1 class="text-danger fw-bold tracking-widest display-3 glitch-text">OMEGA PROTOCOL</h1>
+    <p class="text-white font-monospace mt-3 fs-4">SYSTEM LEVEL LOCKDOWN INITIATED</p>
+    <div class="progress w-50 mt-4 bg-dark border border-danger border-opacity-50" style="height: 4px;">
+        <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+    </div>
+    <p class="text-danger small font-monospace mt-2" id="omega-status">Purging Cache... Rebuilding Kernels... Securing Perimeter...</p>
+    <div class="d-flex gap-3 mt-5">
+        <button class="btn btn-outline-danger px-4 py-2 fw-bold" onclick="window.location.reload()"><i class="fa-solid fa-power-off me-2"></i>SYSTEM REBOOT</button>
+        <button class="btn btn-danger px-4 py-2 fw-bold shadow-danger-glow" onclick="window.stopLockdown()"><i class="fa-solid fa-shield me-2"></i>ARRESTA LOCKDOWN</button>
+    </div>
+</div>
+
+<!-- MODAL: HAZARD CONFIRMATION -->
+<div class="modal fade" id="modal-hazard-confirm" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-black border border-danger shadow-danger-glow">
+            <div class="modal-header border-bottom border-danger border-opacity-50 bg-danger bg-opacity-10">
+                <h5 class="modal-title text-danger fw-bold tracking-widest">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>PROTOCOLLO DI SICUREZZA
+                </h5>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="display-1 text-danger mb-3 pulsate"><i class="fa-solid fa-radiation"></i></div>
+                <h4 class="text-white fw-bold mb-3">ATTENZIONE: AZIONE DISTRUTTIVA</h4>
+                <p class="text-secondary small font-monospace mb-4" id="hazard-msg">
+                    Stai per avviare una procedura irreversibile.<br>
+                    Il sistema potrebbe diventare instabile durante l'operazione.
+                </p>
+                <div class="alert alert-dark border-secondary text-start small mb-0">
+                    <div class="fw-bold text-white mb-1"><i class="fa-solid fa-list-check me-2 text-info"></i>SEQ. OPERATIVA AUTOMATICA:</div>
+                    <ul class="mb-0 ps-3 text-muted">
+                        <li>1. Backup Completo Database (Snapshot)</li>
+                        <li>2. Esecuzione Comando Distruttivo</li>
+                        <li>3. Verifica Integrità Sistema</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary border-opacity-25 justify-content-center gap-3">
+                <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">ANNULLA</button>
+                <button type="button" class="btn btn-danger px-4 fw-bold shadow-danger-glow" id="btn-confirm-hazard">
+                    <i class="fa-solid fa-skull me-2"></i>CONFERMA E PROCEDI
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Hash Navigation Handler -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const handleHash = (isInit = false) => {
+            const hash = window.location.hash;
+            if (!hash) return;
+
+            if (hash === '#terminal') {
+                // Ignore #terminal on page load (User Request: "NON SI DEVE APRIRE IN AUTOMATICO")
+                if (isInit) return;
+
+                if (typeof toggleTerminal === 'function') {
+                    toggleTerminal();
+                    // Scroll to terminal
+                    document.querySelector('.terminal-window')?.scrollIntoView({ behavior: 'smooth' });
+                }
+                return;
+            }
+
+            // Map hash to tab ID
+            // #db -> v-pills-db-tab
+            // #security -> v-pills-security-tab
+            // #editor -> v-pills-editor-tab
+            // #audit -> v-pills-audit-tab
+            const tabId = 'v-pills-' + hash.substring(1) + '-tab';
+            const tabTrigger = document.getElementById(tabId);
+            if (tabTrigger) {
+                const tab = new bootstrap.Tab(tabTrigger);
+                tab.show();
+            }
+        };
+
+        // Run on load (init = true)
+        handleHash(true);
+
+        // Run on hash change
+        window.addEventListener('hashchange', handleHash);
+    });
+</script>
 
 {{> layout_footer }}
 

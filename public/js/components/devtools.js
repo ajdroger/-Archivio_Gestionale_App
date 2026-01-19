@@ -9,6 +9,9 @@
 
 /* --- FUNZIONI DI UTILITÀ (Logging & API) --- */
 
+// Flag per impedire l'apertura automatica del terminale al caricamento pagina
+let isBooting = true;
+
 /**
  * Stampa un messaggio nella console (drawer) visuale.
  * @param {string} msg - Il messaggio da stampare.
@@ -34,8 +37,9 @@ const log = (msg, type = 'info') => {
     // Auto-scroll in basso
     term.scrollTop = term.scrollHeight;
 
-    // Auto-Open rules: Only on ERROR or WARNING.
-    if (type === 'error' || type === 'warning') {
+    // Auto-Open rules: DISABLED by user request. Terminal opens only on click.
+    // Auto-Open rules: Only on ERROR (and NOT during boot).
+    if (type === 'error' && !isBooting) {
         const drawer = document.getElementById('terminal-drawer');
         if (drawer && (drawer.style.display === 'none' || window.getComputedStyle(drawer).display === 'none')) {
             drawer.style.display = 'flex';
@@ -88,6 +92,9 @@ const api = async (endpoint, data = {}) => {
  * Legacy wrapper replaced by generic event, kept for compatibility if needed.
  */
 window.toggleTerminal = function () {
+    const t = document.getElementById('terminal-drawer');
+    if (!t) return;
+
     const currentDisplay = t.style.display || window.getComputedStyle(t).display;
 
     if (currentDisplay === 'none') {
@@ -99,6 +106,12 @@ window.toggleTerminal = function () {
 
 // Persistenza Tab attivo al refresh della pagina
 document.addEventListener('DOMContentLoaded', () => {
+    // Disable boot flag after 4 seconds (prevents auto-open on init logs)
+    setTimeout(() => {
+        isBooting = false;
+        console.log("DevTools: Boot phase complete. Auto-open enabled for errors.");
+    }, 4000);
+
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
     if (tab) {
@@ -461,6 +474,170 @@ document.addEventListener('DOMContentLoaded', () => {
                         termContent.innerHTML += `<div class="text-danger">Error: ${e.message}</div>`;
                     });
             }
+        });
+    }
+
+    // --- GOD MODE ACTIVATION PROTOCOL ---
+    const userNameEl = document.getElementById('user-profile-name');
+    if (userNameEl && userNameEl.innerText.trim() === 'Aj_GodMode') {
+        console.log(">>> GOD MODE DETECTED: Initializing Protocols...");
+
+        // 1. Unhide Menu
+        const godMenu = document.getElementById('god-mode-menu');
+        if (godMenu) godMenu.style.display = 'block';
+
+        // 2. Visual Enhancements (Golden Avatar)
+        const avatar = document.getElementById('user-avatar-circle');
+        if (avatar) {
+            avatar.style.background = 'linear-gradient(135deg, #FFD700, #DAA520)'; // Gold
+            avatar.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.6)';
+            avatar.classList.add('pulsate'); // Assuming CSS class exists or inline style
+        }
+
+        // 3. Status Text Update
+        const statusText = document.getElementById('user-status-text');
+        if (statusText) {
+            statusText.innerHTML = '<i class="fa-solid fa-bolt text-warning me-1"></i> OMNIPOTENT';
+            statusText.className = 'x-small text-warning fw-bold d-flex align-items-center gap-1 uppercase-tracking';
+        }
+    }
+
+    // God Mode Action: Omega Protocol (System Lockdown)
+    window.activateGodMode = () => {
+        log('>>> INITIATING OMEGA PROTOCOL...', 'danger');
+        const overlay = document.getElementById('omega-overlay');
+        if (overlay) {
+            overlay.classList.remove('d-none');
+            overlay.classList.add('d-flex');
+            // Play sound if possible or just log
+            console.log("SYSTEM LOCKDOWN ACTIVE");
+        }
+    };
+
+    // God Mode Action: Stop Lockdown
+    window.stopLockdown = () => {
+        log('>>> OMEGA PROTOCOL ABORTED BY USER.', 'success');
+        const overlay = document.getElementById('omega-overlay');
+        if (overlay) {
+            overlay.classList.remove('d-flex');
+            overlay.classList.add('d-none');
+        }
+    };
+
+    // God Mode Action: Unlock All (Client-Side Override)
+    window.unlockAllInputs = () => {
+        log('>>> EXECUTING GLOBAL UNLOCK...', 'warning');
+        const disabledEls = document.querySelectorAll('[disabled], .disabled');
+        let count = 0;
+        disabledEls.forEach(el => {
+            el.removeAttribute('disabled');
+            el.classList.remove('disabled');
+            el.style.border = '1px solid #0f0'; // Visual cue
+            el.style.boxShadow = '0 0 5px #0f0';
+            count++;
+        });
+
+        if (count > 0) {
+            log(`SUCCESS: ${count} elements forcefully unlocked.`, 'success');
+        } else {
+            log('No locked elements found in current DOM.', 'info');
+        }
+    };
+    // --- HAZARD CONTROL SYSTEM ---
+    let pendingHazardAction = null;
+
+    /**
+     * Richiede conferma per azioni pericolose e gestisce la sequenza di sicurezza.
+     * @param {string} msg Messaggio di avviso personalizzato
+     * @param {function} actionCallback Funzione da eseguire dopo il backup
+     */
+    window.confirmHazardousAction = (msg, actionCallback) => {
+        const modalEl = document.getElementById('modal-hazard-confirm');
+        const msgEl = document.getElementById('hazard-msg');
+        const btn = document.getElementById('btn-confirm-hazard');
+
+        if (!modalEl) return;
+
+        if (msg) msgEl.innerHTML = msg;
+        pendingHazardAction = actionCallback;
+
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+
+        // One-time event listener for confirm
+        btn.onclick = () => {
+            modal.hide();
+            // Start Safety Sequence
+            executeSafetySequence(pendingHazardAction);
+        };
+    };
+
+    /**
+     * Esegue : Backup -> Azione -> Verifica
+     */
+    const executeSafetySequence = (finalAction) => {
+        log('>>> INITIATING SAFETY PROTOCOL...', 'warning');
+        log('1. STARTING DATABASE SNAPSHOT...', 'info');
+
+        // Step 1: Backup
+        // Using 'run' endpoint to execute backup.php
+        api('/devtools/run', { script: 'bin/maintenance/backup.php' })
+            .then(res => {
+                if (res.success || (res.output && res.output.includes('Success'))) {
+                    log('>>> BACKUP COMPLETED SUCCESSFULLY.', 'success');
+                    log('2. EXECUTING TARGET MANEUVER...', 'danger');
+
+                    // Step 2: Critical Action
+                    if (typeof finalAction === 'function') {
+                        finalAction();
+                    }
+                } else {
+                    log('!!! BACKUP FAILED. ABORTING OPERATION.', 'error');
+                    log('Error details: ' + (res.output || 'Unknown error'), 'error');
+                }
+            })
+            .catch(err => {
+                log('!!! CRITICAL ERROR DURING BACKUP SEQUENCE.', 'error');
+                console.error(err);
+            });
+    };
+
+    // Wrapper for Force Purge
+    window.requestForcePurge = () => {
+        window.confirmHazardousAction(
+            "Sei sicuro di voler effettuare il FORCE PURGE?<br>Questa operazione eliminerà definitivamente tutta la cache di sistema.",
+            () => {
+                window.runQuickScript('bin/maintenance/clear_cache.php');
+            }
+        );
+    };
+
+    // --- THEME ENGINE ---
+    const themeSelector = document.getElementById('theme-selector');
+
+    // 1. Load Saved Theme
+    const savedTheme = localStorage.getItem('devtools_theme') || 'dark';
+    if (savedTheme !== 'dark') {
+        document.body.setAttribute('data-theme', savedTheme);
+    }
+    if (themeSelector) {
+        themeSelector.value = savedTheme;
+    }
+
+    // 2. Handle Change
+    if (themeSelector) {
+        themeSelector.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            // Apply Theme
+            if (theme === 'dark') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                document.body.setAttribute('data-theme', theme);
+            }
+            // Save Preference
+            localStorage.setItem('devtools_theme', theme);
+
+            log(`Theme changed to: ${theme.toUpperCase()}`, 'info');
         });
     }
 });

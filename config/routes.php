@@ -125,6 +125,9 @@ return function (App $app) {
     $app->delete('/workshift/api/shifts/{id}', \MCAG\Controller\External\WorkshiftController::class . ':deleteShift');
     $app->post('/workshift/api/shifts/reset', \MCAG\Controller\External\WorkshiftController::class . ':resetShifts');
     $app->post('/workshift/api/optimize', \MCAG\Controller\External\WorkshiftController::class . ':optimizeSchedule');
+    $app->post('/workshift/api/apply-suggestion', \MCAG\Controller\External\WorkshiftController::class . ':applyAiSuggestion'); // [NEW] AI Action
+    $app->get('/workshift/api/reports/export', \MCAG\Controller\External\WorkshiftController::class . ':exportReports'); // [NEW] Export Action
+    $app->get('/workshift/api/ai-suggestion', \MCAG\Controller\External\WorkshiftController::class . ':getNewAiSuggestion'); // [NEW] Refresh AI
 
     // Team API
     $app->get('/workshift/api/employees', \MCAG\Controller\External\WorkshiftController::class . ':getEmployees');
@@ -159,6 +162,29 @@ return function (App $app) {
     // API Documentation
     $app->get('/api/docs', \MCAG\Controller\Docs\DocumentationController::class . ':ui')->setName('api_docs');
     $app->get('/api/docs/json', \MCAG\Controller\Docs\DocumentationController::class . ':spec')->setName('api_docs_json');
+
+    // --- Taskflow Routes ---
+    $app->group('/taskflow', function (\Slim\Routing\RouteCollectorProxy $group) {
+        $group->get('', \MCAG\Controller\External\TaskflowController::class . ':index')->setName('taskflow_home');
+        $group->get('/about', \MCAG\Controller\External\TaskflowController::class . ':about')->setName('taskflow_about');
+
+        // API
+        $group->get('/api/tasks', \MCAG\Controller\External\TaskflowController::class . ':getTasks');
+        $group->post('/api/tasks', \MCAG\Controller\External\TaskflowController::class . ':addTask');  // Changed from /api/tasks/add
+        $group->put('/api/tasks', \MCAG\Controller\External\TaskflowController::class . ':updateTask'); // Changed from POST /api/tasks/update
+        $group->delete('/api/tasks', \MCAG\Controller\External\TaskflowController::class . ':deleteTask'); // Changed from standard POST to DELETE logic handling
+    });
+
+    // --- Expensebar Routes ---
+    $app->group('/expensebar', function (\Slim\Routing\RouteCollectorProxy $group) {
+        $group->get('', \MCAG\Controller\External\ExpensebarController::class . ':index')->setName('expensebar_home');
+        $group->get('/analytics', \MCAG\Controller\External\ExpensebarController::class . ':analytics')->setName('expensebar_analytics');
+
+        // API
+        $group->get('/api/expenses', \MCAG\Controller\External\ExpensebarController::class . ':getExpenses');
+        $group->post('/api/expenses/add', \MCAG\Controller\External\ExpensebarController::class . ':addExpense');
+        $group->get('/api/forecast', \MCAG\Controller\External\ExpensebarController::class . ':getForecast');
+    });
 
     // Admin & DevTools
     $app->group('', function ($group) {

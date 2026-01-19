@@ -17,7 +17,13 @@
         window.MCAG_BASE_URL = "{{base_url}}";
         window.MCAG_USER = "{{username}}";
         window.MCAG_API_URL = "{{base_url}}/taskflow/api";
+        window.MCAG_CSRF_NAME = "{{csrf.keys.name}}";
+        window.MCAG_CSRF_VALUE = "{{csrf.keys.value}}";
     </script>
+    {{#csrf}}
+    <meta name="csrf-name" content="{{name}}">
+    <meta name="csrf-value" content="{{value}}">
+    {{/csrf}}
 </head>
 <body class="animated-gradient min-h-screen flex flex-col">
     <div id="particles-js" class="fixed inset-0 z-0"></div>
@@ -51,6 +57,25 @@
                         <i data-feather="terminal" class="w-4 h-4"></i> DevTools
                     </a>
                     
+                    <!-- Apps Dropdown -->
+                    <div class="relative group z-50">
+                        <button class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all text-sm font-medium">
+                            <i data-feather="layers" class="w-4 h-4"></i> Apps
+                        </button>
+                        <!-- Transparent Bridge (pt-2) ensures mouse stays in hover state -->
+                        <div class="absolute right-0 top-full pt-2 w-56 hidden group-hover:block z-[100]">
+                            <div class="bg-gray-900 rounded-xl shadow-2xl py-2 border border-gray-600 ring-1 ring-black ring-opacity-5 relative">
+                                <!-- Little triangle/arrow (optional cosmetic) -->
+                                <div class="absolute -top-1.5 right-4 w-3 h-3 bg-gray-600 rotate-45 border-l border-t border-gray-600"></div>
+                                <div class="absolute -top-1.5 right-4 w-3 h-3 bg-gray-900 rotate-45 translate-y-[1px]"></div>
+                                
+                                <a href="{{base_url}}/workshift" class="block px-4 py-3 text-sm text-gray-200 hover:bg-gray-800 hover:text-white transition-colors border-b border-gray-800 first:rounded-t-xl"><i data-feather="calendar" class="inline w-4 h-4 mr-2 text-amber-400"></i> Workshift</a>
+                                <a href="{{base_url}}/taskflow" class="block px-4 py-3 text-sm text-gray-200 hover:bg-gray-800 hover:text-white transition-colors border-b border-gray-800"><i data-feather="check-square" class="inline w-4 h-4 mr-2 text-cyan-400"></i> Taskflow</a>
+                                <a href="{{base_url}}/expensebar" class="block px-4 py-3 text-sm text-gray-200 hover:bg-gray-800 hover:text-white transition-colors last:rounded-b-xl"><i data-feather="bar-chart-2" class="inline w-4 h-4 mr-2 text-emerald-400"></i> ExpenseBar</a>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="h-6 w-px bg-gray-700 mx-2"></div>
                     
                     <!-- App Specific Links -->
@@ -161,15 +186,13 @@
                 </div>
             </div>
         </main>
-        <confirm-modal></confirm-modal>
+    <div class="relative z-50">
+        {{> taskflow/footer}}
     </div>
-    
-    {{> taskflow/footer}}
 
     <!-- Web Components -->
     <script src="{{base_url}}/assets/taskflow/components/navbar.js"></script>
     <script src="{{base_url}}/assets/taskflow/components/stats-card.js"></script>
-    <script src="{{base_url}}/assets/taskflow/components/confirm-modal.js"></script>
     
     <!-- Particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -190,5 +213,49 @@
             });
         });
     </script>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <!-- Custom Delete Confirmation Modal (v2: Robust Layout) -->
+    <div id="delete-modal" class="fixed inset-0 z-[9999] hidden" style="z-index: 2147483647 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-gray-900/95 transition-opacity opacity-0" id="delete-modal-backdrop"></div>
+
+        <!-- Layout Container -->
+        <div class="fixed inset-0 z-[10000] overflow-y-auto">
+            <div class="flex min-h-screen items-center justify-center p-4 text-center">
+                
+                <!-- Modal Panel -->
+                <!-- Use inline background to ensure visibility vs Tailwind purge issues -->
+                <!-- Use inline margin auto for centering safety -->
+                <div class="relative transform overflow-hidden rounded-2xl bg-[#1f2937] border border-gray-600 text-left shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transition-all w-full max-w-sm scale-95 opacity-0" 
+                     id="delete-modal-panel"
+                     style="background-color: #1f2937; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+                    
+                    <div class="px-6 pt-6 pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-900/30 sm:mx-0 sm:h-10 sm:w-10">
+                                <i data-feather="alert-triangle" class="h-6 w-6 text-red-500"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                <h3 class="text-lg font-semibold leading-6 text-white" id="modal-title">Elimina Attività</h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-300">Sei sicuro di voler procedere?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800/50 px-6 py-4 sm:flex sm:flex-row-reverse gap-3 border-t border-gray-700">
+                        <button type="button" id="confirm-delete-btn" class="inline-flex w-full justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto transition-transform hover:scale-105 active:scale-95">
+                            Elimina Definitivamente
+                        </button>
+                        <button type="button" onclick="taskManager.closeDeleteModal()" class="mt-3 inline-flex w-full justify-center rounded-xl bg-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 shadow-sm ring-1 ring-inset ring-gray-600 hover:bg-gray-600 sm:mt-0 sm:w-auto transition-colors">
+                            Annulla
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

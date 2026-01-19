@@ -17,6 +17,8 @@
     <!-- Custom CSS (Consolidated) -->
     <link rel="stylesheet" href="{{base_url}}/css/style.css?v=20260115_FIX_CSS">
     <link href="{{base_url}}/css/components/scroll_navigator.css?v=20260115_REV5" rel="stylesheet">
+    <!-- Accessibility Utils -->
+    <script src="{{base_url}}/js/components/accessibility.js?v=1.0.0"></script>
     
     <!-- DataTables Bootstrap 5 CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css">
@@ -69,6 +71,7 @@
                 </ul>
                 
                 <div class="d-flex align-items-center gap-3">
+                    
                     <!-- Talking Archive Launcher -->
                     <button id="ta-launcher" class="btn btn-sm btn-outline-info rounded-circle d-none" title="Attiva Lettura Vocale" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
                         <i class="fa-solid fa-headphones"></i>
@@ -83,10 +86,21 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-secondary bg-dark text-white">
                             {{#real_is_admin}}
-                            <li><a class="dropdown-item text-white" href="{{base_url}}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Impostazioni</a></li>
-                            <li><a class="dropdown-item text-warning" href="{{base_url}}/devtools"><i class="fa-solid fa-microchip me-2"></i>DeVToolS</a></li>
-                            <li><a class="dropdown-item text-warning" href="{{base_url}}/../bin/debug_tools/test_dashboard.php"><i class="fa-solid fa-toolbox me-2"></i>Toolkit Avanzato</a></li>
+                            <li><h6 class="dropdown-header text-uppercase x-small text-warning fw-bold"><i class="fa-solid fa-shuttle-space me-2"></i>Mission Control</h6></li>
+                            
+                            <!-- Main Dashboard -->
+                             <li><a class="dropdown-item text-white" href="{{base_url}}/impostazioni"><i class="fa-solid fa-sliders me-2"></i>Settings Logic</a></li>
+                            <li><a class="dropdown-item text-warning" href="{{base_url}}/devtools"><i class="fa-solid fa-microchip me-2"></i>DevTools Hub</a></li>
+                            
+                            <!-- Specific DevTools Modules -->
+                            <li><a class="dropdown-item text-light small ps-4" href="{{base_url}}/devtools#terminal"><i class="fa-solid fa-terminal me-2 text-danger"></i>Terminal</a></li>
+                            <li><a class="dropdown-item text-light small ps-4" href="{{base_url}}/devtools#db"><i class="fa-solid fa-database me-2 text-info"></i>Database</a></li>
+                            <li><a class="dropdown-item text-light small ps-4" href="{{base_url}}/devtools#security"><i class="fa-solid fa-shield-cat me-2 text-success"></i>Security</a></li>
+                            <li><a class="dropdown-item text-light small ps-4" href="{{base_url}}/devtools#editor"><i class="fa-solid fa-folder-tree me-2 text-warning"></i>File System</a></li>
+                             <li><a class="dropdown-item text-light small ps-4" href="{{base_url}}/devtools#audit"><i class="fa-solid fa-file-waveform me-2 text-secondary"></i>Log Viewer</a></li>
+
                             <li><hr class="dropdown-divider border-secondary"></li>
+                            
                             <li><a class="dropdown-item text-info" href="{{base_url}}/landing/index.html" target="_blank"><i class="fa-solid fa-rocket me-2"></i>Landing Page</a></li>
                             <li><a class="dropdown-item text-success" href="{{base_url}}/auth/start-demo"><i class="fa-solid fa-gamepad me-2"></i>Avvia Demo Mode</a></li>
                             <li><hr class="dropdown-divider border-secondary"></li>
@@ -107,6 +121,64 @@
             </div>
         </div>
     </nav>
+
+    <!-- MODAL: WORLD LANGUAGES -->
+    <div class="modal fade" id="modal-language-world" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 class="modal-title"><i class="fa-solid fa-earth-americas me-2 text-info"></i>Select Language</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Imposta la lingua globale del sistema. (Powered by Google Neural Translate)</p>
+                    
+                    <!-- Major Languages Grid -->
+                    <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr);">
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" onclick="AccessControl.resetLang()">
+                            <img src="https://flagcdn.com/w20/it.png" width="20"> ITA
+                        </button>
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" onclick="AccessControl.setLang('en')">
+                            <img src="https://flagcdn.com/w20/gb.png" width="20"> ENG
+                        </button>
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" onclick="AccessControl.setLang('es')">
+                            <img src="https://flagcdn.com/w20/es.png" width="20"> ESP
+                        </button>
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" onclick="AccessControl.setLang('fr')">
+                            <img src="https://flagcdn.com/w20/fr.png" width="20"> FRA
+                        </button>
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" onclick="AccessControl.setLang('de')">
+                            <img src="https://flagcdn.com/w20/de.png" width="20"> DEU
+                        </button>
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 py-2" onclick="AccessControl.setLang('zh-CN')">
+                            <img src="https://flagcdn.com/w20/cn.png" width="20"> CHN
+                        </button>
+                    </div>
+
+                    <hr class="border-secondary opacity-25 my-3">
+
+                    <!-- Full Selector -->
+                    <label class="small text-secondary fw-bold mb-2">OTHER LANGUAGES</label>
+                    <select class="form-select bg-black text-white border-secondary" onchange="if(this.value) AccessControl.setLang(this.value)">
+                        <option value="" selected>Scegli dal mondo...</option>
+                        <option value="ar">🇸🇦 Arabic</option>
+                        <option value="ru">🇷🇺 Russian</option>
+                        <option value="pt">🇵🇹 Portuguese</option>
+                        <option value="ja">🇯🇵 Japanese</option>
+                        <option value="ko">🇰🇷 Korean</option>
+                        <option value="hi">🇮🇳 Hindi</option>
+                        <option value="tr">🇹🇷 Turkish</option>
+                        <option value="pl">🇵🇱 Polish</option>
+                        <option value="nl">🇳🇱 Dutch</option>
+                        <option value="sv">🇸🇪 Swedish</option>
+                        <option value="ro">🇷🇴 Romanian</option>
+                        <option value="uk">🇺🇦 Ukrainian</option>
+                        <option value="el">🇬🇷 Greek</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
     <main class="flex-shrink-0 main-content">
         <div class="container-fluid px-4">
             <!-- Flash Messages -->

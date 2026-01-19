@@ -15,6 +15,7 @@ return [
     __DIR__ . '/definitions/intelligence.php',
     __DIR__ . '/definitions/devtools.php',
     __DIR__ . '/definitions/queue.php',
+    __DIR__ . '/definitions/apps.php',
 ];
 
 

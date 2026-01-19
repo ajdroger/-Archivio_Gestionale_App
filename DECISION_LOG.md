@@ -27,6 +27,40 @@ Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026
 
 ---
 
+## [ADR-042] Client-Side Internationalization (I18n)
+**Data**: 2026-01-19
+**Stato**: ✅ Attivo
+**Contesto**:
+Richiesta di rendere il prodotto "Internazionale e Accessibile" immediatamente, senza riscrittura completa del backend per supporto multilingua nativo (gettext/arrays).
+**Decisione**:
+Adottare un approccio **Google Cloud Translate Engine (Client-Side Wrapper)**:
+1.  **Engine**: Script `google.translate.TranslateElement` caricato dinamicamente in `accessibility.js`.
+2.  **UI Integration**: Nascondere l'interfaccia default (Banner TopBar) via CSS per preservare il design "Mission Control".
+3.  **Custom Selector**: Modale nativo Bootstrap che imposta programmaticamente il cookie `googtrans` (`/source/target`) per triggerare la traduzione.
+**Conseguenze**:
+- (+) Supporto immediato per **100+ lingue** (Arabic, Russian, Chinese, Hindi, etc.).
+- (+) Traduzione completa (anche contenuti dinamici DB).
+- (+) Zero maintenance dizionari.
+- (-) Dipendenza esterna (Google JS).
+
+---
+
+## [ADR-041] Mission Control "God Mode" Protocol
+**Data**: 2026-01-19
+**Stato**: ✅ Attivo
+**Contesto**:
+Necessità di un livello di accesso "Super-Root" per maintenance critica, visualmente distinto e protetto da attivazione accidentale.
+**Decisione**:
+1.  **User-Based Trigger**: Funzionalità attive solo per username specifico (`Aj_GodMode`).
+2.  **Omega Protocol**: Overlay full-screen per simulare "Lockdown" del sistema durante operazioni critiche.
+3.  **Hazard Confirmation**: Introduzione pattern "Double-Confirm with Auto-Backup" per azioni distruttive (es. Force Purge).
+    - Prima di cancellare, il sistema ESEGUE sempre un backup DB.
+**Conseguenze**:
+- (+) Sicurezza operativa (Backup automatico).
+- (+) Chiara distinzione visiva tra Admin normale e SuperUser.
+
+---
+
 ## [ADR-040] Workshift Delete Propagation Strategy
 **Data**: 2026-01-18
 **Stato**: ✅ Attivo

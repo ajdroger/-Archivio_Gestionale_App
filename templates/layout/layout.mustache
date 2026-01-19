@@ -47,6 +47,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{base_url}}/statistiche"><i class="fa-solid fa-chart-pie me-1"></i>Report Center</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="appsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-layer-group me-1"></i>Apps
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="appsDropdown">
+                             <li><a class="dropdown-item" href="{{base_url}}/workshift"><i class="fa-solid fa-calendar-week me-2 text-warning"></i>Workshift</a></li>
+                             <li><a class="dropdown-item" href="{{base_url}}/taskflow"><i class="fa-solid fa-list-check me-2 text-info"></i>Taskflow Pro</a></li>
+                             <li><a class="dropdown-item" href="{{base_url}}/expensebar"><i class="fa-solid fa-sack-dollar me-2 text-success"></i>ExpenseBar</a></li>
+                        </ul>
+                    </li>
                     {{^is_demo_mode}}
                     <li class="nav-item">
                         <a class="nav-link" href="{{base_url}}/impostazioni"><i class="fa-solid fa-cog me-1"></i>Impostazioni</a>

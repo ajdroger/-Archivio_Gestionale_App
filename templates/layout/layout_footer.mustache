@@ -54,6 +54,19 @@
                         <li class="mb-2"><i class="fa-solid fa-code me-2 opacity-50"></i>Dev: <strong>Soobadur Mohammad Ajmeer</strong></li>
                         <li class="mb-2"><i class="fa-solid fa-building me-2 opacity-50"></i>P.IVA: 12345678901</li>
                         <li class="mb-2"><i class="fa-solid fa-envelope me-2 opacity-50"></i>support@mcag-system.interno</li>
+                        
+                        <!-- ACCESSIBILITY CONTROLS -->
+                        <li class="mt-2 d-flex gap-2">
+                             <button class="btn btn-sm btn-outline-light rounded-circle bg-dark bg-opacity-50 border-secondary d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" onclick="AccessControl.toggleTheme()" title="Cambia Tema (Dark/Light)">
+                                <i class="fa-solid fa-sun text-warning" id="theme-toggle-icon"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-light rounded-circle bg-dark bg-opacity-50 border-secondary d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; overflow: hidden;" onclick="AccessControl.openLangSelector()" title="Scegli Lingua (Mondo)">
+                                <img src="https://flagcdn.com/w20/it.png" id="lang-toggle-flag" alt="Lang" style="width: 18px; height: auto;">
+                            </button>
+                             <!-- Google Translate Element (Hidden) -->
+                            <div id="google_translate_element"></div>
+                        </li>
+
                         <li class="mt-3">
                             <small class="d-block text-muted fst-italic">
                                 "Secure Digitalization Project"<br>
