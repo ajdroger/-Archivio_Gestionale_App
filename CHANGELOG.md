@@ -11,6 +11,30 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [v8.3.0-hypergrid-stable] - 2026-01-26 "**Hyper-Grid Evolution**"
+### Massive UI/UX Overhaul [Hyper-Grid]
+- **Design System Revolution**: Adozione totale del nuovo linguaggio visivo "Hyper-Grid":
+    - **Neon/Glass Aesthetics**: Pulsanti gradienti, sfondi mesh radiali, bordi luminescenti.
+    - **Interactive Elements**: Hover effects, micro-interazioni "breathing", icone animate.
+    - **Typography**: Inter / JetBrains Mono per massima leggibilità tecnica.
+- **Module Reskinning**: Aggiornamento visivo completo di:
+    - **Workshift Commander**: Grid calendario, card turni, modali scuri.
+    - **ExpenseBar**: Grafici finanziari, tabelle spese.
+    - **TaskFlow**: Kanban board e liste task.
+    - **DevTools**: Console di debug in stile "Matrix/Sci-Fi".
+
+### Codebase Purification
+- **Ghost Code Elimination**: Rimozione file legacy non più utilizzati:
+    - Eliminato `public/css/main.css` (v1.0.0).
+    - Eliminato `public/assets/expensebar/script.js` (logic duplicata).
+- **Diagnostics**: Ripristino strutturale di `public/probe.php` per health-check server.
+- **Routing clean-up**: Rimozione sistematica di `index.php` da tutti i percorsi interni per URL SEO-friendly.
+
+### Features
+- **Global Diagnosability**: Pagina probe accessibile per verifica stack LAMP immediata.
+
+---
+
 ## [Unreleased]
 
 ## [Unreleased]

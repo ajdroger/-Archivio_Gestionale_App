@@ -1191,4 +1191,59 @@ Creare un modulo "Financial Intelligence" nella dashboard Statistiche.
 - (+) Privacy compliance migliorata (zero tracking esterno).
 
 
+---
 
+## [ADR-043] Hyper-Grid Design System (Neon/Glass)
+**Data**: 2026-01-26
+**Stato**: ✅ Attivo
+**Contesto**:
+L'interfaccia utente precedente mancava del "Wow Factor" enterprise.
+**Decisione**:
+Adozione del Design System **"Hyper-Grid"**:
+1.  **Aestetica**: Glassmorphism spinto, accenti Neon (Ciano/Viola/Smeraldo).
+2.  **Tech Stack**: CSS3 Variabili, Layout Flexbox/Grid nativi.
+3.  **Componenti**: Card fluttuanti, Badge luminescenti, Tabelle ad alto contrasto.
+**Conseguenze**:
+- (+) Percezione valore prodotto aumentata.
+- (+) Leggibilità migliorata (Dark Mode nativa).
+
+---
+
+## [ADR-044] Ghost Code Elimination Strategy
+**Data**: 2026-01-26
+**Stato**: ✅ Eseguito
+**Contesto**:
+Accumulo di file "Zombie" (non più referenziati).
+**Decisione**:
+**"Delete-if-Unused" Protocol**:
+1.  Analisi referenze incrociate.
+2.  Eliminazione fisica dei file ridondanti (`main.css` legacy, script JS vecchi).
+**Conseguenze**:
+- (+) Repository più leggero.
+- (+) Minore carico cognitivo.
+
+---
+
+## [ADR-045] Diagnosability First (Probe Restoration)
+**Data**: 2026-01-26
+**Stato**: ✅ Attivo
+**Contesto**:
+Necessità di diagnosticare la raggiungibilità del server web in caso di schermata bianca.
+**Decisione**:
+Mantenere **`public/probe.php`**:
+1.  **Funzione**: Restituisce "SYSTEM REACHABLE" e `phpinfo()` per debug rapido.
+**Conseguenze**:
+- (+) Diagnostica immediata setup PHP.
+
+---
+
+## [ADR-046] Clean Routing (No-Index)
+**Data**: 2026-01-26
+**Stato**: ✅ Attivo
+**Contesto**:
+`index.php` nell'URL era obsoleto.
+**Decisione**:
+**URL Rewriting Forzato**:
+1.  Rimozione `index.php` da tutti i link interni nei template.
+**Conseguenze**:
+- (+) URL professionali e puliti.
