@@ -7,6 +7,7 @@
     <!-- Core Styles (Mirroring Workshift) -->
     <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
     <link rel="stylesheet" href="{{base_url}}/assets/expensebar/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Scripts -->
     <script src="https://unpkg.com/feather-icons"></script>
@@ -97,6 +98,7 @@
                         Trend Annuale
                     </h3>
                     <select id="trendYearMock" class="bg-gray-900 border border-gray-700 text-xs text-gray-300 rounded-lg px-2 py-1 focus:ring-1 focus:ring-emerald-500">
+                        <option value="2026" selected>2026</option>
                         <option value="2025">2025</option>
                         <option value="2024">2024</option>
                     </select>
@@ -176,8 +178,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-400 mb-1">Data</label>
-                        <input type="date" id="dateInput" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm">
+                        <label class="block text-xs font-medium text-gray-400 mb-1">Data e Ora</label>
+                        <input type="datetime-local" id="dateInput" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm">
                     </div>
 
                     <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all duration-200 mt-2 flex items-center justify-center gap-2">
@@ -193,10 +195,16 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{base_url}}/assets/expensebar/script.js"></script>
+    <script src="{{base_url}}/js/lib/sweetalert2.all.min.js"></script>
+    <script src="{{base_url}}/js/pages/expensebar.js"></script>
     <script>
-        // Init Date Input with Today
-        document.getElementById('dateInput').valueAsDate = new Date();
+        // Init Date Input with Today's Date and Time
+        const dateInput = document.getElementById('dateInput');
+        if(dateInput) {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            dateInput.value = now.toISOString().slice(0, 16);
+        }
     </script>
 </body>
 </html>

@@ -50,6 +50,13 @@ class ExpensebarController
         return $response;
     }
 
+    public function help(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('expensebar/help.mustache', $this->getCommonData('Expensebar Help Center'));
+        $response->getBody()->write($html);
+        return $response;
+    }
+
     // API Methods
 
     public function getExpenses(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
@@ -73,7 +80,7 @@ class ExpensebarController
             'description' => $data['description'] ?? 'Expense',
             'amount' => (float) ($data['amount'] ?? 0),
             'category' => $data['category'] ?? 'General',
-            'date' => $data['date'] ?? date('Y-m-d')
+            'date' => $data['date'] ?? date('Y-m-d H:i:s')
         ];
 
         $id = $this->repository->save($newExpense);
@@ -136,6 +143,30 @@ class ExpensebarController
         $id = (int) $args['id'];
         $success = $this->repository->delete($id);
         $response->getBody()->write(json_encode(['status' => $success ? 'success' : 'error']));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+    public function updateExpense(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $id = (int) $args['id'];
+        $data = $request->getParsedBody();
+
+        // Validation (basic)
+        if (empty($data['description']) || empty($data['amount'])) {
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing required fields']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+
+        $updateData = [
+            'id' => $id,
+            'description' => $data['description'],
+            'amount' => (float) $data['amount'],
+            'category' => $data['category'] ?? 'Other',
+            'date' => $data['date'] ?? date('Y-m-d H:i:s')
+        ];
+
+        $this->repository->save($updateData);
+
+        $response->getBody()->write(json_encode(['status' => 'success', 'expense' => $updateData]));
         return $response->withHeader('Content-Type', 'application/json');
     }
 }

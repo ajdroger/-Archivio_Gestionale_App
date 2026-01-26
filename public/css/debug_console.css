@@ -478,60 +478,138 @@ body::after {
     text-shadow: 0 0 5px var(--neon-blue);
 }
 
+/* --- MEGA MENU (HYPER-GRID STYLE) --- */
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: rgba(5, 5, 5, 0.95);
-    min-width: 200px;
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--neon-blue);
-    z-index: 200;
+    /* Anchored to the Button */
     top: 100%;
+    /* Directly below */
     left: 0;
-    backdrop-filter: blur(5px);
+    min-width: 600px;
+    /* Wide enough for grid */
+    max-height: 80vh;
+    background-color: rgba(10, 15, 20, 0.98);
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 10px 40px rgba(0, 243, 255, 0.2);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    overflow-y: auto;
+
+    /* MEGA GRID */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+
+/* BRIDGE FIX: Invisible area to catch mouse */
+.dropdown-content::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    /* Extend upwards to button */
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: transparent;
+    cursor: default;
 }
 
 .dropdown:hover .dropdown-content {
-    display: block;
+    display: grid;
+    animation: fadeIn 0.1s ease-out;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Category Header (formerly submenu trigger) */
 .menu-item {
-    color: var(--neon-blue);
-    padding: 10px 16px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    cursor: pointer;
-    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
-    transition: 0.2s;
+    color: var(--neon-pink);
+    font-weight: bold;
+    font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 2px solid rgba(255, 0, 255, 0.3);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    cursor: default;
+    display: block;
+    /* Ensure full width in grid cell */
 }
 
+/* Remove hover effect from header */
 .menu-item:hover {
-    background-color: rgba(0, 243, 255, 0.2);
-    padding-left: 20px;
-    /* Slight bump */
+    background: none;
+    padding-left: 0;
 }
 
 .menu-item.danger {
-    color: var(--neon-pink);
+    color: #ff0000;
 }
 
-.menu-item.danger:hover {
-    background-color: rgba(255, 0, 255, 0.2);
-}
-
-/* Submenus */
+/* Submenu Container (Flattened) */
 .dropdown-submenu {
-    position: relative;
+    break-inside: avoid;
+    /* Keep headers with tools */
 }
 
 .dropdown-submenu .dropdown-content {
-    top: 0;
-    left: 100%;
-    margin-top: -1px;
+    display: block !important;
+    /* Always visible in grid */
+    position: static;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: auto;
+    max-height: none;
+    padding: 0;
+    z-index: auto;
+    overflow: visible;
+    animation: none;
+    border-left: none;
+}
+
+/* The Tools themselves (nested inside the flattened content) */
+.dropdown-submenu .dropdown-content .menu-item {
+    color: var(--neon-blue);
+    font-weight: normal;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+    cursor: pointer;
+    text-transform: none;
+    /* Tool names proper case */
+    margin: 0;
+    display: flex;
+}
+
+.dropdown-submenu .dropdown-content .menu-item:hover {
+    background-color: rgba(0, 243, 255, 0.15);
+    padding-left: 12px;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+@keyframes slideDown {
+
+    /* Legacy animation placeholder to prevent errors if referenced elsewhere */
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .dropdown-submenu:hover>.dropdown-content {

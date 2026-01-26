@@ -25,6 +25,12 @@
 
     <script>
         window.BASE_URL = "{{base_url}}";
+        {{#csrf}}
+        window.CSRF = {
+            name: "{{name}}",
+            value: "{{value}}"
+        };
+        {{/csrf}}
     </script>
     
     <!-- jQuery (Required for DataTables) -->

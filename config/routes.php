@@ -57,12 +57,18 @@ return function (App $app) {
     $app->get('/soci', SocioList::class . ':list')->setName('socio_list');
 
     // Anagrafica - Soci (Write) - SPECIFICHE PRIMA DI {cf}
+    // Calcolo CF (Utility condivisa - Accessibile a ruoli amministrativi e operativi)
+    $app->post('/soci/calcola-cf', SocioAction::class . ':calculateFiscalCode')
+        ->setName('socio_calc_cf')
+        ->add(new RateLimitMiddleware(20, 60))
+        ->add(new RoleMiddleware(['admin', 'segreteria', 'segreteria_soci', 'direttore_associazione', 'sviluppo', 'comando', 'user'])); // Ampliato per Workshift
+
+    // Anagrafica - Soci (Write) - SPECIFICHE PRIMA DI {cf}
     $writeRole = new RoleMiddleware(['segreteria', 'segreteria_soci', 'direttore_associazione']);
     $app->group('/soci', function ($group) {
         // ROUTES SPECIFICHE PRIMA
         $group->get('/nuovo', SocioPersistence::class . ':create')->setName('socio_create');
         $group->post('/salva', SocioPersistence::class . ':store')->setName('socio_store');
-        $group->post('/calcola-cf', SocioAction::class . ':calculateFiscalCode')->setName('socio_calc_cf')->add(new RateLimitMiddleware(10, 60));
 
         // ROUTES GENERICHE DOPO
         $group->get('/{cf}/edit', SocioPersistence::class . ':edit')->setName('socio_edit');
@@ -179,11 +185,16 @@ return function (App $app) {
     $app->group('/expensebar', function (\Slim\Routing\RouteCollectorProxy $group) {
         $group->get('', \MCAG\Controller\External\ExpensebarController::class . ':index')->setName('expensebar_home');
         $group->get('/analytics', \MCAG\Controller\External\ExpensebarController::class . ':analytics')->setName('expensebar_analytics');
+        $group->get('/help', \MCAG\Controller\External\ExpensebarController::class . ':help')->setName('expensebar_help'); // [NEW] Help Center
 
         // API
         $group->get('/api/expenses', \MCAG\Controller\External\ExpensebarController::class . ':getExpenses');
         $group->post('/api/expenses/add', \MCAG\Controller\External\ExpensebarController::class . ':addExpense');
+        $group->post('/api/expenses/{id}/delete', \MCAG\Controller\External\ExpensebarController::class . ':deleteExpense'); // Explicit DELETE via POST
+        $group->post('/api/expenses/{id}/update', \MCAG\Controller\External\ExpensebarController::class . ':updateExpense');
         $group->get('/api/forecast', \MCAG\Controller\External\ExpensebarController::class . ':getForecast');
+        $group->get('/api/stats/category', \MCAG\Controller\External\ExpensebarController::class . ':getCategoryStats'); // [NEW] Stats
+        $group->get('/api/stats/trend', \MCAG\Controller\External\ExpensebarController::class . ':getTrend'); // [NEW] Stats
     });
 
     // Admin & DevTools

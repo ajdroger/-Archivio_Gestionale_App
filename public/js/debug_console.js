@@ -177,48 +177,22 @@ function fetchLogs() {
 
 // --- HYBRID ENGINE: REAL TOOLS + SIMULATION ---
 // --- HYBRID ENGINE: REAL TOOLS + SIMULATION ---
+// --- HYBRID ENGINE: REAL TOOLS + SIMULATION ---
 function runSim(tool, title) {
-    // LIST OF REAL TOOLS
-    const realTools = ['nmap', 'whois', 'dns', 'ping', 'traceroute', 'netstat', 'ifconfig'];
+    // List of tools that don't need a target IP/Domain
+    const globalTools = ['netstat', 'ifconfig', 'id', 'whoami', 'last', 'ps', 'top', 'w', 'mount', 'df', 'free', 'uname', 'lsblk', 'lscpu', 'lsusb', 'lspci', 'uptime', 'date', 'cal', 'bc', 'history', 'openvas-scanner', 'burpsuite', 'wireshark', 'metasploit-framework', 'armitage'];
 
-    if (realTools.includes(tool)) {
-        let target = '';
-        const noTargetTools = ['netstat', 'ifconfig'];
+    let target = '';
+    // Simple heuristic: if tool ends with 'scan' or 'map' or 'enum', it likely needs a target
+    const needsTarget = !globalTools.includes(tool);
 
-        if (!noTargetTools.includes(tool)) {
-            target = prompt(`ENTER TARGET FOR ${title}:`, 'localhost');
-            if (!target) return;
-        }
-
-        log(`>>> EXECUTING REAL ${title} TARGETING [${target || 'SYSTEM'}]...`, 'info');
-        apiCall(tool, { target: target });
-        return;
+    if (needsTarget) {
+        target = prompt(`ENTER TARGET FOR ${title}:`, 'localhost');
+        if (target === null) return; // Cancelled
     }
 
-    // FALLBACK TO SIMULATION FOR OTHERS
-    log(`>>> INITIALIZING ${title} (SIMULATION MODE)...`, 'info');
-
-    const steps = [
-        "Loading modules...",
-        "Connecting to local interface...",
-        "Bypassing simulated firewalls...",
-        "Running heuristic analysis...",
-        "Decrypting data streams...",
-        "Compiling report..."
-    ];
-
-    let i = 0;
-    const interval = setInterval(() => {
-        if (i >= steps.length) {
-            clearInterval(interval);
-            log(`>>> ${title} COMPLETE. REPORT SAVED TO /VAR/LOGS/SECURE.`, 'success');
-        } else {
-            // Random hex output for effect
-            const hex = Math.random().toString(16).substr(2, 8).toUpperCase();
-            log(`[${hex}] ${steps[i]}`);
-            i++;
-        }
-    }, 600);
+    log(`>>> EXECUTING ${title} [${target || 'SYSTEM'}]...`, 'info');
+    apiCall('run_tool_smart', { tool: tool, target: target });
 }
 
 function purgeCache() {

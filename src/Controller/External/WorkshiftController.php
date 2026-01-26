@@ -25,35 +25,44 @@ class WorkshiftController
         $this->baseUrl = $scriptDir === '/' ? '' : $scriptDir;
     }
 
-    private function getCommonData(string $title): array
+    private function getCommonData(string $title, ServerRequestInterface $request = null): array
     {
+        $csrf = [];
+        if ($request) {
+            $csrf = [
+                'name' => $request->getAttribute('csrf_name'),
+                'value' => $request->getAttribute('csrf_value')
+            ];
+        }
+
         return [
             'base_url' => $this->baseUrl,
             'title' => $title,
             'user' => $_SESSION['user'] ?? null,
             'user_role' => $_SESSION['user_role'] ?? $_SESSION['temp_user_role'] ?? 'GUEST',
             'username' => $_SESSION['username'] ?? $_SESSION['user']['username'] ?? $_SESSION['temp_username'] ?? 'Ospite',
-            'stats' => $this->getStats()
+            'stats' => $this->getStats(),
+            'csrf' => $csrf
         ];
     }
 
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('workshift/index.mustache', $this->getCommonData('Workshift Dashboard'));
+        $html = $this->mustache->render('workshift/index.mustache', $this->getCommonData('Workshift Dashboard', $request));
         $response->getBody()->write($html);
         return $response;
     }
 
     public function shiftManagement(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('workshift/shift-management.mustache', $this->getCommonData('Gestione Turni'));
+        $html = $this->mustache->render('workshift/shift-management.mustache', $this->getCommonData('Gestione Turni', $request));
         $response->getBody()->write($html);
         return $response;
     }
 
     public function teamManagement(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $data = $this->getCommonData('Gestione Team');
+        $data = $this->getCommonData('Gestione Team', $request);
 
         // Fetch employees
         $employees = $this->repository->findAllEmployees();
@@ -79,7 +88,7 @@ class WorkshiftController
 
     public function timeOff(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $data = $this->getCommonData('Gestione Ferie');
+        $data = $this->getCommonData('Gestione Ferie', $request);
         $data['requests'] = $this->repository->findAllRequests(); // Fetch real requests
 
         $html = $this->mustache->render('workshift/time-off.mustache', $data);
@@ -89,7 +98,7 @@ class WorkshiftController
 
     public function reports(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $data = $this->getCommonData('Reportistica');
+        $data = $this->getCommonData('Reportistica', $request);
         $params = $request->getQueryParams();
 
         // Month Filter Logic
@@ -245,11 +254,11 @@ class WorkshiftController
         $allowed = ['hr-policy', 'labor-laws', 'privacy', 'status', 'support', 'terms'];
 
         if (!in_array($page, $allowed)) {
-            $response->getBody()->write($this->mustache->render('404.mustache', $this->getCommonData('Pagina non trovata')));
+            $response->getBody()->write($this->mustache->render('404.mustache', $this->getCommonData('Pagina non trovata', $request)));
             return $response->withStatus(404);
         }
 
-        $html = $this->mustache->render("workshift/info/$page.mustache", $this->getCommonData('Informazioni'));
+        $html = $this->mustache->render("workshift/info/$page.mustache", $this->getCommonData('Informazioni', $request));
         $response->getBody()->write($html);
         return $response;
     }

@@ -412,7 +412,13 @@ class DevToolsSystemController
         while (ftell($f) > 0 && $readLines <= $lines) {
             $seek = min(ftell($f), $chunkSize);
             fseek($f, -$seek, SEEK_CUR);
-            $output = ($chunk = fread($f, $seek)) . $output;
+            $chunk = fread($f, $seek);
+
+            if (!$chunk) {
+                break;
+            }
+
+            $output = $chunk . $output;
             fseek($f, -mb_strlen($chunk, '8bit'), SEEK_CUR);
             $readLines = substr_count($output, "\n");
         }

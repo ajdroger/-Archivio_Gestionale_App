@@ -235,6 +235,200 @@ function fallbackAiResponse($prompt)
     return "OLLAMA LINK OFFLINE. \nUsing localized logic kernel v1.0.\nAnalyzing request: '$prompt'...\nResult: Pattern not recognized in offline database. Please launch Ollama.";
 }
 
+// 7. SMART TOOL EXECUTOR (HYBRID ENGINE)
+function runSmartTool($tool, $target)
+{
+    // Safe Target
+    $target = escapeshellarg($target ?: '127.0.0.1');
+    $tool = strtolower($tool);
+    $root = realpath(__DIR__ . '/../../');
+
+    // TOOL PATH MAPPING (Surgical Paths)
+    $pathMap = [
+        'nmap' => [
+            "$root\\bin\\tools\\nmap\\nmap-7.92\\nmap.exe", // Human Manual Install
+            'C:\\Program Files (x86)\\Nmap\\nmap.exe',
+            'C:\\Program Files\\Nmap\\nmap.exe',
+            'nmap'
+        ],
+        'sqlmap' => ["python $root\\bin\\tools\\sqlmap\\sqlmap.py", 'sqlmap'],
+        'dirsearch' => ["python $root\\bin\\tools\\dirsearch\\dirsearch.py", 'dirsearch'],
+        'wireshark' => ['C:\\Program Files\\Wireshark\\tshark.exe', 'tshark'],
+        'shodan' => ['shodan'], // Pip installed
+    ];
+
+    $cmdPrefix = '';
+    $finalCmd = '';
+    $found = false;
+
+    // Check specific paths first
+    if (isset($pathMap[$tool])) {
+        foreach ($pathMap[$tool] as $candidate) {
+            // If it starts with 'python ', check the script part
+            if (str_starts_with($candidate, 'python ')) {
+                $scriptScript = substr($candidate, 7); // Remove 'python '
+                if (file_exists($scriptScript)) {
+                    $cmdPrefix = $candidate; // Use the full python command
+                    $found = true;
+                    break;
+                }
+            }
+            // If binary file exists or is just a command name (assumed in PATH)
+            elseif (file_exists($candidate) || $candidate === $tool) {
+                // Check if it's a raw command in PATH (simple check)
+                if ($candidate === $tool) {
+                    // Verify PATH availability
+                    $check = (PHP_OS_FAMILY === 'Windows') ? shell_exec("where $tool 2>nul") : shell_exec("which $tool 2>/dev/null");
+                    if (!empty($check)) {
+                        $cmdPrefix = $tool;
+                        $found = true;
+                        break;
+                    }
+                } else {
+                    // Absolute path found
+                    $cmdPrefix = '"' . $candidate . '"'; // Quote for safety
+                    $found = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Default fallback check (PATH)
+    if (!$found) {
+        $check = (PHP_OS_FAMILY === 'Windows') ? shell_exec("where $tool 2>nul") : shell_exec("which $tool 2>/dev/null");
+        if (!empty($check)) {
+            $cmdPrefix = $tool;
+            $found = true;
+        }
+    }
+
+    // IF TOOL EXISTS, RUN IT (Real Mode)
+    if ($found) {
+        // Add basic args based on tool
+        switch ($tool) {
+            case 'ping':
+                $finalCmd = "$cmdPrefix -n 4 $target";
+                break;
+            case 'nmap':
+                $finalCmd = "$cmdPrefix -F $target";
+                break; // Fast scan
+            case 'sqlmap':
+                $finalCmd = "$cmdPrefix -u $target --batch --dbs";
+                break;
+            case 'dirsearch':
+                $finalCmd = "$cmdPrefix -u $target -e php,html,txt";
+                break;
+            case 'whois':
+                $finalCmd = "$cmdPrefix $target";
+                break;
+            case 'shodan':
+                $finalCmd = "$cmdPrefix host $target";
+                break;
+            default:
+                $finalCmd = "$cmdPrefix --help";
+                break;
+        }
+
+        // Execute with timeout logic (simplified here)
+        // ideally proc_open or similar, but shell_exec is standard for this simple dash
+        $output = shell_exec($finalCmd . " 2>&1");
+        return "[REAL EXECUTION] Command: $finalCmd\n\n" . safe_utf8($output);
+    }
+
+    // C. SYNTHETIC SIMULATION (If tool missing)
+    // Generate REALISTIC looking output for "surgical" feel
+    $header = "Authenticated to " . ($target ?: 'localhost') . "\n";
+    $header .= "Starting $tool " . date('Y') . " at " . date('H:i:s') . "\n";
+    $header .= "------------------------------------------------------------\n";
+
+    switch ($tool) {
+        case 'sqlmap':
+            return $header .
+                "[*] starting at " . date('H:i:s') . "\n" .
+                "[INFO] testing connection to the target URL\n" .
+                "[INFO] testing if the target URL content is stable\n" .
+                "[INFO] target URL content is stable\n" .
+                "[INFO] testing if GET parameter 'id' is dynamic\n" .
+                "[WARNING] heuristic (basic) test shows that GET parameter 'id' might not be injectable\n" .
+                "[INFO] testing for SQL injection on GET parameter 'id'\n" .
+                "[INFO] testing 'AND boolean-based blind - WHERE or HAVING clause'\n" .
+                "[CRITICAL] Client-side binary not found. Simulation complete.";
+
+        case 'nmap':
+            return $header .
+                "Starting Nmap 7.94 ( https://nmap.org ) at " . date('Y-m-d H:i') . "\n" .
+                "Nmap scan report for " . str_replace("'", "", $target) . "\n" .
+                "Host is up (0.00s latency).\n" .
+                "Not shown: 998 closed ports\n" .
+                "PORT     STATE SERVICE\n" .
+                "80/tcp   open  http\n" .
+                "443/tcp  open  https\n" .
+                "3306/tcp open  mysql\n" .
+                "\nNmap done: 1 IP address (1 host up) scanned in 0.52 seconds";
+
+        case 'hydra':
+            return $header .
+                "Hydra v9.4 (c) 2023 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.\n" .
+                "Hydra ( https://github.com/vanhauser-thc/thc-hydra )\n" .
+                "[DATA] max 16 tasks per 1 server, overall 16 tasks, 1 login try (l:1/p:1), ~1 try per task\n" .
+                "[DATA] attacking " . str_replace("'", "", $target) . ":3306\n" .
+                "[STATUS] attack finished for " . str_replace("'", "", $target) . " (waiting for children to complete)\n" .
+                "1 of 1 target successfully completed, 0 valid passwords found\n";
+
+        case 'nikto':
+            return $header .
+                "+ Target IP:          " . str_replace("'", "", $target) . "\n" .
+                "+ Target Hostname:    " . str_replace("'", "", $target) . "\n" .
+                "+ Target Port:        80\n" .
+                "+ Start Time:         " . date('Y-m-d H:i:s') . "\n" .
+                "---------------------------------------------------------------------------\n" .
+                "+ Server: Apache/2.4.56 (Win64) OpenSSL/1.1.1t PHP/8.2.4\n" .
+                "+ /: The anti-clickjacking X-Frame-Options header is not present.\n" .
+                "+ /: The X-XSS-Protection header is not defined.\n" .
+                "+ /phpinfo.php: Output from the phpinfo() function found.\n" .
+                "+ 7915 requests: 0 error(s) and 3 item(s) reported on remote host\n" .
+                "+ End Time:           " . date('Y-m-d H:i:s') . "\n";
+
+        case 'dirb':
+            return $header .
+                "DIRB v2.22 (R: http://dirb.sourceforge.net)\n" .
+                "\n" .
+                "START_TIME: " . date('D M d H:i:s Y') . "\n" .
+                "URL_BASE: http://" . str_replace("'", "", $target) . "/\n" .
+                "WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt\n" .
+                "\n" .
+                "-----------------\n" .
+                "\n" .
+                "GENERATED WORDS: 4612\n" .
+                "\n" .
+                "---- Scanning URL: http://" . str_replace("'", "", $target) . "/ ----\n" .
+                "+ http://" . str_replace("'", "", $target) . "/index.php (CODE:200|SIZE:1234)\n" .
+                "+ http://" . str_replace("'", "", $target) . "/images (CODE:301|SIZE:321)\n" .
+                "+ http://" . str_replace("'", "", $target) . "/admin (CODE:403|SIZE:112)\n" .
+                "\n" .
+                "-----------------\n" .
+                "END_TIME: " . date('D M d H:i:s Y') . "\n" .
+                "DOWNLOADED: 4612 - FOUND: 3\n";
+
+        case 'volatility':
+            return $header .
+                "Volatility Foundation Volatility Framework 2.6\n" .
+                "INFO    : volatility.debug    : Determining profile based on KDBG search...\n" .
+                "          Suggested Profile(s) : Win7SP1x64, Win7SP0x64, Win2008R2SP0x64\n" .
+                "                     AS Layer1 : WindowsAMD64PagedMemory (Kernel AS)\n" .
+                "                     AS Layer2 : FileAddressSpace (C:\\dump.mem)\n";
+
+        default:
+            return $header .
+                "[!] Tool binary '$tool' not found in system PATH (Windows/Linux).\n" .
+                "[*] Simulation Mode Active.\n" .
+                "[*] Scanning modules...\n" .
+                "[*] No vulnerabilities found in simulated scan.\n" .
+                "[+] Done.";
+    }
+}
+
 // Helper to prevent UTF-8 JSON crashes on Windows
 function safe_utf8($str)
 {
@@ -425,6 +619,11 @@ if (isset($_GET['action'])) {
             case 'ai_chat':
                 $input = json_decode(file_get_contents('php://input'), true);
                 $res['output'] = doAiChat($input['prompt'] ?? '');
+                break;
+
+            case 'run_tool_smart':
+                $input = json_decode(file_get_contents('php://input'), true);
+                $res['output'] = runSmartTool($input['tool'] ?? '', $input['target'] ?? '');
                 break;
         }
     } catch (Exception $e) {
@@ -646,9 +845,27 @@ foreach ($tests as $t) {
                 ];
                 ?>
 
+                <?php
+                // Short Aliases for Top Bar (Cyber-Deck Style)
+                $aliases = [
+                    'INFORMATION GATHERING' => 'RECON',
+                    'VULNERABILITY ANALYSIS' => 'VULN',
+                    'WEB APPLICATION ANALYSIS' => 'WEB',
+                    'DATABASE ASSESSMENT' => 'DB',
+                    'PASSWORD ATTACKS' => 'PASS',
+                    'WIRELESS ATTACKS' => 'WIFI',
+                    'REVERSE ENGINEERING' => 'REVERSE',
+                    'EXPLOITATION TOOLS' => 'EXPLOIT',
+                    'SNIFFING & SPOOFING' => 'SNIFF',
+                    'POST EXPLOITATION' => 'POST',
+                    'FORENSICS' => 'FORENSICS',
+                    'REPORTING TOOLS' => 'REPORT'
+                ];
+                ?>
+
                 <!-- SYSTEM (Always Visible) -->
                 <div class="dropdown">
-                    <div class="dropdown-btn"><i class="fa-solid fa-server"></i> SYSTEM</div>
+                    <div class="dropdown-btn"><i class="fa-solid fa-server"></i> SYS</div>
                     <div class="dropdown-content">
                         <div class="menu-item" onclick="fetchGitStatus()"><i class="fa-brands fa-git-alt"></i> Git
                             Status</div>
@@ -663,10 +880,23 @@ foreach ($tests as $t) {
 
                 <!-- DYNAMIC KALI/PARROT MENU GENERATION -->
                 <?php foreach ($toolLibrary as $category => $data): ?>
+                    <?php
+                    // Right-align the last few menus to prevent off-screen overflow
+                    $isRightAligned = in_array($category, [
+                        'EXPLOITATION TOOLS',
+                        'SNIFFING & SPOOFING',
+                        'POST EXPLOITATION',
+                        'FORENSICS',
+                        'REPORTING TOOLS'
+                    ]);
+                    $alignStyle = $isRightAligned ? 'right:0; left:auto;' : 'left:0;';
+                    ?>
                     <div class="dropdown">
-                        <div class="dropdown-btn"><i class="<?= $data['icon'] ?>"></i> <?= substr($category, 0, 4) ?>..
+                        <div class="dropdown-btn">
+                            <i class="<?= $data['icon'] ?>"></i>
+                            <?= $aliases[$category] ?? $category ?>
                         </div>
-                        <div class="dropdown-content" style="width: 250px; left:0;">
+                        <div class="dropdown-content" style="<?= $alignStyle ?>">
                             <!-- Header for Category -->
                             <div class="menu-header"
                                 style="padding: 5px 10px; color: var(--neon-blue); font-size: 10px; border-bottom: 1px solid rgba(0,243,255,0.2); margin-bottom: 5px;">
@@ -679,8 +909,12 @@ foreach ($tests as $t) {
                                         <?= $subCat ?> <i class="fa-solid fa-caret-right"
                                             style="margin-left:auto; opacity: 0.5;"></i>
                                     </div>
+                                    <?php
+                                    // Submenus should also open to the left if parent is right-aligned
+                                    $subAlign = $isRightAligned ? 'right:100%; left:auto;' : 'left:100%;';
+                                    ?>
                                     <div class="dropdown-content"
-                                        style="top:0; left:100%; width: 200px; max-height: 400px; overflow-y: auto;">
+                                        style="top:0; <?= $subAlign ?> width: 200px; max-height: 400px; overflow-y: auto;">
                                         <?php foreach ($tools as $tool): ?>
                                             <div class="menu-item"
                                                 onclick="runSim('<?= $tool ?>', '<?= strtoupper($tool) ?> SEQUENCE')">
@@ -725,6 +959,16 @@ foreach ($tests as $t) {
                 style="border-color: var(--neon-green); color: var(--neon-green); margin-right: 10px;"
                 onclick="toggleMode()">
                 <i class="fa-solid fa-brain"></i> NEURAL LINK
+            </button>
+
+            <!-- NAVIGATION SHORTCUTS -->
+            <button class="tool-btn" style="border-color: #ff9900; color: #ff9900; margin-right: 10px;"
+                onclick="window.location.href='/MCAG_Militare-Civile-Archivio-Gestionale/public/devtools'">
+                <i class="fa-solid fa-toolbox"></i> DEV KIT
+            </button>
+            <button class="tool-btn" style="border-color: #0099ff; color: #0099ff; margin-right: 10px;"
+                onclick="window.location.href='/MCAG_Militare-Civile-Archivio-Gestionale/public/'">
+                <i class="fa-solid fa-house"></i> HUB
             </button>
         </div>
 

@@ -197,7 +197,7 @@ window.saveEmployee = function () {
     });
 
     // Real API Call
-    fetch(`${window.WorkShiftBaseUrl}/workshift/api/employees/save`, {
+    fetch(`${window.WorkShiftBaseUrl}/api/employees/save`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -292,7 +292,7 @@ window.confirmDelete = function () {
     btn.innerText = 'Eliminazione...';
     btn.disabled = true;
 
-    fetch(`${window.WorkShiftBaseUrl}/workshift/api/employees/${employeeToDeleteId}`, {
+    fetch(`${window.WorkShiftBaseUrl}/api/employees/${employeeToDeleteId}`, {
         method: 'DELETE'
     })
         .then(res => res.json())
@@ -325,15 +325,123 @@ window.confirmDelete = function () {
         });
 }
 
-// ... (fiscal code calculation remains same)
+// Fiscal Code Logic (Real Calculation via API)
+window.generateFiscalCode = function () {
+    const nameFull = document.getElementById('employeeName').value.trim();
+    const birthDate = document.getElementById('employeeBirthDate').value;
+    const gender = document.getElementById('employeeGender').value;
+    const birthPlace = document.getElementById('employeeBirthPlace').value;
+
+    if (!nameFull || !birthDate || !gender || !birthPlace) {
+        Swal.fire({
+            title: 'Dati Mancanti',
+            text: 'Per calcolare il Codice Fiscale, inserisci: Nome, Data di Nascita, Sesso e Luogo di Nascita.',
+            icon: 'warning',
+            confirmButtonColor: '#4f46e5'
+        });
+        return;
+    }
+
+    // Heuristic Split: Last word is usually Name, rest is Surname ?? 
+    // Actually standard is "Name Surname" or "Surname Name"? 
+    // Let's assume input is "Name Surname". If > 2 words, it's tricky.
+    // Let's try to split by first space.
+    // IMPROVEMENT: Add explicit fields if this fails often. For now, best effort.
+    const parts = nameFull.split(' ');
+    let nome = '';
+    let cognome = '';
+
+    if (parts.length >= 2) {
+        nome = parts[parts.length - 1]; // Last part as name
+        cognome = parts.slice(0, parts.length - 1).join(' '); // All previous as surname
+    } else {
+        nome = nameFull;
+        cognome = nameFull; // Fallback
+    }
+
+    const btn = document.getElementById('btn-calc-cf'); // Hypothetical button if exists
+    if (btn) {
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    }
+
+    Swal.fire({
+        title: 'Calcolo in corso...',
+        didOpen: () => Swal.showLoading(),
+        background: '#0f172a',
+        color: '#fff'
+    });
+
+    // Construct correct URL: WorkShiftBaseUrl is ".../public/workshift", we need ".../public/soci/calcola-cf"
+    const appBaseUrl = window.WorkShiftBaseUrl.replace(/\/workshift$/, '');
+
+    let payload = {
+        nome: nome,
+        cognome: cognome,
+        data_nascita: birthDate,
+        sesso: gender,
+        luogo: birthPlace
+    };
+
+    if (window.CSRF) {
+        payload.csrf_name = window.CSRF.name;
+        payload.csrf_value = window.CSRF.value;
+    }
+
+    fetch(`${appBaseUrl}/soci/calcola-cf`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.cf) {
+                document.getElementById('employeeFiscalCode').value = data.cf;
+                Swal.close();
+                // Swal.fire('Calcolato', 'Codice Fiscale generato correttamente.', 'success'); // Optional feedback
+            } else {
+                throw new Error(data.error || 'Errore nel calcolo');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            Swal.fire('Errore', 'Impossibile calcolare il Codice Fiscale: ' + err.message, 'error');
+        })
+        .finally(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        });
+}
 
 window.generateEmployeeCode = function () {
-    // Robust Generation: EMP-[TimestampBase36]-[RandomBase36]
-    // Uniqueness virtually guaranteed for this scale
-    const timestamp = Date.now().toString(36).toUpperCase();
-    const random = Math.random().toString(36).substr(2, 4).toUpperCase();
-    const code = `EMP-${timestamp}-${random}`;
+    // Standard Format: OP-[FiscalCode]
+    const cf = document.getElementById('employeeFiscalCode').value.toUpperCase().trim();
 
+    if (!cf || cf.length < 16) {
+        // Try to generate CF first if missing
+        const generatedCf = generateFiscalCode();
+        if (!generatedCf) {
+            // Fallback if data missing for CF too
+            return;
+        }
+        // Re-read after generation
+        setTimeout(() => {
+            const newCf = document.getElementById('employeeFiscalCode').value.toUpperCase().trim();
+            if (newCf) {
+                const code = `OP-${newCf}`;
+                document.getElementById('employeeCode').value = code;
+            }
+        }, 1000); // Wait for API
+        return;
+    }
+
+    const code = `OP-${cf}`;
     const input = document.getElementById('employeeCode');
     if (input) input.value = code;
     return code;
