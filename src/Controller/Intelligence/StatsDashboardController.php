@@ -94,9 +94,9 @@ class StatsDashboardController
             $health = $this->healthCheck->checkAll();
             // Mocking Advanced Financials (In real app, this would be a Service)
             $financials = [
-                'asset_value' => '€ 175.000',
-                'projected_revenue' => '€ 24.500',
-                'growth_rate' => '+12.5%'
+                'asset_value' => '€ 495.000',
+                'projected_revenue' => '€ 6.000.000',
+                'growth_rate' => '+6088%'
             ];
 
             // Mocking Recent Transactions for DataTable
