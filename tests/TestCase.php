@@ -69,6 +69,10 @@ abstract class TestCase extends BaseTestCase
             $this->db->exec("DELETE FROM users WHERE username != 'admin'");
             $this->db->exec("DELETE FROM audit_logs");
         }
+
+        // Clear flush session
+        $_SESSION = [];
+
         parent::tearDown();
     }
 

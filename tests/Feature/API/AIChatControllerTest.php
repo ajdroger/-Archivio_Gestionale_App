@@ -10,6 +10,7 @@ class AIChatControllerTest extends TestCase
 {
     public function test_chat_needs_message()
     {
+        $this->loginAs('admin');
         $request = $this->createRequest('POST', '/api/ai/chat')
             ->withParsedBody([]); // Empty
 
@@ -23,6 +24,7 @@ class AIChatControllerTest extends TestCase
         // Ideally we Mock AIService here using DI Container
         // But for this quick integration test, we check if it handles the flow 
         // even if it returns 503 (AI Unavailable) or 200 (Mocked/Real)
+        $this->loginAs('admin');
 
         $request = $this->createRequest('POST', '/api/ai/chat')
             ->withParsedBody(['message' => 'Hello AI', 'context' => 'test']);
@@ -33,7 +35,8 @@ class AIChatControllerTest extends TestCase
 
         // It should be 200 (Success) or 503 (AI Service Down/Null)
         // We consider both "passing" logic flow as Controller didn't crash
-        $this->assertTrue(in_array($statusCode, [200, 503]));
+        $body = (string) $response->getBody();
+        $this->assertTrue(in_array($statusCode, [200, 503]), "Expected 200 or 503, got $statusCode. Response: $body");
 
         $json = json_decode((string) $response->getBody(), true);
         $this->assertNotNull($json);

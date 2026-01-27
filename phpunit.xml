@@ -31,6 +31,8 @@
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="DB_DATABASE" value="fratellanza_test"/>
+        <env name="DB_USERNAME" value="root"/>
+        <env name="DB_PASSWORD" value="mysql"/>
         <ini name="session.cookie_httponly" value="1"/>
         <ini name="session.cookie_samesite" value="Strict"/>
         <ini name="session.use_only_cookies" value="1"/>

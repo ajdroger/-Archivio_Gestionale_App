@@ -19,9 +19,7 @@ class ResellerControllerTest extends TestCase
 
     public function test_partner_dashboard_loads()
     {
-        // Mock Session/Auth
-        $_SESSION['user_id'] = 1;
-        $_SESSION['user_role'] = 'admin'; // Or 'partner' if granular
+        $this->loginAs('admin');
 
         $request = $this->createRequest('GET', '/partner');
         $response = $this->app->handle($request);
@@ -33,7 +31,7 @@ class ResellerControllerTest extends TestCase
 
     public function test_create_client_endpoint()
     {
-        $_SESSION['user_id'] = 1;
+        $this->loginAs('admin');
 
         $request = $this->createRequest('POST', '/partner/client/create')
             ->withParsedBody(['client_name' => 'New Corp']);

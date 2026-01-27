@@ -39,23 +39,29 @@ class AIChatController
             $systemPrompt .= " You specialize in explaining PHP code and SQL queries.";
         }
 
-        // Call AI Service
-        $aiResponse = $this->aiService->generate($userMessage, $systemPrompt);
+        try {
+            // Call AI Service
+            $aiResponse = $this->aiService->generate($userMessage, $systemPrompt);
 
-        // Calculate Latency
-        $latencyMs = (microtime(true) - $start) * 1000;
+            // Calculate Latency
+            $latencyMs = (microtime(true) - $start) * 1000;
 
-        // Log for GDPR
-        $this->auditLogger->logInteraction(
-            $this->aiService->getActiveDriverName(),
-            $context,
-            $userMessage,
-            $aiResponse ?? 'ERROR',
-            $latencyMs
-        );
+            // Log for GDPR
+            $this->auditLogger->logInteraction(
+                $this->aiService->getActiveDriverName(),
+                $context,
+                $userMessage,
+                $aiResponse ?? 'ERROR',
+                $latencyMs
+            );
 
-        if ($aiResponse === null) {
-            $response->getBody()->write(json_encode(['error' => 'AI Service Unavailable']));
+            if ($aiResponse === null) {
+                $response->getBody()->write(json_encode(['error' => 'AI Service Unavailable']));
+                return $response->withStatus(503)->withHeader('Content-Type', 'application/json');
+            }
+        } catch (\Throwable $e) {
+            error_log("AI Chat Error: " . $e->getMessage());
+            $response->getBody()->write(json_encode(['error' => 'AI Internal Error: ' . $e->getMessage()]));
             return $response->withStatus(503)->withHeader('Content-Type', 'application/json');
         }
 
