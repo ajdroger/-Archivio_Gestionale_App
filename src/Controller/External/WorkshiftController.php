@@ -55,7 +55,12 @@ class WorkshiftController
 
     public function shiftManagement(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $html = $this->mustache->render('workshift/shift-management.mustache', $this->getCommonData('Gestione Turni', $request));
+        $data = $this->getCommonData('Gestione Turni', $request);
+
+        // Fetch employees for the dropdown
+        $data['employees'] = $this->repository->findAllEmployees();
+
+        $html = $this->mustache->render('workshift/shift-management.mustache', $data);
         $response->getBody()->write($html);
         return $response;
     }
@@ -311,7 +316,13 @@ class WorkshiftController
     {
         $data = $request->getParsedBody();
         $scope = $data['scope'] ?? 'week'; // 'day' or 'week'
-        $start = $data['start'] ?? date('Y-m-d');
+
+        // STRICT SAFETY: Start date is mandatory. Never default to 'today'.
+        if (empty($data['start'])) {
+            $response->getBody()->write(json_encode(['success' => false, 'error' => 'Start date is required and cannot be empty.']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+        $start = $data['start'];
         $end = $data['end'] ?? null;
 
         $count = $this->repository->deleteAllShifts($scope, $start, $end);

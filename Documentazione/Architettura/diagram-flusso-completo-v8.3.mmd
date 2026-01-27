@@ -1,0 +1,306 @@
+```mermaid
+flowchart TD
+    %% =====================================================
+    %% MCAG v8.3.0 - DIAGRAMMA DI FLUSSO COMPLETO
+    %% Tutti i Flussi Critici del Sistema
+    %% Data: 27 Gennaio 2026
+    %% =====================================================
+
+    %% =====================================================
+    %% STILI ENTERPRISE
+    %% =====================================================
+    classDef startNode fill:#4caf50,stroke:#2e7d32,stroke-width:3px,color:#fff
+    classDef endNode fill:#f44336,stroke:#b71c1c,stroke-width:3px,color:#fff
+    classDef processNode fill:#2196f3,stroke:#0d47a1,stroke-width:2px,color:#fff
+    classDef decisionNode fill:#ff9800,stroke:#e65100,stroke-width:2px,color:#fff
+    classDef securityNode fill:#9c27b0,stroke:#4a148c,stroke-width:2px,color:#fff
+    classDef dataNode fill:#00bcd4,stroke:#006064,stroke-width:2px,color:#fff
+    classDef aiNode fill:#673ab7,stroke:#311b92,stroke-width:2px,color:#fff
+    classDef errorNode fill:#f44336,stroke:#c62828,stroke-width:3px,color:#fff
+
+    %% =====================================================
+    %% FLUSSO 1: USER REGISTRATION COMPLETO
+    %% =====================================================
+    subgraph FLOW1 [" 1️⃣ USER REGISTRATION FLOW "]
+        START_REG([🚀 Utente visita Landing Page]):::startNode
+        CLICK_DEMO[Clicca 'Richiedi Demo']:::processNode
+        FILL_FORM[Compila Form Registrazione<br/>Nome, Email, Telefono, Organizzazione]:::processNode
+        VALIDATE_INPUT{Validazione Input<br/>Email valida?<br/>Phone valido?}:::decisionNode
+        SANITIZE[InputSanitizer:<br/>Rimuovi XSS, SQL Injection]:::securityNode
+        DUP_CHECK{Duplicate Check<br/>Email già registrata?}:::decisionNode
+        GEN_MATRICOLA[RegistrationService:<br/>Genera Matricola Univoca]:::processNode
+        GEN_PASSWORD[PasswordHasher:<br/>Hash Password Bcrypt]:::processNode
+        SAVE_DB[(PDOSocioRepository:<br/>Salva su Database)]:::dataNode
+        SEND_EMAIL[EmailService:<br/>Invia Email Verifica]:::processNode
+        EMAIL_VERIFY{Utente clicca<br/>link verifica?}:::decisionNode
+        ACTIVATE_ACCOUNT[Attiva Account]:::processNode
+        SETUP_2FA[TwoFactorController:<br/>Setup 2FA TOTP]:::securityNode
+        GEN_QR[Genera QR Code<br/>Google Authenticator]:::processNode
+        VERIFY_2FA{Verifica Codice<br/>6 cifre}:::decisionNode
+        ENABLE_2FA[Abilita 2FA<br/>Cripta Secret AES-256-GCM]:::securityNode
+        FIRST_LOGIN[Login con credenziali]:::processNode
+        END_REG([✅ Registrazione Completa<br/>Accesso al Sistema]):::endNode
+        ERROR_REG([❌ Errore Registrazione]):::errorNode
+
+        START_REG --> CLICK_DEMO --> FILL_FORM --> VALIDATE_INPUT
+        VALIDATE_INPUT -->|Valid| SANITIZE
+        VALIDATE_INPUT -->|Invalid| ERROR_REG
+        SANITIZE --> DUP_CHECK
+        DUP_CHECK -->|Duplicate| ERROR_REG
+        DUP_CHECK -->|Unique| GEN_MATRICOLA
+        GEN_MATRICOLA --> GEN_PASSWORD --> SAVE_DB
+        SAVE_DB --> SEND_EMAIL --> EMAIL_VERIFY
+        EMAIL_VERIFY -->|No| ERROR_REG
+        EMAIL_VERIFY -->|Yes| ACTIVATE_ACCOUNT
+        ACTIVATE_ACCOUNT --> SETUP_2FA --> GEN_QR
+        GEN_QR --> VERIFY_2FA
+        VERIFY_2FA -->|Invalid| ERROR_REG
+        VERIFY_2FA -->|Valid| ENABLE_2FA
+        ENABLE_2FA --> FIRST_LOGIN --> END_REG
+    end
+
+    %% =====================================================
+    %% FLUSSO 2: SOCIO CRUD COMPLETO
+    %% =====================================================
+    subgraph FLOW2 [" 2️⃣ SOCIO CREATE/UPDATE/DELETE FLOW "]
+        START_CRUD([🎯 Admin apre Form Socio]):::startNode
+        FILL_SOCIO[Compila Dati:<br/>Nome, CF, Email, Residenza]:::processNode
+        CALC_CF[FiscalCodeCalculator:<br/>Calcola CF automatico]:::processNode
+        VALIDATE_CF{CF valido?<br/>16 caratteri<br/>CIN corretto?}:::decisionNode
+        VALIDATE_SOCIO[ValidationService:<br/>Valida tutti campi]:::processNode
+        UPLOAD_DOC[Upload Documenti:<br/>Carta Identità, Foto]:::processNode
+        VIRUS_SCAN[Security Scan:<br/>ClamAV check]:::securityNode
+        VIRUS_FOUND{Virus<br/>rilevato?}:::decisionNode
+        GEN_PDF[PdfGenerationService:<br/>Genera Modulo Iscrizione PDF]:::processNode
+        START_TX[(Database:<br/>BEGIN TRANSACTION)]:::dataNode
+        SAVE_SOCIO[(PDOSocioRepository:<br/>INSERT socio)]:::dataNode
+        SAVE_DOCS[(PDODocumentoRepository:<br/>INSERT documenti)]:::dataNode
+        AUDIT_LOG[AuditLogger:<br/>Log CREATE_SOCIO]:::securityNode
+        COMMIT_TX[(Database:<br/>COMMIT)]:::dataNode
+        ROLLBACK_TX[(Database:<br/>ROLLBACK)]:::dataNode
+        SEND_WELCOME[EmailService:<br/>Invia Email Benvenuto + PDF]:::processNode
+        END_CRUD([✅ Socio Creato]):::endNode
+        ERROR_CRUD([❌ Errore Creazione]):::errorNode
+
+        START_CRUD --> FILL_SOCIO --> CALC_CF
+        CALC_CF --> VALIDATE_CF
+        VALIDATE_CF -->|Invalid| ERROR_CRUD
+        VALIDATE_CF -->|Valid| VALIDATE_SOCIO
+        VALIDATE_SOCIO --> UPLOAD_DOC --> VIRUS_SCAN
+        VIRUS_SCAN --> VIRUS_FOUND
+        VIRUS_FOUND -->|Yes| ERROR_CRUD
+        VIRUS_FOUND -->|No| GEN_PDF
+        GEN_PDF --> START_TX --> SAVE_SOCIO
+        SAVE_SOCIO --> SAVE_DOCS --> AUDIT_LOG
+        AUDIT_LOG --> COMMIT_TX
+        SAVE_SOCIO -.->|Error| ROLLBACK_TX
+        SAVE_DOCS -.->|Error| ROLLBACK_TX
+        ROLLBACK_TX --> ERROR_CRUD
+        COMMIT_TX --> SEND_WELCOME --> END_CRUD
+    end
+
+    %% =====================================================
+    %% FLUSSO 3: WORKSHIFT MANAGEMENT
+    %% =====================================================
+    subgraph FLOW3 [" 3️⃣ WORKSHIFT COMMANDER FLOW "]
+        START_WS([📅 Manager apre Shift Calendar]):::startNode
+        VIEW_CALENDAR[Visualizza Calendario<br/>Griglia settimanale/mensile]:::processNode
+        CREATE_SHIFT[Crea Nuovo Turno:<br/>Data, Orario, Ruolo]:::processNode
+        SEARCH_OP[Cerca Operatore:<br/>Dual-Source Search]:::processNode
+        SEARCH_DB[(PDOWorkshiftRepository:<br/>Search Team DB)]:::dataNode
+        SEARCH_SEC[(SecurityCenter:<br/>Search Users DB)]:::dataNode
+        SELECT_OP[Seleziona Operatore]:::processNode
+        CHECK_CONFLICT{Conflitto<br/>Turni?}:::decisionNode
+        CALC_COST[Calcola Costo Stimato:<br/>Ore × Tariffa]:::processNode
+        SAVE_SHIFT[(PDOWorkshiftRepository:<br/>saveShift)]:::dataNode
+        AI_OPTIMIZE{Ottimizzazione<br/>AI richiesta?}:::decisionNode
+        RUN_OPTIMIZER[Algorithm:<br/>Minimize Cost<br/>Balance Workload]:::aiNode
+        GEN_REPORT[Genera Report:<br/>KPI, Trend, Distribuzione]:::processNode
+        EXPORT_PDF[Export PDF/CSV]:::processNode
+        END_WS([✅ Turni Organizzati]):::endNode
+
+        START_WS --> VIEW_CALENDAR --> CREATE_SHIFT
+        CREATE_SHIFT --> SEARCH_OP
+        SEARCH_OP --> SEARCH_DB
+        SEARCH_OP --> SEARCH_SEC
+        SEARCH_DB --> SELECT_OP
+        SEARCH_SEC --> SELECT_OP
+        SELECT_OP --> CHECK_CONFLICT
+        CHECK_CONFLICT -->|Conflict| CREATE_SHIFT
+        CHECK_CONFLICT -->|No Conflict| CALC_COST
+        CALC_COST --> SAVE_SHIFT --> AI_OPTIMIZE
+        AI_OPTIMIZE -->|Yes| RUN_OPTIMIZER
+        AI_OPTIMIZE -->|No| GEN_REPORT
+        RUN_OPTIMIZER --> GEN_REPORT
+        GEN_REPORT --> EXPORT_PDF --> END_WS
+    end
+
+    %% =====================================================
+    %% FLUSSO 4: DOCUMENT VAULT SECURITY
+    %% =====================================================
+    subgraph FLOW4 [" 4️⃣ DOCUMENT VAULT FLOW "]
+        START_VAULT([📁 Socio upload documento]):::startNode
+        SELECT_FILE[Seleziona File:<br/>PDF, DOCX, JPG]:::processNode
+        CHECK_SIZE{Dimensione<br/>\< 10MB?}:::decisionNode
+        CHECK_EXT{Estensione<br/>permessa?}:::decisionNode
+        SCAN_AV[AntiVirus Scan:<br/>ClamAV]:::securityNode
+        MALWARE{Malware<br/>rilevato?}:::decisionNode
+        ENCRYPT_FILE[EncryptionService:<br/>AES-256-GCM Encryption]:::securityNode
+        GEN_HASH[SHA-256 Hash<br/>per integrità]:::securityNode
+        MOVE_STORAGE[Sposta in Secure Storage:<br/>/storage/documents/encrypted/]:::processNode
+        SAVE_META[(PDODocumentoRepository:<br/>Salva Metadata)]:::dataNode
+        AUDIT_UPLOAD[AuditLogger:<br/>LOG DOCUMENT_UPLOAD]:::securityNode
+        END_VAULT([✅ Documento Archiviato]):::endNode
+        ERROR_VAULT([❌ Upload Bloccato]):::errorNode
+
+        START_VAULT --> SELECT_FILE --> CHECK_SIZE
+        CHECK_SIZE -->|Too Large| ERROR_VAULT
+        CHECK_SIZE -->|OK| CHECK_EXT
+        CHECK_EXT -->|Not Allowed| ERROR_VAULT
+        CHECK_EXT -->|OK| SCAN_AV
+        SCAN_AV --> MALWARE
+        MALWARE -->|Yes| ERROR_VAULT
+        MALWARE -->|No| ENCRYPT_FILE
+        ENCRYPT_FILE --> GEN_HASH --> MOVE_STORAGE
+        MOVE_STORAGE --> SAVE_META --> AUDIT_UPLOAD
+        AUDIT_UPLOAD --> END_VAULT
+    end
+
+    %% =====================================================
+    %% FLUSSO 5: AI RAG QUERY
+    %% =====================================================
+    subgraph FLOW5 [" 5️⃣ AI RAG 'ARCHIVIO PARLANTE' FLOW "]
+        START_AI([💬 Utente chiede domanda]):::startNode
+        INPUT_QUERY[Input: 'Come funziona 2FA?']:::processNode
+        SANITIZE_Q[Sanitize Input]:::securityNode
+        GEN_EMBED[EmbeddingService:<br/>Ollama embed<br/>Query → Vector]:::aiNode
+        SEARCH_VECTOR[(VectorStoreService:<br/>Cosine Similarity Search<br/>Top 10 chunks)]:::dataNode
+        RETRIEVE_DOCS[Recupera Documenti:<br/>DECISION_LOG.md<br/>CHANGELOG.md<br/>MANUALI/*]:::processNode
+        BUILD_CONTEXT[Build Context:<br/>Concatena chunks rilevanti]:::processNode
+        CALL_LLM[OllamaService:<br/>llama3.2 generate<br/>Prompt + Context]:::aiNode
+        STREAM_RESP[Stream Response<br/>Real-time HTMX]:::processNode
+        CITATION[Add Citations:<br/>[Source: ADR-042]]:::processNode
+        END_AI([✅ Risposta AI Generata]):::endNode
+
+        START_AI --> INPUT_QUERY --> SANITIZE_Q
+        SANITIZE_Q --> GEN_EMBED --> SEARCH_VECTOR
+        SEARCH_VECTOR --> RETRIEVE_DOCS --> BUILD_CONTEXT
+        BUILD_CONTEXT --> CALL_LLM --> STREAM_RESP
+        STREAM_RESP --> CITATION --> END_AI
+    end
+
+    %% =====================================================
+    %% FLUSSO 6: SECURITY PIPELINE (Middleware Chain)
+    %% =====================================================
+    subgraph FLOW6 [" 6️⃣ SECURITY PIPELINE FLOW "]
+        START_REQ([🌐 HTTP Request]):::startNode
+        MW_HEADERS[SecurityHeadersMiddleware:<br/>Add CSP, HSTS, X-Frame]:::securityNode
+        MW_RATE{RateLimitMiddleware:<br/>Redis Check<br/>Max 100 req/min}:::decisionNode
+        MW_CORS[CORS Check:<br/>Origin allowed?]:::securityNode
+        MW_CSRF{CsrfMiddleware:<br/>Token valido?}:::decisionNode
+        MW_BODY[BodyParserMiddleware:<br/>Parse JSON/Form]:::processNode
+        MW_AUTH{AuthMiddleware:<br/>Session valida?}:::decisionNode
+        MW_2FA{2FA verificato?}:::decisionNode
+        MW_RBAC{AdminMiddleware:<br/>Ha permesso?}:::decisionNode
+        MW_AUDIT[AuditLogger:<br/>Log Request]:::securityNode
+        CONTROLLER[Controller:<br/>Esegue Business Logic]:::processNode
+        END_SEC([✅ Response 200 OK]):::endNode
+        ERROR_401([❌ 401 Unauthorized]):::errorNode
+        ERROR_403([❌ 403 Forbidden]):::errorNode
+        ERROR_429([❌ 429 Too Many Requests]):::errorNode
+
+        START_REQ --> MW_HEADERS --> MW_RATE
+        MW_RATE -->|Limit Exceeded| ERROR_429
+        MW_RATE -->|OK| MW_CORS --> MW_CSRF
+        MW_CSRF -->|Invalid| ERROR_403
+        MW_CSRF -->|Valid| MW_BODY --> MW_AUTH
+        MW_AUTH -->|Guest| ERROR_401
+        MW_AUTH -->|Authenticated| MW_2FA
+        MW_2FA -->|Not Verified| ERROR_401
+        MW_2FA -->|Verified| MW_RBAC
+        MW_RBAC -->|Forbidden| ERROR_403
+        MW_RBAC -->|Allowed| MW_AUDIT
+        MW_AUDIT --> CONTROLLER --> END_SEC
+    end
+
+    %% =====================================================
+    %% FLUSSO 7: DEVTOOLS TERMINAL
+    %% =====================================================
+    subgraph FLOW7 [" 7️⃣ DEVTOOLS TERMINAL FLOW "]
+        START_TERM([⚙️ Admin apre DevTools Terminal]):::startNode
+        INPUT_CMD[Input Command:<br/>'php vendor/bin/pest']:::processNode
+        SANITIZE_CMD[Sanitize Command:<br/>Blocca ';', '&&', '|']:::securityNode
+        CHECK_DANGER{Comando<br/>pericoloso?<br/>rm, dd, etc}:::decisionNode
+        CHECK_GOD{God Mode<br/>attivo?}:::decisionNode
+        EXEC_SHELL[Execute:<br/>proc_open<br/>PowerShell/Bash]:::processNode
+        CAPTURE_OUT[Capture Output:<br/>STDOUT + STDERR]:::processNode
+        PARSE_OUT[Parse Output:<br/>Syntax Highlight]:::processNode
+        STREAM_WS[Stream via WebSocket<br/>Real-time]:::processNode
+        AUDIT_CMD[AuditLogger:<br/>LOG TERMINAL_COMMAND]:::securityNode
+        END_TERM([✅ Output Visualizzato]):::endNode
+        ERROR_TERM([❌ Comando Bloccato]):::errorNode
+
+        START_TERM --> INPUT_CMD --> SANITIZE_CMD
+        SANITIZE_CMD --> CHECK_DANGER
+        CHECK_DANGER -->|Dangerous| CHECK_GOD
+        CHECK_GOD -->|Not God| ERROR_TERM
+        CHECK_GOD -->|God Mode| EXEC_SHELL
+        CHECK_DANGER -->|Safe| EXEC_SHELL
+        EXEC_SHELL --> CAPTURE_OUT --> PARSE_OUT
+        PARSE_OUT --> STREAM_WS --> AUDIT_CMD
+        AUDIT_CMD --> END_TERM
+    end
+
+    %% =====================================================
+    %% FLUSSO 8: PAYMENT FLOW (Future)
+    %% =====================================================
+    subgraph FLOW8 [" 8️⃣ PAYMENT FLOW (FUTURE) "]
+        START_PAY([💳 Utente seleziona Piano]):::startNode
+        SELECT_TIER[Seleziona Tier:<br/>Professional €350K]:::processNode
+        ADD_CART[Aggiungi a Carrello]:::processNode
+        CHECKOUT[Checkout:<br/>Conferma Ordine]:::processNode
+        SELECT_METHOD{Metodo<br/>Pagamento}:::decisionNode
+        STRIPE_PAY[Stripe Gateway:<br/>Credit Card]:::processNode
+        BANK_TRANSFER[Bonifico Bancario]:::processNode
+        VERIFY_PAY{Pagamento<br/>verificato?}:::decisionNode
+        GEN_INVOICE[Genera Fattura<br/>con dati fiscali]:::processNode
+        SEND_LICENSE[Invia Licenza:<br/>Download Link + Serial]:::processNode
+        ACTIVATE_SUP[Attiva Support 24m]:::processNode
+        SCHEDULE_TRAIN[Schedule Training 48h]:::processNode
+        END_PAY([✅ Pagamento Completato]):::endNode
+        ERROR_PAY([❌ Pagamento Fallito]):::errorNode
+
+        START_PAY --> SELECT_TIER --> ADD_CART
+        ADD_CART --> CHECKOUT --> SELECT_METHOD
+        SELECT_METHOD -->|Card| STRIPE_PAY
+        SELECT_METHOD -->|Bank| BANK_TRANSFER
+        STRIPE_PAY --> VERIFY_PAY
+        BANK_TRANSFER --> VERIFY_PAY
+        VERIFY_PAY -->|Failed| ERROR_PAY
+        VERIFY_PAY -->|Success| GEN_INVOICE
+        GEN_INVOICE --> SEND_LICENSE --> ACTIVATE_SUP
+        ACTIVATE_SUP --> SCHEDULE_TRAIN --> END_PAY
+    end
+
+    %% =====================================================
+    %% STILE APPLICATO
+    %% =====================================================
+```
+
+**MCAG v8.3.0 - Diagramma di Flusso Completo**
+
+**8 Flussi Critici Documentati**:
+
+1. **User Registration Flow**: Registrazione completa con validazione, 2FA setup, email verification
+2. **Socio CRUD Flow**: Create/Update/Delete con validazione CF, virus scan, PDF generation, transazioni ACID
+3. **Workshift Management Flow**: Gestione turni con ricerca dual-source, ottimizzazione AI, export report
+4. **Document Vault Flow**: Upload sicuro con encryption AES-256, antivirus, audit trail
+5. **AI RAG Flow**: Query processing con embedding, vector search, LLM generation, citations
+6. **Security Pipeline Flow**: Middleware chain completa (Rate Limit, CSRF, Auth, 2FA, RBAC)
+7. **DevTools Terminal Flow**: Esecuzione comandi con sanitization, God Mode check, real-time output
+8. **Payment Flow (Future)**: Checkout, payment processing, license delivery, support activation
+
+**Nodi Totali**: 120+
+**Decision Points**: 25+
+**Security Checks**: 18+
+**Database Operations**: 15+

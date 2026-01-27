@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseUrl = window.location.origin + window.location.pathname.split('/workshift')[0];
     const client = new WorkShiftAPI(baseUrl);
 
-    // State
-    let currentDate = new Date();
+    // State - Made global to be accessible by modal logic
+    window.currentShiftDate = new Date();
     let currentView = 'week'; // day, week, month, year
 
     // View Switcher logic
@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // === Date Navigation ===
     const updateDate = (direction) => {
         if (currentView === 'week') {
-            currentDate.setDate(currentDate.getDate() + (direction * 7));
+            window.currentShiftDate.setDate(window.currentShiftDate.getDate() + (direction * 7));
         } else if (currentView === 'month') {
-            currentDate.setMonth(currentDate.getMonth() + direction);
+            window.currentShiftDate.setMonth(window.currentShiftDate.getMonth() + direction);
         } else if (currentView === 'year') {
-            currentDate.setFullYear(currentDate.getFullYear() + direction);
+            window.currentShiftDate.setFullYear(window.currentShiftDate.getFullYear() + direction);
         } else if (currentView === 'day') {
-            currentDate.setDate(currentDate.getDate() + direction);
+            window.currentShiftDate.setDate(window.currentShiftDate.getDate() + direction);
         }
         updateHeaderDisplay();
         loadSchedule();
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let titleText;
 
         if (currentView === 'week') {
-            const clone = new Date(currentDate);
+            const clone = new Date(window.currentShiftDate);
             const day = clone.getDay();
             const diff = clone.getDate() - day + (day === 0 ? -6 : 1);
             clone.setDate(diff);
@@ -83,16 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else if (currentView === 'month') {
             titleText = "MESE CORRENTE";
-            if (label) label.innerHTML = currentDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
+            if (label) label.innerHTML = window.currentShiftDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
         } else if (currentView === 'year') {
             titleText = "ANNO";
-            if (label) label.innerHTML = currentDate.getFullYear();
+            if (label) label.innerHTML = window.currentShiftDate.getFullYear();
         } else if (currentView === 'list') {
             titleText = "VISTA LISTA (MESE)";
-            if (label) label.innerHTML = currentDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
+            if (label) label.innerHTML = window.currentShiftDate.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).toUpperCase();
         } else if (currentView === 'day') {
             titleText = "GIORNO SINGOLO";
-            if (label) label.innerHTML = currentDate.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+            if (label) label.innerHTML = window.currentShiftDate.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
         }
 
         if (headerTitle) headerTitle.textContent = titleText;
@@ -123,14 +123,14 @@ document.addEventListener('DOMContentLoaded', () => {
         modalBackdrop.classList.remove('opacity-0');
         modalBackdrop.classList.add('opacity-100');
 
-        modalPanel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
-        modalPanel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+        modalPanel.classList.remove('opacity-0');
+        modalPanel.classList.add('opacity-100');
     }
 
     function closeModal() {
         // Animation out
-        modalPanel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
-        modalPanel.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+        modalPanel.classList.remove('opacity-100');
+        modalPanel.classList.add('opacity-0');
         modalBackdrop.classList.remove('opacity-100');
         modalBackdrop.classList.add('opacity-0');
 
@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `${y}-${m}-${day}`;
             };
 
-            const clone = new Date(currentDate);
+            const clone = new Date(window.currentShiftDate);
 
             if (currentView === 'week') {
                 const day = clone.getDay();
@@ -601,10 +601,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const isDayPast = (dayName) => {
         if (currentView !== 'week') return false; // Only strict for week view logic usually
 
-        // Calculate the Date of that column based on currentDate (which is start of week usually or tracked)
-        // This relies on currentDate being correct.
-        // Let's re-calculate the week start from currentDate state
-        const clone = new Date(currentDate);
+        // Calculate New Date
+        // We must calculate based on the VIEW's current date, NOT just "next Monday" from today.
+        // Otherwise navigating weeks breaks dragging.
+        const clone = new Date(window.currentShiftDate);
         const day = clone.getDay();
         const diff = clone.getDate() - day + (day === 0 ? -6 : 1);
         clone.setDate(diff); // Monday of current view
@@ -659,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate New Date
         // We must calculate based on the VIEW's current date, NOT just "next Monday" from today.
         // Otherwise navigating weeks breaks dragging.
-        const clone = new Date(currentDate);
+        const clone = new Date(window.currentShiftDate);
         const day = clone.getDay();
         const diff = clone.getDate() - day + (day === 0 ? -6 : 1);
         clone.setDate(diff); // Monday of VIEW
@@ -815,53 +815,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === Global Actions ===
-    window.clearDay = async (day) => {
-        console.log('[ShiftManager] Request to clears day:', day);
-        if (!confirm(`Sei sicuro di voler eliminare TUTTI i turni di ${day}?`)) return;
+    // Updated to use the new Modal UI and correct logic
+    window.clearDay = (dayName) => {
+        // Translation map
+        const dayMapIt = { 'Monday': 'Lunedì', 'Tuesday': 'Martedì', 'Wednesday': 'Mercoledì', 'Thursday': 'Giovedì', 'Friday': 'Venerdì', 'Saturday': 'Sabato', 'Sunday': 'Domenica' };
 
-        // Calculate Date (Local Time Safe)
-        const today = new Date();
-        const currentDay = today.getDay(); // 0 (Sun) - 6 (Sat)
-        const dayOffsets = { 'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6 };
+        const label = document.getElementById('resetDayTargetName');
+        if (label) label.textContent = dayMapIt[dayName] || dayName;
+        document.getElementById('resetDayTargetKey').value = dayName;
 
-        const mondayOffset = (currentDay === 0 ? -6 : 1) - currentDay;
-        const mondayDate = new Date(today);
-        mondayDate.setDate(today.getDate() + mondayOffset);
+        const resetDayModal = document.getElementById('resetDayModal');
+        const resetDayBackdrop = document.getElementById('resetDayBackdrop');
+        const resetDayPanel = document.getElementById('resetDayPanel');
 
-        const targetDate = new Date(mondayDate);
-        targetDate.setDate(mondayDate.getDate() + dayOffsets[day]);
-
-        // Use Local Date String YYYY-MM-DD
-        const yyyy = targetDate.getFullYear();
-        const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
-        const dd = String(targetDate.getDate()).padStart(2, '0');
-        const dateStr = `${yyyy}-${mm}-${dd}`;
-
-        console.log('[ShiftManager] Computed date for clear:', dateStr);
-
-        try {
-            const baseUrl = window.location.origin + window.location.pathname.split('/workshift')[0];
-            const endpoint = baseUrl + '/workshift/api/shifts/reset';
-
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ scope: 'day', date: dateStr })
+        if (resetDayModal) {
+            resetDayModal.classList.remove('hidden');
+            resetDayModal.classList.add('flex');
+            requestAnimationFrame(() => { // Ensure transition plays
+                resetDayBackdrop.classList.remove('opacity-0');
+                resetDayPanel.classList.remove('opacity-0', 'scale-95');
+                resetDayPanel.classList.add('opacity-100', 'scale-100');
             });
-
-            if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-
-            const result = await response.json();
-            if (result.success) {
-                console.log(`[ShiftManager] Deleted ${result.deleted} shifts.`);
-                if (result.deleted === 0) alert("Nessun turno trovato per la data selezionata: " + dateStr);
-                else window.location.reload();
-            } else {
-                throw new Error(result.error || 'Errore sconosciuto dal server');
-            }
-        } catch (e) {
-            console.error(e);
-            alert("Errore eliminazione: " + e.message);
         }
     };
 
@@ -869,58 +843,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetWeekBtn = document.getElementById('resetWeekBtn');
     if (resetWeekBtn) {
         console.log('[ShiftManager] Reset Week button found, attaching listener.');
-        resetWeekBtn.addEventListener('click', async () => {
+        resetWeekBtn.addEventListener('click', () => {
             console.log('[ShiftManager] Reset Week clicked');
-            if (!confirm("ATTENZIONE: Vuoi cancellare TUTTI i turni della settimana corrente? Questa operazione non può essere annullata.")) return;
 
-            // Calculate Week Range (Local Time Safe)
-            const today = new Date();
-            const currentDay = today.getDay();
-            const mondayOffset = (currentDay === 0 ? -6 : 1) - currentDay;
-            const mondayDate = new Date(today);
-            mondayDate.setDate(today.getDate() + mondayOffset);
+            Swal.fire({
+                title: 'Sei sicuro?',
+                text: "Vuoi cancellare TUTTI i turni della settimana corrente visualizzata? Questa operazione non può essere annullata.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444', // Red 500
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sì, svuota settimana',
+                cancelButtonText: 'Annulla',
+                background: '#1e293b', // Slate 800
+                color: '#fff'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    // FIX: Use window.currentShiftDate (View State) instead of new Date() (System Time)
+                    const clone = new Date(window.currentShiftDate);
+                    const day = clone.getDay();
+                    const diff = clone.getDate() - day + (day === 0 ? -6 : 1);
+                    clone.setDate(diff);
 
-            const sundayDate = new Date(mondayDate);
-            sundayDate.setDate(mondayDate.getDate() + 6);
+                    const mondayDate = new Date(clone);
 
-            // Format Start
-            const y1 = mondayDate.getFullYear();
-            const m1 = String(mondayDate.getMonth() + 1).padStart(2, '0');
-            const d1 = String(mondayDate.getDate()).padStart(2, '0');
-            const startStr = `${y1}-${m1}-${d1}`;
+                    // Calculate Sunday
+                    const sundayDate = new Date(mondayDate);
+                    sundayDate.setDate(mondayDate.getDate() + 6);
 
-            // Format End
-            const y2 = sundayDate.getFullYear();
-            const m2 = String(sundayDate.getMonth() + 1).padStart(2, '0');
-            const d2 = String(sundayDate.getDate()).padStart(2, '0');
-            const endStr = `${y2}-${m2}-${d2}`;
+                    // Format Start
+                    const y1 = mondayDate.getFullYear();
+                    const m1 = String(mondayDate.getMonth() + 1).padStart(2, '0');
+                    const d1 = String(mondayDate.getDate()).padStart(2, '0');
+                    const startStr = `${y1}-${m1}-${d1}`;
 
-            console.log('[ShiftManager] Clearing week from', startStr, 'to', endStr);
+                    // Format End
+                    const y2 = sundayDate.getFullYear();
+                    const m2 = String(sundayDate.getMonth() + 1).padStart(2, '0');
+                    const d2 = String(sundayDate.getDate()).padStart(2, '0');
+                    const endStr = `${y2}-${m2}-${d2}`;
 
-            try {
-                const baseUrl = window.location.origin + window.location.pathname.split('/workshift')[0];
-                const endpoint = baseUrl + '/workshift/api/shifts/reset';
+                    try {
+                        const baseUrl = window.location.origin + window.location.pathname.split('/workshift')[0];
+                        const endpoint = baseUrl + '/workshift/api/shifts/reset';
 
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ scope: 'week', start_date: startStr, end_date: endStr })
-                });
+                        const response = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ scope: 'week', start: startStr, end: endStr })
+                        });
 
-                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
-                const result = await response.json();
-                if (result.success) {
-                    console.log(`[ShiftManager] Deleted ${result.deleted} shifts.`);
-                    if (result.deleted === 0) alert("Nessun turno trovato nella settimana.");
-                    else window.location.reload();
-                } else {
-                    throw new Error(result.error || 'Errore sconosciuto dal server');
+                        const resData = await response.json();
+                        if (resData.success) {
+                            if (resData.deleted > 0) {
+                                Swal.fire('Svuotata!', `Settimana pulita (${resData.deleted} turni eliminati).`, 'success')
+                                    .then(() => window.location.reload());
+                            } else {
+                                Swal.fire('Info', "Nessun turno trovato nella settimana corrente.", 'info');
+                            }
+                        } else {
+                            throw new Error(resData.error || 'Errore sconosciuto dal server');
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        Swal.fire('Errore', "Impossibile svuotare la settimana: " + e.message, 'error');
+                    }
                 }
-            } catch (e) {
-                console.error(e);
-                alert("Errore reset settimana: " + e.message);
-            }
+            });
         });
     }
 
@@ -1155,6 +1146,129 @@ document.addEventListener('DOMContentLoaded', () => {
         // But need to ensure data-shift attribute is on the TR. Done.
     }
 
+    // === NEW SHIFT MODAL LOGIC (v8) ===
+
+    // Auto-fill Time from Type
+    window.updateTimeInputs = () => {
+        const typeSelector = document.getElementById('shiftType');
+        const startInput = document.getElementById('shiftStart');
+        const endInput = document.getElementById('shiftEnd');
+
+        if (!typeSelector || !startInput || !endInput) return;
+
+        const type = typeSelector.value;
+        switch (type) {
+            case 'Morning':
+                startInput.value = '08:00';
+                endInput.value = '16:00';
+                break;
+            case 'Day':
+                startInput.value = '09:00';
+                endInput.value = '17:00';
+                break;
+            case 'Evening':
+                startInput.value = '16:00';
+                endInput.value = '00:00';
+                break;
+            case 'Night':
+                startInput.value = '00:00';
+                endInput.value = '08:00';
+                break;
+            default:
+                // Custom: do not touch inputs
+                break;
+        }
+    };
+
+    // Save Shift Handler
+    const newShiftConfirmBtn = document.getElementById('confirmCreateShift');
+    if (newShiftConfirmBtn) {
+        newShiftConfirmBtn.addEventListener('click', () => {
+            const employeeId = document.getElementById('shiftEmployee').value;
+            const type = document.getElementById('shiftType').value;
+            const dayName = document.getElementById('shiftDay').value; // Monday, Tuesday...
+            const startTime = document.getElementById('shiftStart').value;
+            const endTime = document.getElementById('shiftEnd').value;
+            const notes = document.getElementById('shiftNotes').value;
+
+            // 1. Validation
+            if (!employeeId) {
+                Swal.fire('Errore', 'Seleziona un dipendente.', 'warning');
+                return;
+            }
+            if (!startTime || !endTime) {
+                Swal.fire('Errore', 'Inserisci orari validi.', 'warning');
+                return;
+            }
+
+            // 2. Calculate Date from Day Name (Context Aware)
+            // We assume 'currentDate' is the reference point for the view.
+            // Logic: Find start of the currently viewed week, then add offset.
+
+            const clone = new Date(currentDate);
+            const currentDay = clone.getDay(); // 0=Sun, 1=Mon
+            const distanceToMonday = clone.getDate() - currentDay + (currentDay === 0 ? -6 : 1);
+            clone.setDate(distanceToMonday); // Now clone is Monday of current view
+
+            const daysOffset = {
+                'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3,
+                'Friday': 4, 'Saturday': 5, 'Sunday': 6
+            };
+
+            if (daysOffset[dayName] !== undefined) {
+                clone.setDate(clone.getDate() + daysOffset[dayName]);
+            }
+
+            const dateSql = clone.toISOString().split('T')[0];
+
+            // 3. Build Payload
+            const payload = {
+                employee_id: employeeId,
+                type: type,
+                day: dayName,
+                date: dateSql,
+                start_time: startTime,
+                end_time: endTime,
+                notes: notes
+            };
+
+            // 4. API Call
+            Swal.fire({
+                title: 'Salvataggio...',
+                didOpen: () => Swal.showLoading(),
+                background: '#0f172a',
+                color: '#fff'
+            });
+
+            client.saveShift(payload)
+                .then(res => {
+                    if (res.success) {
+                        Swal.fire('Fatto!', 'Turno creato correttamente.', 'success'); // removed timer
+                        toggleCreateShiftModal(); // Close
+                        loadSchedule(); // Refresh Grid
+                        // Reset Form?
+                        document.getElementById('shiftNotes').value = '';
+                        // Reset Helper Label
+                        const label = document.getElementById('customSelectLabel');
+                        if (label) label.innerText = "Seleziona Dipendente...";
+                        document.getElementById('shiftEmployee').value = "";
+                    } else {
+                        throw new Error(res.error || 'Errore sconosciuto');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Errore', 'Impossibile salvare il turno: ' + err.message, 'error');
+                });
+        });
+    }
+
+    // Close Handler
+    const newShiftCancelBtn = document.getElementById('cancelCreateShift');
+    if (newShiftCancelBtn) {
+        newShiftCancelBtn.addEventListener('click', toggleCreateShiftModal);
+    }
+
 }); // End DOMContentLoaded
 // ... Global Helpers ...
 
@@ -1162,34 +1276,149 @@ document.addEventListener('DOMContentLoaded', () => {
 window.toggleCreateShiftModal = () => {
     const modal = document.getElementById('createShiftModal');
     const backdrop = document.getElementById('modalBackdrop');
-    const panel = document.getElementById('modalPanel');
+    // Panel is always visible/opacity-100 in DOM when modal is open
 
     if (modal.classList.contains('hidden')) {
-        // Open
         modal.classList.remove('hidden');
-        // Force reflow
         void modal.offsetWidth;
         backdrop.classList.remove('opacity-0');
         backdrop.classList.add('opacity-100');
-        panel.classList.remove('opacity-0', 'scale-95');
-        panel.classList.add('opacity-100', 'scale-100');
     } else {
-        // Close
         backdrop.classList.remove('opacity-100');
         backdrop.classList.add('opacity-0');
-        panel.classList.remove('opacity-100', 'scale-100');
-        panel.classList.add('opacity-0', 'scale-95');
-
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 300);
     }
 };
 
-// Ensure other modals close functions are also global if not already
-// closeQuickMoveModal is already defined as window.closeQuickMoveModal inside, but let's double check.
-// It is defined as window.closeQuickMoveModal inside DOMContentLoaded.
-// NOTE: Defining window.function INSIDE DOMContentLoaded IS fine, as long as it runs before user clicks.
-// However, to be absolutely safe and cleaner, we prefer distinct definitions.
-// Currently closeQuickMoveModal is correctly attached to window inside the callback.
-// toggleCreateShiftModal WAS defined inside as const or function, NOT attached to window. That was the bug.
+// Custom Select Logic
+window.toggleCustomSelect = () => {
+    const options = document.getElementById('customSelectOptions');
+    if (options) {
+        options.classList.toggle('hidden');
+    }
+};
+
+window.selectCustomOption = (id, name) => {
+    // 1. Update UI
+    const label = document.getElementById('customSelectLabel');
+    if (label) label.innerText = name;
+
+    // 2. Update Hidden Select
+    const select = document.getElementById('shiftEmployee');
+    if (select) select.value = id;
+
+    // 3. Close Dropdown
+    const options = document.getElementById('customSelectOptions');
+    if (options) options.classList.add('hidden');
+};
+
+// Close custom select when clicking outside
+document.addEventListener('click', (e) => {
+    const container = document.getElementById('customSelectContainer');
+    const options = document.getElementById('customSelectOptions');
+
+    if (container && options && !container.contains(e.target) && !options.classList.contains('hidden')) {
+        options.classList.add('hidden');
+    }
+});
+
+// === Clear Day Logic ===
+if (typeof window.ClearDayLogicInitialized !== 'undefined' && window.ClearDayLogicInitialized) {
+    // Already initialized
+} else {
+    window.ClearDayLogicInitialized = true;
+
+    var resetDayModal = document.getElementById('resetDayModal');
+    var resetDayBackdrop = document.getElementById('resetDayBackdrop');
+    var resetDayPanel = document.getElementById('resetDayPanel');
+    var confirmResetDayBtn = document.getElementById('confirmResetDay');
+
+
+    window.closeResetDayModal = () => {
+        resetDayBackdrop.classList.add('opacity-0');
+        resetDayPanel.classList.remove('opacity-100', 'scale-100');
+        resetDayPanel.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => {
+            resetDayModal.classList.add('hidden');
+            resetDayModal.classList.remove('flex');
+        }, 300);
+    };
+
+    window.clearDay = (dayName) => {
+        // Translation map
+        const dayMapIt = { 'Monday': 'Lunedì', 'Tuesday': 'Martedì', 'Wednesday': 'Mercoledì', 'Thursday': 'Giovedì', 'Friday': 'Venerdì', 'Saturday': 'Sabato', 'Sunday': 'Domenica' };
+
+        const label = document.getElementById('resetDayTargetName');
+        if (label) label.textContent = dayMapIt[dayName] || dayName;
+        document.getElementById('resetDayTargetKey').value = dayName;
+
+        resetDayModal.classList.remove('hidden');
+        resetDayModal.classList.add('flex');
+        setTimeout(() => {
+            resetDayBackdrop.classList.remove('opacity-0');
+            resetDayPanel.classList.remove('opacity-0', 'scale-95');
+            resetDayPanel.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    };
+
+    if (confirmResetDayBtn) {
+        // Clone to prevent duplicate listeners if re-run
+        const newBtn = confirmResetDayBtn.cloneNode(true);
+        confirmResetDayBtn.parentNode.replaceChild(newBtn, confirmResetDayBtn);
+
+        newBtn.addEventListener('click', async () => {
+            const dayName = document.getElementById('resetDayTargetKey').value;
+            window.closeResetDayModal();
+
+            // Calculate Date Logic (Same as Week/Drag) from currentDate VIEW
+            const clone = new Date(window.currentShiftDate);
+            const d = clone.getDay();
+            const diff = clone.getDate() - d + (d === 0 ? -6 : 1);
+            clone.setDate(diff); // Monday
+
+            const dayOffsets = { 'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6 };
+            const targetDate = new Date(clone);
+            targetDate.setDate(clone.getDate() + dayOffsets[dayName]);
+
+            // Format YYYY-MM-DD
+            const y = targetDate.getFullYear();
+            const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(targetDate.getDate()).padStart(2, '0');
+            const dateStr = `${y}-${m}-${dd}`;
+
+            const dayMapIt = { 'Monday': 'Lunedì', 'Tuesday': 'Martedì', 'Wednesday': 'Mercoledì', 'Thursday': 'Giovedì', 'Friday': 'Venerdì', 'Saturday': 'Sabato', 'Sunday': 'Domenica' };
+
+            console.log(`[ShiftManager] Clearing Day: ${dayName} -> ${dateStr}`);
+
+            try {
+                const baseUrl = window.location.origin + window.location.pathname.split('/workshift')[0];
+                const endpoint = baseUrl + '/workshift/api/shifts/reset';
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ scope: 'day', start: dateStr })
+                });
+
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.deleted > 0) {
+                        Swal.fire('Fatto!', `Svuotato ${dayMapIt[dayName]} (Turni: ${result.deleted})`, 'success')
+                            .then(() => window.location.reload());
+                    } else {
+                        Swal.fire('Info', "Nessun turno trovato per questo giorno.", 'info');
+                    }
+                } else {
+                    Swal.fire('Errore', result.error || 'Errore server', 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Errore', "Errore di connessione: " + e.message, 'error');
+            }
+        });
+    }
+}

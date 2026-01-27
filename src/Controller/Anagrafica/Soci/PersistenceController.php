@@ -151,13 +151,28 @@ class PersistenceController
         $viewData = [
             'socio' => [
                 'codice_fiscale' => $socio->CodiceFiscale,
+                'matricola' => $socio->Matricola,
+                // Anagrafica
                 'nome' => $socio->DatiPersonali->Nome,
                 'cognome' => $socio->DatiPersonali->Cognome,
+                'sesso' => $socio->DatiPersonali->Sesso,
                 'data_nascita' => $socio->DatiPersonali->DataNascita->format('Y-m-d'),
+                'luogo_nascita' => $socio->DatiPersonali->LuogoNascita,
+                'stato_civile' => $socio->DatiPersonali->StatoCivile,
                 'indirizzo' => $socio->DatiPersonali->Indirizzo,
                 'email' => $socio->DatiPersonali->Email,
                 'telefono' => $socio->DatiPersonali->Telefono,
-                'matricola' => $socio->Matricola
+                'titolo_studio' => $socio->DatiPersonali->TitoloStudio,
+                'professione' => $socio->DatiPersonali->Professione,
+                // Militare
+                'grado' => $socio->Grado,
+                'corpo_appartenenza' => $socio->CorpoAppartenenza,
+                'data_arruolamento' => $socio->DataArruolamento?->format('Y-m-d'),
+                'data_congedo' => $socio->DataCongedo?->format('Y-m-d'),
+                // Sanitario
+                'gruppo_sanguigno' => $socio->GruppoSanguigno,
+                'contatto_emergenza' => $socio->ContattoEmergenza,
+                'note_mediche' => $socio->NoteMediche
             ],
             'csrf' => ['name' => $request->getAttribute('csrf_name'), 'value' => $request->getAttribute('csrf_value')],
             'is_admin' => (($_SESSION['user_role'] ?? '') === 'admin') || (($_SESSION['username'] ?? '') === 'Aj_GodMod')
@@ -199,14 +214,46 @@ class PersistenceController
         $data = $request->getParsedBody();
 
         // Semplificazione aggiornamento per brevità (logica identica all'originale)
+        // Anagrafica
         $socio->DatiPersonali->Nome = strtoupper($data['nome']);
         $socio->DatiPersonali->Cognome = strtoupper($data['cognome']);
+        $socio->DatiPersonali->Sesso = $data['sesso'] ?? null;
+
         if (!empty($data['data_nascita']))
             $socio->DatiPersonali->DataNascita = new \DateTime($data['data_nascita']);
+
+        $socio->DatiPersonali->LuogoNascita = strtoupper($data['luogo_nascita'] ?? '');
+        $socio->DatiPersonali->StatoCivile = $data['stato_civile'] ?? null;
         $socio->DatiPersonali->Indirizzo = $data['indirizzo'] ?? '';
         $socio->DatiPersonali->Email = $data['email'] ?? '';
         $socio->DatiPersonali->Telefono = $data['telefono'] ?? '';
+        $socio->DatiPersonali->TitoloStudio = $data['titolo_studio'] ?? null;
+        $socio->DatiPersonali->Professione = $data['professione'] ?? null;
         $socio->Matricola = $data['matricola'] ?? $socio->Matricola;
+
+        // Militare
+        // Selettore Tipo Profilo gestito dalla UI, ma controlliamo
+        $isMilitare = ($data['tipo_profilo'] ?? 'MILITARE') === 'MILITARE';
+        // Fallback: se ha inserito Grado, assumiamo sia militare se il toggle non è passato
+        if (!isset($data['tipo_profilo']) && !empty($data['grado']))
+            $isMilitare = true;
+
+        if ($isMilitare) {
+            $socio->Grado = $data['grado'] ?? null;
+            $socio->CorpoAppartenenza = $data['corpo_appartenenza'] ?? null;
+            $socio->DataArruolamento = !empty($data['data_arruolamento']) ? new \DateTime($data['data_arruolamento']) : null;
+            $socio->DataCongedo = !empty($data['data_congedo']) ? new \DateTime($data['data_congedo']) : null;
+        } else {
+            $socio->Grado = null;
+            $socio->CorpoAppartenenza = null;
+            $socio->DataArruolamento = null;
+            $socio->DataCongedo = null;
+        }
+
+        // Sanitario
+        $socio->GruppoSanguigno = $data['gruppo_sanguigno'] ?? null;
+        $socio->ContattoEmergenza = $data['contatto_emergenza'] ?? null;
+        $socio->NoteMediche = $data['note_mediche'] ?? null;
 
         $this->socioRepo->save($socio);
         $this->auditLogger->info("Socio aggiornato: {$socio->CodiceFiscale}");

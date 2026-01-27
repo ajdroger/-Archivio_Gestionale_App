@@ -1,0 +1,407 @@
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'git0':'#4caf50','git1':'#2196f3','git2':'#ff9800','git3':'#9c27b0','git4':'#00bcd4','git5':'#f44336','git6':'#673ab7','git7':'#ffc107'}}}%%
+gitGraph
+    commit id: "v0.1.0 - Project Kickoff" tag: "v0.1.0"
+    commit id: "Setup structure & composer"
+    
+    branch develop
+    checkout develop
+    commit id: "Genesis: POC development"
+    
+    branch feature/foundation-setup
+    checkout feature/foundation-setup
+    commit id: "POC: Basic CRUD"
+    commit id: "SQLite integration"
+    checkout develop
+    merge feature/foundation-setup
+    
+    checkout main
+    commit id: "v0.5.0 - Functional Prototype" tag: "v0.5.0"
+    
+    checkout develop
+    branch feature/clean-architecture
+    checkout feature/clean-architecture
+    commit id: "Repository Pattern"
+    commit id: "Service Layer"
+    commit id: "Domain Models"
+    checkout develop
+    merge feature/clean-architecture
+    
+    checkout main
+    commit id: "v1.0.0 - Initial Release" tag: "v1.0.0"
+    
+    checkout develop
+    branch feature/authentication
+    checkout feature/authentication
+    commit id: "Login system"
+    commit id: "Bcrypt password hashing"
+    commit id: "Session management"
+    checkout develop
+    merge feature/authentication
+    
+    branch feature/ui-templates
+    checkout feature/ui-templates
+    commit id: "Mustache templates"
+    commit id: "Bootstrap 5 integration"
+    checkout develop
+    merge feature/ui-templates
+    
+    checkout main
+    commit id: "v1.1.0 - UI Enhancement" tag: "v1.1.0"
+    
+    checkout develop
+    branch feature/security-totp
+    checkout feature/security-totp
+    commit id: "2FA/TOTP implementation"
+    commit id: "TotpEncryptionService AES-256"
+    commit id: "QR code generation"
+    checkout develop
+    merge feature/security-totp
+    
+    branch feature/gdpr-compliance
+    checkout feature/gdpr-compliance
+    commit id: "Audit Trail immutable"
+    commit id: "IP pseudonimizzazione"
+    commit id: "GDPR consent tracking"
+    checkout develop
+    merge feature/gdpr-compliance
+    
+    checkout main
+    commit id: "v1.2.0 - Security Enterprise" tag: "v1.2.0"
+    
+    checkout develop
+    branch feature/docker-setup
+    checkout feature/docker-setup
+    commit id: "Docker Compose"
+    commit id: "Multi-service config"
+    commit id: "PHPMyAdmin integration"
+    checkout develop
+    merge feature/docker-setup
+    
+    branch feature/vite-build
+    checkout feature/vite-build
+    commit id: "Vite build system"
+    commit id: "SCSS compilation"
+    commit id: "HMR setup"
+    checkout develop
+    merge feature/vite-build
+    
+    branch feature/testing-pest
+    checkout feature/testing-pest
+    commit id: "Migration PHPUnit → Pest"
+    commit id: "63 test suite"
+    checkout develop
+    merge feature/testing-pest
+    
+    checkout main
+    commit id: "v1.3.0 - DevOps Modernization" tag: "v1.3.0"
+    
+    checkout develop
+    branch feature/mysql-migration
+    checkout feature/mysql-migration
+    commit id: "SQLite → MySQL 8"
+    commit id: "Performance indices"
+    commit id: "ProxySQL integration"
+    checkout develop
+    merge feature/mysql-migration
+    
+    branch feature/correlation-ids
+    checkout feature/correlation-ids
+    commit id: "Request tracing"
+    commit id: "Correlation middleware"
+    checkout develop
+    merge feature/correlation-ids
+    
+    checkout main
+    commit id: "v2.0.0 - Mission Critical" tag: "v2.0.0"
+    
+    checkout develop
+    branch feature/openapi-swagger
+    checkout feature/openapi-swagger
+    commit id: "OpenAPI 3.0 spec"
+    commit id: "Swagger UI integration"
+    commit id: "PHP 8.2 attributes"
+    checkout develop
+    merge feature/openapi-swagger
+    
+    checkout main
+    commit id: "v2.3.0 - API Documentation" tag: "v2.3.0"
+    
+    checkout develop
+    branch release/v4.0.0-prep
+    checkout release/v4.0.0-prep
+    commit id: "DevTools Ultimate v4"
+    commit id: "Terminal, Security Center"
+    commit id: "Audit Inspector"
+    
+    branch feature/demo-mode-enhancements
+    checkout feature/demo-mode-enhancements
+    commit id: "Demo restrictions"
+    commit id: "Invitation system"
+    checkout release/v4.0.0-prep
+    merge feature/demo-mode-enhancements
+    
+    checkout develop
+    merge release/v4.0.0-prep
+    
+    checkout main
+    commit id: "v4.0.0 - Ultimate Upgrade" tag: "v4.0.0"
+    
+    checkout develop
+    branch feature/ai-integration-rag
+    checkout feature/ai-integration-rag
+    commit id: "Ollama integration"
+    commit id: "Vector Store JSON"
+    commit id: "Embedding service"
+    commit id: "Chat interface HTMX"
+    checkout develop
+    merge feature/ai-integration-rag
+    
+    branch feature/queue-system
+    checkout feature/queue-system
+    commit id: "Database Queue"
+    commit id: "Worker background"
+    commit id: "Job interface"
+    checkout develop
+    merge feature/queue-system
+    
+    checkout main
+    commit id: "v5.1.0 - Singularity AI" tag: "v5.1.0"
+    
+    checkout develop
+    branch feature/ai-omni-reader
+    checkout feature/ai-omni-reader
+    commit id: "PDF/DOCX/XLSX parsers"
+    commit id: "Global AI widget"
+    commit id: "Voice interface STT"
+    checkout develop
+    merge feature/ai-omni-reader
+    
+    branch feature/semantic-chunking
+    checkout feature/semantic-chunking
+    commit id: "Semantic markdown splitting"
+    commit id: "RAG optimization"
+    checkout develop
+    merge feature/semantic-chunking
+    
+    checkout main
+    commit id: "v5.2.0 - Omni-Reader Edition" tag: "v5.2.0"
+    
+    checkout develop
+    branch feature/rebranding-mcag
+    checkout feature/rebranding-mcag
+    commit id: "Fratellanza → MCAG rename"
+    commit id: "Namespace migration"
+    commit id: "Database rename"
+    commit id: "Legacy aliases"
+    checkout develop
+    merge feature/rebranding-mcag
+    
+    checkout main
+    commit id: "v5.3.0 - Operation Rebranding" tag: "v5.3.0"
+    
+    checkout develop
+    branch feature/dashboard-radical-upgrade
+    checkout feature/dashboard-radical-upgrade
+    commit id: "Interactive Mission Control"
+    commit id: "Switchboard operativa"
+    commit id: "Workflow inbox"
+    checkout develop
+    merge feature/dashboard-radical-upgrade
+    
+    branch feature/admin-financial-intel
+    checkout feature/admin-financial-intel
+    commit id: "Financial Intelligence Dashboard"
+    commit id: "Wall Street ticker"
+    commit id: "AI Growth forecast"
+    checkout develop
+    merge feature/admin-financial-intel
+    
+    checkout main
+    commit id: "v5.5.0 - Intelligence Suite" tag: "v5.5.0"
+    
+    checkout develop
+    branch feature/soci-dossier-overhaul
+    checkout feature/soci-dossier-overhaul
+    commit id: "Classified Dossier UI"
+    commit id: "Service Timeline"
+    commit id: "Ribbon Rack system"
+    checkout develop
+    merge feature/soci-dossier-overhaul
+    
+    checkout main
+    commit id: "v5.7.0 - Classified Dossier" tag: "v5.7.0"
+    
+    checkout develop
+    branch feature/creative-god-mode-ux
+    checkout feature/creative-god-mode-ux
+    commit id: "Hyper-Grid UI system"
+    commit id: "Neural synaptic web"
+    commit id: "Dual-core UI engine"
+    checkout develop
+    merge feature/creative-god-mode-ux
+    
+    checkout main
+    commit id: "v6.0.0 - Genius Mode" tag: "v6.0.0"
+    
+    checkout develop
+    branch feature/toolkit-hypergrid
+    checkout feature/toolkit-hypergrid
+    commit id: "Quantum Engineering Deck"
+    commit id: "Recursive metrics"
+    commit id: "Lazy loading panels"
+    checkout develop
+    merge feature/toolkit-hypergrid
+    
+    checkout main
+    commit id: "v7.1.0 - Hyper Grid" tag: "v7.1.0"
+    
+    checkout develop
+    branch feature/god-mode-protocol
+    checkout feature/god-mode-protocol
+    commit id: "God Mode Protocol implementation"
+    commit id: "Omega Protocol overlay"
+    commit id: "Hazard confirmation"
+    checkout develop
+    merge feature/god-mode-protocol
+    
+    checkout main
+    commit id: "v7.2.0 - God Mode" tag: "v7.2.0"
+    
+    checkout develop
+    branch feature/parrot-security-tools
+    checkout feature/parrot-security-tools
+    commit id: "Port Scanner native PHP"
+    commit id: "Whois client TCP"
+    commit id: "DNS enumeration"
+    checkout develop
+    merge feature/parrot-security-tools
+    
+    checkout main
+    commit id: "v7.3.0 - Parrot Arsenal" tag: "v7.3.0"
+    
+    checkout develop
+    branch feature/ai-coding-assistance
+    checkout feature/ai-coding-assistance
+    commit id: "Ollama deepseek-coder"
+    commit id: "Universal shell backend"
+    commit id: "Omni-editor modal"
+    checkout develop
+    merge feature/ai-coding-assistance
+    
+    checkout main
+    commit id: "v7.4.0 - Operational Command" tag: "v7.4.0"
+    
+    checkout develop
+    branch feature/external-modules-redux
+    checkout feature/external-modules-redux
+    commit id: "TaskFlow Pro integration"
+    commit id: "ExpenseBar Financial"
+    checkout develop
+    merge feature/external-modules-redux
+    
+    checkout main
+    commit id: "v7.5.0 - Strategic Ops Suite" tag: "v7.5.0"
+    
+    checkout develop
+    branch feature/workshift-commander
+    checkout feature/workshift-commander
+    commit id: "Shift Calendar Grid"
+    commit id: "Time-Off Management"
+    commit id: "PDOWorkshiftRepository 25+ methods"
+    
+    branch feature/fiscal-code-calculator
+    checkout feature/fiscal-code-calculator
+    commit id: "Fiscal Code algorithm"
+    commit id: "Belfiore DB completo"
+    commit id: "Global city codes"
+    checkout feature/workshift-commander
+    merge feature/fiscal-code-calculator
+    
+    commit id: "Team Management CRUD"
+    commit id: "Analytics & Reports live"
+    checkout develop
+    merge feature/workshift-commander
+    
+    checkout main
+    commit id: "v7.6.0 - Sovereign State" tag: "v7.6.0"
+    
+    checkout develop
+    branch feature/world-language-system
+    checkout feature/world-language-system
+    commit id: "Google Neural Translate"
+    commit id: "100+ languages support"
+    commit id: "Custom UI modal"
+    checkout develop
+    merge feature/world-language-system
+    
+    branch feature/theme-engine
+    checkout feature/theme-engine
+    commit id: "Light/Dark switcher"
+    commit id: "localStorage persistence"
+    commit id: "High-contrast accessibility"
+    checkout develop
+    merge feature/theme-engine
+    
+    checkout main
+    commit id: "v7.11.0 - Mission Control" tag: "v7.11.0"
+    commit id: "v7.11.1 - World Language" tag: "v7.11.1"
+    
+    checkout develop
+    branch feature/hypergrid-design
+    checkout feature/hypergrid-design
+    commit id: "Neon/Glass aesthetics"
+    commit id: "Interactive elements breathing"
+    commit id: "Module reskinning (6 modules)"
+    commit id: "Codebase purification"
+    checkout develop
+    merge feature/hypergrid-design
+    
+    checkout main
+    commit id: "v8.2.0 - Hyper Grid Stable" tag: "v8.2.0"
+    
+    checkout develop
+    commit id: "Ghost code elimination"
+    commit id: "Routing cleanup SEO"
+    commit id: "Diagnostics probe restore"
+    
+    checkout main
+    merge develop id: "Final integration v8.3.0"
+    commit id: "v8.3.0 - Hyper Grid Evolution" tag: "v8.3.0"
+```
+
+**MCAG v8.3.0 - Git Branching Strategy**
+
+**Timeline Completo**: 15 Marzo 2025 → 27 Gennaio 2026 (10 mesi, 12 giorni)
+
+**Branches Principali**:
+- **main**: Production releases (30+ tag)
+- **develop**: Continuous integration
+- **172 branch totali**: Feature, hotfix, release, test, backup
+
+**Release Tags** (36 versioni):
+- v0.1.0 → v0.5.0: Genesis
+- v1.0.0 → v1.3.0: Foundation
+- v2.0.0 → v2.4.0: Enterprise
+- v4.0.0: Ultimate Upgrade
+- v5.0.0 → v5.7.0: Singularity & AI
+- v6.0.0: Genius Mode
+- v7.0.0 → v7.11.1: God Mode Era
+- v8.0.0 → v8.3.0: Hyper-Grid Evolution
+
+**Feature Branches Critici**:
+1. clean-architecture
+2. security-totp (2FA)
+3. gdpr-compliance
+4. docker-setup
+5. ai-integration-rag
+6. ai-omni-reader
+7. rebranding-mcag
+8. dashboard-radical-upgrade
+9. god-mode-protocol
+10. parrot-security-tools
+11. workshift-commander
+12. world-language-system
+13. hypergrid-design
+
+**Workflow**: Sacred Main + Feature Branches + Quality Gate

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{base_url}}/css/components/scroll_navigator.css">
     <link href="{{base_url}}/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{base_url}}/js/components/user-status.js"></script>
     <style>
         .glass-panel {
@@ -248,35 +249,68 @@
     </main>
 
     <!-- Create Shift Modal (Ultimate Glass) -->
-    <div id="createShiftModal" class="fixed inset-0 hidden overflow-y-auto" style="z-index: 9999 !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="createShiftModal" class="fixed inset-0 hidden" style="z-index: 9999 !important; overflow: visible !important;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Backdrop with direct click handler -->
         <div class="fixed inset-0 bg-black transition-opacity opacity-0" id="modalBackdrop" style="--tw-bg-opacity: 0.95;" onclick="toggleCreateShiftModal()"></div>
 
         <div class="flex min-h-screen items-center justify-center p-4 text-center" onclick="if(event.target === this) toggleCreateShiftModal()">
-            <div class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-2xl opacity-0 scale-95" id="modalPanel" style="background-color: #0f172a; color: white;" onclick="event.stopPropagation()">
+            <!-- Compact Width Forced via Style -->
+            <div class="relative rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl w-full opacity-100" id="modalPanel" style="background-color: #0f172a; color: white; overflow: visible !important; max-width: 450px !important;" onclick="event.stopPropagation()">
+                <style>
+                    option { background-color: #0f172a; color: white; }
+                    /* Integrated Scrollbar (High Visibility) */
+                    .custom-scrollbar::-webkit-scrollbar { width: 10px; }
+                    .custom-scrollbar::-webkit-scrollbar-track { background: #020617; border-left: 1px solid rgba(255,255,255,0.05); }
+                    .custom-scrollbar::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 5px; border: 2px solid #020617; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #818cf8; }
+                </style>
                 
-                <div class="p-8 border-b border-white/5 bg-white/5">
+                <div class="p-6 border-b border-white/5 bg-white/5">
                     <div class="flex items-center gap-4">
-                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30">
-                            <i data-feather="clock" class="h-6 w-6"></i>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30">
+                            <i data-feather="clock" class="h-5 w-5"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white">Nuovo Turno</h3>
-                            <p class="text-sm text-slate-400">Assegna un turno alla pianificazione.</p>
+                            <h3 class="text-lg font-bold text-white">Nuovo Turno</h3>
+                            <p class="text-xs text-slate-400">Assegna un turno alla pianificazione.</p>
                         </div>
                     </div>
                 </div>
 
-                <form id="shiftForm" class="p-8 space-y-6">
+                <form id="shiftForm" class="p-6 space-y-5 pb-40">
                     <input type="hidden" id="shiftId">
                     
-                    <div>
+                    <div class="relative z-50 mb-6" id="customSelectContainer">
                         <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Dipendente</label>
-                        <select id="shiftEmployee" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-900">
+                        
+                        <!-- Hidden Native Select (For Logic) -->
+                        <select id="shiftEmployee" class="hidden">
                             {{#employees}}
                             <option value="{{id}}">{{name}}</option>
                             {{/employees}}
                         </select>
+
+                        <!-- Custom UI Trigger -->
+                        <div id="customSelectTrigger" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white flex justify-between items-center cursor-pointer hover:bg-slate-900 transition-colors" onclick="toggleCustomSelect()">
+                            <span id="customSelectLabel">Seleziona Dipendente...</span>
+                            <i data-feather="chevron-down" class="w-4 h-4 text-slate-500"></i>
+                        </div>
+
+                        <!-- Custom UI Options (Higher Z-Index + Integrated Scroll) -->
+                        <div id="customSelectOptions" class="hidden absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-y-auto max-h-56 z-[200] custom-scrollbar pr-1" style="background-color: #0f172a !important; opacity: 1 !important;">
+                            {{#employees}}
+                            <div class="px-4 py-2.5 hover:bg-indigo-500/20 cursor-pointer flex items-center transition-colors border-b border-white/5 last:border-0 group" onclick="selectCustomOption('{{id}}', '{{name}}')">
+                                <!-- Initials Avatar -->
+                                <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white mr-3 border border-slate-600 group-hover:border-indigo-400 transition-colors">
+                                    {{user_initial}}
+                                </div>
+                                <span class="text-sm font-medium text-slate-200 group-hover:text-white">{{name}}</span>
+                            </div>
+                            {{/employees}}
+                            {{^employees}}
+                            <div class="px-4 py-3 text-slate-500 italic text-sm text-center">Nessun dipendente disponibile</div>
+                            {{/employees}}
+                        </div>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-6">
@@ -322,11 +356,11 @@
                     </div>
                 </form>
 
-                <div class="bg-slate-900/50 px-8 py-6 border-t border-white/5 flex gap-4">
-                    <button type="button" id="confirmCreateShift" class="flex-1 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-indigo-500 transition-all hover:scale-105 active:scale-95">
+                <div class="bg-slate-900/50 px-4 py-3 flex flex-row-reverse gap-2 border-t border-white/5">
+                    <button type="button" id="confirmCreateShift" class="inline-flex w-full justify-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-bold text-white shadow-sm hover:bg-indigo-500 sm:w-auto transition-all">
                         Salva Turno
                     </button>
-                    <button type="button" id="cancelCreateShift" class="flex-1 rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all hover:text-white">
+                    <button type="button" id="cancelCreateShift" class="inline-flex w-full justify-center rounded-lg bg-white/5 px-3 py-2 text-sm font-bold text-slate-300 shadow-sm hover:bg-white/10 sm:w-auto transition-all">
                         Annulla
                     </button>
                 </div>
@@ -424,7 +458,6 @@
     {{> workshift/footer}}
 
     <script src="{{base_url}}/js/workshift-api.js"></script>
-    <script src="{{base_url}}/js/pages/workshift-shift-management.js?v=3.6"></script>
     <script>
         feather.replace();
     </script>
@@ -514,7 +547,73 @@
         </div>
     </div>
 
+    <!-- Reset Week Modal (Custom Alert) -->
+    <div id="resetWeekModal" class="fixed inset-0 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="z-index: 10000;">
+        <div id="resetWeekBackdrop" class="fixed inset-0 bg-black transition-opacity opacity-0" style="--tw-bg-opacity: 0.95;"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+                <div id="resetWeekPanel" class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-sm opacity-0 scale-95">
+                    
+                    <div class="bg-amber-500/10 px-6 py-6 border-b border-white/5 flex items-center justify-center">
+                        <div class="h-16 w-16 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                            <i data-feather="alert-triangle" class="w-8 h-8"></i>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-6 text-center">
+                        <h3 class="text-xl font-bold text-white mb-2">Reset Settimana?</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Stai per cancellare <strong class="text-amber-400">TUTTI i turni</strong> della settimana visualizzata.
+                            <br><span class="text-xs text-slate-500 mt-2 block">Questa operazione è irreversibile.</span>
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-900/50 px-6 py-4 flex gap-3 border-t border-white/5">
+                        <button type="button" id="confirmResetWeek" class="flex-1 rounded-xl bg-amber-600 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-amber-500 transition-all hover:scale-[1.02]">Sì, Resetta</button>
+                        <button type="button" onclick="closeResetWeekModal()" class="flex-1 rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all">Annulla</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Day Modal (New) -->
+    <div id="resetDayModal" class="fixed inset-0 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="z-index: 10000;">
+        <div id="resetDayBackdrop" class="fixed inset-0 bg-black transition-opacity opacity-0" style="--tw-bg-opacity: 0.95;"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+                <div id="resetDayPanel" class="relative transform overflow-hidden rounded-[2rem] bg-[#0f172a] border border-white/10 text-left shadow-2xl transition-all w-full max-w-sm opacity-0 scale-95">
+                    
+                    <div class="bg-amber-500/10 px-6 py-6 border-b border-white/5 flex items-center justify-center">
+                        <div class="h-16 w-16 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                            <i data-feather="trash-2" class="w-8 h-8"></i>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-6 text-center">
+                        <h3 class="text-xl font-bold text-white mb-2">Svuota Giorno?</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Stai per eliminare tutti i turni di <strong id="resetDayTargetName" class="text-amber-400">Lunedi</strong>.
+                            <br><span class="text-xs text-slate-500 mt-2 block">Questa operazione è irreversibile.</span>
+                        </p>
+                        <input type="hidden" id="resetDayTargetKey">
+                    </div>
+
+                    <div class="bg-slate-900/50 px-6 py-4 flex gap-3 border-t border-white/5">
+                        <button type="button" id="confirmResetDay" class="flex-1 rounded-xl bg-amber-600 px-4 py-3 text-sm font-bold text-white shadow-lg hover:bg-amber-500 transition-all hover:scale-[1.02]">Sì, Svuota</button>
+                        <button type="button" onclick="closeResetDayModal()" class="flex-1 rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-slate-300 hover:bg-slate-700 transition-all">Annulla</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-[10000] flex flex-col gap-3 pointer-events-none"></div>
+
     <!-- Scripts -->
-    <script src="{{base_url}}/js/pages/workshift-shift-management.js?v=7.9.2"></script>
+    <script src="{{base_url}}/js/pages/workshift-shift-management.js?v=7.9.5"></script>
 </body>
 </html>

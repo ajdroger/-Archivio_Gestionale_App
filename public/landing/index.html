@@ -182,11 +182,11 @@
                         Legacy a MCAG v4.0 garantisce un incremento di velocità fino a 50x.</p>
                 </div>
                 <div class="col-lg-6 text-end">
-                    <a href="../reports/MCAG_Benchmark_2026_v5.4.0.html" target="_blank"
+                    <a href="../reports/MCAG_Benchmark_2026_v5.4.0.html" target="_blank" id="btn-report-html"
                         class="btn btn-sm btn-outline-light rounded-pill me-2">
                         <i class="fas fa-eye me-2"></i>Visualizza Report (HTML)
                     </a>
-                    <a href="../reports/MCAG_Benchmark_2026_v5.4.0.pdf" download=""
+                    <a href="../reports/MCAG_Benchmark_2026_v5.4.0.pdf" download="" id="btn-report-pdf"
                         class="btn btn-sm btn-outline-secondary rounded-pill">
                         <i class="fas fa-file-pdf me-2"></i>Scarica Report (PDF)
                     </a>
@@ -510,7 +510,7 @@
     <section id="commercial-analysis" class="py-5 bg-black">
         <div class="container" data-aos="fade-up">
             <div class="text-center mb-5">
-                <span class="text-warning text-uppercase fw-bold ls-2 small">Full Potential Analysis</span>
+                <span class="text-warning text-uppercase small ls-2">Full Potential Analysis</span>
                 <h2 class="display-5 fw-bold mt-2">Analisi Valore & Potenzialità Commerciale</h2>
                 <p class="text-secondary mx-auto" style="max-width: 800px;">
                     Report dettagliato sull'investimento tecnologico, l'evoluzione del valore e il ROI proiettato.
@@ -1077,6 +1077,24 @@
 
     <!-- Scroll Navigator -->
     <script src="../js/components/scroll_navigator.js"></script>
+    <!-- Auto-Updater for Benchmark Links -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('check_version.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html) {
+                        const btnHtml = document.getElementById('btn-report-html');
+                        if (btnHtml) btnHtml.href = '../reports/' + data.html;
+                    }
+                    if (data.pdf) {
+                        const btnPdf = document.getElementById('btn-report-pdf');
+                        if (btnPdf) btnPdf.href = '../reports/' + data.pdf;
+                    }
+                })
+                .catch(err => console.error('Failed to check for latest benchmark:', err));
+        });
+    </script>
 </body>
 
 </html>

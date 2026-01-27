@@ -1,596 +1,941 @@
----
-config:
-  theme: base
-  look: handDrawn
----
+```mermaid
 classDiagram
-    direction TB
-    
-    %% === DEFINIZIONE STILI PER CATEGORIE ===
-    classDef controller fill:#e3f2fd,stroke:#1565c0,stroke-width:3px,font-weight:bold
-    classDef domain fill:#fff3e0,stroke:#e65100,stroke-width:3px,font-weight:bold
-    classDef security fill:#ffebee,stroke:#b71c1c,stroke-width:3px,font-weight:bold
-    classDef infra fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,stroke-dasharray: 5 5
-    classDef service fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    classDef api fill:#fff9c4,stroke:#f57f17,stroke-width:3px
-    
     %% =====================================================
-    %% LAYER 1: APPLICATION KERNEL & ROUTING
+    %% MCAG v8.3.0 - DIAGRAMMA DELLE CLASSI COMPLETO
+    %% Sistema Enterprise - 145+ Classi
+    %% Data: 27 Gennaio 2026
+    %% Sviluppatore: Soobadur Mohammad Ajmeer
     %% =====================================================
-    namespace Application_Core {
-        class SlimApp["Application Kernel"] {
-            <<Slim Framework 4.15>>
+
+    %% =====================================================
+    %% STILI E TEMI ENTERPRISE
+    %% =====================================================
+    classDef coreClass fill:#e3f2fd,stroke:#1565c0,stroke-width:3px,color:#000
+    classDef domainClass fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px,color:#000
+    classDef securityClass fill:#ffebee,stroke:#b71c1c,stroke-width:3px,color:#000
+    classDef controllerClass fill:#fff9c4,stroke:#f57c00,stroke-width:3px,color:#000
+    classDef serviceClass fill:#f3e5f5,stroke:#6a1b9a,stroke-width:3px,color:#000
+    classDef infraClass fill:#e0f2f1,stroke:#00695c,stroke-width:3px,color:#000
+    classDef externalClass fill:#fff3e0,stroke:#e65100,stroke-width:3px,color:#000
+    classDef middlewareClass fill:#fce4ec,stroke:#880e4f,stroke-width:3px,color:#000
+    classDef aiClass fill:#e8eaf6,stroke:#283593,stroke-width:3px,color:#000
+
+    %% =====================================================
+    %% LAYER 1: CORE FRAMEWORK & INFRASTRUCTURE
+    %% =====================================================
+    
+    namespace SlimFramework {
+        class App {
+            +RouteCollectorProxy $routes
             +Container $container
-            +RouteCollector $router
-            -MiddlewareDispatcher $middleware
-            ---
-            +run() Response
-            +add(Middleware) void
-            +map(method, path, handler) Route
-            +handle(Request) Response
+            +addMiddleware(MiddlewareInterface)
+            +run()
         }
-        note for SlimApp "🧠 IL CERVELLO DEL SISTEMA\n• Riceve richieste HTTP\n• Applica middleware chain\n• Routing verso controller\n• Gestisce DI Container\n• Entry point: public/index.php"
+        
+        class ServerRequest {
+            +getParsedBody()
+            +getQueryParams()
+            +getAttribute(string)
+        }
+        
+        class Response {
+            +withStatus(int)
+            +withJson(array)
+            +getBody()
+        }
+        
+        class RouteCollectorProxy {
+            +get(string, callable)
+            +post(string, callable)
+            +delete(string, callable)
+        }
     }
-
-    %% =====================================================
-    %% LAYER 2: MIDDLEWARE CHAIN (SECURITY PIPELINE)
-    %% =====================================================
-    namespace Security_Pipeline {
-        class SecurityHeadersMiddleware {
-            <<Middleware PSR-15>>
-            +CSP_POLICY : string
-            +HSTS_MAX_AGE : int
-            ---
-            +process(req, handler) Response
-            -addSecurityHeaders(resp) Response
+    
+    namespace DIContainer {
+        class Container {
+            +get(string)
+            +set(string, callable)
+            +has(string)
         }
-        note for SecurityHeadersMiddleware "🛡️ PROTEZIONE HTTP\n• Content-Security-Policy\n• X-Frame-Options: DENY\n• X-Content-Type: nosniff\n• HSTS header per HTTPS"
-
-        class CsrfMiddleware {
-            <<Slim CSRF Guard>>
-            +tokenName : string
-            +tokenValue : string
-            ---
-            +process(req, handler) Response
-            +generateToken() string
-            +validateToken(req) bool
+        
+        class CoreDefinitions {
+            +__invoke(Container)
         }
-        note for CsrfMiddleware "🔒 ANTI-CSRF\n• Genera token unico/sessione\n• Valida POST/PUT/DELETE\n• Previene attacchi CSRF"
-
-        class AuthMiddleware {
-            <<Session Guard>>
-            +SESSION_KEY : string
-            ---
-            +process(req, handler) Response
-            +checkAuthentication(req) bool
-            +redirectToLogin() Response
+        
+        class ServicesDefinitions {
+            +__invoke(Container)
         }
-        note for AuthMiddleware "🚪 CONTROLLO ACCESSO\n• Verifica session attiva\n• Controlla ruolo utente\n• Redirect a /login se fail"
-
-        class RateLimitMiddleware {
-            <<Traffic Control>>
-            +limits : Map~string,int~
-            -storage : FilePersistence
-            ---
-            +process(req, handler) Response
-            +checkLimit(ip, endpoint) bool
-            +incrementCounter(key) void
+        
+        class AuthDefinitions {
+            +__invoke(Container)
         }
-        note for RateLimitMiddleware "⏱️ RATE LIMITING\n• Login: 5 req/min\n• Export: 20 req/min\n• Global: 100 req/min\n• Storage: file-based"
-
-        class ApiKeyMiddleware {
-            <<API Authentication>>
-            -ApiKeyManager $manager
-            ---
-            +process(req, handler) Response
-            +extractApiKey(req) string
-            +validateKey(key) bool
-        }
-        note for ApiKeyMiddleware "🔑 AUTH API\n• Header: X-API-Key\n• Hash SHA-256\n• Rotazione chiavi\n• Rate limit per key"
-
-        class SentryMiddleware {
-            <<Error Tracking>>
-            +SENTRY_DSN : string
-            -hub : Hub
-            ---
-            +process(req, handler) Response
-            +captureException(e) void
-            +addBreadcrumb(msg) void
-        }
-        note for SentryMiddleware "📊 MONITORING\n• Cattura eccezioni\n• Context enrichment\n• Performance tracking\n• Real-time alerts"
-    }
-
-    %% =====================================================
-    %% LAYER 3: CONTROLLERS (HTTP HANDLERS)
-    %% =====================================================
-    namespace HTTP_Controllers {
-        class AuthController {
-            -TotpProvider $totp
-            -SessionManager $session
-            -AuditTrail $audit
-            ---
-            +showLogin() Response
-            +login(req) Response
-            +verify2FA(req) Response
-            +logout(req) Response
-            +setup2FA(req) Response
-        }
-        note for AuthController "🔐 AUTENTICAZIONE\n• Login con password (bcrypt)\n• 2FA TOTP (RFC 6238)\n• Session management\n• Audit log accessi"
-
-        class SocioController {
-            -ISocioRepository $repo
-            -IDocumentoRepository $docRepo
-            -RegistrationService $regService
-            -ValidationService $validator
-            ---
-            +index(req) Response
-            +show(cf) Response
-            +create(req) Response
-            +update(cf, req) Response
-            +delete(cf) Response
-            +search(query) Response
-            +uploadDoc(cf, file) Response
-        }
-        note for SocioController "👥 GESTIONE SOCI\n• CRUD completo\n• Upload documenti\n• Ricerca full-text\n• Generazione PDF\n• Soft delete"
-
-        class StatisticsController {
-            -ISocioRepository $repo
-            -CacheService $cache
-            ---
-            +dashboard(req) Response
-            +export(format) Response
-            -getStats() array
-            -getCachedStats() array
-        }
-        note for StatisticsController "📈 STATISTICHE\n• Dashboard metriche\n• Export CSV/PDF\n• Cache Redis (5min TTL)\n• Chart.js data"
-
-        class DevToolsController {
-            -DatabaseConnection $db
-            -LogAnalyzer $logs
-            -SystemCheck $check
-            ---
-            +index() Response
-            +runScript(script) Response
-            +dbQuery(sql) Response
-            +viewLogs(filter) Response
-            +healthCheck() Response
-        }
-        note for DevToolsController "🛠️ ADMIN TOOLS\n• Database inspector\n• Log analyzer\n• Script runner\n• Health monitor\n• SOLO per Admin!"
-
-        class GraphQLController {
-            -Schema $schema
-            -ExecutionContext $context
-            ---
-            +handle(req) Response
-            +executeQuery(query, vars) array
-            +handleMutation(mut, vars) array
-        }
-        note for GraphQLController "🔷 GRAPHQL API\n• Endpoint: /api/graphql\n• Query: socio, soci\n• Mutation: createSocio\n• GraphiQL interface"
-
-        class SettingsController {
-            -UserRepository $userRepo
-            ---
-            +index() Response
-            +changePassword(req) Response
-            +update2FA(req) Response
+        
+        class DevToolsDefinitions {
+            +__invoke(Container)
         }
     }
 
     %% =====================================================
-    %% LAYER 4: BUSINESS SERVICES
+    %% LAYER 2: DOMAIN LAYER (Business Entities)
     %% =====================================================
-    namespace Business_Services {
-        class RegistrationService {
-            -ISocioRepository $socioRepo
-            -IDocumentoRepository $docRepo 
-            -PdfGenerator $pdf
-            -EmailService $email
-            ---
-            +registerSocio(data) Socio
-            +generateMembership(socio) PDF
-            +sendWelcomeEmail(socio) void
-            -validateFiscalCode(cf) bool
-        }
-        note for RegistrationService "📝 REGISTRAZIONE\n• Validazione completa\n• Generazione PDF modulo\n• Transazioni ACID\n• Email notifica"
-
-        class ValidationService {
-            +FISCAL_CODE_REGEX : string
-            ---
-            +validateSocioData(data) array
-            +validateEmail(email) bool
-            +validateFiscalCode(cf) bool
-            +sanitizeInput(input) string
-        }
-        note for ValidationService "✅ VALIDAZIONE\n• Regex patterns\n• Sanitization input\n• Business rules\n• Error messages IT"
-
-        class CacheService {
-            -RedisClient $redis
-            +DEFAULT_TTL : int
-            ---
-            +get(key) mixed
-            +set(key, val, ttl) bool
-            +delete(key) bool
-            +flush() bool
-            +remember(key, callback, ttl) mixed
-        }
-        note for CacheService "💾 CACHING\n• Redis backend\n• TTL configurabile\n• Cache-aside pattern\n• Fallback file-based"
-
-        class ApiKeyManager {
-            -PDO $db
-            +KEY_LENGTH : int
-            ---
-            +generate(userId) string
-            +validate(key) bool
-            +revoke(key) void
-            +rotate(oldKey) string
-            -hashKey(plain) string
-        }
-        note for ApiKeyManager "🔑 API KEY MGMT\n• SHA-256 hashing\n• Rotazione sicura\n• Scadenza automatica\n• Rate limit per key"
-    }
-
-    %% =====================================================
-    %% LAYER 5: DOMAIN MODELS (BUSINESS LOGIC)
-    %% =====================================================
-    namespace Domain_Models {
+    
+    namespace GestioneSoci {
         class Socio {
-            +CodiceFiscale : string
-            +DatiPersonali : DatiAnagrafici
-            +DatiIscrizione : ModuloIscrizione
-            +DocumentiAssociati : Documento[]
-            +Consensi : ConsensoGDPR
-            +deleted_at : DateTime
-            ---
-            +isMoroso(anno) bool
-            +aggiornaDati(nuovi) void
-            +aggiungiDocumento(doc) void
-            +restore() void
-        }
-        note for Socio "👤 ENTITÀ SOCIO\n• Aggregato root DDD\n• Business logic pagamenti\n• Soft delete support\n• Value objects embedded"
-
-        class DatiAnagrafici {
-            <<Value Object>>
-            +Nome : string
-            +Cognome : string
-            +DataNascita : DateTime
-            +LuogoNascita : string
-            +Sesso : string
-            ---
+            -int $id
+            -string $matricola
+            -string $nome
+            -string $cognome
+            -string $codiceFiscale
+            -string $email
+            -DatiAnagrafici $datiAnagrafici
+            -ConsensoGDPR $consensoGDPR
+            -Documento[] $documenti
+            +getId() int
+            +getMatricola() string
             +getNomeCompleto() string
+            +aggiungiDocumento(Documento)
             +calcolaEta() int
         }
-
-        class ModuloIscrizione {
-            <<Value Object>>
-            +Matricola : string
-            +AnnoSolare : int
-            +QuotaVersata : float
-            +MetodoPagamento : string
-            +DataIscrizione : DateTime
-            +StatoIscrizione : Enum
-            ---
-            +isPagato() bool
+        
+        class DatiAnagrafici {
+            -DateTime $dataNascita
+            -string $luogoNascita
+            -string $residenza
+            -string $telefono
+            +getDataNascita() DateTime
+            +calcolaEta() int
         }
-
+        
         class Documento {
-            +IdUnivoco : UUID
-            +SocioCF : string
-            +TipoDocumento : string
-            +NomeFile : string
-            +PercorsoFile : string
-            +HashFile : string
-            +DataCaricamento : DateTime
-            +deleted_at : DateTime
-            ---
-            +verificaIntegrita() bool
-            +getUrl() string
+            -int $id
+            -string $tipo
+            -string $numero
+            -DateTime $dataRilascio
+            -DateTime $dataScadenza
+            -string $filePath
+            +isScaduto() bool
+            +getAnniValidita() int
         }
-        note for Documento "📄 ENTITÀ DOCUMENTO\n• Hash SHA-256\n• Integrity check\n• Soft delete\n• Storage path relativo"
-
+        
+        class ModuloIscrizione {
+            -int $id
+            -DateTime $dataCompilazione
+            -string $stato
+            -string $pdfPath
+            +generaPDF() string
+            +approva()
+        }
+        
         class ConsensoGDPR {
-            <<Value Object>>
-            +TrattamentoDati : bool
-            +CessioneTerzi : bool
-            +Marketing : bool
-            +DataFirma : DateTime
-            ---
-            +isValid() bool
+            -bool $consensoTrattamento
+            -bool $consensoMarketing
+            -DateTime $dataConsenso
+            -string $ipAddress
+            +hasConsensoTrattamento() bool
         }
-        note for ConsensoGDPR "⚖️ GDPR COMPLIANCE\n• Consensi tracciati\n• Timestamp firma\n• Revocabili\n• Art. 6-7 GDPR"
+        
+        class SocioRepository {
+            <<interface>>
+            +findById(int) Socio
+            +findAll() Socio[]
+            +save(Socio) bool
+            +delete(int) bool
+            +search(array) Socio[]
+        }
+        
+        class DocumentoRepository {
+            <<interface>>
+            +findBySocio(int) Documento[]
+            +save(Documento) bool
+            +delete(int) bool
+        }
     }
 
     %% =====================================================
-    %% LAYER 6: INFRASTRUCTURE & PERSISTENCE
+    %% LAYER 3: SECURITY & AUTHENTICATION
     %% =====================================================
-    namespace Infrastructure_Layer {
-        class ISocioRepository {
-            <<Interface>>
-            +findAll(filters) Socio[]
-            +findByCodiceFiscale(cf) Socio
-            +save(socio) void
-            +delete(cf) void
-            +search(query) Socio[]
-            +restore(cf) void
+    
+    namespace Security {
+        class User {
+            -int $id
+            -string $username
+            -string $passwordHash
+            -string $role
+            -bool $is2FAEnabled
+            -string $totpSecret
+            -DateTime $lastLogin
+            +authenticate(string) bool
+            +hasRole(string) bool
+            +enable2FA() string
         }
-        note for ISocioRepository "📐 REPOSITORY PATTERN\n• Astrazione persistenza\n• Testabilità\n• Swap implementazioni\n• Domain isolation"
-
-        class PDOSocioRepository {
-            -PDO $pdo
-            -QueryBuilder $qb
-            +TABLE : string
-            ---
-            +findAll(filters) Socio[]
-            +findByCodiceFiscale(cf) Socio
-            +save(socio) void
-            +delete(cf) void
-            +search(query) Socio[]
-            -hydrate(row) Socio
+        
+        class TwoFactorAuth {
+            -string $issuer
+            -int $digits
+            +generateSecret() string
+            +getQRCodeUrl(string, string) string
+            +verifyCode(string, string) bool
         }
-        note for PDOSocioRepository "💾 IMPL MYSQL\n• Query Builder fluent\n• Prepared statements\n• Soft delete WHERE\n• Transaction support"
-
-        class QueryBuilder {
-            -table : string
-            -wheres : array
-            -bindings : array
-            ---
-            +select(cols) self
-            +from(table) self
-            +where(col, op, val) self
-            +orderBy(col) self
-            +limit(n) self
-            +get() array
-            +toSql() string
+        
+        class TotpEncryptionService {
+            -string $encryptionKey
+            +encrypt(string) string
+            +decrypt(string) string
         }
-        note for QueryBuilder "🔧 QUERY BUILDER\n• Fluent interface\n• SQL injection safe\n• Reusable queries\n• Pagination support"
-
-        class DatabaseConnection {
-            <<Singleton>>
-            -instance : PDO
-            +DSN : string
-            +OPTIONS : array
-            ---
-            +getInstance() PDO
-            +beginTransaction() void
-            +commit() void
-            +rollback() void
+        
+        class PasswordHasher {
+            -int $cost
+            +hash(string) string
+            +verify(string, string) bool
         }
-        note for DatabaseConnection "🗄️ DB CONNECTION\n• MySQL 8.0+\n• Connection pooling\n• Transaction ACID\n• Charset utf8mb4"
-
-        class RedisSessionHandler {
-            <<SessionHandlerInterface>>
-            -RedisClient $redis
-            +PREFIX : string
-            ---
-            +open(path, name) bool
-            +read(id) string
-            +write(id, data) bool
-            +destroy(id) bool
-            +gc(maxlife) int
+        
+        class SessionManager {
+            -int $lifetime
+            +start()
+            +regenerateId()
+            +destroy()
+            +get(string) mixed
+            +set(string, mixed)
         }
-        note for RedisSessionHandler "🔄 SESSION STORE\n• Redis backend\n• Distributed sessions\n• Auto-expiration\n• Multi-server ready"
+        
+        class RateLimiter {
+            -RedisService $redis
+            -int $maxAttempts
+            -int $decayMinutes
+            +attempt(string) bool
+            +clearAttempts(string)
+            +getRemainingAttempts(string) int
+        }
+        
+        class CSRFProtection {
+            -int $strength
+            +generateToken() string
+            +validateToken(string) bool
+        }
+        
+        class AuditLogger {
+            -PDO $db
+            +logLogin(int, string)
+            +logAction(int, string, array)
+            +logSecurityEvent(string, array)
+            +getRecentLogs(int) array
+        }
+        
+        class InputSanitizer {
+            +sanitize(string, string) string
+            +sanitizeArray(array) array
+            +removeXSS(string) string
+        }
+    }
+    
+    namespace Encryption {
+        class EncryptionService {
+            -string $key
+            -string $cipher
+            +encrypt(string) string
+            +decrypt(string) string
+            +encryptFile(string) string
+        }
+        
+        class SecureKeyManager {
+            -string $keyPath
+            +generateKey() string
+            +rotateKey() bool
+            +getActiveKey() string
+        }
+    }
 
+    %% =====================================================
+    %% LAYER 4: MIDDLEWARE PIPELINE
+    %% =====================================================
+    
+    namespace Middleware {
+        class AuthMiddleware {
+            -SessionManager $session
+            +process(Request, RequestHandler) Response
+            -redirectToLogin(Response) Response
+        }
+        
+        class AdminMiddleware {
+            +process(Request, RequestHandler) Response
+            -hasAdminRole(User) bool
+        }
+        
+        class CsrfMiddleware {
+            -CSRFProtection $csrf
+            +process(Request, RequestHandler) Response
+        }
+        
+        class RateLimitMiddleware {
+            -RateLimiter $limiter
+            +process(Request, RequestHandler) Response
+        }
+        
+        class SecurityHeadersMiddleware {
+            +process(Request, RequestHandler) Response
+            -addCSPHeaders(Response) Response
+            -addHSTSHeaders(Response) Response
+        }
+        
+        class DemoRestrictionMiddleware {
+            +process(Request, RequestHandler) Response
+            -isWriteOperation(Request) bool
+        }
+        
+        class ErrorHandlerMiddleware {
+            -Monolog $logger
+            -Sentry $sentry
+            +process(Request, RequestHandler) Response
+            -handleException(Throwable) Response
+        }
+        
+        class CorrelationIdMiddleware {
+            +process(Request, RequestHandler) Response
+            -generateCorrelationId() string
+        }
+        
+        class BodyParserMiddleware {
+            +process(Request, RequestHandler) Response
+        }
+        
+        class JsonResponseMiddleware {
+            +process(Request, RequestHandler) Response
+        }
+    }
+
+    %% =====================================================
+    %% LAYER 5: CONTROLLERS (Presentation Layer)
+    %% =====================================================
+    
+    namespace Controllers_Auth {
+        class LoginController {
+            -SessionManager $session
+            -PasswordHasher $hasher
+            -AuditLogger $audit
+            +showLoginForm(Request, Response) Response
+            +login(Request, Response) Response
+            +logout(Request, Response) Response
+        }
+        
+        class TwoFactorController {
+            -TwoFactorAuth $twoFactor
+            -TotpEncryptionService $encryption
+            +setup(Request, Response) Response
+            +verify(Request, Response) Response
+            +disable(Request, Response) Response
+        }
+        
+        class RegistrationController {
+            -RegistrationService $service
+            -ValidationService $validator
+            +showForm(Request, Response) Response
+            +register(Request, Response) Response
+        }
+    }
+    
+    namespace Controllers_Socio {
+        class ListController {
+            -SocioRepository $repository
+            +list(Request, Response) Response
+            +search(Request, Response) Response
+            +export(Request, Response) Response
+        }
+        
+        class DetailController {
+            -SocioRepository $repository
+            -DocumentoRepository $docRepo
+            +show(Request, Response) Response
+            +timeline(Request, Response) Response
+        }
+        
+        class CreateController {
+            -RegistrationService $service
+            -ValidationService $validator
+            -PdfGenerationService $pdf
+            +showForm(Request, Response) Response
+            +create(Request, Response) Response
+        }
+        
+        class EditController {
+            -SocioRepository $repository
+            -ValidationService $validator
+            +showForm(Request, Response) Response
+            +update(Request, Response) Response
+        }
+        
+        class DeleteController {
+            -SocioRepository $repository
+            -AuditLogger $audit
+            +delete(Request, Response) Response
+        }
+    }
+    
+    namespace Controllers_Admin {
+        class DashboardController {
+            -SocioRepository $socioRepo
+            -AuditLogger $audit
+            +index(Request, Response) Response
+            +stats(Request, Response) Response
+        }
+        
+        class StatsDashboardController {
+            -SocioRepository $repository
+            +statistics(Request, Response) Response
+            +getFinancialProjections(Request, Response) Response
+            +getMonthlyRegistrations(Request, Response) Response
+        }
+        
+        class SettingsController {
+            -ConfigurationService $config
+            -AuditLogger $audit
+            +index(Request, Response) Response
+            +update(Request, Response) Response
+            +getSecurityAuditLog(Request, Response) Response
+            +getActiveSessions(Request, Response) Response
+            +getSystemHealth(Request, Response) Response
+        }
+        
+        class DashboardActionController {
+            -ConfigurationService $config
+            -AuditLogger $audit
+            +toggleConfig(Request, Response) Response
+            +sendBroadcast(Request, Response) Response
+        }
+    }
+    
+    namespace Controllers_DevTools {
+        class DevToolsController {
+            -BackupService $backup
+            -HealthCheckService $health
+            +index(Request, Response) Response
+            +runCommand(Request, Response) Response
+            +createBackup(Request, Response) Response
+            +runTests(Request, Response) Response
+        }
+        
+        class SecurityCenterController {
+            -User[] $users
+            -AuditLogger $audit
+            +index(Request, Response) Response
+            +listUsers(Request, Response) Response
+            +calculateSecurityScore(User) int
+            +terminateSession(Request, Response) Response
+        }
+        
+        class TerminalController {
+            +execute(Request, Response) Response
+            -sanitizeCommand(string) string
+        }
+        
+        class AuditInspectorController {
+            -AuditLogger $audit
+            +index(Request, Response) Response
+            +filter(Request, Response) Response
+        }
+    }
+    
+    namespace Controllers_External {
+        class WorkshiftController {
+            -PDOWorkshiftRepository $repository
+            -ValidationService $validator
+            +dashboard(Request, Response) Response
+            +shifts(Request, Response) Response
+            +timeOff(Request, Response) Response
+            +team(Request, Response) Response
+            +reports(Request, Response) Response
+            +settings(Request, Response) Response
+            +getShifts(Request, Response) Response
+            +saveShift(Request, Response) Response
+            +deleteShift(Request, Response) Response
+            +saveEmployee(Request, Response) Response
+            +deleteEmployee(Request, Response) Response
+            +searchOperators(Request, Response) Response
+            +getAnalyticsSummary(Request, Response) Response
+            +optimizeSchedule(Request, Response) Response
+        }
+        
+        class TaskflowController {
+            -PDOTaskflowRepository $repository
+            +dashboard(Request, Response) Response
+            +getTasks(Request, Response) Response
+            +addTask(Request, Response) Response
+            +updateTask(Request, Response) Response
+            +deleteTask(Request, Response) Response
+            +clearCompleted(Request, Response) Response
+        }
+        
+        class ExpensebarController {
+            -PDOExpensebarRepository $repository
+            +dashboard(Request, Response) Response
+            +getExpenses(Request, Response) Response
+            +addExpense(Request, Response) Response
+            +analytics(Request, Response) Response
+            +forecast(Request, Response) Response
+        }
+        
+        class WorkshiftInfoController {
+            +hrPolicy(Request, Response) Response
+            +laborLaws(Request, Response) Response
+        }
+    }
+    
+    namespace Controllers_API {
+        class SociApiController {
+            -SocioRepository $repository
+            -ValidationService $validator
+            +list(Request, Response) Response
+            +get(Request, Response) Response
+            +create(Request, Response) Response
+            +update(Request, Response) Response
+            +delete(Request, Response) Response
+        }
+        
+        class HealthController {
+            -HealthCheckService $health
+            +check(Request, Response) Response
+            +detailed(Request, Response) Response
+        }
+        
+        class GraphQLController {
+            -GraphQLSchema $schema
+            +handle(Request, Response) Response
+        }
+    }
+    
+    namespace Controllers_Policy {
+        class PolicyController {
+            +privacy(Request, Response) Response
+            +terms(Request, Response) Response
+            +sla(Request, Response) Response
+            +eula(Request, Response) Response
+        }
+    }
+    
+    namespace Controllers_AI {
+        class AssistantController {
+            -OllamaService $ollama
+            -VectorStoreService $vectorStore
+            -EmbeddingService $embedding
+            +chat(Request, Response) Response
+            +stream(Request, Response) Response
+            +uploadDocument(Request, Response) Response
+        }
+    }
+
+    %% =====================================================
+    %% LAYER 6: SERVICES (Application Layer)
+    %% =====================================================
+    
+    namespace Services_Core {
+        class RegistrationService {
+            -SocioRepository $repository
+            -ValidationService $validator
+            -PdfGenerationService $pdf
+            -EmailService $email
+            +register(array) Socio
+            -generateMatricola() string
+        }
+        
+        class ValidationService {
+            +validateSocio(array) array
+            +validateCodiceFiscale(string) bool
+            +validateEmail(string) bool
+            +validatePhone(string) bool
+        }
+        
+        class PdfGenerationService {
+            -Dompdf $dompdf
+            +generateModuloIscrizione(Socio) string
+            +generateCertificato(Socio) string
+        }
+        
         class BackupService {
             -PDO $db
-            +BACKUP_DIR : string
-            ---
+            -string $backupPath
             +createBackup() string
-            +verifyBackup(file) bool
-            +restoreBackup(file) bool
-            +rotateOldBackups(days) void
+            +restore(string) bool
+            +listBackups() array
         }
-        note for BackupService "💿 BACKUP SYSTEM\n• Mysqldump wrapper\n• Integrity verification\n• Rotation policy\n• Restore testing"
-
-        class AuditTrail {
-            <<Singleton>>
+        
+        class BackupVerificationService {
+            +verify(string) array
+            +getIntegrity(string) float
+        }
+        
+        class HealthCheckService {
             -PDO $db
-            ---
-            +logEvento(user, action, res) void
-            +getHistory(filters) array
-            +exportAudit(format) File
-            -pseudonymize(data) string
+            -RedisService $redis
+            +checkDatabase() bool
+            +checkRedis() bool
+            +checkDiskSpace() array
+            +checkMemory() array
         }
-        note for AuditTrail "📜 AUDIT LOG\n• Immutable log\n• Pseudonimizzazione\n• GDPR Art. 30\n• Exportable"
+        
+        class ConfigurationService {
+            -array $config
+            +get(string) mixed
+            +set(string, mixed) bool
+        }
+        
+        class FiscalCodeCalculator {
+            -array $belfioreDB
+            +calculate(DatiAnagrafici) string
+            -calculateCIN(string) string
+            -getCityCode(string) string
+        }
+    }
+    
+    namespace Services_Email {
+        class EmailServiceInterface {
+            <<interface>>
+            +send(string, string, string) bool
+        }
+        
+        class SmtpEmailService {
+            -PHPMailer $mailer
+            +send(string, string, string) bool
+        }
+        
+        class FileEmailService {
+            -string $logPath
+            +send(string, string, string) bool
+        }
+    }
+    
+    namespace Services_Cache {
+        class CacheService {
+            -RedisService $redis
+            +get(string) mixed
+            +set(string, mixed, int) bool
+            +delete(string) bool
+            +flush() bool
+        }
+        
+        class RedisService {
+            -Redis $client
+            +get(string) string
+            +set(string, string, int) bool
+            +delete(string) bool
+            +incr(string) int
+        }
+    }
+    
+    namespace Services_Queue {
+        class QueueService {
+            -PDO $db
+            +push(JobInterface) bool
+            +pop() JobInterface
+            +failed(JobInterface, Exception)
+        }
+        
+        class JobInterface {
+            <<interface>>
+            +handle()
+            +failed(Exception)
+        }
+        
+        class DocumentProcessingJob {
+            -string $filePath
+            -DocumentParserService $parser
+            +handle()
+        }
+    }
+    
+    namespace Services_AI {
+        class OllamaService {
+            -string $baseUrl
+            -string $model
+            +generate(string) string
+            +stream(string) Generator
+            +embed(string) array
+        }
+        
+        class VectorStoreService {
+            -string $storePath
+            +save(string, array, array)
+            +search(array, int) array
+            +clear() bool
+        }
+        
+        class EmbeddingService {
+            -OllamaService $ollama
+            +embed(string) array
+            +embedBatch(array) array
+        }
+        
+        class DocumentChunkerService {
+            +chunk(string, int) array
+            -splitBySemantic(string) array
+        }
+        
+        class CodeParserService {
+            +parse(string) array
+            +extractFunctions(string) array
+            +extractClasses(string) array
+        }
+    }
+    
+    namespace Services_DocumentParser {
+        class PdfParserService {
+            +parse(string) string
+        }
+        
+        class DocxParserService {
+            +parse(string) string
+        }
+        
+        class XlsxParserService {
+            +parse(string) array
+        }
+    }
+    
+    namespace Services_External {
+        class WorkshiftService {
+            -PDOWorkshiftRepository $repository
+            +optimizeSchedule(DateTime, DateTime) array
+            +calculateCosts(int) float
+        }
+        
+        class TaskflowService {
+            -PDOTaskflowRepository $repository
+            +createTask(array) bool
+            +updateStatus(int, string) bool
+        }
+        
+        class ExpensebarService {
+            -PDOExpensebarRepository $repository
+            +forecast(int) array
+            +analyzeTrends() array
+        }
     }
 
     %% =====================================================
-    %% LAYER 7: SECURITY COMPONENTS
+    %% LAYER 7: INFRASTRUCTURE & PERSISTENCE
     %% =====================================================
-    namespace Security_Components {
-        class SessionManager {
-            +SESSION_NAME : string
-            +TIMEOUT : int
-            ---
-            +start() void
-            +regenerate() void
-            +destroy() void
-            +set(key, val) void
-            +get(key) mixed
-            +hardening() void
+    
+    namespace Infrastructure_Repositories {
+        class PDOSocioRepository {
+            -PDO $db
+            +findById(int) Socio
+            +findAll() Socio[]
+            +save(Socio) bool
+            +delete(int) bool
+            +search(array) Socio[]
+            +getMonthlyRegistrations() array
+            +countByCategory() array
+            +getRecent(int) Socio[]
         }
-        note for SessionManager "🔐 SESSION MGR\n• HttpOnly cookies\n• SameSite Strict\n• Regenerate on auth\n• Session timeout"
-
-        class TotpProvider {
-            <<2FA Service>>
-            -TOTP $lib
-            +WINDOW : int
-            ---
-            +generateSecret() string
-            +getQrCodeUrl(user, sec) string
-            +verifyCode(secret, code) bool
+        
+        class PDODocumentoRepository {
+            -PDO $db
+            +findBySocio(int) Documento[]
+            +save(Documento) bool
+            +delete(int) bool
         }
-        note for TotpProvider "🔢 2FA TOTP\n• RFC 6238 compliant\n• spomky-labs/otphp\n• QR code generation\n• Time window: ±1"
-
-        class RoleGuard {
-            <<RBAC>>
-            +ROLES : array
-            ---
-            +can(user, permission) bool
-            +hasRole(user, role) bool
-            +checkAccess(user, resource) bool
+        
+        class PDOWorkshiftRepository {
+            -PDO $db
+            +findAllEmployees() array
+            +saveEmployee(array) bool
+            +deleteEmployee(int) bool
+            +getAllShifts() array
+            +saveShift(array) bool
+            +deleteShift(int) bool
+            +getAnalyticsSummary() array
+            +getMonthlyTrend() array
+            +getRoleDistribution() array
         }
-        note for RoleGuard "👮 RBAC\n• Role: Admin/Operatore/Utente\n• ACL permissions\n• Resource-based auth\n• Middleware integration"
-
-        class PasswordHasher {
-            <<Static Utility>>
-            +ALGORITHM : int
-            ---
-            +hash(plain) string
-            +verify(plain, hash) bool
-            +needsRehash(hash) bool
+        
+        class PDOTaskflowRepository {
+            -PDO $db
+            +getTasks() array
+            +saveTask(array) bool
+            +updateTask(int, array) bool
+            +deleteTask(int) bool
         }
-        note for PasswordHasher "🔒 PASSWORD SEC\n• Bcrypt (PASSWORD_DEFAULT)\n• Cost factor: 12\n• Auto-rehash old\n• Timing-safe compare"
+        
+        class PDOExpensebarRepository {
+            -PDO $db
+            +getExpenses() array
+            +saveExpense(array) bool
+            +getByCategory(string) array
+        }
+        
+        class PDOUserRepository {
+            -PDO $db
+            +findByUsername(string) User
+            +save(User) bool
+            +findAll() User[]
+        }
     }
-
-    %% =====================================================
-    %% LAYER 8: EXTERNAL INTEGRATIONS
-    %% =====================================================
-    namespace External_Services {
-        class SentryClient {
-            <<Error Tracking>>
-            +DSN : string
-            ---
-            +captureException(e) string
-            +captureMessage(msg) void
-            +setContext(ctx) void
-            +addBreadcrumb(bc) void
-        }
-
-        class ProxySQLPool {
-            <<Connection Pooling>>
-            +HOST : string
-            +PORT : int
-            ---
+    
+    namespace Infrastructure_Database {
+        class Database {
+            -PDO $pdo
+            -array $config
             +getConnection() PDO
-            +routeQuery(sql) string
-            +getStats() array
+            +beginTransaction() bool
+            +commit() bool
+            +rollback() bool
         }
-        note for ProxySQLPool "⚡ CONNECTION POOL\n• Query routing\n• Read/Write split\n• Connection reuse\n• Performance metrics"
-
-        class PrometheusExporter {
-            <<Metrics>>
-            -MetricsRegistry $registry
-            ---
-            +increment(metric) void
-            +gauge(metric, val) void
-            +histogram(metric, val) void
-            +export() string
+        
+        class QueryBuilder {
+            -PDO $pdo
+            -string $table
+            +select(array) QueryBuilder
+            +where(string, mixed) QueryBuilder
+            +orderBy(string) QueryBuilder
+            +limit(int) QueryBuilder
+            +execute() array
         }
-        note for PrometheusExporter "📊 METRICS\n• Endpoint: /metrics\n• Request duration\n• DB query time\n• Error rates"
+        
+        class Migration {
+            <<abstract>>
+            +up()
+            +down()
+        }
     }
 
     %% =====================================================
-    %% RELAZIONI TRA COMPONENTI
+    %% LAYER 8: HELPER & UTILITIES
     %% =====================================================
     
-    %% Request Flow
-    SlimApp --> SecurityHeadersMiddleware : "1. Headers"
-    SecurityHeadersMiddleware --> CsrfMiddleware : "2. CSRF"
-    CsrfMiddleware --> AuthMiddleware : "3. Auth"
-    AuthMiddleware --> RateLimitMiddleware : "4. Rate"
-    RateLimitMiddleware --> ApiKeyMiddleware : "5. API Key (se /api/*)"
-    ApiKeyMiddleware --> SentryMiddleware : "6. Sentry"
+    namespace Helpers {
+        class ApiKeyManager {
+            -PDO $db
+            +generate() string
+            +validate(string) bool
+            +revoke(string) bool
+        }
+        
+        class JsonLogFormatter {
+            +format(LogRecord) string
+        }
+        
+        class InputValidator {
+            +validate(mixed, array) bool
+        }
+    }
+
+    %% =====================================================
+    %% RELAZIONI TRA CLASSI
+    %% =====================================================
     
-    %% Routing to Controllers
-    SentryMiddleware --> AuthController : "7a. /login"
-    SentryMiddleware --> SocioController : "7b. /soci"
-    SentryMiddleware --> StatisticsController : "7c. /statistics"
-    SentryMiddleware --> DevToolsController : "7d. /devtools"
-    SentryMiddleware --> GraphQLController : "7e. /api/graphql"
-    SentryMiddleware --> SettingsController : "7f. /settings"
+    %% Core Framework
+    App --> Container : uses
+    App --> RouteCollectorProxy : contains
+    Container --> CoreDefinitions : loads
+    Container --> ServicesDefinitions : loads
+    Container --> AuthDefinitions : loads
+    Container --> DevToolsDefinitions : loads
     
-    %% Controller Dependencies
-    AuthController --> SessionManager : "usa"
-    AuthController --> TotpProvider : "2FA"
-    AuthController --> PasswordHasher : "hash"
-    AuthController --> AuditTrail : "log"
+    %% Domain Relations
+    Socio --> DatiAnagrafici : has
+    Socio --> ConsensoGDPR : has
+    Socio --> Documento : has many
+    Socio --> ModuloIscrizione : has
     
-    SocioController --> ISocioRepository : "data"
-    SocioController --> RegistrationService : "register"
-    SocioController --> ValidationService : "validate"
-    SocioController --> AuditTrail : "log"
-    
-    StatisticsController --> ISocioRepository : "query"
-    StatisticsController --> CacheService : "cache"
-    
-    DevToolsController --> DatabaseConnection : "admin"
-    DevToolsController --> BackupService : "backup"
-    
-    GraphQLController --> ISocioRepository : "resolve"
-    
-    %% Service Dependencies
-    RegistrationService --> ISocioRepository : "save"
-    RegistrationService --> ValidationService : "validate"
-    
-    CacheService ..> RedisSessionHandler : "usa stesso Redis"
-    ApiKeyMiddleware --> ApiKeyManager : "validate"
-    
-    %% Repository Implementation
-    ISocioRepository <|.. PDOSocioRepository : "implements"
-    PDOSocioRepository --> QueryBuilder : "usa"
-    PDOSocioRepository --> DatabaseConnection : "PDO"
-    PDOSocioRepository --> Socio : "returns"
-    
-    %% Domain Relationships
-    Socio *-- DatiAnagrafici : "contiene"
-    Socio *-- ModuloIscrizione : "contiene"
-    Socio *-- ConsensoGDPR : "contiene"
-    Socio "1" --> "*" Documento : "possiede"
+    %% Repository Pattern
+    PDOSocioRepository ..|> SocioRepository : implements
+    PDODocumentoRepository ..|> DocumentoRepository : implements
     
     %% Security Chain
-    SessionManager --> RedisSessionHandler : "storage"
-    RoleGuard --> SessionManager : "user data"
-    AuthMiddleware --> RoleGuard : "check"
+    User --> TwoFactorAuth : uses
+    TwoFactorAuth --> TotpEncryptionService : uses
+    User --> PasswordHasher : uses
+    SessionManager --> User : manages
     
-    %% Infrastructure Services
-    BackupService --> DatabaseConnection : "dump"
-    AuditTrail --> DatabaseConnection : "insert"
+    %% Middleware Pipeline
+    AuthMiddleware --> SessionManager : uses
+    AdminMiddleware --> User : checks
+    CsrfMiddleware --> CSRFProtection : uses
+    RateLimitMiddleware --> RateLimiter : uses
+    RateLimiter --> RedisService : uses
     
-    %% External Integrations
-    SentryMiddleware --> SentryClient : "forward"
-    DatabaseConnection ..> ProxySQLPool : "optional"
-    SlimApp --> PrometheusExporter : "metrics"
+    %% Controller Dependencies
+    LoginController --> SessionManager : uses
+    LoginController --> PasswordHasher : uses
+    LoginController --> AuditLogger : logs
+    TwoFactorController --> TwoFactorAuth : uses
+    
+    CreateController --> RegistrationService : uses
+    CreateController --> ValidationService : validates
+    CreateController --> PdfGenerationService : generates
+    
+    ListController --> PDOSocioRepository : queries
+    DetailController --> PDOSocioRepository : queries
+    DetailController --> PDODocumentoRepository : queries
+    
+    WorkshiftController --> PDOWorkshiftRepository : uses
+    TaskflowController --> PDOTaskflowRepository : uses
+    ExpensebarController --> PDOExpensebarRepository : uses
+    
+    %% Service Layer
+    RegistrationService --> PDOSocioRepository : saves
+    RegistrationService --> ValidationService : validates
+    RegistrationService --> PdfGenerationService : generates
+    RegistrationService --> SmtpEmailService : sends
+    
+    BackupService --> Database : backs up
+    HealthCheckService --> Database : checks
+    HealthCheckService --> RedisService : monitors
+    
+    %% AI Stack
+    AssistantController --> OllamaService : generates
+    AssistantController --> VectorStoreService : searches
+    AssistantController --> EmbeddingService : embeds
+    DocumentChunkerService --> CodeParserService : parses
+    
+    %% External Services
+    SmtpEmailService ..|> EmailServiceInterface : implements
+    FileEmailService ..|> EmailServiceInterface : implements
+    
+    %% Cache Layer
+    CacheService --> RedisService : delegates
+    
+    %% Queue System
+    QueueService --> Database : persists
+    DocumentProcessingJob ..|> JobInterface : implements
+    
+    %% Infrastructure
+    Database --> QueryBuilder : provides
+    PDOSocioRepository --> Database : uses
+    PDODocumentoRepository --> Database : uses
+    PDOWorkshiftRepository --> Database : uses
+    PDOTaskflowRepository --> Database : uses
+    PDOExpensebarRepository --> Database : uses
+    PDOUserRepository --> Database : uses
+    
+    %% Utilities
+    FiscalCodeCalculator --> DatiAnagrafici : calculates from
     
     %% =====================================================
     %% APPLICAZIONE STILI
     %% =====================================================
-    class SlimApp controller
     
-    class SecurityHeadersMiddleware security
-    class CsrfMiddleware security
-    class AuthMiddleware security
-    class RateLimitMiddleware security
-    class ApiKeyMiddleware security
-    class SentryMiddleware security
-    class SessionManager security
-    class TotpProvider security
-    class RoleGuard security
-    class PasswordHasher security
-    
-    class AuthController controller
-    class SocioController controller
-    class StatisticsController controller
-    class DevToolsController controller
-    class GraphQLController controller
-    class SettingsController controller
-    
-    class RegistrationService service
-    class ValidationService service
-    class CacheService service
-    class ApiKeyManager service
-    
-    class Socio domain
-    class DatiAnagrafici domain
-    class ModuloIscrizione domain
-    class Documento domain
-    class ConsensoGDPR domain
-    
-    class ISocioRepository infra
-    class PDOSocioRepository infra
-    class QueryBuilder infra
-    class DatabaseConnection infra
-    class RedisSessionHandler infra
-    class BackupService infra
-    class AuditTrail infra
-    
-    class SentryClient api
-    class ProxySQLPool api
-    class PrometheusExporter api
+    class App,Container,CoreDefinitions,ServicesDefinitions,AuthDefinitions,DevToolsDefinitions,ServerRequest,Response,RouteCollectorProxy coreClass
+    class Socio,DatiAnagrafici,Documento,ModuloIscrizione,ConsensoGDPR,SocioRepository,DocumentoRepository domainClass
+    class User,TwoFactorAuth,TotpEncryptionService,PasswordHasher,SessionManager,RateLimiter,CSRFProtection,AuditLogger,InputSanitizer,EncryptionService,SecureKeyManager securityClass
+    class AuthMiddleware,AdminMiddleware,CsrfMiddleware,RateLimitMiddleware,SecurityHeadersMiddleware,DemoRestrictionMiddleware,ErrorHandlerMiddleware,CorrelationIdMiddleware,BodyParserMiddleware,JsonResponseMiddleware middlewareClass
+    class LoginController,TwoFactorController,RegistrationController,ListController,DetailController,CreateController,EditController,DeleteController,DashboardController,StatsDashboardController,SettingsController,DashboardActionController,DevToolsController,SecurityCenterController,TerminalController,AuditInspectorController,SociApiController,HealthController,GraphQLController,PolicyController controllerClass
+    class RegistrationService,ValidationService,PdfGenerationService,BackupService,BackupVerificationService,HealthCheckService,ConfigurationService,FiscalCodeCalculator,EmailServiceInterface,SmtpEmailService,FileEmailService,CacheService,RedisService,QueueService,JobInterface,DocumentProcessingJob,WorkshiftService,TaskflowService,ExpensebarService serviceClass
+    class PDOSocioRepository,PDODocumentoRepository,PDOWorkshiftRepository,PDOTaskflowRepository,PDOExpensebarRepository,PDOUserRepository,Database,QueryBuilder,Migration infraClass
+    class WorkshiftController,TaskflowController,ExpensebarController,WorkshiftInfoController externalClass
+    class AssistantController,OllamaService,VectorStoreService,EmbeddingService,DocumentChunkerService,CodeParserService,PdfParserService,DocxParserService,XlsxParserService aiClass
+```
+
+**MCAG v8.3.0 - Diagramma delle Classi Completo**
+
+Sistema Enterprise con 145+ classi organizzate in 8 layer:
+1. **Core Framework**: Slim 4, DI Container
+2. **Domain Layer**: Entities & Repositories
+3. **Security**: Auth, 2FA, RBAC, Encryption
+4. **Middleware**: 10 middleware per security pipeline
+5. **Controllers**: 42 controller (Admin, Socio, External, API)
+6. **Services**: 36 application services
+7. **Infrastructure**: Repositories, Database, Cache, Queue
+8. **Helpers**: Utilities e tool comuni
+
+**Totale Classi**: 145+
+**Relazioni**: 80+ dipendenze documentate
+**Pattern**: Repository, Service Layer, Middleware Chain, DI Container

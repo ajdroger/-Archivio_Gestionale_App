@@ -91,11 +91,13 @@ class PDOWorkshiftRepository
     public function deleteAllShifts(string $scope, string $dateOrStart, ?string $end = null): int
     {
         if ($scope === 'day') {
-            $stmt = $this->pdo->prepare("DELETE FROM workshift_shifts WHERE date = :date");
-            $stmt->execute(['date' => $dateOrStart]);
+            // Use range to cover entire day (DATETIME safe)
+            $stmt = $this->pdo->prepare("DELETE FROM workshift_shifts WHERE date >= :start AND date <= :end");
+            $stmt->execute(['start' => $dateOrStart . ' 00:00:00', 'end' => $dateOrStart . ' 23:59:59']);
         } elseif ($scope === 'week') {
-            $stmt = $this->pdo->prepare("DELETE FROM workshift_shifts WHERE date BETWEEN :start AND :end");
-            $stmt->execute(['start' => $dateOrStart, 'end' => $end]);
+            // Use >= and <= with end-of-day time to ensure DATETIME columns are fully covered
+            $stmt = $this->pdo->prepare("DELETE FROM workshift_shifts WHERE date >= :start AND date <= :end");
+            $stmt->execute(['start' => $dateOrStart, 'end' => $end . ' 23:59:59']);
         } else {
             return 0;
         }
