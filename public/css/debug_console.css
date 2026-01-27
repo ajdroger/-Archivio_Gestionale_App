@@ -13,17 +13,16 @@ body {
     color: var(--neon-blue);
     font-family: 'Rajdhani', sans-serif;
     margin: 0;
+    /* Use dvh for mobile/browser bar compatibility */
+    height: 100dvh;
+    width: 100vw;
     overflow: hidden;
-    /* Force single screen */
-    height: 100vh;
     display: flex;
     font-size: 13px;
-    /* Global scale down */
     background-image:
         linear-gradient(var(--grid-color) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
     background-size: 30px 30px;
-    /* Tighter grid */
     background-position: center bottom;
     perspective: 1000px;
 }
@@ -53,6 +52,10 @@ body {
     padding: 20px;
     gap: 20px;
     position: relative;
+    overflow: hidden;
+    /* Ensure inner content scrolls not the deck */
+    min-width: 0;
+    /* Flexbox trick for nested overflow */
 }
 
 /* --- BRAND --- */
@@ -130,6 +133,9 @@ body {
     background: var(--glass-bg);
     border: 1px solid var(--neon-blue);
     border-radius: 4px;
+    flex-wrap: wrap;
+    /* Prevent cutoff on small screens */
+    flex-shrink: 0;
 }
 
 .tool-btn {
