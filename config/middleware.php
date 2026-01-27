@@ -87,6 +87,9 @@ return function (App $app) {
     // Body Parsing (JSON fields) - Must run BEFORE CSRF and Logic
     $app->addBodyParsingMiddleware();
 
+    // Multi-Tenancy (SaaS Engine) - Runs very early to determine DB Context
+    $app->add(new \MCAG\Middleware\TenantMiddleware());
+
     // Sentry Monitoring (Runs first)
     $app->add(new \MCAG\Middleware\SentryMiddleware());
 };

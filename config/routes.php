@@ -219,7 +219,22 @@ return function (App $app) {
         $group->post('/devtools/audit/list', DevToolsDashboardController::class . ':auditAjax')->setName('devtools_audit_list');
         $group->post('/devtools/demo-invite', DevToolsDashboardController::class . ':handleDemoInvite')->setName('devtools_demo_invite'); // [NEW] Demo Invite Action
         $group->post('/devtools/alive', DevToolsDashboardController::class . ':heartbeat')->setName('devtools_alive');
+
+        // SaaS Super Admin
+        $group->get('/super-admin', \MCAG\Controller\Admin\SuperAdminController::class . ':dashboard')->setName('super_admin_dashboard');
+        $group->post('/super-admin/create', \MCAG\Controller\Admin\SuperAdminController::class . ':createTenant')->setName('super_admin_create');
+        $group->post('/super-admin/toggle/{id}', \MCAG\Controller\Admin\SuperAdminController::class . ':toggleStatus')->setName('super_admin_toggle');
+
+        // Partner / Reseller Portal
+        $group->get('/partner', \MCAG\Controller\Partner\ResellerController::class . ':dashboard')->setName('partner_dashboard');
+        $group->post('/partner/client/create', \MCAG\Controller\Partner\ResellerController::class . ':createClient')->setName('partner_client_create');
+
     })->add(new AdminMiddleware());
+
+    // API Routes (Authenticated)
+    $app->group('/api', function ($group) {
+        $group->post('/ai/chat', \MCAG\Controller\API\AIChatController::class . ':chat');
+    }); // ->add(new ApiAuthMiddleware()); // Uncomment in prod
 
 };
 

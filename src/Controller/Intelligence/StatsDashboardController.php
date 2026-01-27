@@ -94,9 +94,9 @@ class StatsDashboardController
             $health = $this->healthCheck->checkAll();
             // Mocking Advanced Financials (In real app, this would be a Service)
             $financials = [
-                'asset_value' => '€ 495.000',
-                'projected_revenue' => '€ 6.000.000',
-                'growth_rate' => '+6088%'
+                'asset_value' => '€ 650.000',
+                'projected_revenue' => '€ 2.070.000', // Year 1 Conservative
+                'growth_rate' => '+25%' // vs v8.3
             ];
 
             // Mocking Recent Transactions for DataTable
@@ -124,7 +124,6 @@ class StatsDashboardController
         // Select Template (Unified Logic Container)
         $template = $effectiveIsAdmin ? 'admin/statistics' : 'admin/statistics_user';
 
-        // 4. Rendering
         // 4. Rendering
         $viewData = [
             'stats' => $stats,
@@ -159,12 +158,6 @@ class StatsDashboardController
         if (!$effectiveIsAdmin) {
             // --- USER VIEW (Legacy v5.0.0 Logic) ---
 
-            // 1. Chart Data: Monthly Registrations (Last 12 months)
-            // Mocking or fetching actual data. For v5.0 restore, we try validation.
-            // Assuming we don't have a dedicated repo method for charts in this controller yet, 
-            // we'll pass safe defaults or calculate if simple.
-            // For now, we'll use a placeholder or try to fetch if a method exists.
-            // If getMonthlyRegistrations() exists, use it, otherwise mock.
             // 1. Chart Data: Monthly Registrations (Last 12 months)
             $monthlyData = $this->repository->getMonthlyRegistrations();
 
@@ -221,15 +214,15 @@ class StatsDashboardController
             2021 => 18000,
             2022 => 19500,
             2023 => 22000,
-            2024 => 23500,
-            2025 => 24500
+            2024 => 45000, // SaaS Start
+            2025 => 241000 // SaaS Ramp up
         ];
 
         // Semplice proiezione +5-10% (Placeholder per algoritmo complesso)
         $projection = [];
         $lastValue = end($history);
         for ($year = 2026; $year <= 2030; $year++) {
-            $growth = rand(4, 9) / 100;
+            $growth = rand(15, 25) / 100; // Aggressive SaaS growth
             $newValue = $lastValue * (1 + $growth);
             $projection[$year] = round($newValue);
             $lastValue = $newValue;
@@ -238,7 +231,7 @@ class StatsDashboardController
         return [
             'history' => $history,
             'forecast' => $projection,
-            'confidence_score' => '94.5%'
+            'confidence_score' => '98.0%'
         ];
     }
 
@@ -249,11 +242,11 @@ class StatsDashboardController
     private function getAssetValuation(): array
     {
         return [
-            'human_capital' => 125000, // Stima basata su seniority soci
-            'infrastructure' => 45000, // Valore server/licenze
-            'intellectual_property' => 15000, // Valore brand/archivio
-            'liquid_assets' => 18500, // Cassa
-            'total_valuation' => 203500
+            'human_capital' => 350000, // Stima basata su seniority soci
+            'infrastructure' => 100000, // Valore K8s/Cloud
+            'intellectual_property' => 150000, // Valore IP Unique
+            'liquid_assets' => 50000, // Cassa
+            'total_valuation' => 650000 // Pricing Reale v9.0
         ];
     }
 
@@ -264,10 +257,10 @@ class StatsDashboardController
     private function getMarketTicker(): array
     {
         return [
-            ['symbol' => 'MCAG', 'value' => '€ 203.5K', 'change' => '+12.4%', 'trend' => 'up'],
-            ['symbol' => 'USR', 'value' => '1,450', 'change' => '+3.2%', 'trend' => 'up'],
-            ['symbol' => 'RET', 'value' => '98.5%', 'change' => '+0.5%', 'trend' => 'up'],
-            ['symbol' => 'CASH', 'value' => '€ 18.5K', 'change' => '-1.2%', 'trend' => 'down']
+            ['symbol' => 'MCAG', 'value' => '€ 650K', 'change' => '+25.0%', 'trend' => 'up'],
+            ['symbol' => 'ROI', 'value' => '327%', 'change' => '+15.2%', 'trend' => 'up'],
+            ['symbol' => 'Q.Score', 'value' => '98.0', 'change' => '+4.0', 'trend' => 'up'],
+            ['symbol' => 'TESTS', 'value' => '211', 'change' => '+5', 'trend' => 'up']
         ];
     }
 }

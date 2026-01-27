@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCAG ROI Calculator - Calcola il Risparmio</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS (Reusing Landing styles) -->
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .roi-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .roi-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .roi-input:focus {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+            color: white;
+        }
+
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-3"
+        style="background: rgba(9, 10, 12, 0.8); backdrop-filter: blur(10px);">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="../index.html">
+                <i class="fas fa-arrow-left text-secondary"></i> <span class="text-white">Torna alla Home</span>
+            </a>
+            <span class="navbar-text text-info fw-bold text-uppercase ls-1 ms-auto">ROI Calculator</span>
+        </div>
+    </nav>
+
+    <div class="container py-5 mt-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">Quanto risparmi con <span class="text-info">MCAG</span>?</h1>
+            <p class="lead text-secondary mx-auto" style="max-width: 700px;">
+                Confronta il costo di sviluppo interno (o custom dev) con l'acquisto della licenza MCAG Enterprise v8.3.
+                I dati si aggiornano in tempo reale.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Left: Inputs -->
+            <div class="col-lg-5">
+                <div class="roi-card p-4 h-100">
+                    <h3 class="mb-4 text-warning"><i class="fas fa-user-clock me-2"></i>Scenario Development Custom</h3>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Numero
+                            Sviluppatori</label>
+                        <input type="number" id="devCount" class="form-control roi-input" value="3" min="1" max="50">
+                        <div class="form-text text-white-50">Team size medio per un progetto di questa portata.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Costo Orario Dev
+                            (€/h)</label>
+                        <input type="number" id="hourlyRate" class="form-control roi-input" value="65" min="20"
+                            max="200">
+                        <div class="form-text text-white-50">Media Italia Senior Dev: €50-80/h.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Mesi di Sviluppo</label>
+                        <input type="number" id="devMonths" class="form-control roi-input" value="18" min="6" max="60">
+                        <div class="form-text text-white-50">Tempo stimato per replicare 53.000 LOC + Security Tools.
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-danger bg-opacity-10 rounded border border-danger border-opacity-25 mt-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-danger fw-bold">Costo Totale Custom</span>
+                            <span class="fs-4 fw-bold text-white result-value" id="customTotal">€0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: MCAG Comparison -->
+            <div class="col-lg-5">
+                <div class="roi-card p-4 h-100 border-info">
+                    <h3 class="mb-4 text-info"><i class="fas fa-shield-alt me-2"></i>Licenza MCAG v8.3</h3>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Piano Selezionato</label>
+                        <select id="mcagPlan" class="form-select roi-input">
+                            <option value="420000">Standard License (€420.000)</option>
+                            <option value="495000" selected>Professional License (€495.000)</option>
+                            <option value="680000">Enterprise License (€680.000)</option>
+                        </select>
+                        <div class="form-text text-white-50">One-time fee. Nessun canone ricorrente sul software.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small text-uppercase fw-bold">Tempo di
+                            Deployment</label>
+                        <div
+                            class="roi-input d-flex align-items-center bg-success bg-opacity-10 text-success border-success border-opacity-25">
+                            <i class="fas fa-bolt me-2"></i> Immediato (Ready-to-Use)
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-info bg-opacity-10 rounded border border-info border-opacity-25 mt-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-info fw-bold">Costo MCAG</span>
+                            <span class="fs-4 fw-bold text-white result-value" id="mcagTotal">€495.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-10">
+                <div class="roi-card p-5 text-center border-success"
+                    style="background: radial-gradient(circle at center, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,0) 70%);">
+                    <h2 class="text-uppercase ls-2 text-success small mb-3 fw-bold">Il tuo Risparmio Netto</h2>
+                    <div class="display-1 fw-bold text-white mb-2 result-value" id="savingsTotal">€0</div>
+                    <div class="fs-4 text-secondary mb-4">
+                        Risparmi il <span class="text-white fw-bold" id="savingsPercent">0%</span> e <span
+                            class="text-white fw-bold" id="timeSaved">18 mesi</span> di tempo.
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold"
+                            onclick="window.location.href='../index.html#contact'">
+                            <i class="fas fa-check me-2"></i>Blocca il Prezzo Ora
+                        </button>
+                        <button class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>Stampa Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5 text-secondary small opacity-50">
+            * Calcolo basato su stime di mercato medie per Sviluppatori Senior Full-Stack in Italia (2025/2026). <br>
+            Il costo custom development include stima overhead gestione progetto (+20%).
+        </div>
+
+    </div>
+
+    <script>
+        // Logic for ROI Calculation
+        function calculateROI() {
+            // Inputs
+            const devCount = parseInt(document.getElementById('devCount').value) || 0;
+            const hourlyRate = parseInt(document.getElementById('hourlyRate').value) || 0;
+            const devMonths = parseInt(document.getElementById('devMonths').value) || 0;
+            const mcagCost = parseInt(document.getElementById('mcagPlan').value) || 0;
+
+            // Calculations
+            // 160 hours/month standard work month
+            const monthlyCostPerDev = hourlyRate * 160;
+            const totalProjectCost = (monthlyCostPerDev * devCount * devMonths);
+            // Add 20% Project Management Overhead
+            const totalCustomCost = totalProjectCost * 1.2;
+
+            const savings = totalCustomCost - mcagCost;
+            const savingsPercent = (savings / totalCustomCost) * 100;
+
+            // Update UI
+            document.getElementById('customTotal').innerText = formatCurrency(totalCustomCost);
+            document.getElementById('mcagTotal').innerText = formatCurrency(mcagCost);
+
+            const savingsEl = document.getElementById('savingsTotal');
+            const percentEl = document.getElementById('savingsPercent');
+            const timeEl = document.getElementById('timeSaved');
+
+            savingsEl.innerText = formatCurrency(savings);
+            percentEl.innerText = savingsPercent.toFixed(1) + '%';
+            timeEl.innerText = devMonths + " mesi";
+
+            if (savings > 0) {
+                savingsEl.classList.remove('text-danger');
+                savingsEl.classList.add('text-success');
+            } else {
+                savingsEl.classList.remove('text-success');
+                savingsEl.classList.add('text-danger');
+            }
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
+        }
+
+        // Event Listeners
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', calculateROI);
+            input.addEventListener('change', calculateROI);
+        });
+
+        // Initial Calc
+        calculateROI();
+    </script>
+</body>
+
+</html>

@@ -23,6 +23,41 @@ class DatabaseConnection
      * @return PDO Istanza di PDO connessa
      * @throws PDOException In caso di errore di connessione
      */
+    /**
+     * Force a reconnection to a specific Tenant Database.
+     * Used by TenantMiddleware to switch context based on subdomain.
+     *
+     * @param string $tenantDbName The name of the tenant's database
+     * @return void
+     */
+    public static function connectToTenant(string $tenantDbName): void
+    {
+        // Close existing connection
+        self::$connection = null;
+
+        // Re-read connection params but override DB Name
+        $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
+        $port = $_ENV['DB_PORT'] ?? '3306';
+        $user = $_ENV['DB_USERNAME'] ?? 'root';
+        $pass = $_ENV['DB_PASSWORD'] ?? '';
+
+        // Construct new DSN
+        $dsn = "mysql:host=$host;port=$port;dbname=$tenantDbName;charset=utf8mb4";
+
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ];
+
+        try {
+            self::$connection = new PDO($dsn, $user, $pass, $options);
+        } catch (PDOException $e) {
+            // Security: Generic message to avoid leaking internal info
+            error_log("Tenant Connection Failed ($tenantDbName): " . $e->getMessage());
+            throw new PDOException("Tenant Database Connection Error.");
+        }
+    }
+
     public static function getConnection(): PDO
     {
         if (self::$connection === null) {
