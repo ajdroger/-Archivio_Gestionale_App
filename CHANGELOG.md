@@ -11,7 +11,7 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
-## [v8.3.0-hypergrid-stable] - 2026-01-26 "**Hyper-Grid Evolution**"
+## [v8.3.0-hypergrid-stable] - 2026-01-27 "**Hyper-Grid Evolution**"
 ### Massive UI/UX Overhaul [Hyper-Grid]
 - **Design System Revolution**: Adozione totale del nuovo linguaggio visivo "Hyper-Grid":
     - **Neon/Glass Aesthetics**: Pulsanti gradienti, sfondi mesh radiali, bordi luminescenti.

@@ -1,6 +1,6 @@
 # Guida alla Migrazione e Deployment
 
-Questo pacchetto contiene tutto il necessario per migrare e installare l'applicazione gestionale **MCAG Archivio v5.4.0 (Fluid Edition)** su un nuovo ambiente server (Locale, VPS, Cloud).
+Questo pacchetto contiene tutto il necessario per migrare e installare l'applicazione gestionale **MCAG Archivio v8.3.0 (Hyper-Grid Stable)** su un nuovo ambiente server (Locale, VPS, Cloud).
 
 ## Contenuto della Cartella
 
