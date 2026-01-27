@@ -108,7 +108,7 @@ php bin/console ai:verify-knowledge
 php vendor/bin/pest --parallel
 ```
 
-## � License
+## 📄 License
 **Proprietary Enterprise License** - © 2026 MCAG System.
 All rights reserved. Unauthorized reproduction is a violation of international copyright laws.
 
