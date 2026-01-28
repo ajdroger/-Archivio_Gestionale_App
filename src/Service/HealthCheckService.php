@@ -54,6 +54,9 @@ class HealthCheckService
             'redis' => $this->checkRedis(),
             'storage' => $this->checkStorage(),
             'queue' => $this->checkQueue(),
+            'security' => $this->checkSecurity(),
+            'resources' => $this->checkSystemResources(),
+            'external' => $this->checkExternalServices(),
         ];
 
         $allHealthy = !in_array('unhealthy', array_column($checks, 'status'));
@@ -64,6 +67,85 @@ class HealthCheckService
             'timestamp' => time(),
             'uptime' => $this->getUptime(),
             'checks' => $checks,
+        ];
+    }
+
+    /**
+     * Verifica configurazioni di sicurezza (SSL, Debug Mode).
+     */
+    private function checkSecurity(): array
+    {
+        $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+        $debugMode = defined('APP_DEBUG') && APP_DEBUG === true;
+
+        $sslStatus = 'Inactive';
+        if ($isSecure) {
+            $sslStatus = 'Active';
+        } elseif (in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1', '::1'])) {
+            $sslStatus = 'Local (Dev)';
+        }
+
+        return [
+            'status' => 'healthy',
+            'ssl' => $sslStatus,
+            'debug_mode' => $debugMode ? 'Enabled' : 'Disabled',
+            'php_version' => PHP_VERSION,
+            'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown'
+        ];
+    }
+
+    /**
+     * Stima risorse di sistema (CPU Load, RAM Memory).
+     */
+    private function checkSystemResources(): array
+    {
+        // Memory
+        $memoryUsage = memory_get_usage(true);
+        $memoryPeak = memory_get_peak_usage(true);
+        $memoryLimit = ini_get('memory_limit');
+
+        // CPU Load (Windows Fallback)
+        $load = [0, 0, 0];
+        if (function_exists('sys_getloadavg')) {
+            $load = sys_getloadavg();
+        } else {
+            // Windows Fallback: Simulate or try COM (skipping COM for stability, returning nulls or simulated)
+            // For now, on Windows, we'll return 0 to indicate unavailable, or a simplified check
+        }
+
+        return [
+            'status' => 'healthy',
+            'memory_usage' => $this->formatBytes($memoryUsage),
+            'memory_peak' => $this->formatBytes($memoryPeak),
+            'memory_limit' => $memoryLimit,
+            'cpu_load' => $load
+        ];
+    }
+
+    /**
+     * Verifica latenza servizi esterni (Mock / Real).
+     */
+    private function checkExternalServices(): array
+    {
+        // Simple connectivity check to Google DNS (8.8.8.8) port 53 as generic internet check
+        $startTime = microtime(true);
+        $connected = @fsockopen('8.8.8.8', 53, $errno, $errstr, 1);
+        $latency = round((microtime(true) - $startTime) * 1000, 2); // ms
+
+        if ($connected) {
+            fclose($connected);
+            return [
+                'status' => 'healthy',
+                'internet_connectivity' => 'Active',
+                'latency_ms' => $latency
+            ];
+        }
+
+        return [
+            'status' => 'degraded',
+            'internet_connectivity' => 'Unreachable',
+            'latency_ms' => null,
+            'error' => $errstr
         ];
     }
 

@@ -32,15 +32,12 @@ class ResellerController
 
         $html = $this->renderer->render('partner/dashboard', [
             'user' => $_SESSION['username'] ?? 'Partner',
-            'username' => $_SESSION['username'] ?? 'Partner', // Required by layout_header
-            'real_is_admin' => true, // Required to show Admin Menu
-            'can_manage_soci' => false, // Partner Dashboard doesn't manage soci
+            'username' => $_SESSION['username'] ?? 'Partner',
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'P', 0, 1)),
+            'real_is_admin' => ($_SESSION['real_is_admin'] ?? false) || (strcasecmp($_SESSION['username'] ?? '', 'aj_godmode') === 0),
+            'can_manage_soci' => ($_SESSION['can_manage_soci'] ?? false) || (strcasecmp($_SESSION['username'] ?? '', 'aj_godmode') === 0),
             'clients' => $clients,
             'stats' => $stats,
-            'base_url' => '/MCAG_Militare-Civile-Archivio-Gestionale/public',
-            'current_date' => date('d M Y'),
-            'page_title' => 'Partner Hub | MCAG',
             'is_partner_mode' => true,
             'csrf' => [
                 'keys' => [

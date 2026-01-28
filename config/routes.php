@@ -134,6 +134,7 @@ return function (App $app) {
     $app->post('/workshift/api/apply-suggestion', \MCAG\Controller\External\WorkshiftController::class . ':applyAiSuggestion'); // [NEW] AI Action
     $app->get('/workshift/api/reports/export', \MCAG\Controller\External\WorkshiftController::class . ':exportReports'); // [NEW] Export Action
     $app->get('/workshift/api/ai-suggestion', \MCAG\Controller\External\WorkshiftController::class . ':getNewAiSuggestion'); // [NEW] Refresh AI
+    $app->get('/workshift/api/system-status', \MCAG\Controller\External\WorkshiftController::class . ':getSystemStatusApi'); // [NEW] System Status API
 
     // Team API
     $app->get('/workshift/api/employees', \MCAG\Controller\External\WorkshiftController::class . ':getEmployees');
@@ -169,6 +170,13 @@ return function (App $app) {
     $app->get('/api/docs', \MCAG\Controller\Docs\DocumentationController::class . ':ui')->setName('api_docs');
     $app->get('/api/docs/json', \MCAG\Controller\Docs\DocumentationController::class . ':spec')->setName('api_docs_json');
 
+    // Knowledge Hub (Internal Documentation)
+    $app->group('/docs', function ($group) {
+        $group->get('', \MCAG\Controller\Docs\DocumentationController::class . ':hub')->setName('docs_hub');
+        $group->get('/{category}', \MCAG\Controller\Docs\DocumentationController::class . ':category')->setName('docs_category');
+        $group->get('/{category}/{file}', \MCAG\Controller\Docs\DocumentationController::class . ':viewFile')->setName('docs_view_file');
+    })->add(new AdminMiddleware()); // Protect Internal Docs
+
     // --- Taskflow Routes ---
     $app->group('/taskflow', function (\Slim\Routing\RouteCollectorProxy $group) {
         $group->get('', \MCAG\Controller\External\TaskflowController::class . ':index')->setName('taskflow_home');
@@ -182,6 +190,7 @@ return function (App $app) {
     });
 
     // --- Expensebar Routes ---
+    // Expensebar Routes
     $app->group('/expensebar', function (\Slim\Routing\RouteCollectorProxy $group) {
         $group->get('', \MCAG\Controller\External\ExpensebarController::class . ':index')->setName('expensebar_home');
         $group->get('/analytics', \MCAG\Controller\External\ExpensebarController::class . ':analytics')->setName('expensebar_analytics');
@@ -197,14 +206,7 @@ return function (App $app) {
         $group->get('/api/stats/trend', \MCAG\Controller\External\ExpensebarController::class . ':getTrend'); // [NEW] Stats
     });
 
-    // Documentation Hub
-    $app->group('/docs', function (\Slim\Routing\RouteCollectorProxy $group) {
-        $group->get('', [\MCAG\Controller\DocsController::class, 'index'])->setName('docs_hub');
-        $group->get('/{category}', [\MCAG\Controller\DocsController::class, 'category'])->setName('docs_category');
-        $group->get('/{category}/{file}', [\MCAG\Controller\DocsController::class, 'download'])->setName('docs_download');
-    });
-
-    // Admin & DevTools
+    // Admin & DevTools ('/docs' removed here as it is defined above)
     $app->group('', function ($group) {
         $group->get('/impostazioni', SettingsController::class . ':view')->setName('settings');
         $group->post('/impostazioni', SettingsController::class . ':updatePassword')->setName('settings_update');

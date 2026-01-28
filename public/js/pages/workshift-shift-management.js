@@ -424,13 +424,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } else if (currentView === 'month') {
                 if (headerRow) headerRow.classList.add('hidden');
-                renderMonthGrid(grid, shifts, currentDate);
+                renderMonthGrid(grid, shifts, window.currentShiftDate);
             } else if (currentView === 'year') {
                 if (headerRow) headerRow.classList.add('hidden');
-                renderYearSummary(grid, shifts, currentDate);
+                renderYearSummary(grid, shifts, window.currentShiftDate);
             } else if (currentView === 'day') {
                 if (headerRow) headerRow.classList.add('hidden');
-                renderDayDetailed(grid, shifts, currentDate);
+                renderDayDetailed(grid, shifts, window.currentShiftDate);
             } else if (currentView === 'list') {
                 if (headerRow) headerRow.classList.add('hidden');
                 renderListView(grid, shifts);
@@ -1028,8 +1028,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="text-indigo-400 text-sm font-medium opacity-80">${shift.role || 'Operatore'}</p>
                     </div>
                     <div class="text-right">
-                         <div class="text-2xl font-black text-white tracking-tight">${shift.start_time.split(' ')[1].substring(0, 5)} <span class="text-slate-500 font-light mx-1">-</span> ${shift.end_time.split(' ')[1].substring(0, 5)}</div>
-                         <div class="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1 bg-white/5 px-2 py-1 rounded-md inline-block">${shift.type}</div>
+                         <div class="text-2xl font-black text-white tracking-tight">
+                            ${(() => {
+                    const safeTime = (t) => {
+                        if (!t) return '??:??';
+                        const parts = t.split(' ');
+                        const timePart = parts.length > 1 ? parts[1] : parts[0];
+                        return timePart.substring(0, 5);
+                    };
+                    return `${safeTime(shift.start_time)} <span class="text-slate-500 font-light mx-1">-</span> ${safeTime(shift.end_time)}`;
+                })()}
+                         </div>
+                         <div class="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1 bg-white/5 px-2 py-1 rounded-md inline-block">${shift.type || 'N/A'}</div>
                     </div>
                 </div>
              `;

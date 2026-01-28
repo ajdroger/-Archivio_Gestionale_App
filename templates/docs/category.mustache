@@ -1,57 +1,77 @@
-{{> layout/layout_header}}
+{{> layout_header }}
 
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid py-5 px-4 bg-dark min-h-screen">
+    <!-- Back Header -->
+    <div class="mb-4">
+        <a href="{{base_url}}/docs" class="text-secondary text-decoration-none small hover-white transition-all">
+            <i class="fa-solid fa-arrow-left me-2"></i>Torna al Knowledge Hub
+        </a>
+    </div>
+
+    <!-- Title Section -->
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary border-opacity-25 pb-4">
         <div>
-             <a href="{{base_url}}/docs" class="text-secondary text-decoration-none small fw-bold mb-2 d-inline-block"><i class="fa-solid fa-arrow-left me-1"></i>Torna all'Hub</a>
-            <h2 class="fw-bold mb-0 text-white"><i class="fa-solid fa-folder-open me-2 text-warning"></i>{{category}}</h2>
-            <p class="text-secondary small mb-0">Archivio documenti</p>
+            <h1 class="text-white fw-bold mb-2">{{category}}</h1>
+            <p class="text-secondary mb-0">Esplora i documenti in questa sezione.</p>
+        </div>
+        <div>
+            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3 py-2 rounded-pill">
+                {{files.length}} Risorse
+            </span>
         </div>
     </div>
 
-    <div class="card bg-dark border-secondary shadow">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0">
-                    <thead class="bg-black bg-opacity-50 border-bottom border-secondary">
-                        <tr>
-                            <th class="ps-4 w-50 text-secondary x-small text-uppercase">Nome File</th>
-                            <th class="text-secondary x-small text-uppercase">Dimensione</th>
-                            <th class="text-secondary x-small text-uppercase">Data</th>
-                            <th class="pe-4 text-end text-secondary x-small text-uppercase">Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#files}}
-                        <tr>
-                            <td class="ps-4">
-                                <div class="d-flex align-items-center">
-                                    <i class="fa-solid {{icon}} me-3 fa-lg"></i>
-                                    <span class="text-white fw-bold">{{name}}</span>
-                                </div>
-                            </td>
-                            <td class="text-secondary small font-monospace">{{size}}</td>
-                            <td class="text-secondary small">{{date}}</td>
-                            <td class="pe-4 text-end">
-                                <a href="{{base_url}}/docs/{{category_encoded}}/{{encoded_name}}" target="_blank" class="btn btn-sm btn-outline-info rounded-pill px-3">
-                                    <i class="fa-solid fa-download me-1"></i>Visualizza
-                                </a>
-                            </td>
-                        </tr>
-                        {{/files}}
-                        {{^files}}
-                        <tr>
-                            <td colspan="4" class="text-center py-5 text-secondary">
-                                <i class="fa-solid fa-folder-open fa-2x mb-3 d-block opacity-50"></i>
-                                Nessun documento in questa cartella.
-                            </td>
-                        </tr>
-                        {{/files}}
-                    </tbody>
-                </table>
+    <!-- Files List Grid -->
+    <div class="row g-3">
+        {{#files}}
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="card h-100 bg-black border border-secondary border-opacity-25 shadow-sm hover-elevate transition-all group">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="p-3 rounded bg-secondary bg-opacity-10 text-info me-3 group-hover:bg-info group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-file-lines fa-lg"></i>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <h6 class="text-white fw-bold mb-1 text-truncate" title="{{name}}">{{name}}</h6>
+                            <span class="badge bg-dark border border-secondary text-secondary x-small">{{extension}}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto d-flex justify-content-between align-items-center border-top border-secondary border-opacity-10 pt-3">
+                        <span class="text-secondary x-small font-monospace">{{size}}</span>
+                        <a href="{{url}}" class="btn btn-sm btn-outline-light rounded-pill px-3" target="_blank" download>
+                            <i class="fa-solid fa-download me-2"></i>Scarica
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+        {{/files}}
+
+        {{^files}}
+        <div class="col-12 py-5 text-center">
+             <i class="fa-regular fa-folder-open fa-3x text-secondary opacity-25 mb-3"></i>
+             <p class="text-secondary">Nessun file trovato in questa categoria.</p>
+        </div>
+        {{/files}}
     </div>
 </div>
 
-{{> layout/layout_footer}}
+<style>
+.hover-elevate:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.02);
+}
+.transition-colors {
+    transition: background-color 0.2s, color 0.2s;
+}
+.group:hover .group-hover\:bg-info {
+    background-color: var(--bs-info) !important;
+}
+.group:hover .group-hover\:text-white {
+    color: white !important;
+}
+</style>
+
+{{> layout_footer }}

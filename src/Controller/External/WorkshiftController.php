@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MCAG\Controller\External;
 
 use MCAG\InfrastrutturaIT\Persistence\PDOWorkshiftRepository;
+use MCAG\Service\HealthCheckService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Mustache_Engine;
@@ -13,12 +14,14 @@ class WorkshiftController
 {
     private Mustache_Engine $mustache;
     private PDOWorkshiftRepository $repository;
+    private HealthCheckService $healthService; // [NEW]
     private string $baseUrl;
 
-    public function __construct(Mustache_Engine $mustache, PDOWorkshiftRepository $repository)
+    public function __construct(Mustache_Engine $mustache, PDOWorkshiftRepository $repository, HealthCheckService $healthService)
     {
         $this->mustache = $mustache;
         $this->repository = $repository;
+        $this->healthService = $healthService; // [NEW]
 
         // Determine base URL dynamically
         $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
@@ -229,6 +232,20 @@ class WorkshiftController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    public function getSystemStatusApi(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = $this->healthService->checkAll();
+        // Add random "heartbeat" variance for the chart visualization
+        $data['latency_chart'] = [
+            'db' => rand(1, 5),
+            'api' => rand(10, 30),
+            'redis' => rand(0, 2)
+        ];
+
+        $response->getBody()->write(json_encode($data));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
     private function _generateAiSuggestion(): array
     {
         // Analyze next 7 days for coverage gaps
@@ -256,12 +273,14 @@ class WorkshiftController
     public function info(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $page = $args['page'] ?? 'status';
-        $allowed = ['hr-policy', 'labor-laws', 'privacy', 'status', 'support', 'terms'];
+        $allowed = ['hr-policy', 'labor-laws', 'privacy', 'status', 'support', 'terms', 'system-status'];
 
         if (!in_array($page, $allowed)) {
             $response->getBody()->write($this->mustache->render('404.mustache', $this->getCommonData('Pagina non trovata', $request)));
             return $response->withStatus(404);
         }
+
+        // Alias removed to use real system-status.mustache
 
         $html = $this->mustache->render("workshift/info/$page.mustache", $this->getCommonData('Informazioni', $request));
         $response->getBody()->write($html);
