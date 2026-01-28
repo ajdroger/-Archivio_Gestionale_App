@@ -1,0 +1,45 @@
+{{> layout/layout_header}}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0 text-white"><i class="fa-solid fa-book-atlas me-2 text-info"></i>Documentation Hub</h2>
+            <p class="text-secondary small mb-0">Accesso centralizzato a tutta la documentazione tecnica e commerciale.</p>
+        </div>
+        <div>
+            <span class="badge bg-dark border border-secondary text-secondary p-2"><i class="fa-solid fa-database me-2"></i>Knowledge Base v9.0</span>
+        </div>
+    </div>
+
+    <!-- Category Grid -->
+    <div class="row g-4">
+        {{#categories}}
+        <div class="col-md-3 col-sm-6">
+            <a href="{{base_url}}/docs/{{encoded_name}}" class="text-decoration-none">
+                <div class="card bg-dark border-secondary h-100 shadow-sm hover-elevate transition-all">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fa-solid {{icon}} fa-3x text-{{color}} opacity-75"></i>
+                        </div>
+                        <h5 class="card-title text-white fw-bold mb-1">{{name}}</h5>
+                        <p class="card-text text-secondary x-small mb-0">{{count}} Documenti</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {{/categories}}
+    </div>
+</div>
+
+<style>
+.hover-elevate:hover {
+    transform: translateY(-5px);
+    border-color: var(--bs-info) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.transition-all {
+    transition: all 0.3s ease;
+}
+</style>
+
+{{> layout/layout_footer}}

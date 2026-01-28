@@ -32,6 +32,9 @@ class ResellerController
 
         $html = $this->renderer->render('partner/dashboard', [
             'user' => $_SESSION['username'] ?? 'Partner',
+            'username' => $_SESSION['username'] ?? 'Partner', // Required by layout_header
+            'real_is_admin' => true, // Required to show Admin Menu
+            'can_manage_soci' => false, // Partner Dashboard doesn't manage soci
             'user_initial' => strtoupper(substr($_SESSION['username'] ?? 'P', 0, 1)),
             'clients' => $clients,
             'stats' => $stats,

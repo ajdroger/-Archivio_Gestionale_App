@@ -197,6 +197,13 @@ return function (App $app) {
         $group->get('/api/stats/trend', \MCAG\Controller\External\ExpensebarController::class . ':getTrend'); // [NEW] Stats
     });
 
+    // Documentation Hub
+    $app->group('/docs', function (\Slim\Routing\RouteCollectorProxy $group) {
+        $group->get('', [\MCAG\Controller\DocsController::class, 'index'])->setName('docs_hub');
+        $group->get('/{category}', [\MCAG\Controller\DocsController::class, 'category'])->setName('docs_category');
+        $group->get('/{category}/{file}', [\MCAG\Controller\DocsController::class, 'download'])->setName('docs_download');
+    });
+
     // Admin & DevTools
     $app->group('', function ($group) {
         $group->get('/impostazioni', SettingsController::class . ':view')->setName('settings');

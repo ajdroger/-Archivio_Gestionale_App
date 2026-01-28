@@ -1,0 +1,57 @@
+{{> layout/layout_header}}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+             <a href="{{base_url}}/docs" class="text-secondary text-decoration-none small fw-bold mb-2 d-inline-block"><i class="fa-solid fa-arrow-left me-1"></i>Torna all'Hub</a>
+            <h2 class="fw-bold mb-0 text-white"><i class="fa-solid fa-folder-open me-2 text-warning"></i>{{category}}</h2>
+            <p class="text-secondary small mb-0">Archivio documenti</p>
+        </div>
+    </div>
+
+    <div class="card bg-dark border-secondary shadow">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                    <thead class="bg-black bg-opacity-50 border-bottom border-secondary">
+                        <tr>
+                            <th class="ps-4 w-50 text-secondary x-small text-uppercase">Nome File</th>
+                            <th class="text-secondary x-small text-uppercase">Dimensione</th>
+                            <th class="text-secondary x-small text-uppercase">Data</th>
+                            <th class="pe-4 text-end text-secondary x-small text-uppercase">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#files}}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa-solid {{icon}} me-3 fa-lg"></i>
+                                    <span class="text-white fw-bold">{{name}}</span>
+                                </div>
+                            </td>
+                            <td class="text-secondary small font-monospace">{{size}}</td>
+                            <td class="text-secondary small">{{date}}</td>
+                            <td class="pe-4 text-end">
+                                <a href="{{base_url}}/docs/{{category_encoded}}/{{encoded_name}}" target="_blank" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                    <i class="fa-solid fa-download me-1"></i>Visualizza
+                                </a>
+                            </td>
+                        </tr>
+                        {{/files}}
+                        {{^files}}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-secondary">
+                                <i class="fa-solid fa-folder-open fa-2x mb-3 d-block opacity-50"></i>
+                                Nessun documento in questa cartella.
+                            </td>
+                        </tr>
+                        {{/files}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout/layout_footer}}

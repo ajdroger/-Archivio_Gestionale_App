@@ -644,3 +644,15 @@ Abbandono calcolo dinamico `base_url` a favore di path assoluto configurato nel 
 **Conseguenze**:
 - (+) Stabilità caricamento JS/CSS in ogni ambiente (Subfolder/VirtualHost).
 
+---
+
+## [ADR-064] Documentation Hub Architecture
+**Data**: 2026-01-28  
+**Decisione**:  
+Implementare **Secure Streaming** per l'accesso ai documenti.
+I file risiedono fuori dalla `public_html`, accessibili solo via Controller (`DocsController`) previa autenticazione.
+**Conseguenze**:
+- (+) Sicurezza totale (nessun hotlinking).
+- (+) Centralizzazione accesso.
+
+

@@ -440,3 +440,16 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Asset Resolution**: Fix `base_url` dinamico nel ResellerController per supporto sottocartelle/proxy.
 - **Strict Redirects**: Routing corretto post-azione verso `/public/partner/dashboard`.
 
+## [v9.1.1] - 2026-01-28 "**Knowledge Core & Polish**"
+### 📚 Feature: Documentation Hub
+- **Centralized Docs**: Nuovo portale `/docs` accessibile dal menu utente.
+- **Card Interface**: Visualizzazione a griglia delle categorie documentali (Guide, Manuali, Analisi, etc.).
+- **Secure File Access**: I documenti sono serviti tramite stream PHP (nessun accesso diretto directory), garantendo sicurezza.
+
+### 🔧 Fixes & Polish
+- **Partner Menu**: Risolto bug visualizzazione menu per utente Partner (ora vede le opzioni "Mission Control" se admin).
+- **Landing Page**:
+    - Aggiornati link Benchmark Report alla versione `v8.3.0`.
+    - Fixato bottone "Vedi Benchmark" nella Hero section (apre report in nuova tab).
+- **Routes**: Fixata definizione gruppo rotte `/docs` in `config/routes.php`.
+
