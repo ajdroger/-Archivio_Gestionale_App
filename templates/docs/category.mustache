@@ -1,0 +1,59 @@
+{{> layout_header }}
+
+<div class="container-fluid py-5 px-4 bg-dark min-h-screen">
+    <div class="mb-4">
+        <a href="{{base_url}}/docs" class="btn btn-outline-secondary btn-sm mb-3">
+            <i class="fa-solid fa-arrow-left me-2"></i>Torna all'Hub
+        </a>
+        <h2 class="text-white fw-bold"><i class="fa-regular fa-folder-open me-3 text-warning"></i>{{category}}</h2>
+    </div>
+
+    <div class="card bg-black border border-secondary border-opacity-25 shadow-lg">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead class="bg-secondary bg-opacity-10 text-uppercase x-small text-secondary">
+                        <tr>
+                            <th class="ps-4 py-3">Nome File</th>
+                            <th>Dimensione</th>
+                            <th>Ultima Modifica</th>
+                            <th class="text-end pe-4">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-top-0">
+                        {{#files}}
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="fa-solid fa-file-lines text-secondary"></i>
+                                    <span class="fw-bold text-white">{{name}}</span>
+                                </div>
+                                <small class="text-muted font-monospace x-small d-block ms-4 ps-2">{{filename}}</small>
+                            </td>
+                            <td class="text-secondary small font-monospace">{{size}}</td>
+                            <td class="text-secondary small">{{updated}}</td>
+                            <td class="text-end pe-4">
+                                <a href="{{base_url}}/docs/{{category}}/{{filename}}" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                    <i class="fa-solid fa-download me-2"></i>Scarica
+                                </a>
+                                <a href="{{base_url}}/docs/{{category}}/{{filename}}?mode=raw" target="_blank" class="btn btn-sm btn-ghost-secondary rounded-circle" title="Vedi Raw">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {{/files}}
+                        {{^files}}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-secondary">
+                                Nessun file presente in questa cartella.
+                            </td>
+                        </tr>
+                        {{/files}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> layout_footer }}

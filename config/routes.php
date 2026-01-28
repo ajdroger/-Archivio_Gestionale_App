@@ -134,6 +134,7 @@ return function (App $app) {
     $app->post('/workshift/api/apply-suggestion', \MCAG\Controller\External\WorkshiftController::class . ':applyAiSuggestion'); // [NEW] AI Action
     $app->get('/workshift/api/reports/export', \MCAG\Controller\External\WorkshiftController::class . ':exportReports'); // [NEW] Export Action
     $app->get('/workshift/api/ai-suggestion', \MCAG\Controller\External\WorkshiftController::class . ':getNewAiSuggestion'); // [NEW] Refresh AI
+    $app->get('/workshift/api/system-status', \MCAG\Controller\External\WorkshiftController::class . ':getSystemStatusApi'); // [NEW] System Status API
 
     // Team API
     $app->get('/workshift/api/employees', \MCAG\Controller\External\WorkshiftController::class . ':getEmployees');
@@ -168,6 +169,13 @@ return function (App $app) {
     // API Documentation
     $app->get('/api/docs', \MCAG\Controller\Docs\DocumentationController::class . ':ui')->setName('api_docs');
     $app->get('/api/docs/json', \MCAG\Controller\Docs\DocumentationController::class . ':spec')->setName('api_docs_json');
+
+    // Knowledge Hub (Internal Documentation)
+    $app->group('/docs', function ($group) {
+        $group->get('', \MCAG\Controller\Docs\DocumentationController::class . ':hub')->setName('docs_hub');
+        $group->get('/{category}', \MCAG\Controller\Docs\DocumentationController::class . ':category')->setName('docs_category');
+        $group->get('/{category}/{file}', \MCAG\Controller\Docs\DocumentationController::class . ':viewFile')->setName('docs_view_file');
+    })->add(new AdminMiddleware()); // Protect Internal Docs
 
     // --- Taskflow Routes ---
     $app->group('/taskflow', function (\Slim\Routing\RouteCollectorProxy $group) {

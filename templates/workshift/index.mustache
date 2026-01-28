@@ -68,31 +68,32 @@
         <!-- Main Command Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- Card 1: Team Management -->
-            <a href="{{base_url}}/workshift/team-management" class="group relative h-[400px] rounded-[3rem] overflow-hidden border border-white/5 bg-slate-900/40 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:border-indigo-500/30 flex flex-col justify-between p-8">
-                <!-- Background Effects -->
-                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent pointer-events-none"></div>
+            <!-- Card 1: Team & System Stack -->
+            <div class="flex flex-col gap-6 h-[400px]">
                 
-                <!-- Top: Icon -->
-                <div class="relative z-10 w-16 h-16 p-4 bg-white/5 rounded-2xl backdrop-blur-md border border-white/10 group-hover:bg-indigo-500/20 transition-colors flex items-center justify-center">
-                    <i data-feather="users" class="w-8 h-8 text-indigo-300"></i>
-                </div>
+                <!-- Team Management -->
+                <a href="{{base_url}}/workshift/team-management" class="group relative flex-[2] rounded-[2.5rem] bg-slate-900/40 backdrop-blur-sm border border-white/5 p-8 flex flex-col justify-between hover:bg-white/5 transition-all overflow-hidden">
+                    <div class="relative z-10">
+                         <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
+                            <i data-feather="users" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors">Gestione Team</h3>
+                        <p class="text-slate-400 text-sm">Anagrafiche e Ruoli</p>
+                    </div>
+                </a>
 
-                <!-- Bottom: Text -->
-                <div class="relative z-10">
-                    <h3 class="text-3xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">Gestione Team</h3>
-                    <p class="text-slate-200 mb-6 group-hover:text-white transition-colors">Gestisci anagrafiche, ruoli e permessi del personale.</p>
-                    <span class="inline-flex items-center gap-2 text-indigo-400 font-bold tracking-wider uppercase text-sm">
-                        Accedi <i data-feather="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-2"></i>
-                    </span>
-                </div>
-                
-                <!-- Abstract Visual -->
-                <div class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 opacity-20 group-hover:opacity-40 transition-all duration-700 pointer-events-none">
-                    <div class="w-64 h-64 border-[30px] border-indigo-500 rounded-full blur-[60px]"></div>
-                </div>
-            </a>
+                <!-- System Status -->
+                <a href="{{base_url}}/workshift/info/system-status" class="group relative flex-1 rounded-[2.5rem] bg-slate-900/40 backdrop-blur-sm border border-white/5 p-8 flex items-center justify-between hover:bg-white/5 transition-all">
+                     <div>
+                        <div class="text-slate-300 text-xs font-bold uppercase tracking-wider mb-1">Stato Sistemi</div>
+                        <div class="text-xl font-bold text-white group-hover:text-neon-blue transition-colors">Monitoraggio Live</div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-neon-blue/10 flex items-center justify-center text-neon-blue group-hover:scale-110 group-hover:animate-pulse transition-transform">
+                        <i data-feather="activity" class="w-6 h-6"></i>
+                    </div>
+                </a>
+
+            </div>
 
             <!-- Card 2: Shift Planner (Centerpiece) -->
             <a href="{{base_url}}/workshift/shift-management" class="group relative h-[400px] rounded-[3rem] overflow-hidden border border-indigo-500/20 bg-gradient-to-b from-indigo-950/30 to-slate-900/40 backdrop-blur-md shadow-2xl shadow-indigo-900/20 transition-all duration-500 hover:shadow-indigo-600/30 hover:-translate-y-2">

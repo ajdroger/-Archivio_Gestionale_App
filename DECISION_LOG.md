@@ -644,3 +644,14 @@ Abbandono calcolo dinamico `base_url` a favore di path assoluto configurato nel 
 **Conseguenze**:
 - (+) Stabilità caricamento JS/CSS in ogni ambiente (Subfolder/VirtualHost).
 
+
+## [ADR-065] Real-time System Monitoring Architecture
+**Data**: 2026-01-28  
+**Decisione**:  
+Adottare architettura **Client-Side Polling** per il monitoraggio dello stato del sistema (HealthCheckService).
+La Dashboard interroga via AJAX l'endpoint API /workshift/api/system-status ogni 3-5 secondi.
+**Conseguenze**:
+- (+) Feedback quasi in tempo reale senza WebSocket (complessità ridotta).
+- (+) Disaccoppiamento totale tra UI e logica di check.
+- (+) Supporto per grafici storici (Chart.js) basati su dati effimeri di sessione.
+

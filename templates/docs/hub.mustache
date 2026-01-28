@@ -1,0 +1,71 @@
+{{> layout_header }}
+
+<div class="container-fluid py-5 px-4 bg-dark min-h-screen">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="text-white fw-bold mb-0"><i class="fa-solid fa-book-atlas me-3 text-info"></i>Knowledge Hub</h1>
+            <p class="text-secondary mt-2 mb-0">Archivio Centrale Documentazione Tecnica e Operativa</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{base_url}}/api/docs" class="btn btn-outline-warning btn-sm" target="_blank">
+                <i class="fa-solid fa-code me-2"></i>API Swagger
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {{#categories}}
+        <div class="col-md-4 col-xl-3">
+            <a href="{{base_url}}/docs/{{slug}}" class="card h-100 bg-black border border-secondary border-opacity-25 shadow-lg text-decoration-none hover-card transition-all">
+                <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center text-center">
+                    
+                    <div class="icon-wrapper mb-4 p-4 rounded-circle bg-gradient-dark border border-secondary border-opacity-25 transition-all">
+                        <i class="fa-solid fa-{{icon}} fa-2x text-info"></i>
+                    </div>
+                    
+                    <h5 class="text-white fw-bold mb-2 tracking-wide">{{name}}</h5>
+                    
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3 py-2 fw-normal x-small">
+                        <i class="fa-regular fa-file me-2"></i>{{count}} Documenti
+                    </span>
+
+                </div>
+            </a>
+        </div>
+        {{/categories}}
+        
+        {{^categories}}
+        <div class="col-12 text-center py-5">
+            <div class="text-secondary opacity-50 mb-3">
+                <i class="fa-solid fa-folder-open fa-3x"></i>
+            </div>
+            <h5 class="text-secondary">Nessuna categoria trovata</h5>
+            <p class="small text-muted">Verifica la cartella <code>Documentazione</code> nella root del progetto.</p>
+        </div>
+        {{/categories}}
+    </div>
+</div>
+
+<style>
+.hover-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(13, 202, 240, 0.5) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+}
+.hover-card:hover .icon-wrapper {
+    background-color: rgba(13, 202, 240, 0.1);
+    border-color: rgba(13, 202, 240, 0.5) !important;
+    transform: scale(1.1);
+}
+.bg-gradient-dark {
+    background: linear-gradient(145deg, #1a1d20, #0f1113);
+}
+.tracking-wide {
+    letter-spacing: 0.05em;
+}
+.transition-all {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>
+
+{{> layout_footer }}
