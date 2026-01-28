@@ -1,101 +1,346 @@
-<!DOCTYPE html>
-<html lang="it" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partner Console | MCAG</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-    </style>
-</head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased">
+{{> layout_header }}
+
+<div class="container-fluid px-4 py-4">
     
-    <nav class="border-b border-slate-700 bg-slate-800/50 backdrop-blur top-0 sticky z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex h-16 items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-handshake text-indigo-500 text-xl"></i>
-                    <span class="font-bold text-lg">Partner<span class="text-indigo-400">Hub</span></span>
+    <!-- Partner Header -->
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="bg-indigo-500 bg-opacity-10 p-2 rounded border border-indigo-500 border-opacity-25">
+                    <i class="fa-solid fa-handshake text-indigo-400 fa-lg"></i>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span class="text-sm text-slate-400">Welcome, {{user}}</span>
-                    <a href="/logout" class="text-sm hover:text-white transition">Logout</a>
+                <div>
+                     <h2 class="text-white fw-bold mb-0">Partner<span class="text-indigo-400">Hub</span></h2>
+                     <span class="badge bg-indigo-500 bg-opacity-20 text-indigo-300 border border-indigo-500 border-opacity-25 small">RESELLER ENTERPRISE</span>
+                </div>
+            </div>
+            <p class="text-secondary mb-0">Gestisci le tue istanze SaaS, monitora i ricavi e attiva nuovi clienti.</p>
+        </div>
+
+        <!-- TRIGGER BUTTON (Bootstrap 5) -->
+        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 shadow-lg hover-scale" data-bs-toggle="modal" data-bs-target="#newTenantModal">
+            <i class="fa-solid fa-plus-circle"></i> Provision New Tenant
+        </button>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card bg-dark border-0 shadow-lg h-100 position-relative overflow-hidden">
+                <div class="card-body p-4">
+                    <small class="text-secondary text-uppercase fw-bold x-small">Clienti Totali</small>
+                    <h2 class="text-white fw-bold mb-0 mt-2">{{stats.total_clients}}</h2>
+                    <div class="mt-2 text-success x-small"><i class="fa-solid fa-arrow-trend-up"></i> +12% vs mese scorso</div>
+                </div>
+                <i class="fa-solid fa-users position-absolute top-0 end-0 p-4 text-white opacity-5 fa-3x"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark border-0 shadow-lg h-100 position-relative overflow-hidden">
+                <div class="card-body p-4">
+                    <small class="text-secondary text-uppercase fw-bold x-small">MRR Lordo</small>
+                    <h2 class="text-white fw-bold mb-0 mt-2 text-info">{{stats.monthly_recurring}}</h2>
+                    <div class="mt-2 text-secondary x-small">Fatturato mensile ricorrente</div>
+                </div>
+                <i class="fa-solid fa-wallet position-absolute top-0 end-0 p-4 text-info opacity-10 fa-3x"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-lg h-100 position-relative overflow-hidden" style="background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);">
+                <div class="card-body p-4 position-relative z-10">
+                    <small class="text-white text-opacity-75 text-uppercase fw-bold x-small">Le Tue Commissioni (30%)</small>
+                    <h2 class="text-white fw-bold mb-0 mt-2">{{stats.commission}}</h2>
+                    <div class="mt-2 text-indigo-900 x-small bg-white px-2 py-1 rounded d-inline-block fw-bold shadow-sm"><i class="fa-solid fa-calendar-check me-1"></i>Payout: {{stats.next_payout}}</div>
+                </div>
+                 <!-- Pattern Overlay -->
+                <div class="position-absolute top-0 start-0 w-100 h-100 opacity-25" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 15px 15px;"></div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <!-- Chart Container -->
+            <div class="card bg-dark border-0 shadow-lg h-100 p-3">
+                <small class="text-secondary text-uppercase fw-bold x-small mb-2 d-block">Growth Trend</small>
+                <div style="height: 60px;">
+                     <!-- Simple CSS Bar Chart Fallback -->
+                    <div class="d-flex align-items-end h-100 gap-1 opacity-75">
+                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 30%"></div>
+                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 50%"></div>
+                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 45%"></div>
+                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 70%"></div>
+                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 60%"></div>
+                        <div class="bg-indigo-400 w-100 rounded-top" style="height: 85%"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="glass rounded-xl p-6">
-                <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Total Clients</div>
-                <div class="text-3xl font-bold text-white">{{stats.total_clients}}</div>
-            </div>
-            <div class="glass rounded-xl p-6">
-                <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Monthly ARR</div>
-                <div class="text-3xl font-bold text-green-400">{{stats.monthly_recurring}}</div>
-            </div>
-            <div class="glass rounded-xl p-6 relative overflow-hidden group">
-                <div class="absolute inset-0 bg-indigo-500/10 group-hover:bg-indigo-500/20 transition"></div>
-                <div class="relative z-10">
-                    <div class="text-indigo-300 text-xs font-semibold uppercase tracking-wider mb-2">Your Commission (30%)</div>
-                    <div class="text-3xl font-bold text-indigo-400">{{stats.commission}}</div>
-                </div>
-            </div>
-            <div class="glass rounded-xl p-6">
-                <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2">Next Payout</div>
-                <div class="text-xl font-bold text-white">{{stats.next_payout}}</div>
+    <!-- Client Table -->
+    <div class="card bg-dark border-0 shadow-lg mb-5">
+        <div class="card-header bg-transparent border-bottom border-secondary d-flex justify-content-between align-items-center p-4">
+            <h5 class="text-white mb-0 fw-bold">Istanze Gestite</h5>
+            <div class="input-group input-group-sm w-auto">
+                <span class="input-group-text bg-black border-secondary text-secondary"><i class="fa-solid fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control bg-black text-white border-secondary" placeholder="Cerca...">
             </div>
         </div>
-
-        <!-- Client List -->
-        <div class="glass rounded-xl overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-                <h3 class="font-bold text-lg">Your Managed Instances</h3>
-                <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg shadow-indigo-500/20">
-                    <i class="fas fa-plus mr-2"></i> New Client
-                </button>
-            </div>
-            <table class="w-full text-left text-sm text-slate-400">
-                <thead class="bg-slate-900/50 text-xs uppercase font-semibold text-slate-500">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0 align-middle" id="clientsTable">
+                <thead class="bg-black bg-opacity-25 text-uppercase x-small text-secondary">
                     <tr>
-                        <th class="px-6 py-3">Client Name</th>
-                        <th class="px-6 py-3">Plan</th>
-                        <th class="px-6 py-3">Status</th>
-                        <th class="px-6 py-3 text-right">Revenue</th>
-                        <th class="px-6 py-3 text-right">Actions</th>
+                        <th class="ps-4">Cliente / ID</th>
+                        <th>Piano</th>
+                        <th>Stato</th>
+                        <th class="text-end">MRR</th>
+                        <th class="text-end pe-4">Azioni</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-700">
+                <tbody class="border-top-0">
                     {{#clients}}
-                    <tr class="hover:bg-slate-800/30 transition">
-                        <td class="px-6 py-4 font-medium text-white">{{name}}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded text-xs bg-slate-700 text-slate-300">{{plan}}</span>
+                    <tr>
+                        <td class="ps-4 py-3">
+                            <div class="fw-bold text-white">{{name}}</div>
+                            <small class="text-muted font-monospace x-small">{{id}}</small>
                         </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium 
-                                {{#status_active}}bg-green-500/10 text-green-400 border border-green-500/20{{/status_active}}
-                                {{^status_active}}bg-yellow-500/10 text-yellow-400 border border-yellow-500/20{{/status_active}}">
-                                <span class="w-1.5 h-1.5 rounded-full {{#status_active}}bg-green-400{{/status_active}}{{^status_active}}bg-yellow-400{{/status_active}}"></span>
-                                {{status}}
-                            </span>
+                        <td>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">{{plan}}</span>
                         </td>
-                        <td class="px-6 py-4 text-right font-mono text-slate-300">{{revenue}}</td>
-                        <td class="px-6 py-4 text-right">
-                            <a href="#" class="text-indigo-400 hover:text-indigo-300 font-medium">Manage</a>
+                        <td>
+                            {{#status_active}}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill"><i class="fa-solid fa-circle x-small me-1"></i>Active</span>
+                            {{/status_active}}
+                            {{^status_active}}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill"><i class="fa-solid fa-pause x-small me-1"></i>Suspended</span>
+                            {{/status_active}}
+                        </td>
+                        <td class="text-end font-monospace text-info">{{formatted_revenue}}</td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-sm btn-icon btn-ghost-secondary" data-bs-toggle="modal" data-bs-target="#manageTenantModal" data-id="{{id}}" data-name="{{name}}" title="Gestione Avanzata"><i class="fa-solid fa-gear"></i></button>
+                            <a href="{{base_url}}/partner/client/access/{{id}}" class="btn btn-sm btn-icon btn-ghost-primary" title="Accedi al Tenant (SSO)"><i class="fa-solid fa-arrow-right-to-bracket"></i></a>
                         </td>
                     </tr>
                     {{/clients}}
                 </tbody>
             </table>
         </div>
+    </div>
 
-    </main>
+</div>
 
-</body>
-</html>
+</div>
+
+<!-- BOOTSTRAP MODAL: NEW INSTANCE (PROFESSIONAL) -->
+<div class="modal fade" id="newTenantModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary shadow-lg" style="box-shadow: 0 0 50px rgba(0,0,0,0.7) !important;">
+            
+            <!-- Professional Header -->
+            <div class="modal-header border-bottom border-secondary p-4 bg-gradient-dark">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-indigo-500 bg-opacity-20 p-3 rounded-circle border border-indigo-500 border-opacity-25">
+                        <i class="fa-solid fa-server text-indigo-400 fa-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white mb-1 fw-bold">Provisioning Nuova Istanza</h4>
+                        <p class="text-secondary mb-0 x-small text-uppercase fw-bold letter-spacing-1">Deploy automatico infrastruttura SaaS</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form action="{{base_url}}/partner/client/create" method="POST">
+                <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+                
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <!-- COLUMN 1: CLIENT IDENTITY -->
+                        <div class="col-md-6 border-end border-secondary border-opacity-25">
+                            <h6 class="text-indigo-300 text-uppercase x-small fw-bold mb-3"><i class="fa-solid fa-id-card me-2"></i>Identità Cliente</h6>
+                            
+                            <div class="mb-3">
+                                <label class="text-secondary x-small text-uppercase fw-bold mb-1">Ragione Sociale Organizzazione <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-black border-secondary text-secondary"><i class="fa-solid fa-building"></i></span>
+                                    <input type="text" name="client_name" class="form-control bg-black text-white border-secondary" placeholder="Es. Logistics Pro Srl" required>
+                                </div>
+                                <div class="form-text x-small text-muted">Verrà utilizzato per generare il dominio tenant.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="text-secondary x-small text-uppercase fw-bold mb-1">Email Amministratore <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-black border-secondary text-secondary"><i class="fa-solid fa-envelope"></i></span>
+                                    <input type="email" name="admin_email" class="form-control bg-black text-white border-secondary" placeholder="admin@azienda.com" required>
+                                </div>
+                                <div class="form-text x-small text-muted">A questo indirizzo verranno inviate le credenziali di root.</div>
+                            </div>
+
+                        </div>
+
+                        <!-- COLUMN 2: INFRASTRUCTURE CONFIG -->
+                        <div class="col-md-6 ps-md-4">
+                            <h6 class="text-info text-uppercase x-small fw-bold mb-3"><i class="fa-solid fa-layer-group me-2"></i>Configurazione Risorse</h6>
+                            
+                            <div class="mb-3">
+                                <label class="text-secondary x-small text-uppercase fw-bold mb-1">Piano di Sottoscrizione</label>
+                                <select name="plan" class="form-select bg-black text-white border-secondary" style="background-image: none;">
+                                    <option value="Standard">⭐ Standard (3 Utenti - 50GB)</option>
+                                    <option value="Pro" selected>🚀 Pro (10 Utenti - 500GB)</option>
+                                    <option value="Enterprise">🏢 Enterprise (Illimitati - 10TB)</option>
+                                    <option value="Health">🏥 Sanità (Compliance GDPR/HIPAA)</option>
+                                </select>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="text-secondary x-small text-uppercase fw-bold mb-1">Data Region</label>
+                                    <select name="region" class="form-select bg-black text-white border-secondary fs-sm text-center">
+                                        <option value="eu-west-1" selected>🇪🇺 Milan (EU)</option>
+                                        <option value="eu-central-1">🇩🇪 Frankfurt (EU)</option>
+                                        <option value="us-east-1">🇺🇸 N. Virginia (US)</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="text-secondary x-small text-uppercase fw-bold mb-1">Environment</label>
+                                    <select name="environment" class="form-select bg-black text-white border-secondary fs-sm text-center">
+                                        <option value="production" selected>🟢 Production</option>
+                                        <option value="staging">🟠 Staging</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-dark border border-secondary d-flex align-items-center p-2 mb-0">
+                                <i class="fa-solid fa-shield-halved text-success me-2 fs-4"></i>
+                                <div class="lh-1">
+                                    <span class="d-block x-small text-white fw-bold">Sicurezza Garantita</span>
+                                    <span class="d-block x-small text-muted" style="font-size: 0.65rem;">Storage crittografato AES-256 e backup orario.</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="modal-footer border-top border-secondary p-3 bg-black bg-opacity-50 justify-content-between">
+                    <div class="text-muted x-small">
+                        <i class="fa-solid fa-clock me-1"></i> Estimated Provisioning Time: <strong>~45s</strong>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm text-uppercase fw-bold px-3" data-bs-dismiss="modal">Annulla</button>
+                        <button type="submit" class="btn btn-indigo btn-sm text-uppercase fw-bold px-4 shadow-lg hover-scale">
+                            <i class="fa-solid fa-rocket me-2"></i>Deploy Tenant
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- BOOTSTRAP MODAL: MANAGE INSTANCE (The Gear Button) -->
+<div class="modal fade" id="manageTenantModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary shadow-lg">
+            <div class="modal-header border-bottom border-secondary d-flex justify-content-between align-items-center p-3">
+                <h5 class="text-white mb-0 fw-bold"><i class="fa-solid fa-gear me-2 text-secondary"></i>Gestione Istanza</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <h5 class="text-white mb-1" id="manageModalName">Nome Cliente</h5>
+                <div class="font-monospace text-secondary small mb-4" id="manageModalId">ID: Loading...</div>
+
+                <div class="d-grid gap-3">
+                    <!-- Suspend/Activate Form -->
+                    <form action="{{base_url}}/partner/client/action" method="POST">
+                        <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                        <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+                        <input type="hidden" name="action" value="suspend"> <!-- Toggles automatically on backend -->
+                        <input type="hidden" name="client_id" id="formSuspendId">
+                        <button type="submit" class="btn btn-outline-warning w-100 py-2 d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-power-off me-2"></i>Sospendi / Riattiva Servizio</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </form>
+
+                    <!-- Reset Password Form -->
+                    <form action="{{base_url}}/partner/client/action" method="POST">
+                        <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                        <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+                        <input type="hidden" name="action" value="reset_auth">
+                        <input type="hidden" name="client_id" id="formResetId">
+                        <button type="submit" class="btn btn-outline-info w-100 py-2 d-flex justify-content-between align-items-center">
+                             <span><i class="fa-solid fa-key me-2"></i>Reset Credenziali Admin</span>
+                             <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </form>
+
+                    <!-- Delete Form (SweetAlert2 Trigger) -->
+                    <form action="{{base_url}}/partner/client/action" method="POST" id="deleteTenantForm">
+                        <input type="hidden" name="{{csrf.keys.name}}" value="{{csrf.name}}">
+                        <input type="hidden" name="{{csrf.keys.value}}" value="{{csrf.value}}">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="client_id" id="formDeleteId">
+                         <button type="button" onclick="confirmDelete()" class="btn btn-outline-danger w-100 py-2 d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-trash me-2"></i>Termina Contratto & Elimina dati</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Search Functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#clientsTable tbody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+
+    // Populate Manage Modal
+    const manageModal = document.getElementById('manageTenantModal');
+    manageModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        
+        document.getElementById('manageModalName').textContent = name;
+        document.getElementById('manageModalId').textContent = 'ID: ' + id;
+        document.getElementById('formSuspendId').value = id;
+        document.getElementById('manageModalId').textContent = 'ID: ' + id;
+        document.getElementById('formSuspendId').value = id;
+        document.getElementById('formDeleteId').value = id;
+        document.getElementById('formResetId').value = id;
+    });
+
+    // SweetAlert2 Confirmation
+    function confirmDelete() {
+        Swal.fire({
+            title: 'Sei assolutamente sicuro?',
+            text: "Questa azione eliminerà DEFINITIVAMENTE il tenant e tutti i suoi dati. Non si torna indietro!",
+            icon: 'warning',
+            background: '#1a1d20', // Dark theme matching
+            color: '#fff',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sì, distruggi tutto',
+            cancelButtonText: 'Annulla'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('deleteTenantForm').submit();
+            }
+        });
+    }
+</script>
+</script>
+<!-- SweetAlert2 -->
+<script src="{{base_url}}/js/lib/sweetalert2.all.min.js"></script>
+{{> layout_footer }}

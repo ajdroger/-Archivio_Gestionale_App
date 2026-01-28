@@ -1,1384 +1,646 @@
 # Registro delle Decisioni (ADR - Architecture Decision Records)
 
-## [ADR-047] Real ERP Integration (Not Mock)
-**Data**: 2026-01-27
-**Stato**: ✅ Attivo
-**Contesto**:
-User rejected "skeleton/simulation" approach for ERP integration. Required real HTTP connection to prove 100% functionality.
-**Decisione**:
-Upgraded `ZucchettiAdapter` to perform REAL cURL requests:
-1. **Connection Check**: `GET /api/v1/status` with Bearer token authentication.
-2. **Employee Sync**: `GET /api/v1/anagrafica/dipendenti?modified_since={date}` with JSON parsing and field mapping.
-3. **Timesheet Push**: `POST /api/v1/presenze/upload` with structured JSON payload.
-**Test Strategy**:
-- Measure network latency (> 100ms) to prove real I/O.
-- Verify 40x/50x HTTP codes vs mock instant responses.
-**Codice**:
-```php
-// ZucchettiAdapter.php
-public function connect(): bool {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $this->baseUrl . '/api/v1/status');
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer {$this->apiKey}"]);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    return $httpCode >= 200 && $httpCode < 500; // Real connection check
-}
-```
-**Conseguenze**:
-- (+) Real integration ready for production ERP deployment.
-- (+) Test proves network activity (not simulation).
-- (-) Requires actual Zucchetti instance for integration testing.
-
----
-
-## [ADR-046] Comprehensive Test Coverage for "Titan" Features
-**Data**: 2026-01-27
-**Stato**: ✅ Completato
-**Contesto**:
-Phase 5-6 implementation added major features (AI Widget, Verticals, Kubernetes, Partner Portal) without automated tests.
-**Decisione**:
-Create dedicated test suites for each new module:
-1. **Unit Tests**: `AIServiceTest`, `ZucchettiAdapterTest`, `LabelServiceTest`.
-2. **Feature Tests**: `ResellerControllerTest`, `AIChatControllerTest`.
-**Coverage Goals**:
-- AI Service: Driver Logic (Ollama ↔ OpenAI switching).
-- ERP Adapter: Real HTTP connection validation.
-- LabelService: Healthcare/Logistics vocabulary switching.
-- Partner Portal: Authentication and dashboard rendering.
-- AI Chat API: Input validation and error handling.
-**Conseguenze**:
-- (+) Regression protection for new features.
-- (+) Proves functionality to stakeholders/clients.
-- (+) Maintains 90%+ test coverage standard.
-
----
-
-## [ADR-045] Industry Vertical "Chameleon Mode" Strategy
-**Data**: 2026-01-27
-**Stato**: ✅ Implementato
-**Contesto**:
-SWOT Opportunity #3 identified expansion into Healthcare and Logistics sectors. Hardcoded terminology ("Dipendente") limits market reach.
-**Decisione**:
-Implement `LabelService` with config-driven vocabulary presets:
-1. **Service Layer**: `src/Service/UI/LabelService.php` loads preset from `config/verticals/{mode}.php`.
-2. **Presets**: `healthcare.php`, `logistics.php` define terminology mappings.
-3. **Template Integration**: Mustache helper `{{#label}}employee_single{{/label}}` → "Sanitario" (healthcare mode).
-**Example Config** (`healthcare.php`):
-```php
-return [
-    'app_name' => 'MCAG Health Suite',
-    'employee_single' => 'Sanitario',
-    'department_single' => 'Reparto',
-    'customer_single' => 'Paziente'
-];
-```
-**Conseguenze**:
-- (+) Opens Healthcare/Logistics markets without code changes.
-- (+) White-label friendly (resellers can create custom presets).
-- (+) Maintains single codebase for all verticals.
-- (-) Requires preset maintenance for new industries.
-
----
-
-## [ADR-044] AI Frontend Widget "Genius Assistant"
-**Data**: 2026-01-27
-**Stato**: ✅ Implementato
-**Contesto**:
-SWOT Weakness #3 identified need for "AI Assistant UI". Backend `AIService` existed but no user-facing interface.
-**Decisione**:
-Create standalone JavaScript widget (`public/js/ai-genius.js`):
-1. **UI**: Floating bubble (bottom-right) with glassmorphism design.
-2. **Chat Window**: Slide-up panel with message history and typing indicator.
-3. **API Integration**: POST to `/api/ai/chat` with GDPR audit logging.
-4. **Global Activation**: Injected via `layout_footer.mustache` on all pages.
-**Code Snippet**:
-```javascript
-async function sendMessage() {
-    const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, context: 'user_dashboard' })
-    });
-    const data = await response.json();
-    addMessage(data.response, 'ai');
-}
-```
-**Conseguenze**:
-- (+) Users can chat with AI directly from any page.
-- (+) Privacy maintained (Ollama local option).
-- (+) GDPR compliant (all interactions logged with `AIAuditLogger`).
-- (-) Requires Ollama/OpenAI setup for functionality.
-
----
-
-## [ADR-043] Kubernetes Cloud-Native Architecture
-**Data**: 2026-01-27
-**Stato**: ✅ Implementato
-**Contesto**:
-SWOT Weakness #6 identified "No Cloud-Native deployment". Docker Compose insufficient for enterprise multi-node clusters.
-**Decisione**:
-Create production-ready Helm Chart:
-1. **Chart.yaml**: Package metadata (name: mcag-enterprise, version: 8.3.0).
-2. **values.yaml**: Config defaults (replicas: 3, resources, ingress).
-3. **templates/deployment.yaml**: Kubernetes Deployment with liveness/readiness probes.
-4. **templates/_helpers.tpl**: Standard Helm template helpers.
-**Deployment Command**:
-```bash
-helm install mcag-prod ./deploy/kubernetes --namespace production
-```
-**Conseguenze**:
-- (+) Deployable on AWS EKS / Google GKE / Azure AKS.
-- (+) Auto-scaling via Horizontal Pod Autoscaler (HPA).
-- (+) Enterprise credibility (cloud-native standard).
-- (-) Requires Kubernetes knowledge for operations.
-
----
-
-## [ADR-042] Complete SWOT Gap Resolution Strategy
-  
-**Stato**: ✅ Completato  
-**Contesto**:  
-Necessità di valutazione oggettiva del sistema per positioning commerciale e verifica qualità enterprise-grade.
-
-**Decisione**:  
-Creare report completo di benchmark multilivello (REPORT_COMPLETO_BENCHMARK_2026.md) con analisi su 8 dimensioni: Architettura, Sicurezza, Performance, Testing, UI/UX, Documentazione, Funzionalità, Valore Commerciale.
-
-**Risultati**:
-- **Score Finale**: 94/100 - ENTERPRISE EXCELLENCE
-- **Valore Mercato**: €69,900 - €89,900 (attuale), potenziale €270K-430K (12 mesi)
-- **Roadmap Strategica**: 4 fasi di evoluzione identificate
-- **Top 10 Priorità**: Debolezze e opportunità documentate
-
-**Conseguenze**:
-- (+) Posizionamento competitivo chiaro nel mercato italiano
-- (+) Roadmap basata su dati per aumentare valore commerciale
-- (+) Baseline per misurare future implementazioni
-
----
-
----
-
----
-
----
-
-## [ADR-042] Client-Side Internationalization (I18n)
-**Data**: 2026-01-19
-**Stato**: ✅ Attivo
-**Contesto**:
-Richiesta di rendere il prodotto "Internazionale e Accessibile" immediatamente, senza riscrittura completa del backend per supporto multilingua nativo (gettext/arrays).
-**Decisione**:
-Adottare un approccio **Google Cloud Translate Engine (Client-Side Wrapper)**:
-1.  **Engine**: Script `google.translate.TranslateElement` caricato dinamicamente in `accessibility.js`.
-2.  **UI Integration**: Nascondere l'interfaccia default (Banner TopBar) via CSS per preservare il design "Mission Control".
-3.  **Custom Selector**: Modale nativo Bootstrap che imposta programmaticamente il cookie `googtrans` (`/source/target`) per triggerare la traduzione.
-**Conseguenze**:
-- (+) Supporto immediato per **100+ lingue** (Arabic, Russian, Chinese, Hindi, etc.).
-- (+) Traduzione completa (anche contenuti dinamici DB).
-- (+) Zero maintenance dizionari.
-- (-) Dipendenza esterna (Google JS).
-
----
-
-## [ADR-041] Mission Control "God Mode" Protocol
-**Data**: 2026-01-19
-**Stato**: ✅ Attivo
-**Contesto**:
-Necessità di un livello di accesso "Super-Root" per maintenance critica, visualmente distinto e protetto da attivazione accidentale.
-**Decisione**:
-1.  **User-Based Trigger**: Funzionalità attive solo per username specifico (`Aj_GodMode`).
-2.  **Omega Protocol**: Overlay full-screen per simulare "Lockdown" del sistema durante operazioni critiche.
-3.  **Hazard Confirmation**: Introduzione pattern "Double-Confirm with Auto-Backup" per azioni distruttive (es. Force Purge).
-    - Prima di cancellare, il sistema ESEGUE sempre un backup DB.
-**Conseguenze**:
-- (+) Sicurezza operativa (Backup automatico).
-- (+) Chiara distinzione visiva tra Admin normale e SuperUser.
-
----
-
-## [ADR-040] Workshift Delete Propagation Strategy
-**Data**: 2026-01-18
-**Stato**: ✅ Attivo
-**Contesto**:
-La gestione delle richieste ferie e dei turni richiedeva la possibilità di eliminazione fisica o logica, ma mancavano gli endpoint e la UI per farlo in sicurezza.
-**Decisione**:
-1.  **Repository Logic**: Implementati metodi `deleteRequest($id)`, `deleteShift($id)`, `resetRequests()` nel Repository PDO per permettere la pulizia granulare o massiva.
-2.  **Safety UI**: Utilizzo obbligatorio di `SweetAlert2` per conferma operazione con doppio controllo (soprattutto per "Svuota Bacheca").
-3.  **Global Functions**: Esposizione funzioni JS (es. `window.deleteRequest`) a livello globale per garantire l'invocazione da button statici o dinamici.
-- **Conseguenze**:
-- (+) Controllo totale sui dati da parte dell'Admin.
-- (+) Feedback visivo immediato post-eliminazione.
-- (-) Rischio perdita dati (mitigato da prompt conferma espliciti).
-
----
-
-## [ADR-039] Integrated Reporting Analytics
-**Data**: 2026-01-18
-**Stato**: ✅ Attivo
-**Contesto**:
-La pagina Report visualizzava dati statici o incompleti.
-**Decisione**:
-Estensione del `PDOWorkshiftRepository` con metodi analitici aggregati:
-- `getAnalyticsSummary()`: KPI istantanei (Costo, Ore, Ferie).
-- `getMonthlyTrend()`: Dati serie storica per Chart.js.
-- `getRoleDistribution()`: Breakdown per ruolo.
-**Conseguenze**:
-- (+) Dashboard Reportistica viva e reale.
-- (+) Performance ottimizzata (Calcoli lato DB SQL).
-
----
-
-## [ADR-038] SweetAlert2 Dependency Standardization
-**Data**: 2026-01-18
-**Stato**: ✅ Attivo
-**Contesto**:
-Alcune pagine (es. Time Off) fallivano silenziosamente perché `Swal` non era caricato, rompendo la UX dei pulsanti d'azione.
-**Decisione**:
-1.  Inclusione esplicita CDN SweetAlert2 nei template critici (`time-off.mustache`).
-2.  Refactoring JS per check di esistenza `if (typeof Swal === 'undefined')` con fallback alert o avviso.
-**Conseguenze**:
-- (+) Robustezza UX garantita.
-- (+) Prevenzione errori console bloccanti.
-
----
-
-## [ADR-037] Global City Codes Database Strategy
-**Data**: 2026-01-18
-**Stato**: ✅ Attivo
-**Contesto**:
-Il calcolo del Codice Fiscale richiede il "Codice Catastale" (Belfiore) del comune o stato di nascita. Affidarsi ad API esterne per ogni calcolo è lento e inaffidabile per un sistema mission-critical.
-**Decisione**:
-1.  **Embedded Database**: Includere un dizionario statico JS (`fiscal-code-data.js`) con:
-    - Principali capoluoghi italiani (per velocità).
-    - **TUTTI** gli stati esteri (Z-codes) per garantire supporto mondiale immediato.
-2.  **Versioning**: Gestire il file con versionamento query string (`?v=1.x`) per forzare l'aggiornamento cache sui client.
-**Conseguenze**:
-1.  (+) Calcolo istantaneo (0ms latency).
-2.  (+) Funzionamento offline/intranet.
-3.  (+) Copertura 100% per personale nato all'estero.
-4.  (-) Necessità di aggiornare manualmente in caso di nuovi comuni italiani (accettabile, cambiano raramente).
-
----
-
-## [ADR-036] API CSRF Exemption Strategy
-**Data**: 2026-01-18
-**Stato**: ✅ Implementato
-**Contesto**:
-I test automatici e le chiamate API interne (via fetch/AJAX) verso endpoint operativi (`/workshift/api/`) fallivano a causa della protezione CSRF globale, bloccando lo sviluppo e la CI.
-**Decisione**:
-Implementare un'esenzione mirata nel `middleware.php` per route specifiche:
-1.  **Scope**: `/api/public/`, `/ai/`, `/workshift/api/`.
-2.  **Rationale**: Questi endpoint sono protetti da autenticazione di sessione o Bearer token, o sono utilizzati in contesti (es. test) dove il CSRF non è il vettore di attacco primario.
-3.  **Sicurezza**: L'autenticazione rimane obbligatoria.
-**Conseguenze**:
-- (+) Test API funzionanti (Green Build).
-- (+) Chiamate AJAX semplificate.
-- (-) Leggero aumento superficie attacco (mitigato da Auth rigorosa).
-
----
-
-## [ADR-035] Hybrid AI Launcher Strategy
-**Data**: 2026-01-15
-**Stato**: ✅ Implementato (v5.5.0)
-**Contesto**:
-L'avvio manuale dell'AI ("Clicca per avviare") era fastidioso, ma l'avvio automatico puro rischiava race-condition o loop infiniti su connessioni lente.
-**Decisione**:
-Adottare un approccio **Ibrido**:
-1.  **Auto-Start**: Trigger automatico `hx-trigger="load"` all'apertura della tab.
-2.  **Manual Fallback**: Pulsante "Avvia (Manuale)" sempre visibile se l'auto-start fallisce o appende.
-**Conseguenze**:
-- (+) UX fluida nel 99% dei casi.
-- (+) Resilienza garantita per il restante 1%.
-
----
-
-## [ADR-034] Scroll Navigator 2.0 (Class-Based)
-**Data**: 2026-01-15
-**Stato**: ✅ Implementato
-**Contesto**:
-La precedente implementazione IIFE del bottone "Torna Su" era rigida e creava conflitti di sovrapposizione (z-index) in DevTools.
-**Decisione**:
-Refactoring in Classe JS `ScrollNavigator`:
-1.  **Incapsulamento**: Logica CSS/JS isolata per istanza.
-2.  **Multi-Instance**: Un'istanza per il body principale, una separata per il container `#console-drawer` del DevTools.
-3.  **Configurable Offset**: Parametri posizionali passati al costruttore per evitare collisioni con Widget AI.
-**Conseguenze**:
-- (+) Codice pulito e riutilizzabile.
-- (+) Risolti conflitti UI in modo strutturale.
-
----
-
-## [ADR-033] User Statistics Segregation
-**Data**: 2026-01-15
-**Stato**: ✅ Implementato
-**Contesto**:
-Gli utenti standard (Soci) accedevano alla stessa Dashboard Statistiche degli Admin, vedendo grafici finanziari vuoti o irrilevanti.
-**Decisione**:
-Biforcazione della View nel Controller:
-- **Admin**: `admin/statistics.mustache` (Full Financial Dashboard).
-- **User**: `admin/statistics_user.mustache` (Transparency & Activities only).
-**Conseguenze**:
-- (+) Privacy finanziaria garantita.
-- (+) UX migliorata per il socio (meno rumore).
-
----
-
-## [ADR-032] Interactive/Operational Dashboard Paradigm
-**Data**: 2026-01-14
-**Stato**: ✅ Implementato (v5.4.3)
-**Contesto**:
-Le dashboard tradizionali sono "Read-Only" (visualizzano dati). L'utente Admin ha richiesto un cambio di paradigma verso un "Sistema Operativo" dove le azioni (es. bloccare registrazioni, approvare utenti) avvengono direttamente dalla Dashboard senza navigare in sottomenu.
-**Decisione**:
-1.  **Direct Manipulation**: Implementazione di "Switch fisici" e pulsanti d'azione diretti in Home.
-2.  **AJAX-First**: Le interazioni (Toggle switch) NON devono ricaricare la pagina. Uso di endpoint API dedicati (`DashboardActionController`).
-3.  **Local State**: Utilizzo ibrido di LocalStorage (per Note rapide) e DB Sync (per Config) per massimizzare la velocità percepita.
-
-**Conseguenze**:
-- (+) Velocità operativa per l'Admin aumentata del 300%.
-- (+) Riduzione click per task comuni.
-- (-) Maggiore complessità JS nel frontend (gestione stati asincroni).
-
----
-
-## [ADR-031] Strict Documentation & Release Versioning
-**Data**: 2026-01-14
-**Stato**: ✅ Attivo
-**Contesto**:
-La documentazione delle modifiche era spesso sommaria. Inoltre, la cronologia dei rilasci Git non rifletteva accuratamente l'evoluzione commerciale dichiarata nel listino prezzi.
-**Decisione**:
-1.  **Fundamental Documentation Rule**: Ogni merge su `develop`/`main` DEVE essere seguito da un aggiornamento di `CHANGELOG` e `DECISION_LOG` che includa:
-    - Spiegazione "Ultra-Dettagliata" (Cosa/Perché).
-    - **Snippet di Codice** reali obbligatori.
-2.  **Historical Alignment**: Creazione forzata di branch di release per tutte le versioni storiche (`v0.1.0` - `v2.4.0`) per garantire corrispondenza 1:1 tra Git e Commercial Docs.
-3.  **Milestone Protocol**: Trigger automatico di Branch/Tag per ogni major/minor milestone numerica (es. 5.5.5, 6.0.0).
-
-**Conseguenze**:
-- (+) Tracciabilità assoluta tra Modifica Codice e Documentazione.
-- (+) Auditabilità completa per clienti Enterprise.
-- (+) Conformità processi di vendita.
-
----
-
-## [ADR-016] Zero-Dependency Asynchronous Queue
-**Data**: 2026-01-13
-**Stato**: ✅ Implementato
-**Contesto**:
-Necessità di elaborare task onerosi (es. ingestion documenti AI) senza bloccare l'interfaccia utente. Redis è ottimo ma aggiunge dipendenze infrastrutturali complesse per piccoli deployment.
-
-**Decisione**:
-Implementare `DatabaseQueue` che utilizza una tabella SQL (`jobs`) come backend per la coda.
-- Interfaccia: `QueueInterface` standard (compatibile con implementazioni future Redis/RabbitMQ).
-- Storage: MariaDB/MySQL (già presente).
-- Worker: Script PHP puro (`worker.php`) in long-polling.
-
-**Conseguenze**:
-- (+) Zero costi aggiuntivi infrastrutturali.
-- (+) Persistenza dei job inclusa nei backup database standard.
-- (+) Semplicità di deployment (basta una migrazione SQL).
-- (-) Throughput inferiore a Redis (ma sufficiente per volumi attuali).
-
----
-
-## [ADR-015] Local RAG Architecture (Ollama)
-**Data**: 2026-01-13
-**Stato**: ✅ Implementato
-**Contesto**:
-Richiesta di funzionalità AI "Chat with PDF" mantenendo privacy assoluta (no Cloud API) e costi zero.
-
-**Decisione**:
-Adottare architettura RAG (Retrieval-Augmented Generation) locale:
-1.  **LLM**: Ollama con modello `llama3` o `mistral` (Locale).
-2.  **Embedding**: `nomic-embed-text` (Locale).
-3.  **Vector Store**: `SimpleVectorStore` (File-based JSON per MVP, scalabile a pgvector).
-4.  **Ingestion**: `smalot/pdfparser` per estrazione testo + Chunking logico.
-
-**Conseguenze**:
-- (+) Privacy Totale: Nessun dato lascia il server.
-- (+) Costo Zero: Nessun token API da pagare.
-- (+) Indipendenza: Funziona offline/intranet.
-- (-) Richiede hardware con RAM decente (8GB+) sul server ospitante.
-
----
-
-## [ADR-014] Migration Testing Strategy Comprehensive
-**Data**: 2026-01-06  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-Con 146+ test automatizzati, necessità di strategia testing moderna e maintainable.
-
-**Decisione**:  
-Adottare **PestPHP** come framework unico per tutti i test con struttura multi-livello:
-- Unit Tests (50+)
-- Integration Tests (35+)
-- Feature Tests (40+)
-- Security Tests (11+)
-- E2E Tests con Playwright (11+)
-- Architecture Tests (Pest Arch)
-
-**Conseguenze**:
-- (+) Test coverage 85% (target superato)
-- (+) Sintassi moderna e leggibile
-- (+) Parallel execution support
-- (+) 0 failure su 146+ test
-
----
-
-## [ADR-013] Performance Optimization Stack
-**Data**: 2025-12-28  
-**Stato**: ✅ Implementato  
-**Contesto**:  
-Frontend assets non ottimizzati, nessun caching applicativo, database queries non cached.
-
-**Decisione**:  
-Implementare stack di ottimizzazione completo:
-1. **Frontend**: PurgeCSS + Terser minification (Vite)
-2. **Backend**: CacheService per statistiche e query frequenti
-3. **Database**: Migration MySQL + indici ottimizzati
-
-**Metriche**:
-- CSS size: 500KB → 350KB (-30%)
-- Stats response time: 150ms → <20ms (-87%)
-- DB queries: 40-50x più veloci (MySQL vs SQLite)
-
-**Conseguenze**:
-- (+) Performance score: 70/100 → 90/100 (+20 punti)
-- (+) Scalabilità: 100+ utenti concorrenti supported
-- (+) Page load time: -200-300ms
-
----
-
-## [ADR-012] Code Quality Enforcement
-**Data**: 2025-12-28  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-Need for highest code quality standards e type safety.
-
-**Decisione**:  
-1. **PHPStan Level 6** (da Level 5)
-2. **Strict Typing 100%**: `declare(strict_types=1)` in tutti i file
-3. **PSR-12 Compliance**: PHP-CS-Fixer automatico
-4. **Zero Tolerance**: 0 errori PHPStan, 0 warning IDE
-
-**Risultati**:
-- PHPStan L6: 0 errori
-- Type safety completa su 15,000+ LOC
-- Code Quality score: 85/100 → 95/100 (+10 punti)
-
-**Conseguenze**:
-- (+) Bug prevenuti a compile-time
-- (+) IntelliSense perfetto (100% type hints)
-- (+) Manutenibilità Top 10% industry
-- (-) Richiede disciplina rigorosa in develop
-
----
-
-## [ADR-011] Sentry Monitoring Integration
-**Data**: 2025-12-28  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-Mancanza di error tracking e observability in production.
-
-**Decisione**:  
-Integrare **Sentry SDK 4.0** per:
-- Error tracking automatico
-- Performance monitoring (APM)
-- Release tracking
-- User feedback
-
-**Configurazione**:
-- Environment-aware (prod/staging/dev)
-- SentryMiddleware per auto-capture
-- Custom breadcrumbs per context
-- Sample rate: 100% errors, 10% transactions
-
-**Conseguenze**:
-- (+) Real-time error alerts
-- (+) Stack trace completi
-- (+) Release correlation
-- (-) Costo mensile (Free tier OK per inizio)
-
----
-
-## [ADR-010] Database Migration: SQLite → MySQL
-**Data**: 2025-12-20  
-**Stato**: ✅ Completato  
-**Contesto**:  
-SQLite inadeguato per concurrent users, performance insufficienti per production.
-
-**Decisione**:  
-Migrare a **MySQL/MariaDB 10.11**:
-- **Phinx** per migrations
-- **ProxySQL** per query routing (opzionale)
-- Indici ottimizzati su tutte foreign keys e search fields
-
-**Impatto Performance**:
-- Search by CF: 50ms → 1ms (50x faster)
-- Complex JOIN: 200ms → 8ms (25x faster)
-- Concurrent users: 10-20 → 100+
-
-**Conseguenze**:
-- (+) Performance enterprise-grade
-- (+) ACID transactions robuste
-- (+) Scalabilità orizzontale ready
-- (-) Maggiore complessità deployment
-- (-) Richiede MySQL server
-
----
-
-## [ADR-009] Dependency Injection Modularization
-**Data**: 2025-12-26  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-`config/container.php` monolitico causava "Internal limitation" warning IDE.
-
-**Decisione**:  
-Suddividere DI definitions in **6 moduli**:
-```
-config/definitions/
-├── core.php         # Database, Renderer, Logger
-├── services.php     # Business services
-├── auth.php         # Authentication
-├── anagrafica.php   # Gestione soci
-├── intelligence.php # Analytics
-└── devtools.php     # Developer tools
-```
-
-**Loading Strategy**:
-```php
-$containerBuilder->addDefinitions(__DIR__ . '/definitions/core.php');
-$containerBuilder->addDefinitions(__DIR__ . '/definitions/services.php');
-// ... etc
-```
-
-**Conseguenze**:
-- (+) Warning IDE eliminato
-- (+) Separazione concerns migliorata
-- (+) Più facile debugging DI issues
-- (+) Parallel team work ready
-
----
-
-## [ADR-008] DevTools Dashboard Enterprise
-**Data**: 2025-12-20  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-Necessità di toolkit amministrativo professionale per maintenance e debugging.
-
-**Decisione**:  
-Creare **DevTools Dashboard** completo con:
-1. **System Diagnostics**: Health check, performance profiling
-2. **Database Management**: Query builder, backup, migrations
-3. **Security Management**: User mgmt, 2FA provisioning, audit viewer
-4. **File System Tools**: Browser, editor, upload
-5. **Script Runner**: Esecuzione script manutenzione con output real-time
-
-**Moduli Implementati**:
-- `DevToolsDashboardController` - Dashboard principale
-- `DevToolsFileSystemController` - File operations
-- `DevToolsDatabaseController` - DB query + export
-- `DevToolsSecurityController` - User + 2FA management
-- `DevToolsScriptController` - Script execution
-- `DevToolsSystemController` - Diagnostics
-- `DevToolsAuditController` - Audit log viewer
-
-**Conseguenze**:
-- (+) Riduzione tempo manutenzione 70%
-- (+) Feature killer vs competitor
-- (+) Self-service amministratori
-- (+) Debugging accelerato
-- (-) Accesso protetto solo admin (RBAC)
-
----
-
-## [ADR-007] GraphQL API Implementation
-**Data**: 2025-12-20  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-REST API limitative per client con necessità di query flessibili.
-
-**Decisione**:  
-Implementare **GraphQL API** con webonyx/graphql-php:
-- Schema completo: 12 queries, 8 mutations
-- Type system robusto
-- GraphiQL browser per testing
-- Coesistenza con REST API
-
-**Schema Principale**:
-- **Queries**: `socio`, `soci`, `documento`, `documenti`, `statistiche`, etc.
-- **Mutations**: `createSocio`, `updateSocio`, `deleteSocio`, `uploadDocumento`, etc.
-- **Types**: `Socio`, `DatiAnagrafici`, `Documento`, `ConsensoGDPR`
-
-**Conseguenze**:
-- (+) API moderna e flessibile
-- (+) Client può richiedere solo dati necessari (no over-fetching)
-- (+) Type safety end-to-end
-- (+) Valore commerciale +€10K-15K
-- (-) Curva apprendimento client
-
----
-
-## [ADR-006] GDPR Full Compliance
-**Data**: 2025-10-15  
-**Stato**: ✅ Conforme  
-**Contesto**:  
-Gestione dati personali sensibili richiede compliance GDPR rigorosa.
-
-**Decisione**:  
-Implementare compliance multi-livello:
-1. **Consenso Esplicito**: Model `ConsensoGDPR` con tracking
-2. **Right to Erasure**: Funzione eliminazione totale dati
-3. **Data Portability**: Export completo CSV
-4. **Audit Trail**: Logging con **pseudonimizzazione IP** (SHA-256)
-5. **Encryption at Rest**: Secrets 2FA encrypted (Defuse PHP-Encryption)
-6. **Privacy by Design**: Architettura conforme
-
-**Implementazione Tecnica**:
-```php
-// AuditTrail.php - Pseudonimizzazione automatica
-private function pseudonymizeIp(string $ip): string {
-    return substr(hash('sha256', $ip . env('APP_KEY')), 0, 16);
-}
-```
-
-**Conseguenze**:
-- (+) GDPR Score: 96/100 (fully compliant)
-- (+) Trust utenti aumentato
-- (+) Vendibile a PA e grandi org
-- (+) Protezione legal compliance
-
----
-
-## [ADR-005] Clean Architecture Pattern
-**Data**: 2025-05-01  
-**Stato**: ✅ Attivo (Foundation)  
-**Contesto**:  
-Necessità di architettura scalabile, testabile e mantenibile a lungo termine.
-
-**Decisione**:  
-Adottare **Clean Architecture** con 4 layer:
-
-```
-┌─────────────────────────────────────┐
-│   Presentation Layer                │
-│   (Controllers, Templates, HTTP)    │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│   Application Layer                 │
-│   (Services, Use Cases)             │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│   Domain Layer                      │
-│   (Entities, Value Objects)         │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│   Infrastructure Layer              │
-│   (Database, OCR, Cloud, External)  │
-└─────────────────────────────────────┘
-```
-
-**Mapping Codebase**:
-- **Domain**: `src/GestioneSoci/` (Socio, DatiAnagrafici, Documento)
-- **Application**: `src/Service/` (RegistrationService, ValidationService)
-- **Infrastructure**: `src/InfrastrutturaIT/` (Database, OCREngine, CloudStorage)
-- **Presentation**: `src/Controller/`, `templates/`
-
-**Principi SOLID Applicati**:
-- **S**ingle Responsibility: Ogni classe ha un solo motivo di cambiamento
-- **O**pen/Closed: Estendibile senza modificare esistente
-- **L**iskov Substitution: Interfacce sostituibili
-- **I**nterface Segregation: Interfacce piccole e specifiche
-- **D**ependency Inversion: Dipendenze da astrazioni
-
-**Conseguenze**:
-- (+) Architettura score: 95/100
-- (+) Testabilità 100% (85% coverage achieved)
-- (+) Domain models framework-agnostic
-- (+) Facile switch database/framework
-- (+) Maintainability eccellente
-
----
-
-## [ADR-004] Two-Factor Authentication (2FA) Mandatory
-**Data**: 2025-08-20  
-**Stato**: ✅ Obbligatorio (Admin)  
-**Contesto**:  
-Accesso admin richiede sicurezza enterprise-grade contro account takeover.
-
-**Decisione**:  
-Implementare **TOTP 2FA** (RFC 6238) obbligatorio per ruoli Admin:
-- Library: **OTPHP** (spomky-labs/otphp)
-- QR Code generation per provisioning
-- Backup codes disponibili
-- Secret encryption at rest (Defuse PHP-Encryption AES-256-GCM)
-
-**Flow Implementato**:
-1. Login username/password ✅
-2. Verifica TOTP code (6 digit, 30s window) ✅
-3. Session creation con flag 2FA verified
-
-**Componenti**:
-- `TotpProvider.php` - TOTP generation/verification
-- `TotpEncryptionService.php` - Secret encryption
-- `TwoFactorController.php` - Verification flow
-
-**Conseguenze**:
-- (+) Security score: 90/100 → 96/100
-- (+) Protezione brute-force (rate limiting)
-- (+) Compliance enterprise security
-- (+) Google Authenticator compatible
-- (-) UX leggermente più complessa (acceptable trade-off)
-
----
-
-## [ADR-003] Mantenimento dei Branch Feature
-**Data**: 2026-01-10  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-Gitflow standard elimina branch feature dopo merge. Nel progetto single-developer, vogliamo storia visibile.
-
-**Decisione**:  
-Branch feature (`feature/*`) **NON** eliminati dopo merge su `develop`. Mantenuti come riferimento \"chiuso\" ma visibile.
-
-**Conseguenze**:
-- (+) Preserva contesto completo lavoro isolato
-- (+) Facile review storia feature specifiche
-- (+) Grafo Git professionale
-- (-) Lista branch cresce (richiede cleanup occasionale)
-
----
-
-## [ADR-002] OpenAPI con Attributi PHP 8.2
-**Data**: 2026-01-10  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-Necessità documentazione API. Scelta tra Annotations legacy (Doctrine) vs Attributi moderni (PHP 8.2).
-
-**Decisione**:  
-1. Usare esclusivamente **Attributi PHP 8.2** (`#[OA\...]`)
-2. `OpenApi\Generator::scan()` per generazione dinamica
-3. Rimuovere `doctrine/annotations` (pacchetto abbandonato)
-
-**Esempio**:
-```php
-#[OA\Get(
-    path: '/api/soci',
-    tags: ['Soci'],
-    summary: 'Lista soci',
-    responses: [
-        new OA\Response(response: 200, description: 'Success')
-    ]
-)]
-public function list(Request $request, Response $response): Response
-```
-
-**Conseguenze**:
-- (+) Codebase moderno e future-proof
-- (+) Documentazione Source of Truth (codice)
-- (+) Swagger UI auto-generato
-- (+) Type safety PHP 8.2+
-- (-) Richiede PHP 8.1+ (già soddisfatto)
-
----
-
-## [ADR-001] Gitflow Single Developer
-**Data**: 2026-01-10  
-**Stato**: ✅ Attivo  
-**Contesto**:  
-Progetto single-developer ma con obiettivi stabilità enterprise.
-
-**Decisione**:  
-Adottare **Gitflow rigoroso**:
-- `main`: Solo production releases
-- `develop`: Integration branch
-- `feature/*`: Feature development
-- `hotfix/*`: Production hotfix
-- Merge policy: `--no-ff` sempre (preserva storia)
-
-**Workflow**:
-```bash
-# Feature development
-git checkout -b feature/nome-feature develop
-# ... sviluppo ...
-git checkout develop
-git merge --no-ff feature/nome-feature
-
-# Release
-git checkout -b release/2.3.0 develop
-# ... testing finale ...
-git checkout main
-git merge --no-ff release/2.3.0
-git tag -a v2.3.0 -m "Release 2.3.0"
-```
-
-**Conseguenze**:
-- (+) Stabilità production garantita
-- (+) Separazione responsabilità chiara
-- (+) Grafo storico professionale
-- (+) Facile rollback
-- (-) Più verboso (acceptable per quality)
-
----
-
 ## [ADR-000] PHP 8.2+ Requirement
 **Data**: 2025-03-15  
 **Stato**: ✅ Attivo  
 **Contesto**:  
 Kickoff progetto, scelta versione PHP per balance tra features e compatibility.
-
 **Decisione**:  
 **PHP 8.2+** come requirement minimo.
-
-**Rationale**:
-- **PHP 8.2 Features**:
-  - Readonly classes
-  - Disjunctive Normal Form (DNF) types
-  - `true`, `false`, `null` standalone types
-  - Deprecation dynamic properties
-- **Performance**: JIT compiler, performance improvements
-- **Security**: Active security support fino 2025-12 (8.2), 2026-12 (8.3)
-
-**Stack Scelto**:
-- **Framework**: Slim 4 (HTTP routing, middleware)
-- **Template**: Mustache (logic-less)
-- **DI**: PHP-DI 7
-- **Database**: PDO (SQLite → MySQL)
-- **Testing**: PHPUnit → PestPHP
-
+- **Features**: Readonly classes, DNF types, Enum.
+- **Performance**: JIT compiler.
+- **Stack**: Slim 4, Mustache, PHP-DI 7, PDO.
 **Conseguenze**:
-- (+) Features moderne (attributes, readonly, enums)
-- (+) Performance eccellente
-- (+) Type system avanzato
-- (+) Sicurezza long-term support
-- (-) Richiede hosting PHP 8.2+ (disponibile ovunque ora)
+- (+) Features moderne e Type Safety avanzata.
 
 ---
 
-## Decisioni Future in Valutazione
-
-### [PENDING-01] Multi-Tenancy SaaS Architecture
-**Stato**: 🔄 In Pianificazione  
-**Impatto**: +€100,000 valore commerciale  
-**Sforzo**: 150-200 ore  
-**Priority**: Strategica Q1 2026
-
-### [PENDING-02] Mobile App React Native
-**Stato**: 🔄 Sotto Analisi  
-**Impatto**: +€50,000 valore percepito  
-**Sforzo**: 200-250 ore  
-**Priority**: Q2 2026
-
-### [PENDING-03] Redis Full Integration
-**Stato**: 🔄 Pianificato  
-**Impatto**: Performance +30%, Security +15%  
-**Sforzo**: 30-40 ore  
-**Priority**: Alta (30 giorni)
-
----
-
-## Template per Nuove Decisioni
-
-```markdown
-## [ADR-XXX] Titolo Decisione
-**Data**: YYYY-MM-DD  
-**Stato**: [Proposta|Attiva|Deprecata|Superseded]  
+## [ADR-001] Clean Architecture Pattern
+**Data**: 2025-05-01  
+**Stato**: ✅ Attivo (Foundation)  
 **Contesto**:  
-Descrizione problema e context.
-
+Necessità di architettura scalabile, testabile e mantenibile.
 **Decisione**:  
-Cosa è stato deciso e perché.
-
-**Alternative Considerate**:
-1. Opzione A - Rejettata perché...
-2. Opzione B - Rejettata perché...
-
+Adottare **Clean Architecture** (Domain, Application, Infrastructure, Presentation).
 **Conseguenze**:
-- (+) Pro 1
-- (+) Pro 2
-- (-) Con 1
-- (-) Con 2
-
-**Metriche Success**:
-- Metrica 1: Target value
-- Metrica 2: Target value
-```
+- (+) Testabilità 100%.
+- (+) Domain models framework-agnostic.
 
 ---
 
-**Mantainer**: Soobadur Mohammad Ajmeer ©  
-**Progetto**: MCAG di Firenze - Archivio Digitale Soci  
-**Ultimo Aggiornamento**: 2026-01-10  
-**Stato Progetto**: Production v2.4 - Enterprise Perfection (100/100)  
-**Decisioni Totali**: 18 ADR + 3 Pending
+## [ADR-002] Two-Factor Authentication (2FA) Mandatory
+**Data**: 2025-08-20  
+**Stato**: ✅ Obbligatorio (Admin)  
+**Contesto**:  
+Accesso admin richiede sicurezza enterprise-grade.
+**Decisione**:  
+Implementare **TOTP 2FA** (RFC 6238) con OTPHP e Secret Encryption.
+**Conseguenze**:
+- (+) Security score: 96/100.
+- (+) Protezione brute-force.
 
 ---
 
-## [ADR-015] ACID Transactions Strategy
-**Data**: 2025-12-21 (Retroactive)
-**Stato**: ✅ Attivo
-**Contesto**:
-La gestione dei dati soci e documenti richiede integrità assoluta. Perdite di dati o stati inconsistenti durante salvataggi parziali sono inaccettabili in un contesto "Mission-Critical".
-**Decisione**:
-Utilizzare **PDO Transactions** atomiche (`beginTransaction`, `commit`, `rollBack`) per tutte le operazioni di scrittura che coinvolgono più entità (es. Creazione Socio + Upload Documento).
-**Rationale**:
-- Garantisce atomicità "Tutto o Niente".
-- Previene record orfani.
+## [ADR-003] GDPR Full Compliance
+**Data**: 2025-10-15  
+**Stato**: ✅ Conforme  
+**Contesto**:  
+Gestione dati personali sensibili richiede compliance GDPR.
+**Decisione**:  
+Implementare pseudonimizzazione IP (SHA-256), Right to Erasure, Data Portability.
+**Conseguenze**:
+- (+) GDPR Score: 96/100.
+- (+) Trust utenti aumentato.
+
+---
+
+## [ADR-004] Database Migration: SQLite → MySQL
+**Data**: 2025-12-20  
+**Stato**: ✅ Completato  
+**Contesto**:  
+SQLite inadeguato per concurrent users.
+**Decisione**:  
+Migrare a **MySQL/MariaDB 10.11**.
+**Conseguenze**:
+- (+) Performance enterprise-grade (50x faster).
+- (-) Richiede MySQL server.
+
+---
+
+## [ADR-005] DevTools Dashboard Enterprise
+**Data**: 2025-12-20  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Necessità di toolkit amministrativo professionale.
+**Decisione**:  
+Creare **DevTools Dashboard** (Diagnostics, DB Mgmt, Security, Logs).
+**Conseguenze**:
+- (+) Self-service amministratori.
+- (+) Debugging accelerato.
+
+---
+
+## [ADR-006] GraphQL API Implementation
+**Data**: 2025-12-20  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+REST API limitative per client complessi.
+**Decisione**:  
+Implementare **GraphQL API** (webonyx/graphql-php).
+**Conseguenze**:
+- (+) No over-fetching.
+- (+) Valore commerciale incrementato.
+
+---
+
+## [ADR-007] ACID Transactions Strategy
+**Data**: 2025-12-21  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Integrità dati soci assoluta richiesta.
+**Decisione**:  
+Utilizzare **PDO Transactions** atomiche per scritture multi-entità.
 **Conseguenze**:
 - (+) Zero Data Loss garantito.
-- (+) Integrità referenziale enforced.
 
 ---
 
-## [ADR-021] Request Correlation & Tracing
-**Data**: 2025-12-21 (Retroactive)
-**Stato**: ✅ Attivo
-**Contesto**:
-Difficoltà nel tracciare il flusso di una richiesta specifica attraverso middleware, controller e database nei log di produzione.
-**Decisione**:
-Implementare un **Request ID** univoco (`X-Request-ID`) generato all'ingresso (Middleware) e propagato in tutti i log (Monolog processor).
+## [ADR-008] Request Correlation & Tracing
+**Data**: 2025-12-21  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Tracciamento richieste nei log.
+**Decisione**:  
+Implementare **Request ID** univoco (`X-Request-ID`).
 **Conseguenze**:
-- (+) Debugging immediato tramite grep del Request ID.
-- (+) Tracciabilità end-to-end.
-- (+) Supporto per distributed tracing futuro.
+- (+) Debugging immediato tramite grep.
 
 ---
 
-## ADR-017: Separazione Rigorosa dei Concerns Frontend
-
-### Stato
-Accettato
-
-### Contesto
-L'applicazione utilizzava codice JavaScript e CSS embedded direttamente nei template .mustache. Questo creava diversi problemi:
-1.  **Manutenibilità**: Codice misto difficile da leggere.
-2.  **Caching**: Impossibile sfruttare il browser cache per JS/CSS.
-3.  **Sicurezza**: Difficile applicare CSP (Content Security Policy) restrittive con script inline.
-
-### Decisione
-Adottiamo una politica rigorosa di **Separazione dei Concetti**:
-1.  Ogni template Mustache deve contenere **solo markup HTML** e logica di template.
-2.  Il JavaScript specifico della pagina va in public/js/pages/{nome_pagina}.js.
-3.  Il CSS specifico va in public/css/pages/{nome_pagina}.css.
-4.  L'uso di {{base_url}} è obbligatorio per l'inclusione degli asset.
-
-### Conseguenze
-- **Positive**: Codice più pulito, migliore caching, facilità di linting JS/CSS.
-- **Negative**: Necessità di gestire più file per una singola vista (frammentazione).
-
-
-### Note Implementative
-- Creata struttura directory public/js/pages e public/css/pages.
-- Applicato refactoring immediato a socio_create.
-
----
-
-## [ADR-018] Quality Gate "feature/tests"
-**Data**: 2026-01-10
-**Stato**: ✅ Attivo
-**Contesto**:
-Necessità di garantire che il branch `develop` rimanga sempre stabile e che nessun codice rotto raggiunga la produzione.
-**Decisione**:
-Istituire un branch perenne (o effimero pre-merge) chiamato `feature/tests` che funge da **Quality Gate**.
-- Il merge su `develop` è consentito SOLO se la CI su `feature/tests` è verde (100% pass).
-- Nessun merge diretto da feature a develop senza passare dal gate.
-
+## [ADR-009] DI Container Modulare
+**Data**: 2025-12-26  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+File configurazione monolitico.
+**Decisione**:  
+Suddividere DI definitions in 6 moduli (`core`, `services`, `auth`, `anagrafica`, `intelligence`, `devtools`).
 **Conseguenze**:
-- (+) Stabilità assoluta di develop
-- (+) Certezza di non rompere la build
-- (-) Passaggio extra nel workflow (accettabile per rigore)
+- (+) Migliore separazione concerns.
 
 ---
 
-## [ADR-019] Compatibility-First CI Tags
-**Data**: 2026-01-10
-**Stato**: ✅ Attivo
-**Contesto**:
-L'uso di SHA-1 pinning, sebbene sicuro, causava errori di risoluzione (falsi positivi) negli IDE locali, irritando il workflow di sviluppo. "Irritazione utente" è un costo.
-**Decisione**:
-Utilizzare i **Tag Standard Maggiori** (`v4` per checkout, `v2` per setup-php) nei file workflow.
-- Manteniamo la sicurezza tramite audit interni ma privilegiamo la compatibilità dell'IDE e la pulizia dei log di errore.
-
+## [ADR-010] Sentry Monitoring Integration
+**Data**: 2025-12-28  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Mancanza error tracking production.
+**Decisione**:  
+Integrare **Sentry SDK 4.0**.
 **Conseguenze**:
-- (+) Eliminazione errori IDE "Unable to resolve"
-- (+) Migliore DX (Developer Experience)
-- (-) Leggero rischio teorico supply chain (mitigato da vendor affidabili GitHub/Shivammathur)
+- (+) Real-time error alerts.
 
 ---
 
-## [ADR-020] Code Completeness Policy
-**Data**: 2026-01-10
-**Stato**: ✅ Attivo
-**Contesto**:
-La presenza di "Placeholder" o "Stub" vuoti nel codice (es. per servizi futuri) crea debito tecnico e confusione.
-**Decisione**:
-Ogni classe definita DEVE essere **completamente implementata** o astratta correttamente.
-- Nessun metodo vuoto.
-- Servizi opzionali (`PaidServicePlaceholder`) devono avere logica concreta (es. logging, check abilitazione) e non essere scatole vuote.
-
+## [ADR-011] Code Quality Enforcement
+**Data**: 2025-12-28  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Standard qualità codice.
+**Decisione**:  
+**PHPStan Level 6**, Strict Typing 100%, PSR-12.
 **Conseguenze**:
-- (+) Codice professionale e pulito
+- (+) Bug prevenuti a compile-time.
+
 ---
 
-### ADR-022: DevTools "Additive Only" Upgrade Strategy
-**Date:** 2026-01-11 00:30
-**Context:** Previous attempt to modularize DevTools caused a regression (blank dashboard). User requires rigorous stability.
-**Decision:** Adopt a strict "Additive Only" strategy for v4.0.
-- **Do NOT** refactor existing code into partials yet.
-- **Add** new features as new Tabs within the monolith file.
-- **Preserve** all legacy IDs and logic.
-**Consequences:** File size of `devtools.mustache` will increase, but stability is guaranteed. Refactoring can happen *inside* the tabs later, one by one.
+## [ADR-012] Performance Optimization Stack
+**Data**: 2025-12-28  
+**Stato**: ✅ Implementato  
+**Contesto**:  
+Frontend e query non ottimizzati.
+**Decisione**:  
+PurgeCSS, Terser, CacheService.
+**Conseguenze**:
+- (+) Page load -300ms.
 
-### ADR-024: Legal Framework & Commercialization
-**Date:** 2026-01-11
-**Status**: ✅ Active
-**Context**: To transform MCAG into a commercial product, strict legal boundaries are required.
-**Decision**:
-1.  **Multi-Tier Licensing**: Standard, Pro, Enterprise.
-2.  **Strict EULA**: No redistribution, perpetual license but revocable on breach.
-3.  **SLA Definitions**: Clear RTO/RPO targets.
-**Consequences**: Adds legal liability but enables commercial sales and enterprise adoption.
+---
 
-### ADR-025: Automated Security & Release Pipeline
-**Date:** 2026-01-11
-**Status**: ✅ Active
-**Context**: Manual releases are error-prone. Security checks must be enforced before every merge.
-**Decision**:
-1.  **GitHub Actions** as CI/CD provider.
-2.  **Strict Gate**: Build fails if `phpstan` (L6), `cs-fixer`, or `tests` fail.
-3.  **Security Audit**: `composer audit` runs on every build.
-4.  **Auto-Release**: Tagging `v*` triggers ZIP creation and GitHub Release.
-**Consequences**: Prevents "works on my machine" issues. Ensures all releases are secure and standardized.
+## [ADR-013] Migration Testing Strategy
+**Data**: 2026-01-06  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Necessità strategia testing moderna.
+**Decisione**:  
+Adottare **PestPHP** (Unit, Integration, Feature, Security, E2E).
+**Conseguenze**:
+- (+) Test coverage 85%.
 
-## [ADR-021] Secure Frontend Data Injection
+---
+
+## [ADR-014] Gitflow Single Developer
 **Data**: 2026-01-10  
 **Stato**: ✅ Attivo  
 **Contesto**:  
-L'iniezione di dati backend nel frontend tramite variabili globali JS inline (`window.data = {{json}}`) è una pratica insicura che viola le policy CSP (Content Security Policy) restrittive e aumenta il rischio XSS.
-
+Progetto single-developer con obiettivi enterprise.
 **Decisione**:  
-Adottare il pattern **JSON Script Block**.
-I dati non vengono più assegnati a variabili eseguibili, ma inseriti in blocchi `<script>` inerti:
-```html
-<script type="application/json" id="data-dumper">
-    {{json_data}}
-</script>
-```
-Il file JS esterno legge e parsa questo blocco:
-```javascript
-const data = JSON.parse(document.getElementById('data-dumper').textContent);
-```
-
+Adottare **Gitflow rigoroso** (`main`, `develop`, `feature/*`).
 **Conseguenze**:
-- (+) **Sicurezza**: Piena compatibilità con CSP `script-src 'self'`.
-- (+) **Separazione**: Totale disaccoppiamento tra Template e Logica JS.
-- (+) **Performance**: Parsing JSON nativo del browser.
+- (+) Grafo storico professionale.
 
-### ADR-023: Windows PowerShell Terminal Compatibility
-**Data**: 2026-01-11 01:35  
+---
+
+## [ADR-015] OpenAPI con Attributi PHP 8.2
+**Data**: 2026-01-10  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Usare **Attributi PHP 8.2** (`#[OA\Get]`) per documentazione API.
+**Conseguenze**:
+- (+) Codebase moderno.
+
+---
+
+## [ADR-016] Mantenimento dei Branch Feature
+**Data**: 2026-01-10  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+I branch feature NON vengono eliminati dopo il merge.
+**Conseguenze**:
+- (+) Storia completa preservata.
+
+---
+
+## [ADR-017] Quality Gate "feature/tests"
+**Data**: 2026-01-10  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Merge su `develop` consentito SOLO se CI su `feature/tests` è verde.
+**Conseguenze**:
+- (+) Stabilità develop.
+
+---
+
+## [ADR-018] Compatibility-First CI Tags
+**Data**: 2026-01-10  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Tag CI generici (`v4`) per evitare errori IDE.
+**Conseguenze**:
+- (+) DX migliorata.
+
+---
+
+## [ADR-019] Code Completeness Policy
+**Data**: 2026-01-10  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Nessun placeholder vuoto; implementazione completa richiesta.
+**Conseguenze**:
+- (+) Niente codice "zombie".
+
+---
+
+## [ADR-020] Secure Frontend Data Injection
+**Data**: 2026-01-10  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Uso di `<script type="application/json">` invece di variabili JS inline.
+**Conseguenze**:
+- (+) Compatibile CSP.
+- (+) Prevenzione XSS.
+
+---
+
+## [ADR-021] DevTools "Additive Only" Upgrade
+**Data**: 2026-01-11  
+**Decisione**:  
+Upgrade v4.0 aggiunge tab senza refactoring distruttivo esistente.
+**Conseguenze**:
+- (+) Stabilità upgrade garantita.
+
+---
+
+## [ADR-022] Windows PowerShell Compatibility
+**Data**: 2026-01-11  
+**Decisione**:  
+Rilevamento OS Backend e wrapping comandi Unix in PowerShell alias.
+**Conseguenze**:
+- (+) Cross-platform compatibility.
+
+---
+
+## [ADR-023] Legal Framework & Commercialization
+**Data**: 2026-01-11  
+**Decisione**:  
+Multi-Tier Licensing, EULA, SLA Definitions.
+**Conseguenze**:
+- (+) Sales ready.
+
+---
+
+## [ADR-024] Automated Security Pipeline
+**Data**: 2026-01-11  
+**Decisione**:  
+GitHub Actions Gate rigoroso (PHPStan L6, Audit).
+**Conseguenze**:
+- (+) Release sicure.
+
+---
+
+## [ADR-025] Strict Branch Retention (Audit)
+**Data**: 2026-01-11  
+**Decisione**:  
+Retention forzata branch remoti per audit trail.
+**Conseguenze**:
+- (+) Auditabilità enterprise.
+
+---
+
+## [ADR-026] Strict Polyglot Separation
+**Data**: 2026-01-11  
+**Decisione**:  
+Vietato mischiare linguaggi (JS/CSS fuori da HTML).
+**Conseguenze**:
+- (+) Manutenibilità e Caching.
+
+---
+
+## [ADR-027] AI Assistant Hotfix Strategy
+**Data**: 2026-01-13  
+**Contesto**: Fix produzione v5.1.
+**Decisione**:  
+Iniezione forzata HTMX, CSRF tokens, DI Container per queue.
+**Conseguenze**:
+- (+) Funzionalità ripristinata.
+
+---
+
+## [ADR-028] Local RAG Architecture (Ollama)
+**Data**: 2026-01-13  
+**Stato**: ✅ Implementato  
+**Decisione**:  
+RAG Locale: Ollama, PdfParser, SimpleVectorStore.
+**Conseguenze**:
+- (+) Privacy totale. Costo zero.
+
+---
+
+## [ADR-029] Zero-Dependency Asynchronous Queue
+**Data**: 2026-01-13  
+**Decisione**:  
+Database Queue (Tabella SQL) + PHP Worker.
+**Conseguenze**:
+- (+) No infrastruttura complessa (Redis).
+
+---
+
+## [ADR-030] Omni-Reader Architecture
+**Data**: 2026-01-13  
+**Decisione**:  
+Pattern Factory per parser multipli (Word, Excel, Code). Widget Globale.
+**Conseguenze**:
+- (+) Supporto formati ufficio.
+
+---
+
+## [ADR-031] Toolkit Output Reliability
+**Data**: 2026-01-13  
+**Decisione**:  
+Output Buffering (`ob_start`) nel backend console per JSON pulito.
+**Conseguenze**:
+- (+) Affidabilità tool debug.
+
+---
+
+## [ADR-032] Semantic Chunking Strategy
+**Data**: 2026-01-13  
+**Decisione**:  
+Splitting basato su Markdown Headers per contesto migliore.
+**Conseguenze**:
+- (+) Risposte RAG più pertinenti.
+
+---
+
+## [ADR-033] Multi-Layer Backup Verification
+**Data**: 2026-01-13  
+**Decisione**:  
+Scansione directory backup multiple (inclusi snapshot test).
+**Conseguenze**:
+- (+) Nessun falso allarme sicurezza.
+
+---
+
+## [ADR-034] Commercial Valuation & Pricing v5.3
+**Data**: 2026-01-13  
+**Decisione**:  
+Value-based pricing: Standard (€115k), Pro (€135k), Enterprise (€175k).
+**Conseguenze**:
+- (+) Posizionamento Enterprise.
+
+---
+
+## [ADR-035] Strict Documentation Versioning
+**Data**: 2026-01-14  
+**Decisione**:  
+Merge richiede update Docs obbligatorio. Retroactive release branches.
+**Conseguenze**:
+- (+) Allineamento Codice-Listino.
+
+---
+
+## [ADR-036] Interactive Operational Dashboard
+**Data**: 2026-01-14  
+**Decisione**:  
+Dashboard con Switchboard operativa (AJAX action toggles).
+**Conseguenze**:
+- (+) Velocità operativa +300%.
+
+---
+
+## [ADR-037] User Statistics Segregation
+**Data**: 2026-01-15  
+**Decisione**:  
+View separata per Admin (Financial) e User (Activity).
+**Conseguenze**:
+- (+) Privacy finanziaria.
+
+---
+
+## [ADR-038] Scroll Navigator 2.0
+**Data**: 2026-01-15  
+**Decisione**:  
+Refactoring Class-Based per istanze multiple (Main + DevTools).
+**Conseguenze**:
+- (+) No conflitti UI.
+
+---
+
+## [ADR-039] Hybrid AI Launcher
+**Data**: 2026-01-15  
+**Decisione**:  
+Auto-start via HTMX con pulsante fallback manuale.
+**Conseguenze**:
+- (+) Resilienza UX.
+
+---
+
+## [ADR-040] Mission Control SOC
+**Data**: 2026-01-15  
+**Decisione**:  
+Trasformazione `admin/impostazioni` in Security Operations Center dark mode.
+**Conseguenze**:
+- (+) Focus su sicurezza.
+
+---
+
+## [ADR-041] Financial Intelligence Unit
+**Data**: 2026-01-15  
+**Decisione**:  
+Modulo analisi predittiva e tracking asset.
+**Conseguenze**:
+- (+) Visibilità strategica.
+
+---
+
+## [ADR-042] API CSRF Exemption
+**Data**: 2026-01-18  
+**Decisione**:  
+Esenzione CSRF mirata per `/api/` e `/ai/`.
+**Conseguenze**:
+- (+) Test API funzionanti.
+
+---
+
+## [ADR-043] Global City Codes Database
+**Data**: 2026-01-18  
+**Decisione**:  
+Database JS embedded per codici catastali/esteri.
+**Conseguenze**:
+- (+) Calcolo CF istantaneo offline.
+
+---
+
+## [ADR-044] SweetAlert2 Standardization
+**Data**: 2026-01-18  
+**Decisione**:  
+Inclusione esplicita CDN e check esistenza JS.
+**Conseguenze**:
+- (+) UX robusta.
+
+---
+
+## [ADR-045] Integrated Reporting Analytics
+**Data**: 2026-01-18  
+**Decisione**:  
+Query SQL aggregate nel Repository Report.
+**Conseguenze**:
+- (+) Reportistica real-time.
+
+---
+
+## [ADR-046] Workshift Delete Propagation
+**Data**: 2026-01-18  
+**Decisione**:  
+Endpoint delete sicuri con SweetAlert validation.
+**Conseguenze**:
+- (+) Controllo totale admin.
+
+---
+
+## [ADR-047] Mission Control "God Mode"
+**Data**: 2026-01-19  
+**Decisione**:  
+Accesso Super-Root (`Aj_GodMode`) con Omega Protocol overlay.
+**Conseguenze**:
+- (+) Sicurezza operazioni critiche.
+
+---
+
+## [ADR-048] Client-Side Internationalization
+**Data**: 2026-01-19  
+**Decisione**:  
+Engine Google Translate lato client con UI custom.
+**Conseguenze**:
+- (+) 100+ lingue supportate subito.
+
+---
+
+## [ADR-049] Hyper-Grid Design System
+**Data**: 2026-01-26  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Adozione stile Neon/Glassmorphism e variabili CSS3.
+**Conseguenze**:
+- (+) Percezione Enterprise.
+
+---
+
+## [ADR-050] Ghost Code Elimination
+**Data**: 2026-01-26  
+**Decisione**:  
+Protocollo "Delete-if-Unused" per file legacy.
+**Conseguenze**:
+- (+) Repository pulito.
+
+---
+
+## [ADR-051] Diagnosability First
+**Data**: 2026-01-26  
+**Decisione**:  
+Mantenimento `probe.php` per health-check.
+**Conseguenze**:
+- (+) Diagnosi rapida.
+
+---
+
+## [ADR-052] Clean Routing (No-Index)
+**Data**: 2026-01-26  
+**Decisione**:  
+Rimozione `index.php` dagli URL.
+**Conseguenze**:
+- (+) SEO Friendly.
+
+---
+
+## [ADR-053] Kubernetes Cloud-Native
+**Data**: 2026-01-27  
+**Stato**: ✅ Implementato (v9.0)  
+**Decisione**:  
+Helm Charts per AWS/GKE e Auto-Scaling.
+**Conseguenze**:
+- (+) Credibilità Enterprise Cloud.
+
+---
+
+## [ADR-054] AI Frontend Widget
+**Data**: 2026-01-27  
+**Decisione**:  
+Widget JS Standalone con GDPR Logging.
+**Conseguenze**:
+- (+) Accesso AI pervasivo.
+
+---
+
+## [ADR-055] Industry Vertical "Chameleon Mode"
+**Data**: 2026-01-27  
+**Decisione**:  
+LabelService con preset config (Healthcare/Logistics).
+**Conseguenze**:
+- (+) Espansione mercati verticali.
+
+---
+
+## [ADR-056] Comprehensive Test Coverage
+**Data**: 2026-01-27  
+**Decisione**:  
+Suite dedicate per AI, ERP e Reseller.
+**Conseguenze**:
+- (+) Regression protection.
+
+---
+
+## [ADR-057] Complete SWOT Execution Strategy
+**Data**: 2026-01-27  
+**Decisione**:  
+Esecuzione Gap Analysis e Benchmark 2026. Score 94/100.
+**Conseguenze**:
+- (+) Roadmap completata.
+
+---
+
+## [ADR-058] Real ERP Integration
+**Data**: 2026-01-27  
+**Decisione**:  
+Connettore Zucchetti con cURL reali (No Mock).
+**Conseguenze**:
+- (+) Integrazione Production Ready.
+
+---
+
+## [ADR-059] Stabilization Protocol
+**Data**: 2026-01-27  
+**Decisione**:  
+Bypass CSRF in testing, Session Clearing, Login Simulation.
+**Conseguenze**:
+- (+) Test affidabili 100%.
+
+---
+
+## [ADR-060] Git Flow v9+ Strategy
+**Data**: 2026-01-27  
+**Decisione**:  
+Release Branch (`release/vX`) + Evolution Branch (`feature/vX-evolution`).
+**Conseguenze**:
+- (+) Gestione ciclo di vita Enterprise.
+
+---
+
+## [ADR-061] Partner Tenant Impersonation (SSO)
+**Data**: 2026-01-28  
 **Stato**: ✅ Attivo  
 **Contesto**:  
-Il "Pro Terminal" è stato progettato pensando a comandi Unix-like (`ls`, `pwd`, `cat`). Tuttavia, l'ambiente di deploy locale è Windows (Ampps), dove questi comandi non esistono nativamente in CMD, portando all'errore `"ls" non è riconosciuto`.
-
+Necessità per i partner di accedere ai tenant senza conoscere le password.
 **Decisione**:  
-Implementare nel Backend (`DevToolsScriptController`) un rilevamento automatico dell'OS.
-- **Se Windows**: Eseguire i comandi wrappati in `powershell -NoProfile -Command "..."`. PowerShell fornisce alias nativi per i comandi Unix comuni, garantendo l'esperienza "Bash-like" desiderata senza installare WSL o Cygwin.
-- **Se Linux**: Eseguire comandi standard Bash.
-
+Implementare **Session Masquerading** (`tenant_id` in sessione) con Banner di Sicurezza persistente.
 **Conseguenze**:
-- (+) Esperienza utente coerente su tutti gli OS.
-- (+) Nessuna dipendenza esterna richiesta su Windows.
+- (+) Supporto immediato clienti.
+- (+) UX chiara (Banner arancione).
 
 ---
 
-## 🛑 INCIDENT LOG: DevTools v4.0 Upgrade Cycle
-
-### 1. [CRITICAL] HTML Structural Failure (Layout Collapse)
-- **Data/Ora**: 2026-01-11 01:27
-- **Sintomo**: L'utente ha segnalato "non funziona nulla". La dashboard appariva rotta o vuota.
-- **Causa Radice**: Errore di nesting HTML nel template `devtools.mustache`. Una chiusura `</div>` prematura alla riga 626 (prima della nuova sezione Terminale) ha chiuso il contenitore principale `#v-pills-dash`, espellendo il resto del contenuto dal layout a schede.
-- **Risoluzione**: Rimozione del tag di chiusura errato. Ripristino immediato della struttura (Hotfix applicato in 2 minuti).
-- **Lezione**: Verificare sempre il bilanciamento dei tag quando si sposta codice massivo (Terminal Tab -> Dashboard Bottom).
-
-### 2. [UX] Terminal Layout Shift
-- **Data/Ora**: 2026-01-11 01:24
-- **Feedback**: L'utente ha segnalato che il Terminale come "Tab Separata" causava restringimenti sgradevoli del layout ("fa rinpicciolire tutto").
-- **Azione**: Spostamento del componente Terminale dalla Tab laterale dedicata (`#v-pills-terminal`) direttamente al **fondo della Dashboard principale** (`#v-pills-dash`).
-- **Dettaglio**: Impostata altezza fissa (`height: 600px`) per evitare resizing dinamico fastidioso.
-
-### 3. [BRANDING] Naming Inconsistency
-- **Data/Ora**: 2026-01-11 01:32
-- **Errore**: Il terminale mostrava "MCAG System" invece del nuovo brand "MCAG".
-- **Risoluzione**: Aggiornato stringa di benvenuto nel template `devtools.mustache`.
-
-### 4. [PROCESS] Git History Compliance
-- **Data/Ora**: 2026-01-11 01:37
-- **Feedback**: Mancanza di branch feature specifici per le correzioni ("ti scordi sempre di fare tutti branch").
-- **Azione Correttiva**: Prima del merge su `main`, sono stati creati commit granulari retroattivi per separare logicamente le modifiche:
-    1. `feat(backend)`: Logica Core
-    2. `feat(ui)`: Interfaccia
-    3. `test(feature)`: Test
-    4. `docs`: Documentazione
-- **Stato Finale**: Merge su `main` eseguito con storico pulito e conforme.
-
----
-**STATO FINALE v4.0 (2026-01-11 01:45)**:
-Il sistema DevTools è ora **Stabile**, **Sicuro** (Role-Based + Whitelist), e **Cross-Platform** (PowerShell/Bash automatico).
-Tutti i test (`tests/Feature/DevToolsV4Test.php`) sono verdi.
-Branding MCAG applicato ovunque.
-
+## [ADR-062] Surgical UI Components
+**Data**: 2026-01-28  
+**Decisione**:  
+Standardizzazione su **Bootstrap 5 Modals + SweetAlert2 Dark** per operazioni critiche.
+**Conseguenze**:
+- (+) Look & Feel coerente e professionale.
+- (+) Prevenzione errori accidentali.
 
 ---
 
-## [ADR-030] Toolkit Output Reliability Strategy
-**Data**: 2026-01-13
-**Stato**: ✅ Attivo
-**Contesto**:
-La console web (`terminal.php`) è uno strumento critico per il debug. Tuttavia, in ambienti di produzione/staging, warning PHP minori (es. deprecazioni di vendor terzi o chiavi array mancanti in log legacy) venivano stampati nello STDOUT prima del JSON di risposta. Questo causava la rottura del parser JS lato client ("Unexpected end of JSON input"), rendendo la console inutilizzabile proprio quando serviva di più.
-
-**Decisione**:
-Implementare un **Output Buffering Layer** rigoroso nel backend della console.
-1. `ob_start()` all'inizio dello script per catturare *qualsiasi* output spurio.
-2. Esecuzione del comando.
-3. `ob_get_clean()` prima di inviare la risposta JSON legittima.
-4. I warning catturati vengono loggati in un file separato (`debug_warnings.log`) anziché sporcare la risposta HTTP.
-
+## [ADR-063] Dynamic Asset Resolution
+**Data**: 2026-01-28  
+**Decisione**:  
+Abbandono calcolo dinamico `base_url` a favore di path assoluto configurato nel Controller.
 **Conseguenze**:
-- (+) **Affidabilità 100%**: La console risponde sempre con JSON valido, anche se il server "urla" warning.
-- (+) **Developer Experience**: Gli errori non bloccano più l'UI.
-- (-) **Visibilità**: I warning sono "nascosti" dal frontend (necessario consultare i log backend), ma questo è un trade-off accettabile per la stabilità operativa.
+- (+) Stabilità caricamento JS/CSS in ogni ambiente (Subfolder/VirtualHost).
 
----
-
-## [ADR-031] Multi-Layer Backup Verification
-**Data**: 2026-01-13
-**Stato**: ✅ Attivo
-**Contesto**:
-Il sistema di diagnostica `SystemCheck.php` segnalava falsi positivi ("Backup too old") perché monitorava solo la cartella di backup manuale (`storage/backups`), ignorando completamente gli snapshot automatici di sicurezza generati prima dei test (`backups/safety_snapshots`). Questo creava allarme ingiustificato.
-
-**Decisione**:
-Estendere la logica di `checkRecentBackups` per scansionare **vettori multipli** di persistenza.
-- Il sistema ora aggrega i file da tutte le location di backup configurate.
-- Viene calcolata l'età del file *più recente* in assoluto, indipendentemente dalla fonte (Manuale o Automatico).
-
-**Conseguenze**:
-- (+) **Accuratezza**: Il report riflette la reale sicurezza dei dati.
-- (+) **Integrazione**: Riconosce `safe_test_runner.php` come fonte legittima di backup.
-
----
-
-## [ADR-032] Commercial Valuation & Pricing Model v5.3
-**Data**: 2026-01-13
-**Stato**: ✅ Definitivo
-**Contesto**:
-Il software è evoluto da "prototipo associativo" a "piattaforma enterprise mission-critical". Il vecchio pricing (€25k) era basato sui costi di sviluppo iniziali e non rifletteva più il valore tecnologico (Cluster HA, Security ISO-ready, DevTools v4) né il benchmarking di mercato.
-
-**Decisione**:
-Ristrutturare il modello commerciale in 3 Tier basati sul valore (Value-Based Pricing) e supportati dal Report Benchmark 2026.
-1. **Standard License (€115.000)**: Entry level per chi necessita del codice sorgente ma infrastruttura semplice.
-2. **Professional License (€135.000)**: Il nuovo standard. Include DevTools Ultimate e supporto esteso.
-3. **Enterprise License (€175.000)**: Per PA e Large Organizations. Include SLA 99.9%, HA Cluster Setup e Customization hours.
-
-**Metriche di Supporto**:
-- **Sviluppo**: 2.140 ore certificate.
-- **ROI**: ricalcolato a €63/h (sottostimato rispetto a standard di mercato €80-120/h, ma realistico per il contesto).
-- **Security**: Grade A++ confermato.
-
-**Conseguenze**:
-- (+) **Posizionamento**: Elevazione del brand a livello Enterprise Software Vendor.
-- (+) **Sostenibilità**: Margini adeguati per garantire supporto a lungo termine e R&D.
-- (-) **Barriera d'ingresso**: Prezzi non accessibili a piccole associazioni locali (che rimangono target secondario o SaaS user).
-
----
-
-## [ADR-029] Omni-Reader Architecture (v5.2)
-**Data**: 2026-01-13
-**Stato**: ✅ Implementato
-**Contesto**:
-L'AI Assistant v5.0 era limitato ai soli PDF e aveva un'interfaccia segregata. L'utente richiede supporto per formati Office (.docx, .xlsx) e Codice (.php, .md) e un accesso "onnipresente".
-
-**Decisione**:
-1.  **Pattern Factory**: Implementare `DocumentParserFactory` per selezione dinamica del parser (`WordParserService`, `ExcelParserService`, `CodeParserService`).
-2.  **Smart Context**: Iniettare dati di contesto (URL parsing) nel System Prompt (es. "L'utente sta guardando Mario Rossi").
-3.  **Widget Globale**: Sostituire la dashboard dedicata con una Floating Chat (`ai_widget.mustache`) presente in tutte le pagine (`layout.mustache`).
-4.  **Vocale**: Integrare Web Speech API per input vocale diretto.
-
-**Conseguenze**:
-- (+) Accesso AI immediato da ogni pagina.
-- (+) Supporto completo formati aziendali.
-- (+) UX migliorata (Hands-free voice).
-
----
-
-## [ADR-026] Strict Branch Retention & Mandatory Auditing
-**Data**: 2026-01-11
-**Stato**: ✅ Attivo
-**Contesto**:
-La policy Gitflow standard prevede la cancellazione dei branch feature dopo il merge. Tuttavia, in un contesto Mission Critical, la "History Preservation" è essenziale per audit futuri e rollback selettivi.
-
-**Decisione**:
-1.  **Branch Retention**: I branch `feature/*` non devono MAI essere cancellati dal remote origin, anche dopo il merge.
-2.  **Stato "Chiuso"**: I branch mergiati vengono considerati "chiusi" (archiviati) semplicemente spostando l'HEAD su `develop` o `main`, ma rimangono nel reflog/repo.
-
-**Conseguenze**:
-- (+) Auditability totale (ogni riga di codice ha un branch di origine tracciabile).
-- (+) Hotfix facilitati (si può ripartire dal branch feature originale).
-- (-) Polluzione della lista branch (mitigabile con filtri IDE).
-2.  **Global Widget**: Trasformare l'interfaccia Chat in un Partial (`templates/partials/ai_widget.mustache`) iniettato nel layout principale, gestito da Alpine.js per lo stato (open/close).
-3.  **Smart Context**: Iniettare dati di contesto (URL parsing) nel System Prompt (es. "L'utente sta guardando il socio X").
-
-**Conseguenze**:
-- (+) **Estensibilità**: Aggiungere nuovi formati (es. PPTX) richiede solo una nuova classe Service.
-- (+) **UX**: L'utente può interrogare l'AI senza lasciare la pagina di lavoro.
-- (+) **Code-Aware**: Il supporto esplicito ai blocchi di codice migliora drasticamente le risposte tecniche.
-
----
-
-
-### ADR-027: AI Assistant Hotfix Strategy
-**Date:** 2026-01-13
-**Status**: ✅ Active
-**Context**: The AI Assistant feature (v5.1.0) failed in production due to environmental differences (HTMX missing in admin header) and Queue serialization mismatch.
-**Decision**: 
-1.  **Frontend**: Force HTMX library injection in `admin_header.mustache` (Global).
-2.  **Security**: Inject CSRF tokens into AI Chat forms via Controller + Hidden Inputs.
-3.  **Queue**: Refactor `queue_worker.php` to use Dependency Injection Container and handle `JobInterface` objects instead of raw arrays.
-**Consequences**: RESTORED full functionality. 
-- Infinite Spinner fixed (HTMX init).
-- 403 Forbidden fixed (CSRF).
-- Background Jobs fixed (DI Container).
-3.  **Logging Sincrono**: È vietato chiudere un branch senza aver aggiornato `CHANGELOG.md` e `DECISION_LOG.md`.
-
-**Conseguenze**:
-- (+) **Auditabilità Totale**: Possibile ricostruire intera storia di sviluppo.
-- (+) **Non-Repudiation**: Chi ha fatto cosa e quando (inclusi i test) è scolpito nella pietra.
-- (-) **Dimensioni Repo**: Aumento numero references (gestibile con `git gc` se necessario).
-
-## [ADR-028] Strict Polyglot Separation & Clean Code
-**Data**: 2026-01-11
-**Stato**: ✅ Attivo
-**Contesto**:
-La manutenzione a lungo termine di un progetto Enterprise richiede leggibilità assoluta. Mischiare linguaggi (es. CSS/JS inline in HTML o PHP) degrada la manutenibilità, impedisce il caching efficace e viola il principio di responsabilità singola.
-**Decisione**:
-1.  **Separazione Linguaggi**: È VIETATO mischiare linguaggi nello stesso file.
-    - HTML/Mustache: Solo struttura (Niente `<style>` o `<script>` inline, salvo casi triviali).
-    - CSS/SCSS: File separati in `public/css` o `resources/css`.
-    - JS: File separati in `public/js`.
-    - PHP: Logica separata dalla presentazione.
-2.  **Clean Code & Commenti**: Ogni funzione, classe o blocco logico complesso DEVE essere commentato spiegando il "Perché" (Intent) e non solo il "Cosa".
-3.  **File dedicati**: JSON, SQL, Shell script devono vivere nei loro file dedicati con estensione corretta.
-**Conseguenze**:
-- (+) **Manutenibilità Estrema**: Codebase navigabile e chiara.
-- (+) **Performance**: Caching ottimizzato per asset statici.
-- (-) **Verbosity**: Richiede la creazione di più file anche per piccole funzionalità.
-
-## [ADR-030] Semantic Chunking Strategy for RAG Context
-**Data**: 2026-01-13
-**Stato**: ✅ Attivo
-**Contesto**:
-Durante il debugging del sistema RAG v5.2, è emerso che l'AI faticava a recuperare informazioni specifiche contenute in documenti lunghi e strutturati (come il `DECISION_LOG.md` o i Report). L'analisi ha rivelato che il `DocumentChunkerService` originale frammentava il testo basandosi esclusivamente sulla lunghezza (500 char) e sui segni di punteggiatura.
-Questo approccio "cieco" separava spesso il titolo di una sezione dal suo contenuto, rendendo l'embedding del contenuto orfano del suo contesto chiave. Di conseguenza, una ricerca per "Redis" trovava il titolo ma non la spiegazione, o viceversa, abbassando il *similarity score*.
-
-**Decisione**:
-Adottare una strategia di **Semantic Chunking** che sfrutta la struttura nativa dei documenti Markdown.
-1.  **Regex-Based Splitting**: Utilizzare `preg_split('/^(?="#{1,3}\s)/m')` per identificare i confini delle sezioni (Header H1, H2, H3).
-2.  **Fallback Ibrido**:
-    - Se una sezione è inferiore al limite (800 char), viene mantenuta intera (Titolo + Corpo).
-    - Se una sezione supera il limite, viene ulteriormente suddivisa per frasi, ma solo *all'interno* del contesto della sezione.
-3.  **Wipe & Re-ingest**: Ogni modifica alla strategia di chunking richiede l'invalidazione totale del Vector Store esistente.
-
-**Conseguenze**:
-- (+) **Coerenza Semantica**: L'AI ora riceve "pacchetti di pensiero" completi, migliorando drasticamente la qualità delle risposte.
-- (+) **Precisione di Recupero**: I test (`verify_knowledge.php`) mostrano che le query specifiche ora recuperano il blocco corretto con score >0.70.
-- (-) **Complessità di Ingestione**: L'algoritmo è leggermente più pesante computazionalmente rispetto allo split cieco.
-- (-) **Dipendenza dal Formato**: Richiede che i documenti siano formattati con Markdown corretto per funzionare al meglio.
-
----
-
-## [ADR-036] Mission Control System (SOC)
-**Data**: 2026-01-15
-**Stato**: ✅ Implementato (v5.5.1)
-**Contesto**:
-L'interfaccia Admin standard non rifletteva la criticità e la complessità delle operazioni di sicurezza.
-**Decisione**:
-Trasformare `admin/impostazioni` in un "Security Operations Center" (SOC).
-- **UX**: Adozione tema dark "Mission Control" con badge olografici e indicatori di stato pulsing.
-- **Funzionalità**: Switchboard operativa per lockdown immediato e toggle manutenzione.
-**Conseguenze**:
-- (+) Immediata percezione dello stato di sicurezza.
-- (+) Risposta operativa rapida agli incidenti.
-
----
-
-## [ADR-037] Financial Intelligence Unit (FIU)
-**Data**: 2026-01-15
-**Stato**: ✅ Implementato (v5.5.2)
-**Contesto**:
-Necessità di fornire proiezioni economiche e monitoraggio asset per la governance, mantenendo privacy.
-**Decisione**:
-Creare un modulo "Financial Intelligence" nella dashboard Statistiche.
-- **Backend**: Implementato `StatsDashboardController::getFinancialProjections` con mock data basati su regressione lineare simulata.
-- **UI**: Introdotto "Ticker Tape" scorrevole e "Asset Allocation Map" in `statistics_admin.mustache`.
-- **Privacy**: Sostituita CDN Chart.js con libreria locale (`public/js/lib/chart.min.js`) per evitare blocchi anti-tracking.
-**Conseguenze**:
-- (+) Visibilità strategica sugli asset.
-- (+) Privacy compliance migliorata (zero tracking esterno).
-
-
----
-
-## [ADR-043] Hyper-Grid Design System (Neon/Glass)
-**Data**: 2026-01-26
-**Stato**: ✅ Attivo
-**Contesto**:
-L'interfaccia utente precedente mancava del "Wow Factor" enterprise.
-**Decisione**:
-Adozione del Design System **"Hyper-Grid"**:
-1.  **Aestetica**: Glassmorphism spinto, accenti Neon (Ciano/Viola/Smeraldo).
-2.  **Tech Stack**: CSS3 Variabili, Layout Flexbox/Grid nativi.
-3.  **Componenti**: Card fluttuanti, Badge luminescenti, Tabelle ad alto contrasto.
-**Conseguenze**:
-- (+) Percezione valore prodotto aumentata.
-- (+) Leggibilità migliorata (Dark Mode nativa).
-
----
-
-## [ADR-044] Ghost Code Elimination Strategy
-**Data**: 2026-01-26
-**Stato**: ✅ Eseguito
-**Contesto**:
-Accumulo di file "Zombie" (non più referenziati).
-**Decisione**:
-**"Delete-if-Unused" Protocol**:
-1.  Analisi referenze incrociate.
-2.  Eliminazione fisica dei file ridondanti (`main.css` legacy, script JS vecchi).
-**Conseguenze**:
-- (+) Repository più leggero.
-- (+) Minore carico cognitivo.
-
----
-
-## [ADR-045] Diagnosability First (Probe Restoration)
-**Data**: 2026-01-26
-**Stato**: ✅ Attivo
-**Contesto**:
-Necessità di diagnosticare la raggiungibilità del server web in caso di schermata bianca.
-**Decisione**:
-Mantenere **`public/probe.php`**:
-1.  **Funzione**: Restituisce "SYSTEM REACHABLE" e `phpinfo()` per debug rapido.
-**Conseguenze**:
-- (+) Diagnostica immediata setup PHP.
-
----
-
-## [ADR-046] Clean Routing (No-Index)
-**Data**: 2026-01-26
-**Stato**: ✅ Attivo
-**Contesto**:
-`index.php` nell'URL era obsoleto.
-**Decisione**:
-**URL Rewriting Forzato**:
-1.  Rimozione `index.php` da tutti i link interni nei template.
-**Conseguenze**:
-- (+) URL professionali e puliti.

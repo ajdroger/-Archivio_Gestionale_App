@@ -128,6 +128,20 @@
         </div>
     </nav>
 
+    <!-- TENANT IMPERSONATION WARNING BANNER -->
+    {{#is_tenant_mode}}
+    <div class="bg-warning bg-opacity-10 border-bottom border-warning border-opacity-25 w-100 py-2">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <div class="spinner-grow text-warning spinner-grow-sm" role="status"></div>
+                <strong class="text-warning text-uppercase small"><i class="fa-solid fa-mask me-2"></i>Modalità Accesso Partner (SSO)</strong>
+                <span class="text-white small border-start border-secondary ps-3 ms-1">Stai agendo per conto di: <span class="fw-bold font-monospace text-info">{{tenant_name}}</span> ({{tenant_id}})</span>
+            </div>
+            <a href="{{base_url}}/partner/client/exit" class="btn btn-sm btn-outline-warning text-uppercase fw-bold"><i class="fa-solid fa-right-from-bracket me-2"></i>Torna alla Console Partner</a>
+        </div>
+    </div>
+    {{/is_tenant_mode}}
+
     <!-- MODAL: WORLD LANGUAGES -->
     <div class="modal fade" id="modal-language-world" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

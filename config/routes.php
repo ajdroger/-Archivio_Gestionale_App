@@ -226,8 +226,11 @@ return function (App $app) {
         $group->post('/super-admin/toggle/{id}', \MCAG\Controller\Admin\SuperAdminController::class . ':toggleStatus')->setName('super_admin_toggle');
 
         // Partner / Reseller Portal
-        $group->get('/partner', \MCAG\Controller\Partner\ResellerController::class . ':dashboard')->setName('partner_dashboard');
+        $group->get('/partner/dashboard', \MCAG\Controller\Partner\ResellerController::class . ':dashboard')->setName('partner_dashboard');
         $group->post('/partner/client/create', \MCAG\Controller\Partner\ResellerController::class . ':createClient')->setName('partner_client_create');
+        $group->post('/partner/client/action', \MCAG\Controller\Partner\ResellerController::class . ':handleAction')->setName('partner_client_action');
+        $group->get('/partner/client/access/{id}', \MCAG\Controller\Partner\ResellerController::class . ':accessTenant')->setName('partner_client_access');
+        $group->get('/partner/client/exit', \MCAG\Controller\Partner\ResellerController::class . ':exitTenant')->setName('partner_client_exit');
 
     })->add(new AdminMiddleware());
 

@@ -75,6 +75,9 @@ class HomeController
         $appConfig = $this->config->getAll();
         $adminNotes = $this->config->get('admin_notes', '');
 
+        // Super Admin Check
+        $isSuperAdmin = (($_SESSION['user_role'] ?? '') === 'super_admin') || $isGodMode;
+
         // Render Template (Unified Logic Container)
         $template = 'admin/dashboard';
 
@@ -85,6 +88,7 @@ class HomeController
             'stats_json' => json_encode($stats),
             'real_is_admin' => $realIsAdmin,
             'is_admin' => $effectiveIsAdmin,
+            'is_super_admin' => $isSuperAdmin, // [NEW] Super Admin Flag
             'view_mode' => $requestedView,
             'is_god_mode' => $effectiveIsGodMode,
             'system_health' => $systemHealth,
@@ -124,7 +128,12 @@ class HomeController
             'base_url' => (function () {
                 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
                 return $scriptDir === '/' ? '' : $scriptDir;
-            })()
+            })(),
+
+            // --- TENANT IMPERSONATION CONTEXT ---
+            'is_tenant_mode' => isset($_SESSION['tenant_id']),
+            'tenant_name' => $_SESSION['tenant_name'] ?? '',
+            'tenant_id' => $_SESSION['tenant_id'] ?? ''
         ]);
 
         $response->getBody()->write($html);

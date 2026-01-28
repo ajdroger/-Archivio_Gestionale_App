@@ -30,6 +30,9 @@
         <div class="d-flex align-items-center text-success small fw-bold animate-pulse">
             <i class="fa-solid fa-satellite-dish me-2"></i>UPLINK STABLE
         </div>
+        <div class="d-flex align-items-center text-info small fw-bold ms-3" title="Zucchetti ERP Connected">
+            <i class="fa-solid fa-link me-2"></i>ERP ONLINE
+        </div>
     </div>
 </div>
 
@@ -95,14 +98,56 @@
                 <div class="col-6">
                     <div class="card bg-dark border-0 p-3 text-center h-100 shadow-sm hover-scale">
                         <small class="text-secondary text-uppercase x-small fw-bold">Valore Asset</small>
-                        <h3 class="text-info fw-bold mb-0 mt-1">€175k</h3>
-                        <small class="text-info x-small"><i class="fa-solid fa-chart-line me-1"></i>Projected</small>
+                        <h3 class="text-info fw-bold mb-0 mt-1">€1.08M</h3>
+                        <small class="text-success x-small"><i class="fa-solid fa-certificate me-1"></i>Certified</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+</div>
+
+<!-- SUPER-ADMIN MULTI-TENANCY CONTROL CENTER -->
+{{#is_super_admin}}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%); border: 1px solid rgba(99, 102, 241, 0.3) !important;">
+            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h6 class="text-uppercase fw-bold text-white mb-0 tracking-widest"><i class="fa-solid fa-server me-2 text-indigo-400"></i>SaaS Infrastructure (Super Admin)</h6>
+                 <span class="badge bg-indigo-500 bg-opacity-20 text-indigo-300 border border-indigo-500 border-opacity-25 rounded-pill small">MULTI-TENANCY ACTIVE</span>
+            </div>
+            <div class="card-body px-4">
+                <div class="row g-4">
+                    <!-- Global Stats -->
+                    <div class="col-md-3">
+                        <div class="bg-black bg-opacity-40 p-3 rounded border border-secondary border-opacity-25 text-center">
+                            <h2 class="text-white fw-bold mb-0">12</h2>
+                            <small class="text-secondary text-uppercase x-small">Active Tenants</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                         <div class="bg-black bg-opacity-40 p-3 rounded border border-secondary border-opacity-25 text-center">
+                            <h2 class="text-white fw-bold mb-0">€24.5k</h2>
+                            <small class="text-secondary text-uppercase x-small">Global MRR</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="col-md-6">
+                        <div class="d-flex gap-3 h-100 align-items-center justify-content-end">
+                            <button class="btn btn-outline-danger d-flex align-items-center gap-2"><i class="fa-solid fa-ban"></i> Sospendi Clienti</button>
+                            <button class="btn btn-outline-info d-flex align-items-center gap-2"><i class="fa-solid fa-globe"></i> Statistiche Globali</button>
+                             <button class="btn btn-primary d-flex align-items-center gap-2"><i class="fa-solid fa-plus"></i> New Tenant</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/is_super_admin}}
 
 <!-- RESTORED INTERACTIVE WORKSPACE (Refitted for Holographic UI) -->
 {{#is_admin}}
@@ -271,6 +316,24 @@
                     <div class="x-small text-secondary">Track Expenses</div>
                 </div>
             </a>
+            <!-- Partner Portal (Resellers) -->
+            <a href="{{base_url}}/partner/dashboard" class="btn btn-outline-light d-flex align-items-center gap-3 px-4 py-3 rounded-3 flex-grow-1 hover-border-indigo-500 transition-all">
+                <div class="rounded-circle bg-indigo-500 bg-opacity-10 p-2 text-indigo-400"><i class="fa-solid fa-handshake fa-lg"></i></div>
+                <div class="text-start">
+                    <div class="fw-bold">Partners</div>
+                    <div class="x-small text-secondary">Reseller Hub</div>
+                </div>
+            </a>
+
+            <!-- Developer Hub (API) -->
+            <a href="{{base_url}}/api/docs" target="_blank" class="btn btn-outline-light d-flex align-items-center gap-3 px-4 py-3 rounded-3 flex-grow-1 hover-border-light transition-all">
+                <div class="rounded-circle bg-white bg-opacity-10 p-2 text-white"><i class="fa-solid fa-code fa-lg"></i></div>
+                <div class="text-start">
+                    <div class="fw-bold">Dev Hub</div>
+                    <div class="x-small text-secondary">API Reference</div>
+                </div>
+            </a>
+
             {{#is_god_mode}}
             <button class="btn btn-outline-danger d-flex align-items-center gap-3 px-4 py-3 rounded-3 flex-grow-1 hover-border-danger transition-all animate-pulse">
                 <div class="rounded-circle bg-danger bg-opacity-10 p-2 text-danger"><i class="fa-solid fa-fingerprint fa-lg"></i></div>
