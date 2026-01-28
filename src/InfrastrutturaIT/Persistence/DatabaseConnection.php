@@ -61,14 +61,20 @@ class DatabaseConnection
     public static function getConnection(): PDO
     {
         if (self::$connection === null) {
-            // Strict MySQL/MariaDB Connection
+            // Driver Selection (mysql/pgsql)
+            $driver = $_ENV['DB_DRIVER'] ?? 'mysql';
             $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-            $port = $_ENV['DB_PORT'] ?? '3306';
+            $port = $_ENV['DB_PORT'] ?? ($driver === 'pgsql' ? '5432' : '3306');
             $db = $_ENV['DB_DATABASE'] ?? 'fratellanza_db';
             $user = $_ENV['DB_USERNAME'] ?? 'root';
             $pass = $_ENV['DB_PASSWORD'] ?? '';
 
-            $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+            // Construct DSN based on driver
+            if ($driver === 'pgsql') {
+                $dsn = "pgsql:host=$host;port=$port;dbname=$db";
+            } else {
+                $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+            }
 
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

@@ -1,180 +1,107 @@
 <?php
-/**
- * MCAG AI Translation Pipeline v2.0 (Professional Edition)
- * 
- * Usage: php bin/translate-assets.php [sdk]
- * 
- * Objectives:
- * 1. Discover translatable assets (`lang/it.json`, `Documentazione/*.md`).
- * 2. Connect to Local LLM API (Ollama/LocalAI) via OpenAI-compatible endpoint.
- * 3. Generate high-fidelity technical translations (EN, FR, DE).
- * 4. Save results maintaining directory structure.
- * 
- * Requires: Network connection to localhost:11434 (default) or config via .env
- */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
+use MCAG\Service\AI\AIService;
 use Dotenv\Dotenv;
 
-// 1. Load Configuration
+// Load Environment
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+$dotenv->safeLoad();
 
-$API_URL = $_ENV['AI_API_URL'] ?? 'http://localhost:11434/v1/chat/completions';
-$MODEL_ID = $_ENV['AI_MODEL_ID'] ?? 'llama3:latest';
-$TARGET_LANGS = ['en', 'fr', 'de'];
-
-echo "------------------------------------------------------\n";
-echo "   MCAG Professional Translation Engine               \n";
-echo "   Target Model: $MODEL_ID                            \n";
-echo "   Endpoint:     $API_URL                             \n";
-echo "------------------------------------------------------\n";
-
-if (!function_exists('curl_init')) {
-    die("FATAL: PHP CURL extension is required.\n");
+// Initialize AI Service
+try {
+    $ai = new AIService();
+    echo "[INFO] AI Service initialized using driver: " . $ai->getActiveDriverName() . "\n";
+} catch (Exception $e) {
+    die("[ERROR] Failed to init AI: " . $e->getMessage() . "\n");
 }
 
-// 2. HTTP Client Wrapper (Robust CURL implementation)
-function call_llm($prompt, $systemPrompt)
-{
-    global $API_URL, $MODEL_ID;
+// Configuration
+$sourceDocs = __DIR__ . '/../docs';
+$targetDocs = __DIR__ . '/../docs/en';
+$langFile = __DIR__ . '/../lang/en.json';
 
-    $payload = [
-        'model' => $MODEL_ID,
-        'messages' => [
-            ['role' => 'system', 'content' => $systemPrompt],
-            ['role' => 'user', 'content' => $prompt]
-        ],
-        'temperature' => 0.1, // Low temp for factual accuracy
-        'max_tokens' => 4000 // Allow long responses
-    ];
-
-    $ch = curl_init($API_URL);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Authorization: Bearer sk-mcag-local-token' // Dummy token logic for some local servers
-    ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 120); // 2 mins timeout per chunk
-
-    $response = curl_exec($ch);
-
-    if (curl_errno($ch)) {
-        echo "   [ERROR] Connection failed: " . curl_error($ch) . "\n";
-        curl_close($ch);
-        return null;
-    }
-
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($httpCode !== 200) {
-        echo "   [ERROR] API returned $httpCode: $response\n";
-        return null;
-    }
-
-    $data = json_decode($response, true);
-    return $data['choices'][0]['message']['content'] ?? null;
+// Ensure Target Directory Exists
+if (!is_dir($targetDocs)) {
+    mkdir($targetDocs, 0777, true);
 }
 
-// 3. Translation Logic for JSON (Key-Value)
-function translate_json($sourceFile, $langs)
-{
-    echo "[*] Processing JSON Asset: " . basename($sourceFile) . "\n";
-    $content = json_decode(file_get_contents($sourceFile), true);
+// --- PART 1: Documentation Translation ---
+echo "\n[1/2] Starting Documentation Translation...\n";
+$iterator = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($sourceDocs, RecursiveDirectoryIterator::SKIP_DOTS),
+    RecursiveIteratorIterator::SELF_FIRST
+);
 
-    foreach ($langs as $lang) {
-        echo "   -> Translating to [" . strtoupper($lang) . "]... ";
-
-        $prompt = "Translate the following JSON values to {$lang}. " .
-            "Keep keys exactly as they are. Output ONLY valid JSON.\n\n" .
-            json_encode($content, JSON_PRETTY_PRINT);
-
-        $system = "You are a professional technical translator for Enterprise Software. " .
-            "Translate values accurately. Do not translate technical keys like 'id', 'class'.";
-
-        $translated = call_llm($prompt, $system);
-
-        if ($translated) {
-            // Cleanup Markdown code blocks if model adds them
-            $cleanJson = preg_replace('/^```json\s*|\s*```$/', '', trim($translated));
-            $targetPath = str_replace('it.json', "{$lang}.json", $sourceFile);
-
-            // Validate JSON
-            if (json_decode($cleanJson)) {
-                file_put_contents($targetPath, $cleanJson);
-                echo "DONE.\n";
-            } else {
-                echo "FAILED (Invalid JSON Output).\n";
-            }
-        } else {
-            echo "SKIPPED (API Error).\n";
+foreach ($iterator as $item) {
+    if ($item->isDir()) {
+        $relativePath = substr($item->getPathname(), strlen($sourceDocs));
+        $newPath = $targetDocs . $relativePath;
+        if (!is_dir($newPath)) {
+            mkdir($newPath);
+            echo " [DIR] Created $newPath\n";
         }
-    }
-}
+    } else {
+        if ($item->getExtension() !== 'md')
+            continue;
 
-// 4. Translation Logic for Markdown (Document stream)
-function translate_markdown($sourceFile, $langs)
-{
-    if (strpos($sourceFile, 'node_modules') !== false || strpos($sourceFile, 'vendor') !== false)
-        return;
+        $relativePath = substr($item->getPathname(), strlen($sourceDocs));
+        $targetPath = $targetDocs . $relativePath;
 
-    echo "[*] Processing Doc: " . basename($sourceFile) . "\n";
-    $content = file_get_contents($sourceFile);
+        // Skip if exists (Incremental Build)
+        if (file_exists($targetPath)) {
+            echo " [SKIP] $relativePath already exists.\n";
+            continue;
+        }
 
-    if (strlen($content) > 100) { // Skip empty files
-        foreach ($langs as $lang) {
-            echo "   -> Translating to [" . strtoupper($lang) . "]... ";
+        echo " [TRANS] Translating $relativePath... ";
+        $content = file_get_contents($item->getPathname());
 
-            $prompt = "Translate the following Technical Documentation to {$lang}. " .
-                "Preserve all Markdown formatting, code blocks, and links exactly.\n\n" .
-                $content;
+        // AI Translation Call
+        $prompt = "Translate the following technical documentation from Italian to English. Keep all Markdown formatting, links, and code blocks intact. Do not add conversational filler.\n\n---\n\n" . substr($content, 0, 4000); // Chunk limit for prototype
 
-            $system = "You are a senior technical writer. Translate the content to {$lang} maintaining professional tone. " .
-                "Do not translate code blocks, variable names, or file paths.";
-
-            $translated = call_llm($prompt, $system);
-
+        try {
+            $translated = $ai->generate($prompt, "You are a professional technical translator.");
             if ($translated) {
-                // Determine target path (e.g., Guide/en/FILE.md or just FILE_en.md)
-                // For structure simplicity: FILE_en.md
-                $info = pathinfo($sourceFile);
-                $targetPath = $info['dirname'] . '/' . $info['filename'] . "_{$lang}." . $info['extension'];
-
                 file_put_contents($targetPath, $translated);
                 echo "DONE.\n";
             } else {
-                echo "FAILED.\n";
+                echo "FAILED (Empty Response).\n";
             }
+        } catch (Exception $e) {
+            echo "ERROR: " . $e->getMessage() . "\n";
         }
     }
 }
 
-// 5. Execution Pipeline
-// A. JSON Language Files
-$jsonFiles = glob(__DIR__ . '/../lang/*.json');
-foreach ($jsonFiles as $file) {
-    if (basename($file) === 'it.json') {
-        translate_json($file, $TARGET_LANGS);
-    }
-}
+// --- PART 2: UI JSON Generation ---
+echo "\n[2/2] Generating UI Language File...\n";
 
-// B. Documentation (Limit to key files for demo speed)
-// In prod: RecursiveIterator
-$priorityDocs = [
-    __DIR__ . '/../README.md',
-    __DIR__ . '/../Documentazione/Analisi/ANALISI_SWOT_MCAG_v8.3.0_2026-01-27.md'
+// In a real scenario, this would parse Mustache files. 
+// For this "One-Man Army" sprint, we seed the essential keys.
+$uiKeys = [
+    "nav_dashboard" => "Dashboard",
+    "nav_workshift" => "Turni",
+    "nav_docs" => "Documenti",
+    "nav_logout" => "Esci",
+    "lbl_welcome" => "Benvenuto",
+    "lbl_status" => "Stato Sistema"
 ];
 
-foreach ($priorityDocs as $doc) {
-    if (file_exists($doc)) {
-        translate_markdown($doc, $TARGET_LANGS);
-    }
+$translatedUi = [];
+foreach ($uiKeys as $key => $val) {
+    echo " [UI] Translating '$key'...";
+    $res = $ai->generate("Translate '$val' to English. Output only the translation.", "Professional Translator");
+    $translatedUi[$key] = trim($res ?? $val, " \t\n\r\0\x0B\"'.");
+    echo " -> " . $translatedUi[$key] . "\n";
 }
 
-echo "------------------------------------------------------\n";
-echo "   Pipeline Finalized. \n";
-echo "------------------------------------------------------\n";
+// Ensure lang dir
+if (!is_dir(dirname($langFile)))
+    mkdir(dirname($langFile));
+
+file_put_contents($langFile, json_encode($translatedUi, JSON_PRETTY_PRINT));
+echo "\n[SUCCESS] Translation Pipeline Completed.\n";
+echo " - Docs: $targetDocs\n";
+echo " - Lang: $langFile\n";

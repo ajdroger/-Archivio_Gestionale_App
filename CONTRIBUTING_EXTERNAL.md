@@ -1,36 +1,45 @@
-# 🤝 Contributing to MCAG Enterprise
+# Contributing to MCAG Enterprise
 
-Thank you for your interest in contributing to the MCAG Project!
-While the core system is "Solo Dev" driven, we welcome community contributions for adapters, translations, and plugins.
+Thank you for your interest in contributing to the **MCAG Project**!
+We follow strict Enterprise standards to maintain system integrity. Please read this guide carefully before submitting a Pull Request.
 
-## 🚀 How to Contribute
+## 🛡️ The Golden Rules
 
-### 1. The Workflow
-We use the **Feature Branch Workflow**.
-1. Fork the repository.
-2. Create a branch: `git checkout -b feature/amazing-feature`.
-3. Commit changes (Atomic commits please!).
-4. Push to your fork.
-5. Open a Pull Request against `develop`.
+1.  **No Simulations**: All code must be production-ready. No `return true;` mocks allowed in `main` branch.
+2.  **Strict Typing**: All PHP code must use `declare(strict_types=1);` and full type hinting.
+3.  **ADR Compliance**: Check `DECISION_LOG.md`. If your change violates an ADR, it will be rejected.
+4.  **Tests Required**: Every new feature must have a corresponding Unit or Feature test.
 
-### 2. Standards & Style
-- **PHP**: PSR-12 Standard.
-- **JS**: ESLint standard config.
-- **Commits**: Conventional Commits (`feat: add capability`, `fix: resolve bug`).
-- **Tests**: Every PULL REQUEST must include tests. Coverage must not drop below 90%.
+## 🌿 Git Workflow
 
-### 3. Review Process
-- All PRs are reviewed by the Core Team (Solo Dev + AI Assistants).
-- CI/CD will run automatically (PHPStan Level 7 check).
+We use **Gitflow**.
+*   `main`: Production releases only.
+*   `develop`: Integration branch.
+*   `feature/my-feature`: Your work area.
+*   `hotfix/xxx`: Critical production fixes.
 
-## 🏗️ Architecture Guide
-- **Domain Layer**: Pure PHP, no dependencies.
-- **Infra Layer**: Heavy implementation details (SQL, API calls).
-- **Controller**: Thin logic, delegates to Services.
+**Workflow**:
+1.  Fork the repo.
+2.  Create `feature/cool-stuff`.
+3.  Commit often (Atomic Commits).
+4.  Push and open a PR against `develop`.
 
-## 📜 Code of Conduct
-Please be respectful. We are building a professional enterprise tool.
-Harassment or unprofessional behavior will result in a ban from the community.
+## 🧪 Testing
 
----
-*Welcome to the Resistance against Legacy Software.*
+Run almost all checks with one command:
+```bash
+composer test
+```
+This runs PHPUnit, PHPStan (Level 6), and CS Fixer.
+
+## 🎨 Code Style
+
+We follow **PSR-12**.
+*   4 spaces indentation.
+*   Method names in `camelCase`.
+*   Class names in `PascalCase`.
+
+## 🤝 Community
+Join our Discord Server (Invite Only) or start a Discussion on GitHub.
+
+*Welcome to the Team!* 🚀

@@ -1,33 +1,46 @@
-# 🛡️ MCAG Security Policy & Bug Bounty
+# Security Policy
 
-## Security is our #1 Priority
-We take the security of MCAG (Militare Civile Archivio Gestionale) seriously. We appreciate the efforts of security researchers who help us keep our platform safe.
+## Supported Versions
 
-## 🐛 Reporting a Vulnerability
-If you discover a security vulnerability, please report it privately.
-**DO NOT** open a public GitHub Issue.
+Use this section to tell people about which versions of your project are currently being supported with security updates.
 
-- **Email**: security@mcag-enterprise.com
-- **PGP Key**: [Link to PGP Key]
-- **Response Time**: We aim to acknowledge reports within 24 hours.
+| Version | Supported          |
+| ------- | ------------------ |
+| v9.x    | :white_check_mark: |
+| v8.x    | :white_check_mark: |
+| v5.x    | :x:                |
+| < v5.0  | :x:                |
 
-## 💰 Bug Bounty Program
-For the v9.0 release, we are launching a pilot Bug Bounty program.
+## Reporting a Vulnerability
 
-| Severity (CVSS) | Reward Tier | Example |
-|---|---|---|
-| **Critical** (9.0+) | €500 - €2,000 | Remote Code Execution (RCE), SQL Injection (God Mode bypass) |
-| **High** (7.0-8.9) | €200 - €500 | Privilege Escalation, Stored XSS |
-| **Medium** (4.0-6.9)| €50 - €150 | IDOR, Reflected XSS |
-| **Low** (0.1-3.9) | Swag / Kudos | Info Disclosure, Best Practice violation |
+We take the security of MCAG seriously. If you have found a vulnerability, please report it immediately.
 
-## 📜 Rules of Engagement
-- **Do not** destroy data (use the Demo environment).
-- **Do not** attempt phishing attacks against our employees.
-- **Do not** use automated scanners that degrade service performance ( > 5 req/sec).
+### Responsible Disclosure
+Please **DO NOT** create a public GitHub Issue for security vulnerabilities.
+Instead, send an encrypted email to:
 
-## 🛡️ Safe Harbor
-We will not pursue legal action against researchers who report vulnerabilities in good faith and in accordance with this policy.
+**security@mcag-enterprise.it** (PGP Key ID: `0xCAFEBABE`)
 
----
-*Last Updated: January 2026*
+### What to include
+*   Description of the vulnerability.
+*   Steps to reproduce.
+*   Impact assessment.
+*   Your name/handle for credit (Hall of Fame).
+
+### Response Timeline
+*   **ACK**: 24 hours.
+*   **Assessment**: 72 hours.
+*   **Fix**: 14 days (Critical) / 30 days (High).
+
+## Bug Bounty Program (Private)
+
+We offer a private bug bounty for critical RCE or SQLi vulnerabilities found in `v9.x`.
+Rewards are paid in ETH/USDC based on CVSS score.
+
+> **Note**: This is a closed program. Contact us for an invite code.
+
+## Security Features
+MCAG v9.0+ includes:
+*   **Titan Shield Protocol**: Automated attack surface monitoring.
+*   **GDPR 2.0 Logs**: AI Decision Audit Trail.
+*   **Session Masquerading**: Secure "God Mode" (impersonation) with audit logs.

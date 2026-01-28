@@ -59,21 +59,84 @@
         <div class="col-md-3">
             <!-- Chart Container -->
             <div class="card bg-dark border-0 shadow-lg h-100 p-3">
-                <small class="text-secondary text-uppercase fw-bold x-small mb-2 d-block">Growth Trend</small>
-                <div style="height: 60px;">
-                     <!-- Simple CSS Bar Chart Fallback -->
-                    <div class="d-flex align-items-end h-100 gap-1 opacity-75">
-                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 30%"></div>
-                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 50%"></div>
-                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 45%"></div>
-                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 70%"></div>
-                        <div class="bg-indigo-500 w-100 rounded-top" style="height: 60%"></div>
-                        <div class="bg-indigo-400 w-100 rounded-top" style="height: 85%"></div>
-                    </div>
+                <div class="h-100 d-flex flex-column justify-content-between">
+                     <small class="text-secondary text-uppercase fw-bold x-small">Growth Trend</small>
+                     <div style="height: 100px; width: 100%;">
+                        <canvas id="growthChart"></canvas>
+                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Chart.js Library and Init -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            const data = {{stats.trend_data}}; // Injected from PHP
+            
+            // Gradient Fill
+            const gradient = ctx.createLinearGradient(0, 0, 0, 100);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); // Indigo
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Ott', 'Nov', 'Dic', 'Gen', 'Feb', 'Mar'], // More explicit labels
+                    datasets: [{
+                        label: 'Revenue (€)',
+                        data: data,
+                        borderColor: '#6366f1',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4, // Visible points
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#6366f1',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: { 
+                        legend: { display: false }, 
+                        tooltip: { 
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' € ' + context.parsed.y;
+                                }
+                            }
+                        } 
+                    },
+                    scales: {
+                        x: { 
+                            display: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#a0aec0', font: { size: 10 } }
+                        },
+                        y: { 
+                            display: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { 
+                                color: '#a0aec0', 
+                                font: { size: 10 },
+                                callback: function(value) { return '€' + value / 1000 + 'k'; }
+                            } 
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 
     <!-- Client Table -->
     <div class="card bg-dark border-0 shadow-lg mb-5">
