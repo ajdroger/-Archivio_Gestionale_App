@@ -86,7 +86,9 @@ class ResellerService
             'monthly_recurring' => '€' . number_format($totalRevenue, 0, ',', '.'),
             'commission' => '€' . number_format($commission, 0, ',', '.'),
             'next_payout' => date('15 M Y', strtotime('+1 month')),
-            'raw_revenue' => $totalRevenue
+            'raw_revenue' => $totalRevenue,
+            // [NEW] Mock Trend Data for Chart.js
+            'trend_data' => json_encode([3500, 4200, 4800, 5100, 5900, $totalRevenue])
         ];
     }
 

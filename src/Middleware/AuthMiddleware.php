@@ -36,7 +36,9 @@ class AuthMiddleware implements MiddlewareInterface
                 'api_docs',
                 'api_docs_json',
                 'demo_launch',
-                'demo_request_submit'
+                'demo_request_submit',
+                'api_security_pulse_public', // [FIX] Allow Pulse without Session
+                'api_security_pulse_force'  // [FIX] Allow Pulse without Session
             ];
 
             // Allow public routes

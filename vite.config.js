@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import path from 'path';
 import purgecss from '@fullhuman/postcss-purgecss';
+import tailwindcss from '@tailwindcss/vite';
 
 // PurgeCSS configuration for production builds
 const purgeCssConfig = purgecss({
@@ -38,6 +39,9 @@ const purgeCssConfig = purgecss({
 
 export default defineConfig({
     root: 'resources',
+    plugins: [
+        tailwindcss(),
+    ],
     build: {
         outDir: '../public/dist',
         emptyOutDir: true,
@@ -45,19 +49,14 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 app: path.resolve(__dirname, 'resources/scss/app.scss'),
+                tailwind: path.resolve(__dirname, 'resources/css/tailwind.css'),
                 main: path.resolve(__dirname, 'resources/js/main.js')
             },
             output: {
                 assetFileNames: 'assets/[name].[ext]'
             }
         },
-        minify: 'terser', // Explicit minification
-        terserOptions: {
-            compress: {
-                drop_console: false, // DEBUG: Keep console logs
-                drop_debugger: true
-            }
-        }
+        minify: 'esbuild'
     },
     css: {
         postcss: {
@@ -70,4 +69,3 @@ export default defineConfig({
         origin: 'http://localhost:5173'
     }
 });
-

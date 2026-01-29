@@ -1,6 +1,15 @@
 {
+  "css/tailwind.css": {
+    "file": "assets/tailwind.css",
+    "src": "css/tailwind.css",
+    "isEntry": true,
+    "name": "tailwind",
+    "names": [
+      "tailwind.css"
+    ]
+  },
   "js/main.js": {
-    "file": "assets/main.js",
+    "file": "assets/main-4LPVtcYx.js",
     "name": "main",
     "src": "js/main.js",
     "isEntry": true

@@ -1,77 +1,48 @@
-{{> layout_header }}
+<!DOCTYPE html>
+<html lang="it" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <title>{{category_name}} - Docs | MCAG</title>
+    <link href="{{base_url}}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{base_url}}/css/all.min.css" rel="stylesheet">
+    <link href="{{base_url}}/css/premium.css" rel="stylesheet">
+    <link href="{{base_url}}/css/components/scroll_navigator.css?v=20260115_REV5" rel="stylesheet">
+</head>
+<body class="d-flex flex-column h-100 bg-black text-white">
 
-<div class="container-fluid py-5 px-4 bg-dark min-h-screen">
-    <!-- Back Header -->
-    <div class="mb-4">
-        <a href="{{base_url}}/docs" class="text-secondary text-decoration-none small hover-white transition-all">
-            <i class="fa-solid fa-arrow-left me-2"></i>Torna al Knowledge Hub
-        </a>
-    </div>
-
-    <!-- Title Section -->
-    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary border-opacity-25 pb-4">
-        <div>
-            <h1 class="text-white fw-bold mb-2">{{category}}</h1>
-            <p class="text-secondary mb-0">Esplora i documenti in questa sezione.</p>
+    <nav class="navbar navbar-dark bg-dark border-bottom border-secondary mb-4">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand mb-0 h1"><i class="fa-solid fa-folder-open me-2 text-warning"></i>{{category_name}}</span>
+            <a href="{{hub_url}}" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-arrow-left me-2"></i>Torna all'Hub</a>
         </div>
-        <div>
-            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3 py-2 rounded-pill">
-                {{files.length}} Risorse
-            </span>
-        </div>
-    </div>
+    </nav>
 
-    <!-- Files List Grid -->
-    <div class="row g-3">
-        {{#files}}
-        <div class="col-md-6 col-lg-4 col-xl-3">
-            <div class="card h-100 bg-black border border-secondary border-opacity-25 shadow-sm hover-elevate transition-all group">
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="d-flex align-items-start mb-3">
-                        <div class="p-3 rounded bg-secondary bg-opacity-10 text-info me-3 group-hover:bg-info group-hover:text-white transition-colors">
-                            <i class="fa-solid fa-file-lines fa-lg"></i>
+    <div class="container">
+        <div class="card bg-dark border-secondary shadow-sm">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {{#files}}
+                    <a href="{{url}}" class="list-group-item list-group-item-action bg-dark text-white border-secondary d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <i class="fa-regular fa-file-lines me-3 text-info"></i>
+                            <span class="fw-bold">{{name}}</span>
                         </div>
-                        <div class="flex-grow-1 overflow-hidden">
-                            <h6 class="text-white fw-bold mb-1 text-truncate" title="{{name}}">{{name}}</h6>
-                            <span class="badge bg-dark border border-secondary text-secondary x-small">{{extension}}</span>
-                        </div>
+                        <span class="badge bg-secondary bg-opacity-25 text-secondary font-monospace">{{size}}</span>
+                    </a>
+                    {{/files}}
+                    {{^files}}
+                    <div class="p-5 text-center text-muted">
+                        <i class="fa-regular fa-folder-open fa-3x mb-3 opacity-50"></i>
+                        <p>Nessun documento trovato in questa sezione.</p>
                     </div>
-                    
-                    <div class="mt-auto d-flex justify-content-between align-items-center border-top border-secondary border-opacity-10 pt-3">
-                        <span class="text-secondary x-small font-monospace">{{size}}</span>
-                        <a href="{{url}}" class="btn btn-sm btn-outline-light rounded-pill px-3" target="_blank" download>
-                            <i class="fa-solid fa-download me-2"></i>Scarica
-                        </a>
-                    </div>
+                    {{/files}}
                 </div>
             </div>
         </div>
-        {{/files}}
-
-        {{^files}}
-        <div class="col-12 py-5 text-center">
-             <i class="fa-regular fa-folder-open fa-3x text-secondary opacity-25 mb-3"></i>
-             <p class="text-secondary">Nessun file trovato in questa categoria.</p>
-        </div>
-        {{/files}}
     </div>
-</div>
 
-<style>
-.hover-elevate:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    background: rgba(255, 255, 255, 0.02);
-}
-.transition-colors {
-    transition: background-color 0.2s, color 0.2s;
-}
-.group:hover .group-hover\:bg-info {
-    background-color: var(--bs-info) !important;
-}
-.group:hover .group-hover\:text-white {
-    color: white !important;
-}
-</style>
-
-{{> layout_footer }}
+    <!-- Scroll Navigator -->
+    <script src="{{base_url}}/js/components/scroll_navigator.js"></script>
+</body>
+</html>
+>>>>>>> feature/v9.1.0-evolution

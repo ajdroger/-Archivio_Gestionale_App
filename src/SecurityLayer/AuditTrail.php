@@ -229,6 +229,56 @@ class AuditTrail
 
         throw new \InvalidArgumentException("Formato $formato non supportato.");
     }
+    public function getThreats(int $limit = 20): array
+    {
+        if (!$this->pdo) {
+            return [];
+        }
+
+        // Fetch recent security-relevant events that are NOT resolved
+        $sql = "SELECT * FROM audit_logs 
+                WHERE action IN ('LOGIN_FAILED', 'ACCESS_DENIED', 'AUTH_ERROR', 'SUSPICIOUS_ACTIVITY', 'SYSTEM_ALERT') 
+                AND resolved_at IS NULL
+                ORDER BY timestamp DESC 
+                LIMIT " . (int) $limit;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // If empty (e.g. fresh install), we return nothing now.
+            // The simulation fallback is removed to comply with "Real Mode" 100%.
+
+            return $results;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    public function resolveThreat(int $id): bool
+    {
+        if (!$this->pdo)
+            return false;
+        try {
+            $stmt = $this->pdo->prepare("UPDATE audit_logs SET resolved_at = NOW() WHERE id = ?");
+            return $stmt->execute([$id]);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function resolveAll(): bool
+    {
+        if (!$this->pdo)
+            return false;
+        try {
+            $stmt = $this->pdo->prepare("UPDATE audit_logs SET resolved_at = NOW() WHERE resolved_at IS NULL AND action IN ('LOGIN_FAILED', 'ACCESS_DENIED', 'AUTH_ERROR', 'SUSPICIOUS_ACTIVITY', 'SYSTEM_ALERT')");
+            return $stmt->execute();
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 }
 
 

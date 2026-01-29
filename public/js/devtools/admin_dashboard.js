@@ -99,6 +99,452 @@ window.addEventListener('load', function () {
         });
     }
 
+    // --- 2.5 THREAT MAP ENGINE (REAL-TIME + PERSISTENT + INTERACTIVE + LEAFLET) ---
+    function initThreatMap() {
+        const mapEl = document.getElementById('global-threat-map');
+        const modalEl = document.getElementById('satelliteModal');
+        const satTargetLabel = document.getElementById('sat-target-ip');
+        const btnNeutralize = document.getElementById('btn-neutralize-target');
+
+        let satModal = null;
+        let leafletMap = null;
+        let leafletMarker = null;
+        let satMap = null;
+        let satMarker = null;
+
+        // --- MAP INITIALIZATION ---
+        // mapEl already declared above
+        if (mapEl && typeof L !== 'undefined') {
+            // LAYERS
+            const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 20
+            });
+
+            const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri',
+                maxZoom: 18
+            });
+
+            const hybridLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 20
+            });
+
+            const hybridGroup = L.layerGroup([satLayer, hybridLabels]);
+
+            leafletMap = L.map('global-threat-map', {
+                center: [20, 0],
+                zoom: 2,
+                zoomControl: true,
+                layers: [darkLayer] // Default to Dark Cyber Style
+            });
+
+            const baseMaps = {
+                "Cyber Dark": darkLayer,
+                "Satellite": satLayer,
+                "Hybrid": hybridGroup
+            };
+
+            L.control.layers(baseMaps).addTo(leafletMap);
+        }
+
+        let activeTargetBlip = null;
+        const processedThreats = new Set();
+
+        if (typeof bootstrap !== 'undefined' && modalEl) {
+            satModal = new bootstrap.Modal(modalEl);
+            modalEl.addEventListener('shown.bs.modal', function () {
+                if (leafletMap) leafletMap.invalidateSize();
+            });
+        }
+
+        if (!mapEl) return;
+
+        window.purgeAllThreats = async function () {
+            // Call API to Resolve ALL
+            let baseUrl = window.location.pathname.includes('/public') ? '/MCAG_Militare-Civile-Archivio-Gestionale/public' : '';
+            if (window.BASE_URL) baseUrl = window.BASE_URL;
+
+            await fetch(`${baseUrl}/api/public/security/neutralize`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ all: true })
+            });
+
+            if (leafletMap) {
+                leafletMap.eachLayer(layer => {
+                    if (layer instanceof L.Marker) {
+                        leafletMap.removeLayer(layer);
+                    }
+                });
+            }
+            processedThreats.clear();
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'DATABASE PULITA (THREATS RESOLVED)',
+                showConfirmButton: false,
+                timer: 2000,
+                background: '#1e293b',
+                color: '#fff'
+            });
+        };
+
+        if (btnNeutralize) {
+            btnNeutralize.addEventListener('click', () => {
+                if (activeTargetBlip) {
+                    // API Call
+                    const tId = activeTargetBlip.threatData.id;
+                    if (tId) apiNeutralize(tId);
+
+                    // LEAFLET MARKER LOGIC
+                    const markerEl = activeTargetBlip.getElement();
+                    if (markerEl) {
+                        markerEl.style.transition = 'all 0.5s ease-in-out';
+                        markerEl.style.transform += ' scale(5)'; // Append scale to existing transform
+                        markerEl.style.opacity = '0';
+                    }
+
+                    const markerToRemove = activeTargetBlip;
+                    setTimeout(() => {
+                        if (markerToRemove) markerToRemove.remove(); // Leaflet remove
+                    }, 500);
+
+                    activeTargetBlip = null;
+                    satModal.hide();
+                }
+            });
+        }
+
+        async function apiNeutralize(id) {
+            let baseUrl = window.location.pathname.includes('/public') ? '/MCAG_Militare-Civile-Archivio-Gestionale/public' : '';
+            if (window.BASE_URL) baseUrl = window.BASE_URL;
+            await fetch(`${baseUrl}/api/public/security/neutralize`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+
+            // Show Success Feedback locally after API call
+            Swal.fire({
+                title: 'TARGET NEUTRALIZED',
+                width: 300,
+                padding: '1em',
+                background: '#000',
+                color: '#0f0',
+                showConfirmButton: false,
+                timer: 1000,
+                backdrop: `rgba(0,0,0,0.5)`
+            });
+        }
+
+        async function fetchRealThreats() {
+            try {
+                let baseUrl = window.location.pathname.includes('/public') ? '/MCAG_Militare-Civile-Archivio-Gestionale/public' : '';
+                if (window.BASE_URL) baseUrl = window.BASE_URL;
+
+                console.log(`[CORTEX] Fetching threats from: ${baseUrl}/api/public/security/pulse?reset_geo=1`);
+
+                const response = await fetch(`${baseUrl}/api/public/security/pulse?reset_geo=1`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const threats = await response.json();
+
+                // SONAR DIAGNOSTIC
+                const count = threats ? threats.length : 0;
+                console.log(`[CORTEX] SONAR SCAN: ${count} targets acquired.`);
+
+                // SONAR DIAGNOSTIC (Logged above)
+
+                // DYNAMIC DEFCON LOGIC
+                updateDefconStatus(threats);
+
+                // VISUAL FEEDBACK FOR USER (DEBUG)
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'bottom-start',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: false,
+                    background: 'rgba(0,0,0,0.5)',
+                    color: '#0f0'
+                });
+
+
+                // NO TOASTS - SILENT OPERATION (Log Only)
+                /*
+                if (count > 0) {
+                   Toast.fire({ icon: 'success', title: `SONAR SCAN: ${count} SIGNALS` });
+                }
+                */
+
+                if (!threats || threats.length === 0) return;
+
+                threats.forEach(threat => {
+                    const uniqueId = `${threat.ip}-${threat.timestamp}`;
+                    if (!processedThreats.has(uniqueId)) {
+                        processedThreats.add(uniqueId);
+                        spawnBlip(threat);
+                    }
+                });
+            } catch (e) {
+                console.error("[CORTEX] SYSTEM FAILURE:", e);
+                // Silent catch
+            }
+        }
+
+        function spawnBlip(threatData) {
+            if (!leafletMap) return;
+
+            // COLOR LOGIC
+            let color = '#ef4444';
+            let isInternal = threatData.origin_type === 'INTERNAL_HQ';
+            let isNemesis = (threatData.details && threatData.details.actor_alias === 'NEMESIS_APT_GROUP');
+
+            if (isInternal) {
+                color = '#00ffff';
+            } else if (isNemesis) {
+                color = '#a855f7'; // PURPLE for APT/Nemesis
+            } else {
+                if (threatData.type === 'unauthorized') color = '#f59e0b';
+                if (threatData.type === 'malware') color = '#d946ef';
+            }
+
+            // CUSTOM MARKER ICON
+            const pulseClass = isNemesis ? 'animate-pulse-fast' : 'animate-pulse';
+            const size = (isInternal || isNemesis) ? 16 : 14;
+
+            const iconHtml = `<div style='
+                background-color: ${color}; 
+                width: ${size}px; 
+                height: ${size}px; 
+                border-radius: 50%; 
+                box-shadow: 0 0 15px ${color}, 0 0 30px ${color}; 
+                border: 2px solid white;
+                cursor: pointer;
+            '></div>`;
+
+            const customIcon = L.divIcon({
+                className: 'custom-blip-icon',
+                html: iconHtml,
+                iconSize: [size, size],
+                iconAnchor: [size / 2, size / 2] // Center the blip
+            });
+
+            // CREATE MARKER
+            const lat = parseFloat(threatData.lat);
+            const lon = parseFloat(threatData.lon);
+            const marker = L.marker([lat, lon], { icon: customIcon, zIndexOffset: 900 }).addTo(leafletMap);
+
+            // BIND DATA
+            marker.threatData = threatData;
+
+            // INTERACTION
+            marker.on('click', function (e) {
+                activeTargetBlip = marker; // Track active marker
+                engageTarget(this.threatData);
+            });
+
+            // POPUP (Tooltip equivalent)
+            let title = `THREAT: ${threatData.ip}`;
+            if (isInternal) title = `[INTERNAL] ${threatData.ip}`;
+            if (isNemesis) title = `[APT DETECTED] ${threatData.ip} (NEMESIS)`;
+
+            marker.bindTooltip(title, {
+                permanent: false,
+                direction: 'top',
+                className: 'bg-black text-white border-0 font-monospace'
+            });
+
+            // PULSE ANIMATION LOGIC (Managed via CSS/JS update if needed, but CSS definition above handles basic pulse)
+            // For intense pulse logic like before, we can manipulate the icon's HTML or class if needed, 
+            // but for performance on map, CSS keyframes are best. 
+            // We use simple box-shadow in HTML for now.
+        }
+
+        function updateDefconStatus(threats) {
+            let defcon = 5; // Default Safe
+            const count = threats ? threats.length : 0;
+
+            // LOGIC: Determine DEFCON Level
+            if (count > 0) defcon = 4; // Minor Activity
+            if (count >= 3) defcon = 3; // Elevated Risk
+
+            // Check for Critical Threats (NEMESIS or Malware)
+            const hasCritical = threats.some(t =>
+                (t.details && t.details.actor_alias === 'NEMESIS_APT_GROUP') ||
+                t.type === 'malware' ||
+                (t.details && t.details.threat_score > 80)
+            );
+
+            if (hasCritical) defcon = 2; // High Risk
+            if (hasCritical && count >= 5) defcon = 1; // MAXIMUM ALERT
+
+            // UPDATE UI
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById(`defcon-btn-${i}`);
+                if (btn) {
+                    if (i === defcon) {
+                        btn.classList.add('active', 'shadow-lg', 'scale-110');
+                        btn.style.transform = 'scale(1.1)';
+                        btn.style.boxShadow = '0 0 15px currentColor';
+                    } else {
+                        btn.classList.remove('active', 'shadow-lg', 'scale-110');
+                        btn.style.transform = 'scale(1)';
+                        btn.style.boxShadow = 'none';
+                    }
+                }
+            }
+        }
+
+        function engageTarget(data) {
+            if (!satModal) return;
+
+            const lat = parseFloat(data.lat);
+            const lon = parseFloat(data.lon);
+            const elev = data.elevation ? parseFloat(data.elevation).toFixed(2) : 'N/A';
+            const isInternal = data.origin_type === 'INTERNAL_HQ';
+            const isNemesis = (data.details && data.details.actor_alias === 'NEMESIS_APT_GROUP');
+            const dHash = data.device_hash || 'UNKNOWN';
+
+            let statusColor = '#0f0'; // Green Default
+            if (isInternal) statusColor = '#00ffff';
+            if (isNemesis) statusColor = '#a855f7';
+
+            let title = 'ACQUIRING SIGNAL...';
+            if (isInternal) title = 'INTERNAL DIAGNOSTIC';
+            if (isNemesis) title = '⚠ APT FINGERPRINT MATCH ⚠';
+
+            Swal.fire({
+                title: title,
+                text: `Target: ${data.ip} // Hash: ${dHash}`,
+                timer: isNemesis ? 1500 : 600,
+                timerProgressBar: true,
+                background: '#000',
+                color: statusColor,
+                showConfirmButton: false,
+                backdrop: `rgba(0,0,0,0.85)`
+            }).then(() => {
+                let infoHtml = `TARGET: <span style="color:${statusColor}" class="fw-bold">${data.ip}</span> <br>
+                                COORDS: [${lat.toFixed(4)}, ${lon.toFixed(4)}] <br>
+                                <span class="text-warning">ALTITUDE: ${elev}m</span>`;
+
+                infoHtml += `<div class="mt-2 text-start small font-monospace border-top border-secondary pt-2 text-white-50">`;
+
+                if (isNemesis) {
+                    infoHtml += `> <strong class="text-warning">DEVICE HASH: ${dHash}</strong> <br>`;
+                }
+
+                if (data.details) {
+                    if (data.details.actor_alias) infoHtml += `> ACTOR: <span style="color:#a855f7">${data.details.actor_alias}</span> <br>`;
+                    if (data.details.status) infoHtml += `> STATUS: ${data.details.status} <br>`;
+                    if (data.details.risk_level) infoHtml += `> RISK: ${data.details.risk_level}<br>`;
+                }
+
+                infoHtml += `</div>`;
+
+                // DATA DOSSIER BUTTON
+                infoHtml += `<button onclick="showFullDossier()" class="btn btn-sm btn-outline-info w-100 mt-2 text-uppercase fw-bold" style="letter-spacing:1px; border: 1px dashed #0dcaf0;">
+                    <i class="fas fa-database me-2"></i> ACCEDI A DATABASE COMPLETO
+                </button>`;
+
+                satTargetLabel.innerHTML = infoHtml;
+                satModal.show();
+
+                // STORE ACTIVE DATA FOR DOSSIER
+                window.currentThreatDossier = data;
+
+                if (!satMap) {
+                    satMap = L.map('sat-map-container', { zoomControl: false, attributionControl: false });
+                    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: 'Tiles &copy; Esri', maxZoom: 18
+                    }).addTo(satMap);
+                }
+
+                // Force resize after modal visible (slight delay)
+                setTimeout(() => {
+                    satMap.invalidateSize();
+                    satMap.setView([lat, lon], 18);
+                }, 300);
+
+                // STRICT ISOLATION: Remove ANY existing markers to ensure ONLY active target is shown
+                satMap.eachLayer(layer => {
+                    if (layer instanceof L.Marker) {
+                        satMap.removeLayer(layer);
+                    }
+                });
+
+                // Create fresh marker every time ensures cleanliness
+                const icon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style='background-color:${statusColor}80; width: 20px; height: 20px; border-radius: 50%; box-shadow: 0 0 20px ${statusColor}; border: 2px solid white;'></div>`,
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                });
+                satMarker = L.marker([lat, lon], { icon: icon }).addTo(satMap);
+
+                satMarker.bindPopup(`<b>${isNemesis ? '⚠ APT DETECTED' : 'TARGET LOCKED'}</b><br>IP: ${data.ip}`).openPopup();
+            });
+
+        }
+
+        // --- NEW: FULL INTEL DOSSIER FUNCTION ---
+        window.showFullDossier = function () {
+            const data = window.currentThreatDossier;
+            if (!data) return;
+
+            // Build Table
+            let tableRows = '';
+            tableRows += `<tr><td class="text-secondary">TARGET IP</td><td class="font-monospace text-white">${data.ip}</td></tr>`;
+            tableRows += `<tr><td class="text-secondary">COORDINATES</td><td class="font-monospace text-warning">${data.lat}, ${data.lon}</td></tr>`;
+
+            if (data.details) {
+                tableRows += `<tr><td class="text-secondary">DEVICE HASH</td><td class="font-monospace text-info">${data.device_hash || 'N/A'}</td></tr>`;
+                tableRows += `<tr><td class="text-secondary">OS FINGERPRINT</td><td class="font-monospace">${data.details.os_fingerprint || 'Unknown'}</td></tr>`;
+                tableRows += `<tr><td class="text-secondary">OPEN PORTS</td><td class="font-monospace text-danger">${(data.details.open_ports || []).join(', ')}</td></tr>`;
+                tableRows += `<tr><td class="text-secondary">UPLINK</td><td class="font-monospace">${data.details.uplink_speed || 'Unknown'}</td></tr>`;
+                tableRows += `<tr><td class="text-secondary">THREAT SCORE</td><td class="font-monospace fw-bold text-danger">${data.details.threat_score || 0}/100</td></tr>`;
+
+                if (data.details.actor_alias) {
+                    tableRows += `<tr><td class="text-secondary">ACTOR ALIAS</td><td class="font-monospace text-primary fw-bold">${data.details.actor_alias}</td></tr>`;
+                }
+            }
+
+            Swal.fire({
+                title: 'CLASSIFIED INTEL DOSSIER',
+                html: `
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm table-borderless text-start align-middle">
+                            <tbody style="border-top: 1px solid #444;">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-muted small fst-italic mt-2">Data retrieved from CORTEX Intelligence Grid.</div>
+                `,
+                width: '600px',
+                background: '#0f172a',
+                color: '#fff',
+                confirmButtonText: 'CLOSE DOSSIER',
+                confirmButtonColor: '#3b82f6',
+                backdrop: `rgba(0,0,0,0.9)`,
+                didOpen: () => {
+                    // FORCE Z-INDEX OVERRIDE
+                    const container = Swal.getContainer();
+                    if (container) container.style.zIndex = '20000';
+                }
+            });
+        };
+
+        setInterval(fetchRealThreats, 2000);
+        fetchRealThreats();
+    }
+    initThreatMap();
+
     // --- 3. LIVE DATALINK (Real-time Updates) ---
     function syncDashboard() {
         const endpoint = window.location.href.split('?')[0] + '/api/stats-pulse'; // Hypothethical Endpoint or use current URL + param
@@ -371,6 +817,6 @@ window.addEventListener('load', function () {
                 }
             });
         });
-    });
 
+    });
 });

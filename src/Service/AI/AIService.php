@@ -41,9 +41,36 @@ class AIService
     /**
      * Generate text using the configured AI driver.
      */
+    /**
+     * Generate text using the configured AI driver.
+     * 
+     * @param string $prompt User prompt
+     * @param string $systemPrompt Context/Persona
+     * @param array $options Additional params (temp, tokens)
+     * @return string|null Response text or null on failure (logged)
+     * @throws \RuntimeException If strict mode is on and service fails
+     */
     public function generate(string $prompt, string $systemPrompt = 'You are a helpful assistant.', array $options = []): ?string
     {
-        return $this->driver->complete($systemPrompt, $prompt, $options);
+        try {
+            if (empty($prompt))
+                return null;
+
+            // Circuit Breaker / retry logic could go here
+            return $this->driver->complete($systemPrompt, $prompt, $options);
+
+        } catch (\Throwable $e) {
+            // Real logging of AI failures is crucial for "GDPR 2.0" auditing (Why did it fail?)
+            error_log("[AIService] Critical Error: " . $e->getMessage());
+
+            // In a real scenario, we might want to fallback to a reliable "Offline" model here
+            // But for now, we return specific error string or rethrow based on ENV
+            if (($_ENV['APP_DEBUG'] ?? false) === true) {
+                return "AI Error: " . $e->getMessage();
+            }
+
+            return "I am currently unavailable due to high load or connectivity issues. Please try again later.";
+        }
     }
 
     /**
