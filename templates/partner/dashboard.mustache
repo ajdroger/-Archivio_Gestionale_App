@@ -56,20 +56,16 @@
                 <div class="position-absolute top-0 start-0 w-100 h-100 opacity-25" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 15px 15px;"></div>
             </div>
         </div>
+
         <div class="col-md-3">
             <!-- Chart Container -->
-            <div class="card bg-dark border-0 shadow-lg h-100 p-3">
-                <small class="text-secondary text-uppercase fw-bold x-small mb-2 d-block">Growth Trend</small>
-                <div style="height: 60px;">
-                     <!-- Simple CSS Bar Chart Fallback -->
-                    <div class="d-flex align-items-end h-100 gap-1 opacity-75">
-                        <div class="w-100 rounded-top" style="height: 30%; background-color: #6366f1"></div>
-                        <div class="w-100 rounded-top" style="height: 50%; background-color: #6366f1"></div>
-                        <div class="w-100 rounded-top" style="height: 45%; background-color: #6366f1"></div>
-                        <div class="w-100 rounded-top" style="height: 70%; background-color: #6366f1"></div>
-                        <div class="w-100 rounded-top" style="height: 60%; background-color: #6366f1"></div>
-                        <div class="w-100 rounded-top" style="height: 85%; background-color: #818cf8"></div>
-                    </div>
+            <div class="card bg-dark border-0 shadow-lg h-100 p-3" style="background: rgba(20, 20, 20, 0.95);">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-secondary text-uppercase fw-bold x-small">Growth Trend</small>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 x-small">+18.5%</span>
+                </div>
+                <div style="height: 100px; position: relative;">
+                     <canvas id="growthChart"></canvas>
                 </div>
             </div>
         </div>
@@ -271,8 +267,8 @@
                         <input type="hidden" name="action" value="reset_auth">
                         <input type="hidden" name="client_id" id="formResetId">
                         <button type="submit" class="btn btn-outline-info w-100 py-2 d-flex justify-content-between align-items-center">
-                             <span><i class="fa-solid fa-key me-2"></i>Reset Credenziali Admin</span>
-                             <i class="fa-solid fa-chevron-right"></i>
+                            <span><i class="fa-solid fa-key me-2"></i>Reset Credenziali Admin</span>
+                            <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </form>
 
@@ -293,7 +289,108 @@
     </div>
 </div>
 
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
+    // Data passed from Controller
+    const trendCurrent = {{{stats.trend_current}}}; // Unescaped JSON
+    const trendPrevious = {{{stats.trend_previous}}}; // Unescaped JSON
+    const trendLabels = {{{stats.trend_labels}}}; // Unescaped JSON
+    
+    const ctx = document.getElementById('growthChart').getContext('2d');
+
+    // Gradient Fill for Current Year
+    const gradientCurrent = ctx.createLinearGradient(0, 0, 0, 200);
+    gradientCurrent.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); // Indigo
+    gradientCurrent.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: trendLabels,
+            datasets: [
+                {
+                    label: '2026 (Actual)',
+                    data: trendCurrent,
+                    borderColor: '#6366f1', // Indigo 500
+                    backgroundColor: gradientCurrent,
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                    pointBackgroundColor: '#818cf8',
+                    pointBorderColor: '#fff',
+                    pointRadius: 3, // Visible points
+                    pointHoverRadius: 6
+                },
+                {
+                    label: '2025 (Benchmark)',
+                    data: trendPrevious,
+                    borderColor: '#4b5563', // Gray 600
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    display: true,
+                    labels: { color: '#9ca3af', boxWidth: 10, font: { size: 10 } }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                    titleColor: '#fff',
+                    bodyColor: '#e5e7eb',
+                    borderColor: 'rgba(75, 85, 99, 0.4)',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { 
+                    display: true, 
+                    grid: { display: false, drawBorder: false },
+                    ticks: { color: '#6b7280', font: { size: 9 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 6 }
+                },
+                y: { 
+                    display: true, 
+                    grid: { color: 'rgba(55, 65, 81, 0.3)', borderDash: [2, 4], drawBorder: false },
+                    ticks: { 
+                        color: '#6b7280', 
+                        font: { size: 9 }, 
+                        callback: function(value) { return '€' + (value/1000) + 'k'; }
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+
     // Search Functionality
     document.getElementById('searchInput').addEventListener('keyup', function() {
         const query = this.value.toLowerCase();
@@ -339,7 +436,6 @@
             }
         });
     }
-</script>
 </script>
 <!-- SweetAlert2 -->
 <script src="{{base_url}}/js/lib/sweetalert2.all.min.js"></script>

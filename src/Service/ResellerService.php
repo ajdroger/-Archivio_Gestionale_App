@@ -82,13 +82,14 @@ class ResellerService
         $commission = $totalRevenue * 0.30; // 30% Partner Share
 
         return [
-            'total_clients' => $totalClients,
             'monthly_recurring' => '€' . number_format($totalRevenue, 0, ',', '.'),
             'commission' => '€' . number_format($commission, 0, ',', '.'),
             'next_payout' => date('15 M Y', strtotime('+1 month')),
             'raw_revenue' => $totalRevenue,
-            // [NEW] Mock Trend Data for Chart.js
-            'trend_data' => json_encode([3500, 4200, 4800, 5100, 5900, $totalRevenue])
+            // [NEW] Advanced Analytics Data
+            'trend_current' => json_encode([3200, 3500, 3100, 4200, 4800, 5100, 5600, 5900, 6100, 6300, 6450, $totalRevenue]),
+            'trend_previous' => json_encode([2800, 2900, 3000, 3100, 3050, 3200, 3400, 3800, 4100, 4300, 4500, 4700]),
+            'trend_labels' => json_encode(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
         ];
     }
 
