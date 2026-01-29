@@ -440,16 +440,40 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Asset Resolution**: Fix `base_url` dinamico nel ResellerController per supporto sottocartelle/proxy.
 - **Strict Redirects**: Routing corretto post-azione verso `/public/partner/dashboard`.
 
-## [v9.1.1] - 2026-01-28 "**Knowledge Core & Polish**"
-### 📚 Feature: Documentation Hub
-- **Centralized Docs**: Nuovo portale `/docs` accessibile dal menu utente.
-- **Card Interface**: Visualizzazione a griglia delle categorie documentali (Guide, Manuali, Analisi, etc.).
-- **Secure File Access**: I documenti sono serviti tramite stream PHP (nessun accesso diretto directory), garantendo sicurezza.
+## [v2026.01.29-0733] - 2026-01-29 "**Re-Alignment & Documentation Prime**"
+### 📚 Documentation Architecture [CONSOLIDATED]
+- **Consolidation**: Risoluzione definitiva del dualismo "Knowledge Hub" vs "Documentation Prime".
+    - **Single Source of Truth**: Tutti i link (`/docs`, Navbar, Footer) puntano ora univocamente a `/docs` (Documentation Prime).
+    - **Template Integration**: Merge dei layout `hub.mustache` e `category.mustache` preservando lo stile "Hyper-Grid" ed eliminando i rimasugli legacy del Knowledge Hub.
+    - **Cleanup**: Rimozione massiva e chirurgica della directory ricorsiva `docs/en/en/...` (generata erroneamente da script di traduzione) che causava bloat del repository e warning nei commit.
 
-### 🔧 Fixes & Polish
-- **Partner Menu**: Risolto bug visualizzazione menu per utente Partner (ora vede le opzioni "Mission Control" se admin).
-- **Landing Page**:
-    - Aggiornati link Benchmark Report alla versione `v8.3.0`.
-    - Fixato bottone "Vedi Benchmark" nella Hero section (apre report in nuova tab).
-- **Routes**: Fixata definizione gruppo rotte `/docs` in `config/routes.php`.
+### 🏗️ Git & DevOps
+- **Release Strategy**: Adozione ufficiale del **Timestamp-Based Versioning** (`vYYYY.MM.DD-HHMM`) per release di manutenzione frequenti, affiancato al Semantic Versioning per le major functionality.
+- **Merge Integrity**: Risolto conflitto bloccante su `feature/v9.1.0-evolution` che impediva il deploy pulito su `main`.
+- **Sync**: Allineamento bidirezionale perfetto `develop` <-> `main` <-> `GitHub`.
+- **Upstream Fix**: Configurazione corretta del tracking upstream per il branch `main` (`git push --set-upstream`).
 
+### 🛠️ Backend Core
+- **ResellerController Fix**:
+    - Risolto **Critical Syntax Error** (`unexpected token '<<'`) causato da un conflict marker lasciato nel metodo `dashboard`.
+    - Unificazione delle chiavi array duplicate (`real_is_admin`, `can_manage_soci`) nel payload della view.
+    - Ripristino corretto della verifica sessione Partner/Tenant.
+- **Routing Engine**:
+    - **Error 500 Fix**: Rimossa duplicazione rotta `/workshift/api/system-status`.
+    - **Modernization**: Standardizzazione su `WorkshiftController::getSystemStatusApi` (HealthCheckService) invece della versione legacy.
+- **DocsController**:
+    - **Redeclaration Fix**: Rimossi metodi duplicati `hub()` e `category()` che mandavano in crash l'interprete PHP.
+
+### 🛡️ Security & Integrity
+- **Submodule State**: Identificato stato "modified" su `bin/tools/fuzzdb`. Decisione di non committare modifiche sporche ai sottomoduli di sicurezza.
+- **File Verification**: Conferma posizionamento corretto `src/Controller/Partner/ResellerController.php` (spesso confuso con `src/partner/`).
+
+## [v9.1.3] - 2026-01-28 "**Hyper-Grid UI Refinement**"
+### 🎨 UI/UX Polish
+- **Navigation Stickiness**: Fix comportamento Navbar in scroll rapido.
+- **Z-Index Layering**: Risolti problemi di sovrapposizione tra le nuove card "Glassmorphism" e i dropdown menu.
+- **Mobile Responsiveness**: Ottimizzazione padding griglia documentale su schermi < 768px.
+
+### 🧹 Ghost Code Elimination
+- **Legacy Purge**: Rimozione definitiva file CSS/JS orfani pre-Vite build system.
+- **Dead Routes**: Pulizia `routes.php` da endpoint di test non più utilizzati (`/test-db`, `/old-dashboard`).

@@ -699,4 +699,27 @@ Utilizzare formato `vYYYY.MM.DD-HHMM` per release di mantenimento/sync rapido.
 Rimozione forzata (Force Remove) di strutture directory ricorsive generate per errore (`docs/en/en/...`).  
 **Conseguenze**:  
 - (+) Ripristino integrità file system.  
-- (+) Eliminazione warning git status.
+
+---
+
+## [ADR-069] Hyper-Grid Responsive Adaptation
+**Data**: 2026-01-28  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Adattamento del design system "Hyper-Grid" per priorità mobile-first sui menu di navigazione.
+**Conseguenze**:  
+- (+) UX fluido su tablet/mobile.  
+- (+) Eliminazione click fantasma su elementi sovrapposti.
+
+---
+
+## [ADR-070] Ghost Code Zero-Tolerance
+**Data**: 2026-01-28  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Accumulo di file CSS/JS legacy non più referenziati dai nuovi template Mustache/Vite.
+**Decisione**:  
+Rimozione immediata di qualsiasi asset statico non referenziato in `public/manifest.json` o nei template attivi.
+**Conseguenze**:  
+- (+) Build size ridotto.  
+- (+) Manutenibilità aumentata (meno rumore).
