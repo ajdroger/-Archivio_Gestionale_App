@@ -666,5 +666,37 @@ La Dashboard interroga via AJAX l'endpoint API /workshift/api/system-status ogni
 - (+) Feedback quasi in tempo reale senza WebSocket (complessità ridotta).
 - (+) Disaccoppiamento totale tra UI e logica di check.
 - (+) Supporto per grafici storici (Chart.js) basati su dati effimeri di sessione.
->>>>>>> feature/backup-full-restoration
 
+---
+
+## [ADR-066] Documentation Prime Strategy
+**Data**: 2026-01-29  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Presenza duplicata di "Knowledge Hub" e "Documentation Prime".  
+**Decisione**:  
+Consolidare tutto sotto il brand **Documentation Prime**.  
+**Conseguenze**:  
+- (+) UX unificata.  
+- (+) Eliminazione ambiguità navigazione.  
+
+---
+
+## [ADR-067] Timestamp-Based Release Tagging
+**Data**: 2026-01-29  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Utilizzare formato `vYYYY.MM.DD-HHMM` per release di mantenimento/sync rapido.  
+**Conseguenze**:  
+- (+) Tracciabilità temporale immediata.  
+- (+) Nessun blocco su SemVer per fix minori.  
+
+---
+
+## [ADR-068] GIT Recursion Cleanup Protocol
+**Data**: 2026-01-29  
+**Decisione**:  
+Rimozione forzata (Force Remove) di strutture directory ricorsive generate per errore (`docs/en/en/...`).  
+**Conseguenze**:  
+- (+) Ripristino integrità file system.  
+- (+) Eliminazione warning git status.
