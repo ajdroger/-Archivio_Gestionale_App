@@ -204,6 +204,7 @@ return function (App $app) {
     $app->group('/expensebar', function (\Slim\Routing\RouteCollectorProxy $group) {
         $group->get('', \MCAG\Controller\External\ExpensebarController::class . ':index')->setName('expensebar_home');
         $group->get('/analytics', \MCAG\Controller\External\ExpensebarController::class . ':analytics')->setName('expensebar_analytics');
+        $group->get('/budget', \MCAG\Controller\External\ExpensebarController::class . ':budget')->setName('expensebar_budget'); // [NEW] Budget Page
         $group->get('/help', \MCAG\Controller\External\ExpensebarController::class . ':help')->setName('expensebar_help'); // [NEW] Help Center
 
         // API
@@ -213,7 +214,10 @@ return function (App $app) {
         $group->post('/api/expenses/{id}/update', \MCAG\Controller\External\ExpensebarController::class . ':updateExpense');
         $group->get('/api/forecast', \MCAG\Controller\External\ExpensebarController::class . ':getForecast');
         $group->get('/api/stats/category', \MCAG\Controller\External\ExpensebarController::class . ':getCategoryStats'); // [NEW] Stats
+
         $group->get('/api/stats/trend', \MCAG\Controller\External\ExpensebarController::class . ':getTrend'); // [NEW] Stats
+        $group->get('/api/budget/status', \MCAG\Controller\External\ExpensebarController::class . ':getBudgetStatusAPI'); // [NEW v2] Genius Budget
+        $group->post('/api/budget/save', \MCAG\Controller\External\ExpensebarController::class . ':saveBudgetAPI'); // [NEW v2] Genius Budget
     });
 
     // Admin & DevTools ('/docs' removed here as it is defined above)

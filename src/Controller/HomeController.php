@@ -134,7 +134,7 @@ class HomeController
             'active_tenants' => (function () {
                 // Quick Service Instantiation (Ideally DI, but acceptable for this architecture)
                 $svc = new \MCAG\Service\ResellerService(__DIR__ . '/../../');
-                return $svc->getAnalytics()['total_clients'];
+                return $svc->getAnalytics()['total_clients'] ?? 0;
             })(),
             'global_mrr' => (function () {
                 $svc = new \MCAG\Service\ResellerService(__DIR__ . '/../../');

@@ -57,6 +57,13 @@ class ExpensebarController
         return $response;
     }
 
+    public function budget(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $html = $this->mustache->render('expensebar/budget.mustache', $this->getCommonData('Expensebar Budget'));
+        $response->getBody()->write($html);
+        return $response;
+    }
+
     // API Methods
 
     public function getExpenses(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
@@ -167,6 +174,61 @@ class ExpensebarController
         $this->repository->save($updateData);
 
         $response->getBody()->write(json_encode(['status' => 'success', 'expense' => $updateData]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function getBudgetStatusAPI(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $queryParams = $request->getQueryParams();
+        $month = (int) ($queryParams['month'] ?? date('m'));
+        $year = (int) ($queryParams['year'] ?? date('Y'));
+
+        $status = $this->repository->getBudgetStatus($month, $year);
+
+        // Add Aggregate Totals
+        $totalLimit = array_sum(array_column($status, 'limit'));
+        $totalSpent = array_sum(array_column($status, 'spent'));
+        $totalRemaining = max(0, $totalLimit - $totalSpent);
+        $totalHealth = 'good';
+        if ($totalLimit > 0) {
+            $p = ($totalSpent / $totalLimit) * 100;
+            if ($p >= 100)
+                $totalHealth = 'critical';
+            elseif ($p >= 80)
+                $totalHealth = 'warning';
+        }
+
+        $payload = [
+            'month' => $month,
+            'year' => $year,
+            'categories' => $status,
+            'aggregate' => [
+                'limit' => $totalLimit,
+                'spent' => $totalSpent,
+                'remaining' => $totalRemaining,
+                'health' => $totalHealth,
+                'percentage' => $totalLimit > 0 ? min(100, round(($totalSpent / $totalLimit) * 100, 1)) : 0
+            ]
+        ];
+
+        $response->getBody()->write(json_encode($payload));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function saveBudgetAPI(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+        $month = (int) ($data['month'] ?? date('m'));
+        $year = (int) ($data['year'] ?? date('Y'));
+
+        if (!isset($data['category']) || !isset($data['limit'])) {
+            $response->getBody()->write(json_encode(['status' => 'error', 'message' => 'Missing data']));
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
+        }
+
+        $this->repository->saveBudget($data['category'], (float) $data['limit'], $month, $year);
+
+        $response->getBody()->write(json_encode(['status' => 'success']));
         return $response->withHeader('Content-Type', 'application/json');
     }
 }

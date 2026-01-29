@@ -84,6 +84,7 @@ class ResellerService
         return [
             'monthly_recurring' => '€' . number_format($totalRevenue, 0, ',', '.'),
             'commission' => '€' . number_format($commission, 0, ',', '.'),
+            'total_clients' => $totalClients,
             'next_payout' => date('15 M Y', strtotime('+1 month')),
             'raw_revenue' => $totalRevenue,
             // [NEW] Advanced Analytics Data
