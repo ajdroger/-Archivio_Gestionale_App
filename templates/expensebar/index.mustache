@@ -5,9 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
     <!-- Core Styles (Mirroring Workshift) -->
-    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css">
+    <!-- Core Styles (Mirroring Workshift) -->
+    <!-- Core Styles (Mirroring Workshift) -->
+    <!-- Reverting to CDN as per User Request -->
+    <link rel="stylesheet" href="{{base_url}}/css/tailwind-external.css"> 
     <link rel="stylesheet" href="{{base_url}}/assets/expensebar/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'mcag-slate': '#0f172a',
+                        'mcag-blue': '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Scripts -->
     <script src="https://unpkg.com/feather-icons"></script>

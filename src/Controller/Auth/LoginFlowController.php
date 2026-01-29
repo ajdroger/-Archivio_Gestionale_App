@@ -100,6 +100,8 @@ class LoginFlowController
         }
 
         // Errore credenziali
+        \MCAG\SecurityLayer\AuditTrail::getInstance()->logEvento(null, 'LOGIN_FAILED', "Login mancato per: $username");
+
         $viewData = $this->getGlobalViewData($request);
         $viewData['error'] = "Credenziali non valide.";
 

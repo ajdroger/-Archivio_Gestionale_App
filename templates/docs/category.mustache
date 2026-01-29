@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <title>{{category_name}} - Docs | MCAG</title>
+    <link href="{{base_url}}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{base_url}}/css/all.min.css" rel="stylesheet">
+    <link href="{{base_url}}/css/premium.css" rel="stylesheet">
+    <link href="{{base_url}}/css/components/scroll_navigator.css?v=20260115_REV5" rel="stylesheet">
+</head>
+<body class="d-flex flex-column h-100 bg-black text-white">
+
+    <nav class="navbar navbar-dark bg-dark border-bottom border-secondary mb-4">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand mb-0 h1"><i class="fa-solid fa-folder-open me-2 text-warning"></i>{{category_name}}</span>
+            <a href="{{hub_url}}" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-arrow-left me-2"></i>Torna all'Hub</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card bg-dark border-secondary shadow-sm">
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {{#files}}
+                    <a href="{{url}}" class="list-group-item list-group-item-action bg-dark text-white border-secondary d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <i class="fa-regular fa-file-lines me-3 text-info"></i>
+                            <span class="fw-bold">{{name}}</span>
+                        </div>
+                        <span class="badge bg-secondary bg-opacity-25 text-secondary font-monospace">{{size}}</span>
+                    </a>
+                    {{/files}}
+                    {{^files}}
+                    <div class="p-5 text-center text-muted">
+                        <i class="fa-regular fa-folder-open fa-3x mb-3 opacity-50"></i>
+                        <p>Nessun documento trovato in questa sezione.</p>
+                    </div>
+                    {{/files}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Navigator -->
+    <script src="{{base_url}}/js/components/scroll_navigator.js"></script>
+</body>
+</html>

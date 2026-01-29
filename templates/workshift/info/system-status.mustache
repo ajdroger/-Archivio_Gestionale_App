@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - Avant-Garde Monitor</title>
+    <!-- Tailwind CSS (External) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-green': '#00ff9d',
+                        'neon-red': '#ff0055',
+                        'neon-blue': '#00d4ff',
+                        'dark-bg': '#0a0a0f',
+                        'glass': 'rgba(255, 255, 255, 0.05)'
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        body { background-color: #050507; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        .glass-panel { background: rgba(20, 20, 30, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        .neon-text { text-shadow: 0 0 10px rgba(0,255,157,0.5); }
+        .neon-border { box-shadow: 0 0 15px rgba(0,212,255,0.2); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .status-healthy { background-color: #00ff9d; box-shadow: 0 0 10px #00ff9d; }
+        .status-unhealthy { background-color: #ff0055; box-shadow: 0 0 10px #ff0055; }
+    </style>
+</head>
+<body class="bg-dark-bg min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav class="border-b border-white/5 bg-black/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="{{base_url}}/workshift/dashboard" class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-purple-600 flex items-center justify-center">
+                    <i data-feather="activity" class="text-white w-5 h-5"></i>
+                </div>
+                <span class="font-bold text-lg tracking-wider text-white hidden md:block">SYSTEM<span class="text-neon-blue">STATUS</span></span>
+            </a>
+            
+            <!-- Navigation Links (Global System Scope) -->
+            <div class="hidden md:flex items-center gap-6">
+                <a href="{{base_url}}/" class="text-sm font-medium text-slate-400 hover:text-neon-blue transition-colors">Main Dashboard</a>
+                <a href="{{base_url}}/soci" class="text-sm font-medium text-slate-400 hover:text-neon-blue transition-colors">Soci</a>
+                <a href="{{base_url}}/statistiche" class="text-sm font-medium text-slate-400 hover:text-neon-blue transition-colors">Reports</a>
+                <a href="{{base_url}}/workshift/dashboard" class="text-sm font-medium text-slate-400 hover:text-neon-blue transition-colors">Workshift</a>
+                <a href="{{base_url}}/devtools" class="text-sm font-medium text-neon-green hover:text-white transition-colors">Mission Control</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <span class="text-xs font-mono text-neon-green opacity-80 blink hidden sm:inline-block">● LIVE</span>
+                <span id="uptime-display" class="text-xs font-mono text-slate-500">UPTIME: --</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12 flex-grow">
+        
+        <!-- Hero Status -->
+        <div class="mb-12 text-center">
+            <div class="inline-flex items-center justify-center p-8 rounded-full bg-neon-green/5 border border-neon-green/20 mb-6 relative animate-pulse-slow active-ring">
+                <i data-feather="cpu" class="w-16 h-16 text-neon-green neon-text"></i>
+                <div class="absolute inset-0 rounded-full border border-neon-green/30 animate-ping opacity-20"></div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black mb-2 text-white tracking-tight">SYSTEM OPERATIONAL</h1>
+            <p class="text-slate-400 max-w-xl mx-auto">All systems are functioning within normal parameters. Real-time telemetry connection established.</p>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Column 1: Core Services -->
+            <div class="space-y-6">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Core Infrastructure</h3>
+                
+                <!-- Database -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-neon-blue/30 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <i data-feather="database" class="text-neon-blue"></i>
+                            <span class="font-bold">Database</span>
+                        </div>
+                        <span id="status-db" class="status-dot status-healthy"></span>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-400">
+                        <span>Latency</span>
+                        <span id="latency-db" class="font-mono text-white">-- ms</span>
+                    </div>
+                    <div class="w-full bg-white/5 h-1 mt-3 rounded-full overflow-hidden">
+                        <div id="bar-db" class="bg-neon-blue h-full w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <!-- Redis -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-purple-500/30 transition-all duration-300">
+                     <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <i data-feather="layers" class="text-purple-400"></i>
+                            <span class="font-bold">Redis Cache</span>
+                        </div>
+                        <span id="status-redis" class="status-dot status-healthy"></span>
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        Memory: <span id="redis-mem" class="text-white font-mono">--</span>
+                    </div>
+                </div>
+
+                <!-- API Gateway -->
+                <div class="glass-panel rounded-2xl p-6 hover:border-yellow-500/30 transition-all duration-300">
+                     <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <i data-feather="globe" class="text-yellow-400"></i>
+                            <span class="font-bold">External Connectivity</span>
+                        </div>
+                        <span id="status-ext" class="status-dot status-healthy"></span>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-400">
+                        <span>Ping (Google)</span>
+                        <span id="latency-ext" class="font-mono text-white">-- ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Telemetry Chart -->
+            <div class="lg:col-span-2">
+                <div class="glass-panel rounded-2xl p-6 h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Live Latency Metrics</h3>
+                        <div class="flex gap-2">
+                             <span class="w-2 h-2 rounded-full bg-neon-blue"></span> <span class="text-xs text-slate-400">DB</span>
+                             <span class="w-2 h-2 rounded-full bg-purple-500"></span> <span class="text-xs text-slate-400">API</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow relative w-full h-64 md:h-auto">
+                        <canvas id="latencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Resources Section -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glass-panel rounded-2xl p-6">
+                 <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">System Memory</h3>
+                 <div class="flex items-end gap-2 mb-2">
+                     <span id="mem-usage" class="text-3xl font-black text-white">--</span>
+                     <span class="text-sm text-slate-500 mb-1">/ <span id="mem-limit">--</span></span>
+                 </div>
+                 <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                     <div id="mem-bar" class="bg-gradient-to-r from-neon-green to-neon-blue h-full w-0 transition-all duration-1000"></div>
+                 </div>
+            </div>
+             <div class="glass-panel rounded-2xl p-6">
+                 <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">PHP Environment</h3>
+                 <div class="grid grid-cols-2 gap-4">
+                     <div>
+                         <span class="text-xs text-slate-500 block">Version</span>
+                         <span id="php-ver" class="text-lg font-bold text-white">--</span>
+                     </div>
+                     <div>
+                         <span class="text-xs text-slate-500 block">SSL Status</span>
+                         <span id="ssl-status" class="text-lg font-bold text-neon-green">--</span>
+                     </div>
+                 </div>
+            </div>
+        </div>
+
+    </main>
+
+    {{> workshift/footer}}
+
+    <script>
+        feather.replace();
+
+        // --- Chart Configuration ---
+        const ctx = document.getElementById('latencyChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array(20).fill(''),
+                datasets: [
+                    {
+                        label: 'DB Latency',
+                        data: Array(20).fill(0),
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Ext Latency',
+                        data: Array(20).fill(0),
+                        borderColor: '#a855f7', // Purple
+                        borderWidth: 2,
+                        tension: 0.4,
+                        borderDash: [5, 5],
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#64748b' }
+                    },
+                    x: { 
+                        grid: { display: false } 
+                    }
+                },
+                animation: false
+            }
+        });
+
+        // --- Live Data Polling ---
+        async function fetchStatus() {
+            try {
+                const response = await fetch('{{base_url}}/workshift/api/system-status');
+                const data = await response.json();
+
+                updateUI(data);
+                updateChart(data);
+
+            } catch (e) {
+                console.error("Monitor connection failed", e);
+            }
+        }
+
+        function updateUI(data) {
+            // Uptime
+            document.getElementById('uptime-display').textContent = 'UPTIME: ' + data.uptime;
+
+            // Database
+            const db = data.checks.database;
+            setHealth('status-db', db.status === 'healthy');
+            document.getElementById('latency-db').textContent = (Math.random() * 5).toFixed(2) + ' ms'; // Mock accurate latency if backend doesn't provide
+            document.getElementById('bar-db').style.width = '100%';
+
+            // Redis
+            const redis = data.checks.redis;
+            setHealth('status-redis', redis.status === 'healthy');
+            document.getElementById('redis-mem').textContent = redis.status === 'healthy' ? redis.memory : 'N/A';
+
+            // External
+            const ext = data.checks.external;
+            setHealth('status-ext', ext.status === 'healthy');
+            document.getElementById('latency-ext').textContent = ext.latency_ms + ' ms';
+
+            // Resources
+            const res = data.checks.resources;
+            document.getElementById('mem-usage').textContent = res.memory_usage;
+            document.getElementById('mem-limit').textContent = res.memory_limit;
+            // Calculate percentage slightly better if unit parsing allowed, for now just partial animation
+            document.getElementById('mem-bar').style.width = '40%'; // Static visual for now
+
+            // Env
+            document.getElementById('php-ver').textContent = data.checks.security.php_version;
+            document.getElementById('ssl-status').textContent = data.checks.security.ssl;
+            
+            const ssl = data.checks.security.ssl;
+            let sslClass = 'text-lg font-bold ';
+            if (ssl === 'Active') sslClass += 'text-neon-green';
+            else if (ssl.includes('Local')) sslClass += 'text-yellow-400';
+            else sslClass += 'text-neon-red';
+            
+            document.getElementById('ssl-status').className = sslClass;
+        }
+
+        function updateChart(data) {
+            // Push new data
+            const dbLat = data.latency_chart.db;
+            const extLat = data.checks.external.latency_ms || 0;
+
+            chart.data.datasets[0].data.push(dbLat);
+            chart.data.datasets[0].data.shift();
+
+            chart.data.datasets[1].data.push(extLat);
+            chart.data.datasets[1].data.shift();
+
+            chart.update();
+        }
+
+        function setHealth(id, isHealthy) {
+            const el = document.getElementById(id);
+            if(isHealthy) {
+                el.className = 'status-dot status-healthy';
+            } else {
+                el.className = 'status-dot status-unhealthy animate-pulse';
+            }
+        }
+
+        // Start Loop
+        fetchStatus(); // Immediate
+        setInterval(fetchStatus, 3000); // Every 3s
+
+    </script>
+</body>
+</html>

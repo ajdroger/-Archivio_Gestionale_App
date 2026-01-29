@@ -1,0 +1,26 @@
+[
+    {
+        "id": "u1",
+        "name": "Associazione Alpini Milano",
+        "plan": "Pro",
+        "status": "Active",
+        "revenue": 350,
+        "joined_at": "2025-10-15"
+    },
+    {
+        "id": "u2",
+        "name": "Comune di Vattelapesca",
+        "plan": "Enterprise",
+        "status": "Active",
+        "revenue": 1200,
+        "joined_at": "2025-11-20"
+    },
+    {
+        "id": "u3",
+        "name": "Clinica San Giorgio",
+        "plan": "Health",
+        "status": "Pending",
+        "revenue": 0,
+        "joined_at": "2026-01-10"
+    }
+]
