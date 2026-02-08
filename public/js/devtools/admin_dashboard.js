@@ -17,6 +17,46 @@ window.addEventListener('load', function () {
     let stats = dataEl ? JSON.parse(dataEl.textContent) : { attivi: 0, morosi: 0, trend_iscritti: [] };
     const POLL_INTERVAL_MS = 15000; // 15s Pulse
 
+    // --- 1.1 DYNAMIC CLOCK & WEATHER ---
+    function updateDashboardClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const dateString = now.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        const clockEl = document.getElementById('clock-live');
+        const dateEl = document.getElementById('dashboard-date');
+
+        if (clockEl) clockEl.innerText = timeString;
+        if (dateEl) dateEl.innerText = dateString;
+    }
+    setInterval(updateDashboardClock, 1000);
+    updateDashboardClock();
+
+    // Mock Weather Update (Realism)
+    function fetchRealWeather() {
+        // Open-Meteo API (Free, No Key, Non-Commercial use allowed)
+        // Coordinates for Milan
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=45.4642&longitude=9.1900&current_weather=true';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const weatherEl = document.getElementById('dashboard-weather');
+                if (weatherEl && data.current_weather) {
+                    const temp = Math.round(data.current_weather.temperature);
+                    weatherEl.innerText = `MILANO: ${temp}°C`;
+                }
+            })
+            .catch(err => {
+                console.warn('Weather API Error:', err);
+                const weatherEl = document.getElementById('dashboard-weather');
+                if (weatherEl) weatherEl.innerText = `MILANO: --°C`;
+            });
+    }
+    // Update weather every 15 minutes (Respect API courtesy)
+    setInterval(fetchRealWeather, 900000);
+    fetchRealWeather();
+
     if (typeof Chart !== 'undefined') {
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
@@ -504,8 +544,66 @@ window.addEventListener('load', function () {
                 satMarker = L.marker([lat, lon], { icon: icon }).addTo(satMap);
 
                 satMarker.bindPopup(`<b>${isNemesis ? '⚠ APT DETECTED' : 'TARGET LOCKED'}</b><br>IP: ${data.ip}`).openPopup();
+
+                // RESET TERMINAL
+                document.getElementById('warfare-terminal-panel').style.display = 'none';
+                document.getElementById('warfare-terminal-output').innerHTML = '';
             });
 
+        }
+
+        // --- WARFARE CONSOLE LOGIC ---
+        window.warfareEngage = function (action) {
+            const data = window.currentThreatDossier;
+            if (!data) return;
+
+            const termPanel = document.getElementById('warfare-terminal-panel');
+            const termOut = document.getElementById('warfare-terminal-output');
+
+            termPanel.style.display = 'block';
+            logWarfare(`> INITIALIZING ${action} PROTOCOL...`, 'info');
+
+            // Visual feedback
+            if (action === 'NUKE') logWarfare(`> AUTHORIZING NEURAL FRY... [#####]`, 'warning');
+
+            fetch('/api/security/engage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, ip: data.ip })
+            })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'ERROR') {
+                        logWarfare(`> ERROR: ${res.msg}`, 'danger');
+                    } else {
+                        if (action === 'TRACE' && res.hops) {
+                            res.hops.forEach((hop, i) => {
+                                setTimeout(() => {
+                                    logWarfare(`> HOP ${i + 1}: ${hop.ip} [${hop.loc}]`, 'primary');
+                                }, i * 500);
+                            });
+                            setTimeout(() => logWarfare(`> TRACE COMPLETE.`, 'success'), res.hops.length * 500);
+                        } else {
+                            logWarfare(`> ${res.msg}`, 'success');
+                        }
+
+                        if (action === 'BAN' || action === 'NUKE') {
+                            // Play sound or visual effect
+                            logWarfare(`> TARGET NEUTRALIZED.`, 'success');
+                        }
+                    }
+                })
+                .catch(err => {
+                    logWarfare(`> SYSTEM FAILURE: ${err.message}`, 'danger');
+                });
+        };
+
+        function logWarfare(msg, type = 'light') {
+            const termOut = document.getElementById('warfare-terminal-output');
+            const colorClass = `text-${type}`;
+            const ts = new Date().toLocaleTimeString([], { hour12: false });
+            termOut.innerHTML += `<div class="font-monospace small"><span class="text-secondary">[${ts}]</span> <span class="${colorClass}">${msg}</span></div>`;
+            termOut.scrollTop = termOut.scrollHeight;
         }
 
         // --- NEW: FULL INTEL DOSSIER FUNCTION ---

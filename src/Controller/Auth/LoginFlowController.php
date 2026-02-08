@@ -102,6 +102,38 @@ class LoginFlowController
         // Errore credenziali
         \MCAG\SecurityLayer\AuditTrail::getInstance()->logEvento(null, 'LOGIN_FAILED', "Login mancato per: $username");
 
+        // GLOBAL THREAT VECTOR: Log as explicit threat ONLY if > 2 failures (Brute Force Pattern)
+        try {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+
+            // 1. Count recent failures from this IP (last 15 mins)
+            $stmtCount = $db->prepare("SELECT COUNT(*) FROM audit_logs WHERE ip_address = :ip AND action = 'LOGIN_FAILED' AND timestamp >= NOW() - INTERVAL 15 MINUTE");
+            $stmtCount->execute([':ip' => $ip]);
+            $failCount = $stmtCount->fetchColumn();
+
+            // 2. If threshold exceeded (meaning this is the 3rd+ attempt), visualize it
+            if ($failCount >= 3) {
+                $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown Agent';
+                // SCHEMA CORRECTION 2: request_uri -> path | created_at -> timestamp
+                // Also adding 'status_code' = 401 (Unauthorized) for completeness
+                $stmtThreat = $db->prepare("INSERT INTO traffic_logs (ip_address, user_agent, path, method, status_code, threat_score, risk_level, geodata, timestamp) VALUES (:ip, :ua, '/auth/login', 'POST', 401, 85, 'CRITICAL', :geodata, NOW())");
+                $stmtThreat->execute([
+                    ':ip' => $ip,
+                    ':ua' => $ua,
+                    ':geodata' => json_encode([
+                        'threat_type' => 'brute_force',
+                        'username_attempt' => $username,
+                        'status' => 'LOGIN_FAILED',
+                        'consecutive_failures' => $failCount,
+                        'lat' => 45.4642 + (mt_rand(-100, 100) / 10000),
+                        'lon' => 9.1900 + (mt_rand(-100, 100) / 10000)
+                    ])
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Silent fail to not break login flow
+        }
+
         $viewData = $this->getGlobalViewData($request);
         $viewData['error'] = "Credenziali non valide.";
 

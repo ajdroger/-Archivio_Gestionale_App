@@ -83,6 +83,35 @@ try {
     $routes = require __DIR__ . '/../config/routes.php';
     $routes($app);
 
+    //    });
+
+    // CYBER WARFARE SUITE
+    $app->post('/api/security/engage', [\MCAG\Controller\WarfareController::class, 'engageTarget']);
+
+    // HONEYPOT TRAP (Mimics a vulnerable admin file)
+    $app->any('/vulnerability/admin.php', function ($request, $response) use ($container) {
+        // 1. Log the Intrusion
+        $audit = $container->get(\MCAG\SecurityLayer\AuditTrail::class);
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+
+        // Log as CRITICAL THREAT
+        $audit->logEvent(
+            $ip,
+            'HONEYPOT_TRIGGERED',
+            'Attempted access to /vulnerability/admin.php',
+            'CRITICAL',
+            ['method' => $request->getMethod(), 'headers' => $request->getHeaders()]
+        );
+
+        // 2. Auto-Ban (Optional? Let's keep it aggressive as requested "Global Threat Vector")
+        // $firewall = new \MCAG\SecurityLayer\Arsenal\FirewallOps(__DIR__ . '/../');
+        // $firewall->banIp($ip); // Direct Ban on touch
+
+        // 3. Tarpit / Fake Response
+        $response->getBody()->write("<h1>403 Forbidden</h1><p>System Integrity Verified. Incident Logged.</p><!-- TRAP TRIGGERED -->");
+        return $response->withStatus(403);
+    });
+
     // 6. Run
     $app->run();
 } catch (\Throwable $e) {

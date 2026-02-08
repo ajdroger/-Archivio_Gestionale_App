@@ -62,6 +62,15 @@ return [
     \MCAG\Controller\DevTools\DevToolsSecurityController::class => function () {
         return new \MCAG\Controller\DevTools\DevToolsSecurityController();
     },
+
+    \MCAG\Controller\WarfareController::class => function (Psr\Container\ContainerInterface $c) {
+        return new \MCAG\Controller\WarfareController(
+            new \MCAG\SecurityLayer\Arsenal\FirewallOps(__DIR__ . '/../../'), // Project Root
+            new \MCAG\SecurityLayer\Arsenal\IntelProbe(),
+            new \MCAG\SecurityLayer\Arsenal\Tarpit(),
+            $c->get(\MCAG\SecurityLayer\AuditTrail::class)
+        );
+    },
 ];
 
 

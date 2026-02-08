@@ -24,7 +24,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
             "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.datatables.net https://unpkg.com translate.google.com translate.googleapis.com www.gstatic.com cdn.tailwindcss.com",
             "font-src 'self' fonts.gstatic.com cdn.jsdelivr.net https://cdnjs.cloudflare.com https://r2cdn.perplexity.ai",
             "img-src 'self' data: blob: https: https://cdn.datatables.net flagcdn.com translate.google.com translate.googleapis.com translate-pa.googleapis.com www.google.com www.gstatic.com https://*.openstreetmap.org https://server.arcgisonline.com https://*.tile.openstreetmap.org",
-            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com translate.googleapis.com translate-pa.googleapis.com",
+            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com translate.googleapis.com translate-pa.googleapis.com https://api.open-meteo.com",
             "frame-src 'self' translate.googleapis.com",
             "frame-ancestors 'none'",
             "base-uri 'self'",
