@@ -475,5 +475,57 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 - **Mobile Responsiveness**: Ottimizzazione padding griglia documentale su schermi < 768px.
 
 ### 🧹 Ghost Code Elimination
-- **Legacy Purge**: Rimozione definitiva file CSS/JS orfani pre-Vite build system.
 - **Dead Routes**: Pulizia `routes.php` da endpoint di test non più utilizzati (`/test-db`, `/old-dashboard`).
+
+## [v9.1.5] - 2026-02-08 "**Security Refinement**"
+### 🛡️ Security Hardening
+- **Fix API Timeout**: Risolto errore `Maximum execution time exceeded` in `security/pulse` (Session Lock release).
+- **Ghost Traffic Fix**: Esclusione polling dashboard (`/pulse`) da `TrafficSurveillanceMiddleware`.
+- **Persistent Threats**: Cancellazione completa log per IP neutralizzati.
+- **Benign Traffic Filter**: Esclusione traffico a rischio zero dalla mappa minacce.
+
+### 🔧 Bug Fixes
+- **PURGE Button**: Ripristino funzionalità reset log in dashboard.
+- **PHP 8.2 Compatibility**: Fix deserializzazione errori API.
+
+## [v9.2.0-cyber-warfare] - 2026-02-08 "**Cyber Warfare Suite**"
+### ⚔️ Active Defense & Offense Grid
+- **Warfare Console**: Terminale tattico "Satellite Lock-on" per ingaggio minacce.
+- **Arsenal**:
+    - **FirewallOps**: Manipolazione automatica `.htaccess` (Ban/Unban).
+    - **Tarpit**: Modulo "Sticky Defense" per rallentare attaccanti.
+    - **IntelProbe**: Simulazione scansione satellitare target.
+- **Visual Counter-Strike**: Effetti visivi per operazioni offensive (Scan, Trace, Nuke).
+
+### 🌍 Real-Time Environment
+- **Live Weather**: Integrazione API Open-Meteo per meteo reale su Milano (Update 15min).
+- **Dynamic Clock**: Sincronizzazione orario server/client al secondo.
+
+### 🚨 Threat Intelligence
+- **Brute Force Visualization**: Rilevamento intelligente attacchi forza bruta.
+    - **Threshold Logic**: Allarme visivo solo dopo **3 tentativi falliti** (filtro falsi positivi).
+    - **Direct DB Injection**: Inserimento forzato in `traffic_logs` per bypassare filtri audit standard.
+    - **Schema Alignment**: Mapping corretto `geodata` e `risk_level` per visualizzazione dashboard.
+
+### 🤖 Sentinel Automation (Phase 4)
+- **Sentinel Mode**: Sistema di difesa attiva automatizzato.
+    - **Auto-Ban Threshold**: Qualsiasi Threat Score > 90 innesca un ban immediato (`.htaccess`) e una risposta 403.
+    - **Middleware Injection**: Iniezione `FirewallOps` in `TrafficSurveillanceMiddleware` per risposta realtime.
+- **Neural Fry (Nuke)**: Implementazione comando "Counter-Strike" definitivo.
+    - **Log Wipe**: Rimozione istantanea di *tutte* le tracce dell'IP attaccante (Traffic & Audit logs).
+    - **Identity Erasure**: Tecnica "Hydra" per prevenire tracce residue.
+- **Visual Counter-Measures**:
+    - **Packet Storm**: Simulazione visiva di flood di risposta (Frontend FX).
+    - **Tarpit Integration**: Predisposizione backend per "Sticky Defense".
+- **Architecture**:
+    - **DI Refactoring**: Registrazione tool Arsenal (`FirewallOps`, `IntelProbe`, `Tarpit`) nel container (`devtools.php`).
+
+### 🎨 Threat Visualization Refinement
+- **Granular Color Coding**: Implementata palette specifica per tipo di minaccia.
+    - 🔴 **Rosso (Critico)**: SQL Injection (SQLI detection via Middleware).
+    - 🟠 **Arancione (High)**: Brute Force (>3 tentativi falliti o pattern 'BRUTE').
+    - 🟢 **Smeraldo (Scripting)**: XSS / Cross-Site Scripting.
+    - 🟡 **Giallo (High Freq)**: DDoS / Rate Limiting (429).
+    - 🔵 **Blu (Anomalie)**: Bot Traffic, Path Probing.
+    - 🟣 **Viola (NEMESIS)**: Attori Ostili confermati (Threat Score > 90 / APT).
+- **Backend Mapping**: Aggiornamento `HomeController` per priorizzare `threat_type` esplicito o inferenzia da `details`.

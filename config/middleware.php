@@ -13,7 +13,10 @@ return function (App $app) {
     $app->add(new \MCAG\Middleware\RequestIdMiddleware());
 
     // 0.1 Global Threat Vector Surveillance (REAL-TIME MONITORING)
-    $app->add(new \MCAG\Middleware\TrafficSurveillanceMiddleware($container->get(PDO::class)));
+    $app->add(new \MCAG\Middleware\TrafficSurveillanceMiddleware(
+        $container->get(PDO::class),
+        $container->get(\MCAG\SecurityLayer\Arsenal\FirewallOps::class)
+    ));
 
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {

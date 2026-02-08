@@ -723,3 +723,97 @@ Rimozione immediata di qualsiasi asset statico non referenziato in `public/manif
 **Conseguenze**:  
 - (+) Build size ridotto.  
 - (+) Manutenibilità aumentata (meno rumore).
+
+---
+
+## [ADR-071] Active Defense Doctrine
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Necessità di reagire alle minacce senza violare leggi (no hack-back).
+**Decisione**:  
+Implementare "Active Defense" (Tarpit, Ban, Simulazione Offensiva).  
+**Conseguenze**:  
+- (+) Deterrenza reale.  
+- (+) Compliance legale mantenuta.
+
+---
+
+## [ADR-072] Real-Time Weather Integration
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Utilizzare **Open-Meteo API** (Free, No-Key) per dati ambientali live in Dashboard.  
+**Conseguenze**:  
+- (+) Realismo "Situation Room".  
+- (+) Costo zero.
+
+---
+
+## [ADR-073] Brute Force Visualization Threshold
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Falsi positivi sulla mappa per errori di battitura utenti.
+**Decisione**:  
+Visualizzare minaccia su mappa SOLO dopo **3 tentativi falliti** (consecutivi/recenti).  
+**Conseguenze**:  
+- (+) Riduzione rumore visivo.  
+- (+) Allarmi più significativi.
+
+---
+
+## [ADR-074] Traffic Logs Schema Alignment
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Adattare injection `LoginFlowController` allo schema reale DB (`geodata`, `risk_level`, `timestamp`) invece di astrazioni ORM layer.  
+- (+) Affidabilità logging incidenti critici.
+
+---
+
+## [ADR-075] Sentinel Automation Threshold
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Necessità di bloccare attacchi complessi (es. SQLi + XSS) senza intervento umano.
+**Decisione**:  
+Impostare soglia di attivazione Sentinel a **Threat Score > 90**.  
+**Conseguenze**:  
+- (+) Protezione H24 anche senza admin online.  
+- (-) Rischio minimo false flag (mitigato da punteggio alto richiesto).
+
+---
+
+## [ADR-076] Neural Fry (Log Wiping)
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Il comando "NUKE" deve cancellare TUTTI i log associati all'IP target oltre a bannarlo.  
+**Conseguenze**:  
+- (+) Pulizia database da traffico spazzatura.  
+- (+) Rimozione definitiva minaccia ("Identity Erasure").
+
+---
+
+## [ADR-077] Arsenal DI Injection
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Decisione**:  
+Registrare i tool di guerra (`FirewallOps`, `IntelProbe`) nel Container DI (`devtools.php`) invece di istanziarli inline.  
+**Conseguenze**:  
+- (+) Testabilità (Mocking possibile nei test di simulazione).  
+- (+) Riutilizzo in Middleware (`TrafficSurveillance`) oltre che nel Controller.
+
+---
+
+## [ADR-078] Threat Visualization Standard
+**Data**: 2026-02-08  
+**Stato**: ✅ Attivo  
+**Contesto**:  
+Necessità di distinguere visivamente tipi di attacco diversi in dashboard per triage rapido.
+**Decisione**:  
+Adottare standard colori specifico: Rosso=SQLi, Arancio=BruteForce, Smeraldo=XSS, Giallo=DDoS, Viola=NEMESIS.  
+**Conseguenze**:  
+- (+) Riconoscimento immediato pattern di attacco.  
+- (-) Necessità manutenzione logica mapping in `HomeController`.

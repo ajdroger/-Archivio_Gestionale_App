@@ -197,18 +197,36 @@ class HomeController
 
                 // [FIX] BETTER THREAT TYPING
                 // Analyze details/path to guess specific attack type for better visualization
-                $type = 'anomaly';
-                $pathLower = strtolower($log['path']);
-                $risk = strtolower($log['risk_level']);
+                $type = 'anomaly'; // Navy/Blue (Default)
 
-                if ($risk === 'critical')
-                    $type = 'sql_injection';
-                elseif ($risk === 'high')
-                    $type = 'brute_force';
-                elseif (str_contains($pathLower, 'xss') || str_contains($pathLower, 'script'))
-                    $type = 'xss';
-                elseif ($log['status_code'] == 429)
-                    $type = 'ddos';
+                // 1. Check Explicit Type (from LoginFlowController or advanced loggers)
+                if (isset($geo['threat_type'])) {
+                    $type = $geo['threat_type'];
+                } else {
+                    // 2. Inference for Middleware Logs
+                    $pathLower = strtolower($log['path']);
+                    $risk = strtolower($log['risk_level']);
+                    $detailsStr = $geo['details'] ?? '';
+
+                    if (str_contains($detailsStr, 'SQLI') || $risk === 'critical') {
+                        $type = 'sql_injection'; // Red
+                    } elseif (str_contains($detailsStr, 'XSS') || str_contains($pathLower, '<script')) {
+                        $type = 'xss'; // Emerald
+                    } elseif (str_contains($detailsStr, 'BRUTE')) {
+                        $type = 'brute_force'; // Orange
+                    } elseif ($log['status_code'] == 429 || str_contains($detailsStr, 'DDOS')) {
+                        $type = 'ddos'; // Yellow
+                    } elseif (str_contains($detailsStr, 'BOT') || str_contains($detailsStr, 'PROBING')) {
+                        $type = 'anomaly'; // Blue
+                    }
+                }
+
+                // Internal Traffic Logic
+                $isInternal = in_array($log['ip_address'], ['127.0.0.1', '::1', 'localhost']);
+
+                // NEMESIS Logic (Confirmed Hostile)
+                // If Score > 90 (Sentinel Threshold), we consider it an APT/Nemesis-level threat
+                $isNemesis = ($log['threat_score'] >= 90 || str_contains($geo['details'] ?? '', 'NEMESIS'));
 
                 $mappedThreats[] = [
                     'id' => $log['id'],
@@ -216,13 +234,13 @@ class HomeController
                     'lon' => $lon,
                     'elevation' => rand(100, 10000), // Satellite altitude
                     'type' => $type,
-                    'origin_type' => 'EXTERNAL', // Todo: check local IP
+                    'origin_type' => $isInternal ? 'INTERNAL_HQ' : 'EXTERNAL',
                     'ip' => $log['ip_address'],
                     'device_hash' => md5($log['user_agent'] ?? ''),
                     'details' => [
                         'risk_level' => $log['risk_level'],
                         'threat_score' => $log['threat_score'],
-                        'actor_alias' => $log['threat_score'] > 50 ? 'HOSTILE_ACTOR' : 'UNKNOWN',
+                        'actor_alias' => $isNemesis ? 'NEMESIS_APT_GROUP' : ($log['threat_score'] > 50 ? 'HOSTILE_ACTOR' : 'UNKNOWN'),
                         'open_ports' => [80, 443],
                         'os_fingerprint' => substr($log['user_agent'] ?? '', 0, 30) . '...',
                         'status' => 'TRACKING'

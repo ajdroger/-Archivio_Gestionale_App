@@ -63,11 +63,24 @@ return [
         return new \MCAG\Controller\DevTools\DevToolsSecurityController();
     },
 
+    // --- CYBER WARFARE ARSENAL ---
+    \MCAG\SecurityLayer\Arsenal\FirewallOps::class => function () {
+        return new \MCAG\SecurityLayer\Arsenal\FirewallOps(__DIR__ . '/../../'); // Project Root
+    },
+
+    \MCAG\SecurityLayer\Arsenal\IntelProbe::class => function () {
+        return new \MCAG\SecurityLayer\Arsenal\IntelProbe();
+    },
+
+    \MCAG\SecurityLayer\Arsenal\Tarpit::class => function () {
+        return new \MCAG\SecurityLayer\Arsenal\Tarpit();
+    },
+
     \MCAG\Controller\WarfareController::class => function (Psr\Container\ContainerInterface $c) {
         return new \MCAG\Controller\WarfareController(
-            new \MCAG\SecurityLayer\Arsenal\FirewallOps(__DIR__ . '/../../'), // Project Root
-            new \MCAG\SecurityLayer\Arsenal\IntelProbe(),
-            new \MCAG\SecurityLayer\Arsenal\Tarpit(),
+            $c->get(\MCAG\SecurityLayer\Arsenal\FirewallOps::class),
+            $c->get(\MCAG\SecurityLayer\Arsenal\IntelProbe::class),
+            $c->get(\MCAG\SecurityLayer\Arsenal\Tarpit::class),
             $c->get(\MCAG\SecurityLayer\AuditTrail::class)
         );
     },

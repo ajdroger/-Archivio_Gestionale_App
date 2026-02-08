@@ -10,10 +10,13 @@ use PDO;
 class TrafficSurveillanceMiddleware
 {
     private PDO $pdo;
+    private ?\MCAG\SecurityLayer\Arsenal\FirewallOps $firewall;
 
-    public function __construct(PDO $pdo)
+    // Optional FirewallOps to allow strictly-typed tests or legacy setup
+    public function __construct(PDO $pdo, ?\MCAG\SecurityLayer\Arsenal\FirewallOps $firewall = null)
     {
         $this->pdo = $pdo;
+        $this->firewall = $firewall;
     }
 
     public function __invoke(Request $request, RequestHandler $handler): Response
@@ -65,6 +68,25 @@ class TrafficSurveillanceMiddleware
             $details[] = 'PATH_PROBING';
         }
 
+        // --- SENTINEL MODE (Auto-Defense) ---
+        // If Threat Score > 90, we engage Active Defense immediately.
+        if ($threatScore > 90 && $this->firewall) {
+            // 1. Ban IP
+            $this->firewall->banIp($ip);
+
+            // 2. Set Status
+            $riskLevel = 'NEUTRALIZED';
+            $details[] = 'SENTINEL_AUTO_BAN';
+
+            // 3. Log Immediately
+            $this->logTraffic($ip, $method, $path, 403, $userAgent, 0, $riskLevel, $threatScore, $details);
+
+            // 4. Kill Request
+            $response = new Response();
+            $response->getBody()->write("<h1>403 Forbidden</h1><p>Global Threat Vector: HOSTILE ACTION DETECTED.</p><!-- SENTINEL ENGAGED -->");
+            return $response->withStatus(403);
+        }
+
         // 2. Execute Request
         $response = $handler->handle($request);
 
@@ -96,8 +118,9 @@ class TrafficSurveillanceMiddleware
             // Ideally use a service, for now, we use the Dashboard's logic or a placeholder
             $geo = json_encode(['lat' => 0, 'lon' => 0, 'details' => implode(',', $details)]);
 
-            $sql = "INSERT INTO traffic_logs (ip_address, method, path, status_code, user_agent, execution_time, risk_level, threat_score, geodata) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            // Log timestamp explicitly to ensure ordering
+            $sql = "INSERT INTO traffic_logs (ip_address, method, path, status_code, user_agent, execution_time, risk_level, threat_score, geodata, timestamp) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([$ip, $method, substr($path, 0, 255), $status, substr($ua, 0, 255), $time, $risk, $score, $geo]);
         } catch (\Throwable $e) {

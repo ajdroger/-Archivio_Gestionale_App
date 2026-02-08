@@ -305,6 +305,25 @@ class AuditTrail
             return false;
         }
     }
+
+    public function resolveThreatByIp(string $ip): bool
+    {
+        if (!$this->pdo)
+            return false;
+        try {
+            // 1. Resolve Audit Logs
+            $stmt = $this->pdo->prepare("UPDATE audit_logs SET resolved_at = NOW() WHERE ip_address = ?");
+            $aRes = $stmt->execute([$ip]);
+
+            // 2. Nuke Traffic Logs
+            $stmt2 = $this->pdo->prepare("DELETE FROM traffic_logs WHERE ip_address = ?");
+            $tRes = $stmt2->execute([$ip]);
+
+            return $aRes || $tRes;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
     public function getRecentTraffic(int $limit = 50): array
     {
         if (!$this->pdo)

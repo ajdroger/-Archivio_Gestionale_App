@@ -71,9 +71,8 @@ class WarfareController
 
             case 'BAN':
                 if ($this->firewall->banIp($ip)) {
-                    $this->audit->resolveThreat(0); // Using 0 logic to potentially clear specific IP logs if updated
-                    // Actually, let's just log the ban action
-                    // Log Ban Event?
+                    // Log the ban action
+                    $this->audit->logEvento(null, 'WARFARE_BAN', "Manual IP Ban executed on $ip");
                     $result = ['status' => 'NEUTRALIZED', 'msg' => "Target $ip has been permanently banned from the network."];
                 } else {
                     $result = ['status' => 'ERROR', 'msg' => "Firewall rewrite failed."];
@@ -83,11 +82,33 @@ class WarfareController
             case 'NUKE':
                 // "Neural Fry": Ban + Tarpit + Log Wipe
                 $banSuccess = $this->firewall->banIp($ip);
-                // Trigger Tarpit (This might need to be async or just a flag set for next request)
-                // For now, we simulate the command success
+                $wipeSuccess = $this->audit->resolveThreatByIp($ip);
+
+                $this->audit->logEvento(null, 'WARFARE_NUKE', "NEURAL FRY executed on $ip");
+
                 $result = [
                     'status' => 'DESTROYED',
-                    'msg' => "NEURAL FRY INITIATED. Target $ip banned. Logs purged. Active connections terminated."
+                    'msg' => "NEURAL FRY INITIATED. Target $ip banned. Logs purged. Identity erased."
+                ];
+                break;
+
+            case 'PACKET_STORM':
+                // Simulated Packet Flood Visuals
+                $packets = [];
+                for ($i = 0; $i < 50; $i++) {
+                    $packets[] = [
+                        'ts' => microtime(true),
+                        'src' => '10.0.0.' . rand(1, 255),
+                        'dst' => $ip,
+                        'proto' => ['TCP', 'UDP', 'ICMP'][rand(0, 2)],
+                        'len' => rand(64, 1500),
+                        'flags' => 'SYN_ACK'
+                    ];
+                }
+                $result = [
+                    'status' => 'ENGAGING',
+                    'msg' => "Orbital Ion Cannon firing on $ip...",
+                    'payload' => $packets
                 ];
                 break;
 
