@@ -52,10 +52,10 @@ class RedisService
         try {
             $this->client = new Client($redisConfig);
             $this->client->connect();
-        } catch (\Exception $e) {
-            // Fallback to disabled mode if connection fails
+        } catch (\Throwable $e) { // Catch Error and Exception
+            // Fallback to disabled mode if connection fails or class missing
             $this->enabled = false;
-            error_log("Redis connection failed: " . $e->getMessage());
+            error_log("Redis connection/init failed: " . $e->getMessage());
         }
     }
 

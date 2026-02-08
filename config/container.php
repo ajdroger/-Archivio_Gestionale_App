@@ -16,6 +16,7 @@ return [
     __DIR__ . '/definitions/devtools.php',
     __DIR__ . '/definitions/queue.php',
     __DIR__ . '/definitions/apps.php',
+    __DIR__ . '/definitions/external.php', // [NEW] Loads Workshift, Redis, HealthCheck services
 ];
 
 

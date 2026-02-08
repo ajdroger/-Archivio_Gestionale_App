@@ -9,11 +9,40 @@ return [
         return new PDOWorkshiftRepository($c->get(PDO::class));
     },
 
+    // Queue Service (Required for HealthCheck)
+    \MCAG\Service\QueueService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\QueueService($c->get(PDO::class));
+    },
+
+    // Redis Service (Wrapper)
+    \MCAG\Service\RedisService::class => function (ContainerInterface $c) {
+        // Try to get the raw Client from core.php if available, else null
+        $client = null;
+        if ($c->has(\Predis\Client::class)) {
+            try {
+                $client = $c->get(\Predis\Client::class);
+            } catch (\Throwable $e) {
+                // Ignore retrieval error, pass null
+            }
+        }
+        return new \MCAG\Service\RedisService($client);
+    },
+
+    // HealthCheck Service
+    \MCAG\Service\HealthCheckService::class => function (ContainerInterface $c) {
+        return new \MCAG\Service\HealthCheckService(
+            $c->get(PDO::class),
+            $c->get(\MCAG\Service\RedisService::class), // Defined in core.php
+            $c->get(\MCAG\Service\QueueService::class)
+        );
+    },
+
     // WorkShift Controller
     \MCAG\Controller\External\WorkshiftController::class => function (ContainerInterface $c) {
         return new \MCAG\Controller\External\WorkshiftController(
             $c->get(Mustache_Engine::class),
-            $c->get(PDOWorkshiftRepository::class)
+            $c->get(PDOWorkshiftRepository::class),
+            $c->get(\MCAG\Service\HealthCheckService::class)
         );
     },
 

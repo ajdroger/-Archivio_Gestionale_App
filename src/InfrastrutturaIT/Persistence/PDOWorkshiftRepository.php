@@ -22,6 +22,7 @@ class PDOWorkshiftRepository
         $sql = "CREATE TABLE IF NOT EXISTS workshift_employees (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
+            surname VARCHAR(100) NOT NULL DEFAULT '',
             role VARCHAR(50),
             department VARCHAR(50),
             email VARCHAR(100),
@@ -148,6 +149,7 @@ class PDOWorkshiftRepository
         // Define all allowed fields based on schema and form
         $fields = [
             'name',
+            'surname',
             'role',
             'department',
             'email',
@@ -197,7 +199,7 @@ class PDOWorkshiftRepository
 
     public function findAllEmployees(): array
     {
-        $stmt = $this->pdo->query("SELECT * FROM workshift_employees ORDER BY name ASC");
+        $stmt = $this->pdo->query("SELECT *, CONCAT(name, ' ', surname) as full_name FROM workshift_employees ORDER BY surname ASC, name ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
@@ -209,17 +211,17 @@ class PDOWorkshiftRepository
         // Search in existing Team
         // Force collation for literals and columns
         // Added employee_code to selection
-        $sqlTeam = "SELECT id, name COLLATE utf8mb4_unicode_ci as name, role COLLATE utf8mb4_unicode_ci as role, email COLLATE utf8mb4_unicode_ci as email, employee_code, fiscal_code, 'Team' COLLATE utf8mb4_unicode_ci as source
+        $sqlTeam = "SELECT id, name COLLATE utf8mb4_unicode_ci as name, surname COLLATE utf8mb4_unicode_ci as surname, role COLLATE utf8mb4_unicode_ci as role, email COLLATE utf8mb4_unicode_ci as email, employee_code, fiscal_code, 'Team' COLLATE utf8mb4_unicode_ci as source
                     FROM workshift_employees ";
         if (!$isAll) {
-            $sqlTeam .= "WHERE name LIKE :q1 OR email LIKE :q2 OR employee_code LIKE :q3";
+            $sqlTeam .= "WHERE name LIKE :q1 OR surname LIKE :q2 OR email LIKE :q3 OR employee_code LIKE :q4";
         }
 
         // Search in Security Center (Users)
-        $sqlUsers = "SELECT id, username COLLATE utf8mb4_unicode_ci as name, role COLLATE utf8mb4_unicode_ci as role, NULL as email, NULL as employee_code, NULL as fiscal_code, 'Security Center' COLLATE utf8mb4_unicode_ci as source
+        $sqlUsers = "SELECT id, username COLLATE utf8mb4_unicode_ci as name, NULL as surname, role COLLATE utf8mb4_unicode_ci as role, NULL as email, NULL as employee_code, NULL as fiscal_code, 'Security Center' COLLATE utf8mb4_unicode_ci as source
                      FROM users ";
         if (!$isAll) {
-            $sqlUsers .= "WHERE username LIKE :q4";
+            $sqlUsers .= "WHERE username LIKE :q5";
         }
 
         $sql = "($sqlTeam) UNION ($sqlUsers) ORDER BY name ASC LIMIT 50";
@@ -227,7 +229,7 @@ class PDOWorkshiftRepository
         $stmt = $this->pdo->prepare($sql);
 
         if (!$isAll) {
-            $stmt->execute(['q1' => $term, 'q2' => $term, 'q3' => $term, 'q4' => $term]);
+            $stmt->execute(['q1' => $term, 'q2' => $term, 'q3' => $term, 'q4' => $term, 'q5' => $term]);
         } else {
             $stmt->execute();
         }

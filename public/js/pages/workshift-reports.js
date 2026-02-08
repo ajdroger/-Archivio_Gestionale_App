@@ -58,7 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnRefresh) {
         btnRefresh.addEventListener('click', async () => {
             // Animate icon
-            btnRefresh.querySelector('i').classList.add('animate-spin');
+            const icon = btnRefresh.querySelector('i') || btnRefresh.querySelector('svg');
+            if (icon) {
+                icon.classList.add('animate-spin');
+            }
 
             try {
                 const res = await fetch('/MCAG_Militare-Civile-Archivio-Gestionale/public/workshift/api/ai-suggestion');
@@ -97,7 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(e);
             } finally {
                 // Stop animation
-                btnRefresh.querySelector('i').classList.remove('animate-spin');
+                const icon = btnRefresh.querySelector('i') || btnRefresh.querySelector('svg');
+                if (icon) {
+                    icon.classList.remove('animate-spin');
+                }
             }
         });
     }

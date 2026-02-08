@@ -263,7 +263,7 @@ class WorkshiftController
         $formattedDate = date('d/m/Y', strtotime($targetDate));
 
         return [
-            'message' => "Rilevata possibile carenza di organico per <strong>$dayName $formattedDate</strong>. Si consiglia di aggiungere un turno Jolly.",
+            'message' => "Rilevata possibile carenza di personale per <strong>$dayName $formattedDate</strong>. Si consiglia di aggiungere un turno Jolly.",
             'target_date' => $targetDate,
             'shift_time' => '09:00-17:00', // Default Standard Shift
             'shift_type' => 'Jolly'
@@ -429,43 +429,56 @@ class WorkshiftController
 
     public function applyAiSuggestion(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        // 1. Get Parameters (AI Analysis or Defaults)
-        $payload = $request->getParsedBody();
-        $targetDate = $payload['target_date'] ?? date('Y-m-d', strtotime('next friday'));
-        $shiftTime = $payload['shift_time'] ?? '18:00-23:59';
-        $times = explode('-', $shiftTime);
-        $startTime = $times[0] ?? '18:00';
-        $endTime = $times[1] ?? '23:59';
+        try {
+            // 1. Get Parameters (AI Analysis or Defaults)
+            $payload = $request->getParsedBody();
+            $targetDate = $payload['target_date'] ?? date('Y-m-d', strtotime('next friday'));
+            $shiftTime = $payload['shift_time'] ?? '18:00-23:59';
+            $times = explode('-', $shiftTime);
+            $startTime = $times[0] ?? '18:00';
+            $endTime = $times[1] ?? '23:59';
 
-        // 2. Find a 'Jolly' or fallback employee
-        $employees = $this->repository->findAllEmployees();
+            // 2. Find a 'Jolly' or fallback employee
+            $employees = $this->repository->findAllEmployees();
 
-        // Emulate AI Logic: Pick reasonable candidate (random for now to vary load)
-        $candidate = !empty($employees) ? $employees[array_rand($employees)] : null;
-        $candidateId = $candidate ? $candidate['id'] : 1;
-        $candidateName = $candidate ? $candidate['name'] . ' ' . $candidate['surname'] : 'Jolly';
+            if (empty($employees)) {
+                throw new \Exception("Nessun dipendente trovato nel sistema. Impossibile assegnare un turno.");
+            }
 
-        // 3. Create the Shift
-        $shiftData = [
-            'employee_id' => $candidateId,
-            'start_time' => $startTime,
-            'end_time' => $endTime, // Midnight
-            'type' => 'Extra',
-            'day' => date('l', strtotime($targetDate)), // 'Friday'
-            'date' => $targetDate
-        ];
+            // Emulate AI Logic: Pick reasonable candidate (random for now to vary load)
+            $candidate = $employees[array_rand($employees)];
+            $candidateId = $candidate['id'];
+            $candidateName = $candidate['name'] . ' ' . $candidate['surname'];
 
-        $newShiftId = $this->repository->save($shiftData);
+            // 3. Create the Shift
+            $shiftData = [
+                'employee_id' => $candidateId,
+                'start_time' => $startTime,
+                'end_time' => $endTime, // Midnight
+                'type' => 'Extra',
+                'day' => date('l', strtotime($targetDate)), // 'Friday'
+                'date' => $targetDate
+            ];
 
-        // 4. Return Success
-        $payload = json_encode([
-            'success' => true,
-            'message' => "Turno creato per $candidateName ($shiftTime) il " . date('d/m/Y', strtotime($targetDate)),
-            'shift_id' => $newShiftId
-        ]);
+            $newShiftId = $this->repository->save($shiftData);
 
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
+            // 4. Return Success
+            $payload = json_encode([
+                'success' => true,
+                'message' => "Turno creato per $candidateName ($shiftTime) il " . date('d/m/Y', strtotime($targetDate)),
+                'shift_id' => $newShiftId
+            ]);
+
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode([
+                'success' => false,
+                'message' => 'Errore durante l\'applicazione del suggerimento: ' . $e->getMessage()
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
     }
 
     public function saveEmployee(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

@@ -137,6 +137,7 @@ window.saveEmployee = function () {
 
         // Identity
         name: document.getElementById('employeeName').value,
+        surname: document.getElementById('employeeSurname').value,
         gender: document.getElementById('employeeGender').value,
         birth_date: document.getElementById('employeeBirthDate').value,
         birth_place: document.getElementById('employeeBirthPlace').value,
@@ -163,7 +164,8 @@ window.saveEmployee = function () {
 
     // Enhanced Validation
     const missingFields = [];
-    if (!data.name) missingFields.push('Nome e Cognome');
+    if (!data.name) missingFields.push('Nome');
+    if (!data.surname) missingFields.push('Cognome');
     if (!data.role) missingFields.push('Ruolo');
     if (!data.department) missingFields.push('Dipartimento');
 
@@ -221,7 +223,7 @@ window.saveEmployee = function () {
 
 // Updated Signature to match Mustache Template explicitly
 window.openEditModal = function (
-    id, name, role, email, department, authGrade,
+    id, name, surname, role, email, department, authGrade,
     code, fiscalCode, dob, pob, gender,
     address, city, zip, phone, mobile,
     contractType, contractStart, contractEnd, notes, skills
@@ -244,6 +246,7 @@ window.openEditModal = function (
     const setVal = (id, val) => { if (document.getElementById(id)) document.getElementById(id).value = val || ''; }
 
     setVal('employeeName', name);
+    setVal('employeeSurname', surname);
     setVal('employeeRole', role);
     setVal('employeeEmail', email);
     setVal('employeeDepartment', department);
@@ -327,37 +330,25 @@ window.confirmDelete = function () {
 
 // Fiscal Code Logic (Real Calculation via API)
 window.generateFiscalCode = function () {
-    const nameFull = document.getElementById('employeeName').value.trim();
+    const name = document.getElementById('employeeName').value.trim();
+    const surname = document.getElementById('employeeSurname').value.trim();
     const birthDate = document.getElementById('employeeBirthDate').value;
     const gender = document.getElementById('employeeGender').value;
     const birthPlace = document.getElementById('employeeBirthPlace').value;
 
-    if (!nameFull || !birthDate || !gender || !birthPlace) {
+    if (!name || !surname || !birthDate || !gender || !birthPlace) {
         Swal.fire({
             title: 'Dati Mancanti',
-            text: 'Per calcolare il Codice Fiscale, inserisci: Nome, Data di Nascita, Sesso e Luogo di Nascita.',
+            text: 'Per calcolare il Codice Fiscale, inserisci: Nome, Cognome, Data di Nascita, Sesso e Luogo di Nascita.',
             icon: 'warning',
             confirmButtonColor: '#4f46e5'
         });
         return;
     }
 
-    // Heuristic Split: Last word is usually Name, rest is Surname ?? 
-    // Actually standard is "Name Surname" or "Surname Name"? 
-    // Let's assume input is "Name Surname". If > 2 words, it's tricky.
-    // Let's try to split by first space.
-    // IMPROVEMENT: Add explicit fields if this fails often. For now, best effort.
-    const parts = nameFull.split(' ');
-    let nome = '';
-    let cognome = '';
-
-    if (parts.length >= 2) {
-        nome = parts[parts.length - 1]; // Last part as name
-        cognome = parts.slice(0, parts.length - 1).join(' '); // All previous as surname
-    } else {
-        nome = nameFull;
-        cognome = nameFull; // Fallback
-    }
+    // Use explicit fields
+    const nome = name;
+    const cognome = surname;
 
     const btn = document.getElementById('btn-calc-cf'); // Hypothetical button if exists
     if (btn) {
@@ -478,7 +469,7 @@ window.searchCandidatesUnified = function (query) {
                         item.innerHTML = `
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <div class="font-bold text-white text-sm">${candidate.name}</div>
+                                    <div class="font-bold text-white text-sm">${candidate.name} ${candidate.surname || ''}</div>
                                     <div class="text-xs text-slate-400">${candidate.role || 'N/A'}</div>
                                 </div>
                                 <div class="flex items-center gap-2 text-xs ${color} font-medium bg-slate-800 px-2 py-1 rounded">
@@ -516,6 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.selectCandidate = function (candidate) {
     console.log('Selected:', candidate);
     document.getElementById('employeeName').value = candidate.name;
+    document.getElementById('employeeSurname').value = candidate.surname || ''; // Use surname if available
     document.getElementById('employeeRole').value = candidate.role;
     if (candidate.email) document.getElementById('employeeEmail').value = candidate.email;
 
