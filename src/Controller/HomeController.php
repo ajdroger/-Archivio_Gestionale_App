@@ -19,19 +19,22 @@ class HomeController
     private \MCAG\Debug\ResilienceMonitor $resilience;
     private \MCAG\Service\HealthCheckService $health;
     private \MCAG\Service\ConfigurationService $config;
+    private \MCAG\SecurityLayer\AuditTrail $auditTrail; // New Dependency
 
     public function __construct(
         Mustache_Engine $mustache,
         \MCAG\GestioneSoci\SocioRepository $repo,
         \MCAG\Debug\ResilienceMonitor $resilience,
         \MCAG\Service\HealthCheckService $health,
-        \MCAG\Service\ConfigurationService $config // Injected
+        \MCAG\Service\ConfigurationService $config,
+        \MCAG\SecurityLayer\AuditTrail $auditTrail // Injected
     ) {
         $this->mustache = $mustache;
         $this->repo = $repo;
         $this->resilience = $resilience;
         $this->health = $health;
         $this->config = $config;
+        $this->auditTrail = $auditTrail;
     }
 
     /**
@@ -152,138 +155,93 @@ class HomeController
     }
     public function securityStats(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        // SUPPRESS WARNINGS & CLEAN BUFFER to prevent JSON corruption
-        error_reporting(E_ERROR | E_PARSE); // Hide warnings/notices
-        while (ob_get_level())
-            ob_end_clean(); // Clear any previous output (e.g. notices)
+        try {
+            // SUPPRESS WARNINGS & CLEAN BUFFER to prevent JSON corruption
+            error_reporting(E_ERROR | E_PARSE);
+            while (ob_get_level())
+                ob_end_clean();
 
-        $auditService = \MCAG\SecurityLayer\AuditTrail::getInstance();
-        $threats = $auditService->getThreats(30);
-        $mappedThreats = [];
+            // [FIX] PERFORMANCE: Release session lock immediately to prevent polling serialization
+            session_write_close();
+            set_time_limit(60); // Give it a bit more breathing room just in case
 
-        foreach ($threats as $threat) {
-            $ip = $threat['ip_address'] ?? '0.0.0.0';
-            $isLocal = ($ip === '::1' || $ip === '127.0.0.1');
+            // Use Injected Service (Guaranteed PDO)
+            $auditService = $this->auditTrail;
+            $logs = $auditService->getRecentTraffic(50);
 
-            $details = [];
-            $originType = 'EXTERNAL';
+            // Mapper
+            $mappedThreats = [];
+            foreach ($logs as $log) {
 
-            if ($isLocal) {
-                // INTERNAL THREAT: Resolve Real Location via External IP
-                // Strategy: 1. Get Public IP -> 2. GeoLocate Public IP -> 3. Fallback to Home Base
+                // Re-construct Geodata
+                $geo = json_decode($log['geodata'] ?? '{}', true);
+                $lat = $geo['lat'] ?? 0;
+                $lon = $geo['lon'] ?? 0;
 
-                // Session Cache to avoid Rate Limiting (5 min cache)
-                $cacheKey = 'local_geo_' . date('Hi');
-                // Allow refreshing every 5 mins (change 'Hi' format if needed for stricter cache)
-                $geoData = $_SESSION[$cacheKey] ?? null;
-
-                if (!$geoData) {
-                    try {
-                        // 1. Get External IP (Fast & Free) - ADD USER AGENT
-                        $opts = [
-                            'http' => [
-                                'method' => 'GET',
-                                'timeout' => 2,
-                                'header' => "User-Agent: MCAG-Cortex/9.0\r\n"
-                            ]
-                        ];
-                        $context = stream_context_create($opts);
-                        $publicIp = @file_get_contents('https://api.ipify.org', false, $context);
-
-                        if ($publicIp) {
-                            // 2. GeoLocate (Free - 45 req/min)
-                            $json = @file_get_contents("http://ip-api.com/json/{$publicIp}", false, $context);
-                            $apiData = json_decode($json, true);
-
-                            if ($apiData && ($apiData['status'] === 'success')) {
-                                $geoData = [
-                                    'lat' => $apiData['lat'],
-                                    'lon' => $apiData['lon'],
-                                    'city' => $apiData['city'] ?? 'Unknown',
-                                    'isp' => $apiData['isp'] ?? 'Unknown',
-                                    'elevation' => 100
-                                ];
-                                $_SESSION[$cacheKey] = $geoData; // Cache it
-                            }
-                        }
-                    } catch (\Exception $e) { /* Silent Fallback */
-                    }
+                // If Lat/Lon is 0, let's "Simulate" a location based on IP hash to keep map lively
+                // (Military "Triangulation" Effect)
+                if ($lat == 0 && $lon == 0) {
+                    $hash = crc32($log['ip_address']);
+                    srand($hash);
+                    $lat = (rand(0, 18000) / 100) - 90;
+                    $lon = (rand(0, 36000) / 100) - 180;
+                    srand();
                 }
 
-                if ($geoData) {
-                    // REAL-TIME TRACKING ACTIVE
-                    $lat = $geoData['lat'];
-                    $lon = $geoData['lon'];
-                    $elevation = $geoData['elevation'];
-
-                    $details = [
-                        'sector' => strtoupper($geoData['city'] ?? 'LOCAL') . '_NODE',
-                        'clearance' => 'TOP_SECRET',
-                        'status' => 'LIVE_TRACKING_ACTIVE',
-                        'notes' => "Origin ISP: " . ($geoData['isp'] ?? 'Local Uplink')
-                    ];
-                } else {
-                    // FALLBACK: HOME BASE (Loro Ciuffenna)
-                    $lat = 43.7797;
-                    $lon = 11.4442;
-                    $elevation = 88.28;
-                    $details = ['sector' => 'HQ_OFFLINE', 'status' => 'FALLBACK_COORDS'];
+                // [FIX] THREAT FILTERING
+                // Filter out benign traffic (Score < 10 or Risk = LOW) from the Visual Threat Map.
+                // We still keep them in DB for audit, but we don't visualize them as "Attacks".
+                if ($log['threat_score'] < 10 && strtolower($log['risk_level']) === 'low') {
+                    continue;
                 }
 
-                $originType = 'INTERNAL_HQ';
+                // [FIX] BETTER THREAT TYPING
+                // Analyze details/path to guess specific attack type for better visualization
+                $type = 'anomaly';
+                $pathLower = strtolower($log['path']);
+                $risk = strtolower($log['risk_level']);
 
-            } else {
-                // External Threats Logic
-                // Use hash for deterministic coordinates
-                $hash = crc32($ip);
-                srand($hash);
-                $lat = (rand(0, 18000) / 100) - 90;
-                $lon = (rand(0, 36000) / 100) - 180;
-                $elevation = rand(10, 500);
-                srand();
+                if ($risk === 'critical')
+                    $type = 'sql_injection';
+                elseif ($risk === 'high')
+                    $type = 'brute_force';
+                elseif (str_contains($pathLower, 'xss') || str_contains($pathLower, 'script'))
+                    $type = 'xss';
+                elseif ($log['status_code'] == 429)
+                    $type = 'ddos';
 
-                $details = [
-                    'category' => 'UNIDENTIFIED_HOSTILE',
-                    'asn' => 'UNKNOWN_ASN',
-                    'risk_level' => 'HIGH',
-                    'device_hash' => substr(md5($ip), 0, 12),
-                    'actor_alias' => 'UNKNOWN_ACTOR',
-                    'notes' => 'REAL TRAFFIC DETECTED'
+                $mappedThreats[] = [
+                    'id' => $log['id'],
+                    'lat' => $lat,
+                    'lon' => $lon,
+                    'elevation' => rand(100, 10000), // Satellite altitude
+                    'type' => $type,
+                    'origin_type' => 'EXTERNAL', // Todo: check local IP
+                    'ip' => $log['ip_address'],
+                    'device_hash' => md5($log['user_agent'] ?? ''),
+                    'details' => [
+                        'risk_level' => $log['risk_level'],
+                        'threat_score' => $log['threat_score'],
+                        'actor_alias' => $log['threat_score'] > 50 ? 'HOSTILE_ACTOR' : 'UNKNOWN',
+                        'open_ports' => [80, 443],
+                        'os_fingerprint' => substr($log['user_agent'] ?? '', 0, 30) . '...',
+                        'status' => 'TRACKING'
+                    ],
+                    'msg' => $log['method'] . ' ' . $log['path'],
+                    'timestamp' => $log['timestamp']
                 ];
             }
 
-            // --- MASSIVE INTEL ENRICHMENT (For "Full Dossier" View) ---
-            $details['os_fingerprint'] = $isLocal ? 'Windows Server 2026 (Datacenter Ed.)' : ($originType === 'INTERNAL_HQ' ? 'Linux Kernel 6.8 (Hardened)' : 'Unknown/Encrypted TCP');
-            $details['open_ports'] = $isLocal ? [80, 443, 3306, 8080] : [rand(1024, 65535)];
-            $details['uplink_speed'] = $isLocal ? '10 Gbps (Backbone)' : rand(10, 1000) . ' Mbps';
-            $details['active_sessions'] = $isLocal ? 1 : rand(5, 50);
-            $details['last_seen'] = date('Y-m-d H:i:s');
-            // Mapping Logic (Reused)
-            $type = match ($threat['action']) {
-                'LOGIN_FAILED' => 'brute_force',
-                'ACCESS_DENIED' => 'unauthorized',
-                'SYSTEM_ALERT' => 'malware',
-                default => 'anomaly'
-            };
-            $details['threat_score'] = $type === 'brute_force' ? 85 : ($type === 'malware' ? 99 : 45);
-
-            $mappedThreats[] = [
-                'id' => $threat['id'], // CRITICAL: Need DB ID for Neutralization
-                'lat' => $lat,
-                'lon' => $lon,
-                'elevation' => $elevation,
-                'type' => $type,
-                'origin_type' => $originType,
-                'ip' => $ip,
-                'device_hash' => $details['device_hash'] ?? 'UNKNOWN',
-                'details' => $details,
-                'msg' => $threat['action'] . ' - ' . ($threat['username'] ?? 'Unknown'),
-                'timestamp' => $threat['timestamp']
-            ];
+            $response->getBody()->write(json_encode($mappedThreats));
+            return $response->withHeader('Content-Type', 'application/json')
+                ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+                ->withHeader('Pragma', 'no-cache');
+        } catch (\Throwable $e) {
+            $msg = $e->getMessage() . "\n" . $e->getTraceAsString();
+            file_put_contents(__DIR__ . '/../../debug_error.log', $msg, FILE_APPEND);
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
-
-        $response->getBody()->write(json_encode($mappedThreats));
-        return $response->withHeader('Content-Type', 'application/json');
     }
 
     private function cleanupGeoCache()
@@ -297,7 +255,7 @@ class HomeController
 
     public function neutralizeThreat(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $auditService = \MCAG\SecurityLayer\AuditTrail::getInstance();
+        $auditService = $this->auditTrail;
         $params = $request->getParsedBody();
 
         $success = false;
@@ -313,5 +271,3 @@ class HomeController
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
-
-

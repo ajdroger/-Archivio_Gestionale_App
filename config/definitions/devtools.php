@@ -13,7 +13,8 @@ return [
             $c->get(\MCAG\GestioneSoci\SocioRepository::class),
             $c->get(\MCAG\Debug\ResilienceMonitor::class),
             $c->get(\MCAG\Service\HealthCheckService::class),
-            $c->get(\MCAG\Service\ConfigurationService::class)
+            $c->get(\MCAG\Service\ConfigurationService::class),
+            $c->get(\MCAG\SecurityLayer\AuditTrail::class) // Injected
         );
     },
 

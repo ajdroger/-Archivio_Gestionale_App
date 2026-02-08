@@ -2,11 +2,15 @@
 
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
+use Slim\Views\Mustache;
 
+// DEBUG ROUTING
+// die("DEBUG: MCAG PUBLIC INDEX REACHED");
 require __DIR__ . '/../vendor/autoload.php';
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
+ini_set('html_errors', 0); // Force plain text errors for API compatibility
 error_reporting(E_ALL);
 
 // Bootstrap Sentry
@@ -48,38 +52,46 @@ if (($_ENV['APP_ENV'] ?? 'production') === 'production') {
 }
 
 // 2. Build Container
-$containerBuilder = new ContainerBuilder();
-foreach ((require __DIR__ . '/../config/container.php') as $definitions) {
-    $containerBuilder->addDefinitions($definitions);
+try {
+    $containerBuilder = new ContainerBuilder();
+    foreach ((require __DIR__ . '/../config/container.php') as $definitions) {
+        $containerBuilder->addDefinitions($definitions);
+    }
+    $container = $containerBuilder->build();
+
+    // Initialize AuditTrail Bridge for Singleton compatibility
+    $auditTrail = \MCAG\SecurityLayer\AuditTrail::getInstance();
+    $auditTrail->setLogger($container->get('audit_logger'));
+    $auditTrail->setPdo($container->get(PDO::class));
+
+    // 3. Create App
+    AppFactory::setContainer($container);
+    $app = AppFactory::create();
+
+    // Automatic Base Path Detection
+    $basePath = (function () {
+        $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        return $scriptDir === '/' ? '' : $scriptDir;
+    })();
+    $app->setBasePath($basePath);
+
+    // 4. Register Middleware
+    $middleware = require __DIR__ . '/../config/middleware.php';
+    $middleware($app);
+
+    // 5. Register Routes
+    $routes = require __DIR__ . '/../config/routes.php';
+    $routes($app);
+
+    // 6. Run
+    $app->run();
+} catch (\Throwable $e) {
+    $errorMsg = "<h1>Fatal Error During Startup</h1>";
+    $errorMsg .= "<p><strong>Message:</strong> " . $e->getMessage() . "</p>";
+    $errorMsg .= "<p><strong>File:</strong> " . $e->getFile() . ":" . $e->getLine() . "</p>";
+    $errorMsg .= "<pre>" . $e->getTraceAsString() . "</pre>";
+    // file_put_contents(__DIR__ . '/../debug_fatal_error.html', $errorMsg); // Optional logging
+    echo $errorMsg;
+    exit;
 }
-$container = $containerBuilder->build();
-
-// Initialize AuditTrail Bridge for Singleton compatibility
-$auditTrail = \MCAG\SecurityLayer\AuditTrail::getInstance();
-$auditTrail->setLogger($container->get('audit_logger'));
-$auditTrail->setPdo($container->get(PDO::class));
-
-// 3. Create App
-AppFactory::setContainer($container);
-$app = AppFactory::create();
-
-// Automatic Base Path Detection
-// Allows the app to run in a subdirectory (e.g. /MCAG_Militare-Civile-Archivio-Gestionale/public)
-// or at the domain root without manual configuration.
-$basePath = (function () {
-    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-    return $scriptDir === '/' ? '' : $scriptDir;
-})();
-$app->setBasePath($basePath);
-
-// 4. Register Middleware
-$middleware = require __DIR__ . '/../config/middleware.php';
-$middleware($app);
-
-// 5. Register Routes
-$routes = require __DIR__ . '/../config/routes.php';
-$routes($app);
-
-// 6. Run
-$app->run();
 

@@ -47,151 +47,126 @@ class RedisService
             'host' => getenv('REDIS_HOST') ?: '127.0.0.1',
             'port' => (int) (getenv('REDIS_PORT') ?: 6379),
             'database' => (int) (getenv('REDIS_DB') ?: 0),
+            'timeout' => 1.0, // Fail fast
         ];
 
         try {
             $this->client = new Client($redisConfig);
             $this->client->connect();
-        } catch (\Throwable $e) { // Catch Error and Exception
-            // Fallback to disabled mode if connection fails or class missing
-            $this->enabled = false;
-            error_log("Redis connection/init failed: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->handleFailure($e, "connection/init");
         }
     }
 
-    /**
-     * Recupera un valore da Redis.
-     */
+    private function handleFailure(\Throwable $e, string $context): void
+    {
+        // Disable Redis for the rest of the request to prevent cascading errors
+        $this->enabled = false;
+        // Log to system log, but ensure it doesn't leak to stdout if possible.
+        // In some setups, error_log goes to stdout. We can silence it here if needed,
+        // or just rely on the fact that subsequent calls won't trigger it.
+        // error_log("Redis $context failed (Disabling): " . $e->getMessage()); 
+    }
+
     public function get(string $key): mixed
     {
-        if (!$this->enabled) {
+        if (!$this->enabled)
             return null;
-        }
 
         try {
             $value = $this->client->get($key);
             return $value ? unserialize($value) : null;
         } catch (\Exception $e) {
-            error_log("Redis GET error: " . $e->getMessage());
+            $this->handleFailure($e, "GET");
             return null;
         }
     }
 
-    /**
-     * Imposta un valore in Redis con TTL opzionale.
-     */
     public function set(string $key, mixed $value, ?int $ttl = null): bool
     {
-        if (!$this->enabled) {
+        if (!$this->enabled)
             return false;
-        }
 
         try {
             $serialized = serialize($value);
-
             if ($ttl !== null) {
                 return (bool) $this->client->setex($key, $ttl, $serialized);
             }
-
             return (bool) $this->client->set($key, $serialized);
         } catch (\Exception $e) {
-            error_log("Redis SET error: " . $e->getMessage());
+            $this->handleFailure($e, "SET");
             return false;
         }
     }
 
-    /**
-     * Cancella una chiave da Redis.
-     */
     public function delete(string $key): bool
     {
-        if (!$this->enabled) {
+        if (!$this->enabled)
             return false;
-        }
 
         try {
             return (bool) $this->client->del([$key]);
         } catch (\Exception $e) {
-            error_log("Redis DELETE error: " . $e->getMessage());
+            $this->handleFailure($e, "DELETE");
             return false;
         }
     }
 
-    /**
-     * Cancella tutte le chiavi che corrispondono a un pattern glob.
-     */
     public function deletePattern(string $pattern): int
     {
-        if (!$this->enabled) {
+        if (!$this->enabled)
             return 0;
-        }
 
         try {
             $keys = $this->client->keys($pattern);
-            if (empty($keys)) {
+            if (empty($keys))
                 return 0;
-            }
             return $this->client->del($keys);
         } catch (\Exception $e) {
-            error_log("Redis DELETE PATTERN error: " . $e->getMessage());
+            $this->handleFailure($e, "DELETE PATTERN");
             return 0;
         }
     }
 
-    /**
-     * Svuota l'intero database Redis selezionato.
-     */
     public function flush(): bool
     {
-        if (!$this->enabled) {
+        if (!$this->enabled)
             return false;
-        }
 
         try {
             return (bool) $this->client->flushdb();
         } catch (\Exception $e) {
-            error_log("Redis FLUSH error: " . $e->getMessage());
+            $this->handleFailure($e, "FLUSH");
             return false;
         }
     }
 
-    /**
-     * Incrementa un contatore atomico (utile per rate limiting).
-     */
     public function increment(string $key, int $by = 1): int
     {
-        if (!$this->enabled) {
+        if (!$this->enabled)
             return 0;
-        }
 
         try {
             return (int) $this->client->incrby($key, $by);
         } catch (\Exception $e) {
-            error_log("Redis INCREMENT error: " . $e->getMessage());
+            $this->handleFailure($e, "INCREMENT");
             return 0;
         }
     }
 
-    /**
-     * Imposta la scadenza (TTL) su una chiave esistente.
-     */
     public function expire(string $key, int $seconds): bool
     {
-        if (!$this->enabled) {
+        if (!$this->enabled)
             return false;
-        }
 
         try {
             return (bool) $this->client->expire($key, $seconds);
         } catch (\Exception $e) {
-            error_log("Redis EXPIRE error: " . $e->getMessage());
+            $this->handleFailure($e, "EXPIRE");
             return false;
         }
     }
 
-    /**
-     * Pattern Cache-Aside: ottiene dalla cache o calcola e salva.
-     */
     public function remember(string $key, Closure $callback, int $ttl = 3600): mixed
     {
         // Try to get from cache
@@ -210,17 +185,11 @@ class RedisService
         return $value;
     }
 
-    /**
-     * Verifica se Redis è abilitato e connesso.
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * Get Redis connection info
-     */
     public function info(): array
     {
         if (!$this->enabled) {
@@ -235,6 +204,7 @@ class RedisService
                 'used_memory' => $info['Memory']['used_memory_human'] ?? 'unknown',
             ];
         } catch (\Exception $e) {
+            $this->handleFailure($e, "INFO");
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }

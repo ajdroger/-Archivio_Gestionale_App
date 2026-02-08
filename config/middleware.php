@@ -12,6 +12,9 @@ return function (App $app) {
     // 0. Request ID (Correlation ID) - Primo della lista per tracciabilità totale
     $app->add(new \MCAG\Middleware\RequestIdMiddleware());
 
+    // 0.1 Global Threat Vector Surveillance (REAL-TIME MONITORING)
+    $app->add(new \MCAG\Middleware\TrafficSurveillanceMiddleware($container->get(PDO::class)));
+
     // 1. Configurazione Sessioni Sicura (Mission-critical)
     if (session_status() === PHP_SESSION_NONE) {
         ini_set('session.cookie_httponly', 1);

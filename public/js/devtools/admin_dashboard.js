@@ -249,10 +249,18 @@ window.addEventListener('load', function () {
 
                 console.log(`[CORTEX] Fetching threats from: ${baseUrl}/api/public/security/pulse?reset_geo=1`);
 
-                const response = await fetch(`${baseUrl}/api/public/security/pulse?reset_geo=1`);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const response = await fetch(`${baseUrl}/api/public/security/pulse?reset_geo=1&_t=${Date.now()}`);
+                const text = await response.text();
 
-                const threats = await response.json();
+                let threats;
+                try {
+                    threats = JSON.parse(text);
+                } catch (e) {
+                    console.warn("[CORTEX] Non-JSON response received:", text.substring(0, 100));
+                    return; // Skip this pulse
+                }
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 // SONAR DIAGNOSTIC
                 const count = threats ? threats.length : 0;
@@ -306,12 +314,20 @@ window.addEventListener('load', function () {
             let isNemesis = (threatData.details && threatData.details.actor_alias === 'NEMESIS_APT_GROUP');
 
             if (isInternal) {
-                color = '#00ffff';
+                color = '#00ffff'; // Cyan (Internal)
             } else if (isNemesis) {
-                color = '#a855f7'; // PURPLE for APT/Nemesis
+                color = '#a855f7'; // Purple (APT/Nemesis)
             } else {
-                if (threatData.type === 'unauthorized') color = '#f59e0b';
-                if (threatData.type === 'malware') color = '#d946ef';
+                // Granular Threat Colors
+                switch (threatData.type) {
+                    case 'malware': color = '#d946ef'; break;       // Magenta
+                    case 'brute_force': color = '#f97316'; break;   // Orange
+                    case 'sql_injection': color = '#ef4444'; break; // Red (Critical)
+                    case 'ddos': color = '#eab308'; break;          // Yellow
+                    case 'xss': color = '#10b981'; break;           // Emerald
+                    case 'anomaly': color = '#3b82f6'; break;       // Blue (Low/Suspicious)
+                    default: color = '#64748b';                     // Slate (Unknown)
+                }
             }
 
             // CUSTOM MARKER ICON

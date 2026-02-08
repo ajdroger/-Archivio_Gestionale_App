@@ -261,8 +261,26 @@ class AuditTrail
         if (!$this->pdo)
             return false;
         try {
+            // 1. Resolve Audit Logs (Legacy)
             $stmt = $this->pdo->prepare("UPDATE audit_logs SET resolved_at = NOW() WHERE id = ?");
-            return $stmt->execute([$id]);
+            $auditRes = $stmt->execute([$id]);
+
+            // 2. Resolve Traffic Logs (Modern)
+            // [FIX] HYDRA EFFECT: Fetch IP first, then delete ALL logs from this IP.
+            // This prevents duplicate "ghost" entries from appearing after one is deleted.
+            $stmtGet = $this->pdo->prepare("SELECT ip_address FROM traffic_logs WHERE id = ?");
+            $stmtGet->execute([$id]);
+            $ip = $stmtGet->fetchColumn();
+
+            if ($ip) {
+                $stmt2 = $this->pdo->prepare("DELETE FROM traffic_logs WHERE ip_address = ?");
+                $trafficRes = $stmt2->execute([$ip]);
+            } else {
+                // Fallback if ID not found (e.g. already deleted)
+                $trafficRes = true;
+            }
+
+            return $auditRes || $trafficRes;
         } catch (\Exception $e) {
             return false;
         }
@@ -273,10 +291,30 @@ class AuditTrail
         if (!$this->pdo)
             return false;
         try {
+            // 1. Resolve Audit Logs
             $stmt = $this->pdo->prepare("UPDATE audit_logs SET resolved_at = NOW() WHERE resolved_at IS NULL AND action IN ('LOGIN_FAILED', 'ACCESS_DENIED', 'AUTH_ERROR', 'SUSPICIOUS_ACTIVITY', 'SYSTEM_ALERT')");
-            return $stmt->execute();
+            $auditRes = $stmt->execute();
+
+            // 2. Clear Traffic Logs (The "Nuke" Option)
+            // This ensures the map clears completely when user asks for PURGE.
+            $stmt2 = $this->pdo->prepare("DELETE FROM traffic_logs");
+            $trafficRes = $stmt2->execute();
+
+            return $auditRes && $trafficRes;
         } catch (\Exception $e) {
             return false;
+        }
+    }
+    public function getRecentTraffic(int $limit = 50): array
+    {
+        if (!$this->pdo)
+            return [];
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM traffic_logs ORDER BY timestamp DESC LIMIT " . (int) $limit);
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            return [];
         }
     }
 }

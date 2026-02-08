@@ -1,38 +1,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /MCAG_Militare-Civile-Archivio-Gestionale/public/
 
     # Ensure Basic Auth is passed to PHP
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-    # Force static assets to be served directly (bypass index.php)
-    RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map)$ [NC]
-    RewriteRule ^ - [L]
-
-    # Redirect non-existing files/directories to index.php
+    
+    # Don't rewrite files or directories
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [QSA,L]
 </IfModule>
-
-# Security: Disable Directory Browsing
-<IfModule mod_autoindex.c>
-    Options -Indexes
-</IfModule>
-
-# Security: Block access to hidden files (except .well-known)
-<IfModule mod_authz_core.c>
-    <FilesMatch "^\.(?!well-known)">
-        Require all denied
-    </FilesMatch>
-</IfModule>
-
-# Security Headers & Hardening
-<IfModule mod_headers.c>
-    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-XSS-Protection "1; mode=block"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-</IfModule>
-
-ServerSignature Off

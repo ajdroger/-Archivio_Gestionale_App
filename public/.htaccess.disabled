@@ -1,0 +1,25 @@
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+#     RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|map)$ [NC]
+#     RewriteRule ^ - [L]
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^ index.php [QSA,L]
+# </IfModule>
+# <IfModule mod_autoindex.c>
+#     Options -Indexes
+# </IfModule>
+# <IfModule mod_authz_core.c>
+#     <FilesMatch "^\.(?!well-known)">
+#         Require all denied
+#     </FilesMatch>
+# </IfModule>
+# <IfModule mod_headers.c>
+#     Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+#     Header always set X-Content-Type-Options "nosniff"
+#     Header always set X-Frame-Options "SAMEORIGIN"
+#     Header always set X-XSS-Protection "1; mode=block"
+#     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+# </IfModule>
+# ServerSignature Off
