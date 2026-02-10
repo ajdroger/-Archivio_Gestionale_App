@@ -1033,7 +1033,7 @@ foreach ($tests as $t) {
                 > _
             </div>
             <div class="terminal-input-line">
-                <span>admin@hypergrid:~$</span>
+                <span>AjDRoger@MCAG:~$</span>
                 <input type="text" class="terminal-input" id="cmdInput" autofocus placeholder="Enter command...">
             </div>
         </div>

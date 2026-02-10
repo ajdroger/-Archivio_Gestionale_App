@@ -6,6 +6,10 @@
     RewriteCond %{REQUEST_URI} /public/
     RewriteRule ^ - [L]
 
+    # Allow direct access to bin/debug_tools
+    RewriteCond %{REQUEST_URI} /bin/
+    RewriteRule ^ - [L]
+
     # Forward everything else to public folder
     RewriteRule ^$ public/ [L]
     RewriteRule (.*) public/$1 [L]

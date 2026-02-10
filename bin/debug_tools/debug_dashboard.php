@@ -33,7 +33,7 @@ $logs = $logViewer->listLogs();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debug Dashboard - Fratellanza Militare</title>
+    <title>Debug Dashboard - MCAG_Militare-Civile-Archivio-Gestionale</title>
     <!-- Cache Buster -->
     <link rel="stylesheet"
         href="/MCAG_Militare-Civile-Archivio-Gestionale/public/css/premium.css?v=<?php echo time(); ?>">
