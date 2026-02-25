@@ -8,9 +8,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/world-view/dist/',
+  base: '/MCAG_Militare-Civile-Archivio-Gestionale/public/world-view/dist/',
   build: {
-    outDir: 'dist',
-    emptyOutDir: true
+    outDir: '../public/world-view/dist'
   }
 })
