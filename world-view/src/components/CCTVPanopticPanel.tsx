@@ -97,9 +97,14 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
 
             {/* Video Feed Simulation */}
             <div className="relative h-48 bg-[#001100] border-b border-[#ffb00040] overflow-hidden">
-                {/* Placeholder image from Austin */}
-                <div className="absolute inset-0 opacity-40 mix-blend-screen scale-105" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1514395617265-276e053a6977?auto=format&fit=crop&q=80&w=600")', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'grayscale(100%) contrast(150%)' }}></div>
-
+                {/* Abstract CSS Pattern (Replaces Unsplash to avoid CORB/CORS) */}
+                <div className="absolute inset-0 opacity-40 mix-blend-screen"
+                    style={{
+                        background: 'radial-gradient(circle, #002200 2px, transparent 2.5px), radial-gradient(circle, #002200 2px, transparent 2.5px)',
+                        backgroundSize: '20px 20px',
+                        backgroundPosition: '0 0, 10px 10px'
+                    }}>
+                </div>
                 {/* HTML5 Canvas overlay per Panoptic Detection */}
                 <canvas ref={canvasRef} className="absolute inset-0 w-full h-full mix-blend-screen"></canvas>
 
