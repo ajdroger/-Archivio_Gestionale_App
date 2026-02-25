@@ -1,60 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GlobeView from './components/GlobeView';
 import { SidebarLeft } from './components/UI/SidebarLeft';
 import { SidebarRight } from './components/UI/SidebarRight';
 import { BottomToolbar } from './components/UI/BottomToolbar';
-import type { LocationDest } from './components/UI/BottomToolbar';
-import type { VisualMode } from './components/UI/BottomToolbar';
 import { CCTVPanopticPanel } from './components/CCTVPanopticPanel';
 import { Link as LinkIcon } from 'lucide-react';
 import { useStore } from './store/useStore';
 
 function App() {
-  const [layers, setLayers] = useState({
-    earthquakes: true,
-    flights: false,
-    satellites: false,
-    cctv: false,
-  });
+  const { layers, toggleLayer, visualMode, fxSettings } = useStore();
 
-  const [activeMode, setActiveMode] = useState<VisualMode>('CRT');
-  const [targetLocation, setTargetLocation] = useState<LocationDest | null>(null);
-
-  const { fxSettings, setAllFxSettings } = useStore();
-
-  const handleSetLayer = (key: keyof typeof layers, value: boolean) => {
-    setLayers(prev => ({ ...prev, [key]: value }));
-  };
-
-  const handleModeChange = (mode: VisualMode) => {
-    setActiveMode(mode);
-    switch (mode) {
-      case 'NORMAL':
-        setAllFxSettings({ distortion: 0, bloom: 0.2, scanlines: 0, noise: 0 });
-        break;
-      case 'CRT':
-        setAllFxSettings({ distortion: 0.15, bloom: 0.8, scanlines: 0.5, noise: 0.05 });
-        break;
-      case 'NVG':
-        setAllFxSettings({ distortion: 0.05, bloom: 1.2, scanlines: 0.2, noise: 0.15 });
-        break;
-      case 'FLIR':
-        setAllFxSettings({ distortion: 0, bloom: 1.0, scanlines: 0.1, noise: 0.08 });
-        break;
-      case 'THERMAL':
-        setAllFxSettings({ distortion: 0, bloom: 1.5, scanlines: 0, noise: 0.02 });
-        break;
-    }
-  };
-
-  const handleJump = (loc: LocationDest) => {
-    setTargetLocation(loc);
-  };
+  // ── Live REC Timestamp ──────────────────────────────
+  const [timestamp, setTimestamp] = useState('');
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      setTimestamp(now.toISOString().replace('T', ' ').substring(0, 19) + 'Z');
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="w-screen h-screen bg-[#050b14] overflow-hidden font-mono fixed inset-0">
 
-      {/* Top Header - Left */}
+      {/* ═══ Top Header - Left ═══ */}
       <div className="absolute top-4 left-4 z-20 pointer-events-none flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <h1 className="text-3xl font-sans font-bold text-gray-200 tracking-wider m-0 leading-none">WORLDVIEW</h1>
@@ -67,19 +38,19 @@ function App() {
           <div>KH11-4166 GPS-4117</div>
         </div>
         <div className="mt-4 bg-gray-900/40 backdrop-blur-md border border-white/10 p-2 rounded max-w-sm">
-          <h2 className="text-xs font-sans font-bold text-[#00f0ff] mb-1">CRT</h2>
+          <h2 className="text-xs font-sans font-bold text-[#00f0ff] mb-1">{visualMode}</h2>
           <p className="text-[10px] font-mono text-gray-300 m-0 leading-tight">
-            SUMMARY: CRT GLOBAL NEAR PENNYBACKER BRIDGE (AUSTIN)...
+            SUMMARY: {visualMode} GLOBAL NEAR PENNYBACKER BRIDGE (AUSTIN)...
           </p>
         </div>
       </div>
 
-      {/* Top Header - Right (Telemetria) */}
+      {/* ═══ Top Header - Right (Telemetria Live) ═══ */}
       <div className="absolute top-4 right-4 z-20 pointer-events-none text-right flex flex-col items-end gap-1">
         <div className="flex items-center gap-2 bg-gray-900/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded">
           <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></div>
           <span className="text-xs font-mono text-red-500 font-bold tracking-widest">
-            REC 2026-02-12 02:49:11Z
+            REC {timestamp}
           </span>
         </div>
         <div className="text-[10px] font-mono text-gray-400 mt-1 mr-1">
@@ -87,7 +58,7 @@ function App() {
         </div>
       </div>
 
-      {/* Bottom Header - Right (Telemetria) */}
+      {/* ═══ Bottom Header - Right (GSD/ALT) ═══ */}
       <div className="absolute bottom-6 right-6 z-20 pointer-events-none text-right">
         <div className="text-[10px] font-mono text-[#00f0ff] leading-relaxed drop-shadow-[0_0_2px_rgba(0,240,255,0.8)]">
           <div>GSD: 12255.14M NDIRS: 0.0</div>
@@ -95,24 +66,24 @@ function App() {
         </div>
       </div>
 
-      {/* Main 3D Globe */}
-      <GlobeView layers={layers} visualMode={activeMode} targetLocation={targetLocation} />
+      {/* ═══ Main 3D Globe ═══ */}
+      <GlobeView />
 
-      {/* UI Panels */}
+      {/* ═══ UI Panels ═══ */}
       <div className="z-10 absolute inset-0 pointer-events-none">
         <div className="pointer-events-auto">
-          <SidebarLeft layers={layers} setLayer={handleSetLayer} />
+          <SidebarLeft />
           <SidebarRight />
-          <BottomToolbar currentMode={activeMode} setMode={handleModeChange} onJump={handleJump} />
+          <BottomToolbar />
 
-          {/* Visual CV Module */}
+          {/* CCTV Panoptic Module */}
           {layers.cctv && (
-            <CCTVPanopticPanel onClose={() => handleSetLayer('cctv', false)} />
+            <CCTVPanopticPanel onClose={() => toggleLayer('cctv')} />
           )}
         </div>
       </div>
 
-      {/* CSS Overlay FX */}
+      {/* ═══ CSS Overlay FX ═══ */}
       {fxSettings.scanlines > 0 && (
         <div className="crt-overlay" style={{ opacity: fxSettings.scanlines }}></div>
       )}

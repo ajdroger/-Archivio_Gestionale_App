@@ -7,8 +7,26 @@ interface CCTVPanelProps {
 
 export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
 
-    // Simulated YOLO Bounding Boxes su HTML5 Canvas
+    // Create video element for the CCTV feed
+    useEffect(() => {
+        const vid = videoRef.current;
+        if (!vid) return;
+        vid.src = 'https://cesium.com/public/SandcastleSampleData/big-buck-bunny_trailer.mp4';
+        vid.crossOrigin = 'anonymous';
+        vid.loop = true;
+        vid.muted = true;
+        vid.play().catch(e => console.error('CCTV autoplay denied:', e));
+
+        return () => {
+            vid.pause();
+            vid.removeAttribute('src');
+            vid.load();
+        };
+    }, []);
+
+    // Simulated YOLO Panoptic Bounding Boxes
     useEffect(() => {
         let animationFrameId: number;
         const canvas = canvasRef.current;
@@ -16,59 +34,64 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Configura proporzioni canvas
-        canvas.width = 300;
+        canvas.width = 320;
         canvas.height = 200;
 
-        // Placeholder objects tracked
+        // Tracked objects
         const boxes = [
-            { x: 50, y: 100, w: 30, h: 40, label: 'PERSON 98%', color: '#00ff41', speed: 0.5 },
-            { x: 150, y: 120, w: 80, h: 50, label: 'VEHICLE 91%', color: '#ffb000', speed: -1 }
+            { x: 50, y: 100, w: 30, h: 40, label: 'PERSON 98%', color: '#00ff41', vx: 0.5, vy: 0.2 },
+            { x: 150, y: 120, w: 80, h: 50, label: 'VEHICLE 91%', color: '#ffb000', vx: -1.0, vy: 0 },
+            { x: 220, y: 80, w: 25, h: 55, label: 'CYCLIST 87%', color: '#00f0ff', vx: 0.7, vy: -0.1 },
+            { x: 30, y: 140, w: 18, h: 20, label: 'DOG 76%', color: '#ff3333', vx: 1.2, vy: 0.3 },
+            { x: 260, y: 130, w: 15, h: 18, label: 'BACKPACK 82%', color: '#a855f7', vx: -0.3, vy: 0.15 },
         ];
 
         const render = () => {
-            // Clear frame
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw grid a matrice
+            // Grid overlay
             ctx.strokeStyle = '#00ff4110';
             ctx.lineWidth = 1;
-            for (let i = 0; i < 300; i += 20) {
-                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 200); ctx.stroke();
+            for (let i = 0; i < canvas.width; i += 20) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
             }
-            for (let i = 0; i < 200; i += 20) {
-                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(300, i); ctx.stroke();
+            for (let i = 0; i < canvas.height; i += 20) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
             }
 
-            // Update AI Boxes
+            // Update & draw each tracked object
             boxes.forEach(b => {
-                b.x += b.speed;
-                if (b.x > 300 - b.w || b.x < 0) b.speed *= -1; // Bounce
+                b.x += b.vx;
+                b.y += b.vy;
+                if (b.x > canvas.width - b.w || b.x < 0) b.vx *= -1;
+                if (b.y > canvas.height - b.h || b.y < 20) b.vy *= -1;
 
+                // Corner brackets (crosshair style)
                 ctx.strokeStyle = b.color;
                 ctx.lineWidth = 1.5;
-                // Animazione crosshair corner
-                const cornerSize = 10;
+                const cs = 8;
                 ctx.beginPath();
-                // Top Left
-                ctx.moveTo(b.x, b.y + cornerSize); ctx.lineTo(b.x, b.y); ctx.lineTo(b.x + cornerSize, b.y);
-                // Top Right
-                ctx.moveTo(b.x + b.w - cornerSize, b.y); ctx.lineTo(b.x + b.w, b.y); ctx.lineTo(b.x + b.w, b.y + cornerSize);
-                // Bottom Left
-                ctx.moveTo(b.x, b.y + b.h - cornerSize); ctx.lineTo(b.x, b.y + b.h); ctx.lineTo(b.x + cornerSize, b.y + b.h);
-                // Bottom Right
-                ctx.moveTo(b.x + b.w - cornerSize, b.y + b.h); ctx.lineTo(b.x + b.w, b.y + b.h); ctx.lineTo(b.x + b.w, b.y + b.h - cornerSize);
+                // TL
+                ctx.moveTo(b.x, b.y + cs); ctx.lineTo(b.x, b.y); ctx.lineTo(b.x + cs, b.y);
+                // TR
+                ctx.moveTo(b.x + b.w - cs, b.y); ctx.lineTo(b.x + b.w, b.y); ctx.lineTo(b.x + b.w, b.y + cs);
+                // BL
+                ctx.moveTo(b.x, b.y + b.h - cs); ctx.lineTo(b.x, b.y + b.h); ctx.lineTo(b.x + cs, b.y + b.h);
+                // BR
+                ctx.moveTo(b.x + b.w - cs, b.y + b.h); ctx.lineTo(b.x + b.w, b.y + b.h); ctx.lineTo(b.x + b.w, b.y + b.h - cs);
                 ctx.stroke();
 
-                // Label Box
+                // Label
                 ctx.fillStyle = b.color;
-                ctx.fillRect(b.x, b.y - 12, ctx.measureText(b.label).width + 8, 12);
+                const tw = ctx.measureText(b.label).width + 8;
+                ctx.fillRect(b.x, b.y - 12, tw, 12);
                 ctx.fillStyle = '#000';
                 ctx.font = '9px Consolas';
                 ctx.fillText(b.label, b.x + 4, b.y - 3);
 
-                // Draw crosshair center
+                // Center crosshair
                 ctx.strokeStyle = b.color;
+                ctx.lineWidth = 1;
                 ctx.beginPath();
                 const cx = b.x + b.w / 2;
                 const cy = b.y + b.h / 2;
@@ -95,26 +118,28 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
                 <button onClick={onClose} className="hover:text-white transition-colors"><X size={14} /></button>
             </div>
 
-            {/* Video Feed Simulation */}
+            {/* Video Feed + Canvas Overlay */}
             <div className="relative h-48 bg-[#001100] border-b border-[#ffb00040] overflow-hidden">
-                {/* Abstract CSS Pattern (Replaces Unsplash to avoid CORB/CORS) */}
-                <div className="absolute inset-0 opacity-40 mix-blend-screen"
-                    style={{
-                        background: 'radial-gradient(circle, #002200 2px, transparent 2.5px), radial-gradient(circle, #002200 2px, transparent 2.5px)',
-                        backgroundSize: '20px 20px',
-                        backgroundPosition: '0 0, 10px 10px'
-                    }}>
-                </div>
-                {/* HTML5 Canvas overlay per Panoptic Detection */}
+                {/* Real video element */}
+                <video
+                    ref={videoRef}
+                    className="absolute inset-0 w-full h-full object-cover opacity-60"
+                    playsInline
+                    muted
+                    loop
+                />
+                {/* HTML5 Canvas for YOLO Detection Overlay */}
                 <canvas ref={canvasRef} className="absolute inset-0 w-full h-full mix-blend-screen"></canvas>
 
-                {/* Tactical Info Overlay */}
+                {/* Radial Vignette */}
                 <div className="absolute top-0 w-full h-full pointer-events-none" style={{ background: 'radial-gradient(circle, transparent 60%, rgba(0,0,0,0.8) 100%)' }}></div>
 
+                {/* Tactical Info */}
                 <div className="absolute bottom-2 left-2 text-[#ffb000] text-[9px] space-y-1 font-bold pointer-events-none">
                     <div><span className="text-gray-400">MODEL</span> YoloV8-Panoptic</div>
                     <div><span className="text-gray-400">CONF.</span> &gt;0.85</div>
                     <div><span className="text-gray-400">LATENCY</span> 14ms</div>
+                    <div><span className="text-gray-400">OBJECTS</span> 5</div>
                 </div>
                 <div className="absolute top-2 right-2 flex items-center gap-1 text-[#ff3333] text-[9px] animate-pulse font-bold pointer-events-none">
                     <Target size={12} /> REC

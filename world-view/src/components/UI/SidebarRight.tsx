@@ -1,9 +1,9 @@
 import { ChevronDown } from 'lucide-react';
-
 import { useStore } from '../../store/useStore';
 
 export function SidebarRight() {
     const { fxSettings, setFxSetting } = useStore();
+
     return (
         <div className="absolute top-1/2 -translate-y-1/2 right-4 w-[300px] z-10 select-none flex flex-col gap-4">
 
@@ -28,12 +28,13 @@ export function SidebarRight() {
                 <div>
                     <div className="flex justify-between text-gray-400 mb-2 font-bold text-xs">
                         <span>SHARPEN</span>
-                        <span className="font-mono text-[10px]">50%</span>
+                        <span className="font-mono text-[10px]">{Math.round(fxSettings.sharpen * 100)}%</span>
                     </div>
                     <input
                         type="range"
-                        min="0" max="100" step="1"
-                        defaultValue="50"
+                        min="0" max="1" step="0.01"
+                        value={fxSettings.sharpen}
+                        onChange={(e) => setFxSetting('sharpen', parseFloat(e.target.value))}
                         className="w-full accent-gray-400 h-0.5 bg-gray-700 rounded-lg appearance-none cursor-pointer"
                     />
                 </div>
@@ -58,12 +59,13 @@ export function SidebarRight() {
                 <div className="p-4">
                     <div className="flex justify-between text-gray-400 mb-2 font-bold text-xs">
                         <span>Opacity</span>
-                        <span className="font-mono text-[10px]">74%</span>
+                        <span className="font-mono text-[10px]">{Math.round(fxSettings.panopticOpacity * 100)}%</span>
                     </div>
                     <input
                         type="range"
-                        min="0" max="100" step="1"
-                        defaultValue="74"
+                        min="0" max="1" step="0.01"
+                        value={fxSettings.panopticOpacity}
+                        onChange={(e) => setFxSetting('panopticOpacity', parseFloat(e.target.value))}
                         className="w-full accent-gray-400 h-0.5 bg-gray-700 rounded-lg appearance-none cursor-pointer"
                     />
                 </div>
@@ -74,18 +76,20 @@ export function SidebarRight() {
                 CLEAR UI
             </button>
 
-            {/* PARAMETERS (CRT Specific FX) */}
+            {/* PARAMETERS (CRT-Specific FX) */}
             <div className="bg-gray-900/60 backdrop-blur-md border border-white/10 p-4 rounded flex flex-col gap-4">
                 <div className="text-[#00f0ff] font-bold text-xs tracking-widest mb-2 border-b border-white/10 pb-2">PARAMETERS</div>
 
                 <div>
                     <div className="flex justify-between text-gray-400 mb-2 font-bold text-xs">
                         <span>Pixelation</span>
+                        <span className="font-mono text-[10px]">{Math.round(fxSettings.pixelation * 100)}%</span>
                     </div>
                     <input
                         type="range"
                         min="0" max="1" step="0.1"
-                        defaultValue="0"
+                        value={fxSettings.pixelation}
+                        onChange={(e) => setFxSetting('pixelation', parseFloat(e.target.value))}
                         className="w-full accent-gray-400 h-0.5 bg-gray-700 rounded-lg appearance-none cursor-pointer"
                     />
                 </div>
