@@ -1,7 +1,7 @@
 import { Entity, PointGraphics } from 'resium';
 import { Cartesian3, Color } from 'cesium';
-import { useCelesTrak } from '../../hooks/useCelesTrak';
-import type { SatData } from '../../hooks/useCelesTrak';
+import { useCelesTrak } from '../api/useCelesTrak';
+import type { SatData } from '../api/useCelesTrak';
 
 export function SatelliteLayer() {
     const { data: satellites } = useCelesTrak(true);

@@ -58,6 +58,14 @@ interface WorldViewState {
     fxSettings: FxSettings;
     setFxSetting: (key: keyof FxSettings, value: number) => void;
     setAllFxSettings: (settings: FxSettings) => void;
+
+    // Real-Time HUD Coords
+    mouseCoords: { lat: number, lng: number, alt: number, mgrs: string };
+    setMouseCoords: (coords: { lat: number, lng: number, alt: number, mgrs: string }) => void;
+
+    // CCTV Mesh Calibration
+    cctvParams: { heading: number, pitch: number, roll: number, fov: number, range: number };
+    setCctvParam: (key: keyof WorldViewState['cctvParams'], value: number) => void;
 }
 
 // ── Store ──────────────────────────────────────────────
@@ -101,4 +109,12 @@ export const useStore = create<WorldViewState>((set) => ({
         set((state) => ({ fxSettings: { ...state.fxSettings, [key]: value } })),
     setAllFxSettings: (settings) =>
         set(() => ({ fxSettings: settings })),
+
+    // Real-Time HUD Coords
+    mouseCoords: { lat: 0, lng: 0, alt: 0, mgrs: 'OUT OF BOUNDS' },
+    setMouseCoords: (coords) => set(() => ({ mouseCoords: coords })),
+
+    // CCTV Params default
+    cctvParams: { heading: 0, pitch: -45, roll: 0, fov: 60, range: 100 },
+    setCctvParam: (key, value) => set((state) => ({ cctvParams: { ...state.cctvParams, [key]: value } })),
 }));

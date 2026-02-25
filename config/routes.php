@@ -46,6 +46,10 @@ return function (App $app) {
     // Demo Request Public API
     $app->post('/api/public/demo-request', \MCAG\Controller\Public\DemoRequestController::class . ':submit')->setName('demo_request_submit');
 
+    // API Proxy for WorldView (Real-time data feeds)
+    $app->get('/api/usgs/{path:.*}', \MCAG\Controller\Public\ApiProxyController::class . ':usgs');
+    $app->get('/api/opensky/{path:.*}', \MCAG\Controller\Public\ApiProxyController::class . ':opensky');
+
     // Main
     $app->get('/', HomeController::class . ':dashboard')->setName('dashboard');
 

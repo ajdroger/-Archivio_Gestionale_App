@@ -1,13 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Video, Target, X } from 'lucide-react';
 
 interface CCTVPanelProps {
     onClose: () => void;
 }
 
+import { useStore } from '../core/store';
+
 export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
+    const { cctvParams, setCctvParam } = useStore();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [isReady, setIsReady] = useState(false);
 
     // Create video element for the CCTV feed
     useEffect(() => {
@@ -17,9 +21,18 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
         vid.crossOrigin = 'anonymous';
         vid.loop = true;
         vid.muted = true;
+
+        const handleReady = () => {
+            if (vid.readyState >= 2) {
+                setIsReady(true);
+            }
+        };
+
+        vid.addEventListener('canplay', handleReady);
         vid.play().catch(e => console.error('CCTV autoplay denied:', e));
 
         return () => {
+            vid.removeEventListener('canplay', handleReady);
             vid.pause();
             vid.removeAttribute('src');
             vid.load();
@@ -28,6 +41,8 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
 
     // Simulated YOLO Panoptic Bounding Boxes
     useEffect(() => {
+        if (!isReady) return;
+
         let animationFrameId: number;
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -105,7 +120,7 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
 
         render();
         return () => cancelAnimationFrame(animationFrameId);
-    }, []);
+    }, [isReady]);
 
     return (
         <div className="absolute top-24 right-[19rem] w-80 glass-panel rounded-md overflow-hidden shadow-[0_0_30px_#ffb00040] border border-[#ffb000] z-50 cursor-move">
@@ -120,10 +135,16 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
 
             {/* Video Feed + Canvas Overlay */}
             <div className="relative h-48 bg-[#001100] border-b border-[#ffb00040] overflow-hidden">
+                {!isReady && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+                        <div className="text-[#ffb000] text-[10px] animate-pulse">CONNECTING TO MESH...</div>
+                    </div>
+                )}
                 {/* Real video element */}
                 <video
                     ref={videoRef}
                     className="absolute inset-0 w-full h-full object-cover opacity-60"
+                    style={{ visibility: isReady ? 'visible' : 'hidden' }}
                     playsInline
                     muted
                     loop
@@ -149,7 +170,37 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
             {/* Status Bar */}
             <div className="p-2 text-[9px] font-bold text-gray-500 flex justify-between tracking-wider">
                 <span>IP: 192.168.10.44:8080</span>
-                <span className="text-[#00ff41]">UPLINK STABLE</span>
+                <span className="text-[#00ff41]">{isReady ? 'UPLINK STABLE' : 'UPLINK SEARCHING'}</span>
+            </div>
+
+            {/* Calibration Controls */}
+            <div className="p-2 border-t border-[#ffb00040] bg-gray-900/80 backdrop-blur-md pb-4 cursor-default">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[9px] text-[#ffb000] font-bold">
+                    <label className="flex flex-col gap-1">
+                        <span>HEADING: {cctvParams.heading}°</span>
+                        <input type="range" min="0" max="360" value={cctvParams.heading}
+                            onChange={e => setCctvParam('heading', parseInt(e.target.value))}
+                            className="w-full accent-[#ffb000] h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
+                    </label>
+                    <label className="flex flex-col gap-1">
+                        <span>PITCH: {cctvParams.pitch}°</span>
+                        <input type="range" min="-90" max="0" value={cctvParams.pitch}
+                            onChange={e => setCctvParam('pitch', parseInt(e.target.value))}
+                            className="w-full accent-[#ffb000] h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
+                    </label>
+                    <label className="flex flex-col gap-1">
+                        <span>FOV: {cctvParams.fov}°</span>
+                        <input type="range" min="20" max="140" value={cctvParams.fov}
+                            onChange={e => setCctvParam('fov', parseInt(e.target.value))}
+                            className="w-full accent-[#ffb000] h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
+                    </label>
+                    <label className="flex flex-col gap-1">
+                        <span>RANGE: {cctvParams.range}M</span>
+                        <input type="range" min="50" max="1500" value={cctvParams.range}
+                            onChange={e => setCctvParam('range', parseInt(e.target.value))}
+                            className="w-full accent-[#ffb000] h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
+                    </label>
+                </div>
             </div>
         </div>
     );

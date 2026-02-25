@@ -7,6 +7,17 @@ e questo progetto aderisce al [Semantic Versioning](https://semver.org/spec/v2.0
 
 ---
 
+## [10.0.0-global-vision] - 2026-02-25 "**Global Vision Edition**"
+### 🌍 Tactical MESH Engine (NEW WORLDVIEW MODULE)
+- **CesiumJS & React 18 Core**: Integrazione profonda di un map viewer webGL a prestazioni estreme (`resium`).
+- **Real-Time Data Feeds**: Proxying attivo di dati terrestri e aero-spaziali:
+    - **OpenSky**: Voli globali 3D (Altitudine, Rotta, Callsign).
+    - **CelesTrak**: Satelliti attivi estratti da file TLE orbitali.
+    - **USGS**: Eventi sismici globali Live.
+- **Top Secret HUD**: Interfaccia a 4 angoli tattica ("SI-TK // NOFORN") con lettura MGRS in tempo reale.
+- **CCTV Panoptic Node**: Finestra CCTV drappeggiata sul terreno 3D (Drape Polygon) con algoritmi YOLO simulati e controlli PTZ.
+- **Post-Processing Shaders**: Filtri visivi avanzati GPU-accelerati: NVG (Night Vision), FLIR (Thermal), CRT, Anime, Noir, Snow.
+
 ## [0.1.0] - 2025-03-15 - Kickoff Progetto
 - Setup iniziale del repository
 - Definizione stack tecnologico (PHP 8.2, Slim 4)

@@ -34,20 +34,21 @@ export function useOpenSky(enabled: boolean) {
 
                 // Take a random sample or top 500 to keep performance optimal
                 const limit = 500;
-                const flights: FlightData[] = json.states.slice(0, limit).filter((s: any) => s[5] !== null && s[6] !== null).map((s: any) => ({
-                    icao24: s[0],
-                    callsign: s[1]?.trim() || 'UNKNOWN',
-                    origin_country: s[2],
-                    lng: s[5], // longitude
-                    lat: s[6], // latitude
-                    altitude: s[7] || s[13], // baro_altitude or geo_altitude
-                    velocity: s[9],
-                    true_track: s[10] // heading
+                type OpenSkyStateVector = (string | number | boolean | null)[];
+                const flights: FlightData[] = json.states.slice(0, limit).filter((s: OpenSkyStateVector) => s[5] !== null && s[6] !== null).map((s: OpenSkyStateVector) => ({
+                    icao24: String(s[0]),
+                    callsign: typeof s[1] === 'string' ? s[1].trim() : 'UNKNOWN',
+                    origin_country: String(s[2]),
+                    lng: Number(s[5]),
+                    lat: Number(s[6]),
+                    altitude: Number(s[7] || s[13] || 0),
+                    velocity: Number(s[9] || 0),
+                    true_track: Number(s[10] || 0)
                 }));
 
                 setData(flights);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);
             }

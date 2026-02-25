@@ -31,19 +31,20 @@ export function useUSGS(enabled: boolean) {
                 if (!response.ok) throw new Error('USGS fetch failed');
                 const json = await response.json();
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const earthquakes: EarthquakeData[] = json.features.map((f: any) => ({
-                    id: f.id,
-                    mag: f.properties.mag,
-                    place: f.properties.place,
-                    time: f.properties.time,
-                    lng: f.geometry.coordinates[0],
-                    lat: f.geometry.coordinates[1],
-                    depth: f.geometry.coordinates[2]
+                    id: String(f.id),
+                    mag: Number(f.properties.mag),
+                    place: String(f.properties.place),
+                    time: Number(f.properties.time),
+                    lng: Number(f.geometry.coordinates[0]),
+                    lat: Number(f.geometry.coordinates[1]),
+                    depth: Number(f.geometry.coordinates[2])
                 }));
 
                 setData(earthquakes);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);
             }

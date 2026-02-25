@@ -32,7 +32,7 @@ export function useCelesTrak(enabled: boolean) {
                 const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
                 // Parse TLE pairs (every 3 lines: Name, Line 1, Line 2)
-                const satRecords: any[] = [];
+                const satRecords: SatData[] = [];
                 for (let i = 0; i < lines.length && i < 3000; i += 3) {
                     // Limit to first 1000 sats (3000 lines) for performance
                     const name = lines[i];
@@ -61,15 +61,15 @@ export function useCelesTrak(enabled: boolean) {
                                     });
                                 }
                             }
-                        } catch (e) {
+                        } catch {
                             // Ignore invalid TLE parsing
                         }
                     }
                 }
 
                 setData(satRecords);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);
             }

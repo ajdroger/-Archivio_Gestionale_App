@@ -1,11 +1,11 @@
-import { Activity, Plane, Satellite, Video, Map, CloudRain } from 'lucide-react';
-import { useStore } from '../../store/useStore';
-import type { LayersState } from '../../store/useStore';
+import { Activity, Plane, Satellite, Video, Map, CloudRain, type LucideIcon } from 'lucide-react';
+import { useStore } from '../core/store';
+import type { LayersState } from '../core/store';
 
 export function SidebarLeft() {
     const { layers, toggleLayer } = useStore();
 
-    const layerItems: { key: keyof LayersState; icon: any; label: string; sub: string; color: string; count?: string }[] = [
+    const layerItems: { key: keyof LayersState; icon: LucideIcon; label: string; sub: string; color: string; count?: string }[] = [
         { key: 'flights', icon: Plane, label: 'Live Flights', sub: 'OpenSky', color: '#00f0ff', count: '8.2K' },
         { key: 'earthquakes', icon: Activity, label: 'Earthquakes (24h)', sub: 'USGS', color: '#ff3333' },
         { key: 'satellites', icon: Satellite, label: 'Satellites', sub: 'CelesTrak', color: '#00ff41', count: '180' },

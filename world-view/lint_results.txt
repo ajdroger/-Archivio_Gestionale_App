@@ -1,0 +1,48 @@
+
+> world-view@0.0.0 lint
+> eslint .
+
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\api\useCelesTrak.ts
+  35:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:34  error  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  71:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\api\useOpenSky.ts
+  37:86   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:134  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  49:27   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\api\useUSGS.ts
+  34:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  45:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\core\GlobeView.tsx
+  31:30  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\core\VideoProjectionLayer.tsx
+  32:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\core\VideoProjectionLayer.tsx:32:9
+  30 |         vid.addEventListener('canplay', handleReady);
+  31 |         vid.play().catch(e => console.error("Auto-play CCTV projection denied:", e));
+> 32 |         setVideoElement(vid);
+     |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |
+  34 |         return () => {
+  35 |             vid.removeEventListener('canplay', handleReady);  react-hooks/set-state-in-effect
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\ui\BottomToolbar.tsx
+  19:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Program Files\Ampps\www\MCAG_Militare-Civile-Archivio-Gestionale\world-view\src\ui\SidebarLeft.tsx
+  8:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 12 problems (12 errors, 0 warnings)
+

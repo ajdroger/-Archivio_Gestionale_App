@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { useStore } from '../../store/useStore';
+import { useStore } from '../core/store';
 
 export function SidebarRight() {
     const { fxSettings, setFxSetting } = useStore();

@@ -1,7 +1,7 @@
 import { Entity, PointGraphics } from 'resium';
 import { Cartesian3, Color } from 'cesium';
-import { useOpenSky } from '../../hooks/useOpenSky';
-import type { FlightData } from '../../hooks/useOpenSky';
+import { useOpenSky } from '../api/useOpenSky';
+import type { FlightData } from '../api/useOpenSky';
 
 export function FlightLayer() {
     const { data: flights } = useOpenSky(true);
