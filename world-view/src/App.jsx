@@ -5,9 +5,12 @@ import { CCTVWindow as CCTVPanopticPanel } from './components/cctv/CCTVWindow';
 import { HUDInfo as HUDInfoBottomRight } from './components/ui/HUDInfo';
 import { Header as HeaderTopLeft } from './components/ui/Header';
 import { Telemetry as TelemetryTopRight } from './components/ui/Telemetry';
+import { TacticalInfoBox } from './components/ui/TacticalInfoBox';
 import { useStore } from './store/useWorldViewStore';
 function App() {
-  const { layers, toggleLayer, fxSettings } = useStore();
+  const layers = useStore(state => state.layers);
+  const toggleLayer = useStore(state => state.toggleLayer);
+  const fxSettings = useStore(state => state.fxSettings);
 
 
 
@@ -25,6 +28,9 @@ function App() {
 
       {/* ═══ Main 3D Globe ═══ */}
       <GlobeContainer />
+
+      {/* ═══ Tactical Info Overlay (Decoupled from Globe) ═══ */}
+      <TacticalInfoBox />
 
       {/* ═══ UI Panels ═══ */}
       <div className="z-10 absolute inset-0 pointer-events-none">

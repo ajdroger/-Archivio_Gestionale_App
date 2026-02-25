@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
-@theme {
+:root {
   --color-military-bg: #050b14;
   --color-military-panel: rgba(10, 20, 35, 0.85);
   --color-military-green: #00ff41;
   --color-military-red: #ff3333;
   --color-military-cyan: #00f0ff;
   --color-military-yellow: #ffb000;
-  
+
   --font-mono: "Consolas", "Courier New", monospace;
-  
+
   --animate-scanline: scanline 8s linear infinite;
   --animate-pulse-fast: pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -30,9 +30,11 @@ body {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-military-green);
   border-radius: 3px;
@@ -40,13 +42,25 @@ body {
 
 /* Animations */
 @keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
 }
 
 @keyframes pulse-fast {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Utilities */
@@ -63,15 +77,11 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%,
-    rgba(0, 0, 0, 0.25) 50%
-  ), linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.06),
-    rgba(0, 255, 0, 0.02),
-    rgba(0, 0, 255, 0.06)
-  );
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06));
   background-size: 100% 4px, 6px 100%;
   pointer-events: none;
   z-index: 9999;

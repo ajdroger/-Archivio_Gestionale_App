@@ -22,7 +22,7 @@
 
 ### Technology Stack
 - **Backend**: PHP 8.2+, Slim 4, MySQL 8 Cluster, Redis
-- **Frontend SPA**: React 18, CesiumJS, Zustand, TailwindCSS, Vite
+- **Frontend SPA (WorldView)**: React 18, CesiumJS, Resium, Zustand, TailwindCSS, Vite
 - **Frontend Core**: Mustache, Vanilla JS (ES6+)
 - **Security**: TOTP 2FA, AES-256-GCM, CSP Strict, Audit Immutable
 - **DevOps**: Docker, GitHub Actions, Sentry, PestPHP
@@ -42,7 +42,11 @@ MCAG_Militare-Civile-Archivio-Gestionale/
 │   └── console               # MCAG CommandRunner
 ├── config/                   # DI Container & Environment
 ├── templates/                # Mustache Hyper-Grid Views
-├── world-view/               # [NEW] Tactical Map SPA (React, Cesium)
+├── world-view/               # [NEW] Tactical Map SPA (React 18, CesiumJS, Resium)
+│   ├── src/api/              # Gestori data-fetching continui (OpenSky, CelesTrak, USGS)
+│   ├── src/components/       # UI Ghost-Neon Components & Map Layers
+│   ├── src/core/             # Inizializzatori Cesium Engine & PostProcess Manager
+│   └── src/store/            # Zustand State & FX Parameters
 ├── public/                   # Web Root (Vite Assets)
 ├── tests/                    # PestPHP Suite (206 tests)
 ├── migrazione_totale/        # Kit deployment universale

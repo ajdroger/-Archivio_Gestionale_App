@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useMemo } from 'react';
+import { useRef, useEffect, useCallback, useMemo, useState } from 'react';
 import throttle from 'lodash/throttle';
 import { Viewer, Cesium3DTileset, PostProcessStage, ScreenSpaceEventHandler, ScreenSpaceEvent } from 'resium';
 import { Color, IonResource, Cartesian3, ScreenSpaceEventType, Math as CesiumMath, Cartographic } from 'cesium';
@@ -7,6 +7,7 @@ import { EarthquakeLayer } from './EarthquakeLayer';
 import { SatelliteLayer } from './SatelliteLayer';
 import { FlightLayer } from './FlightLayer';
 import { VideoProjectionLayer } from './VideoProjectionLayer';
+import { StreetTrafficLayer, WeatherRadarLayer } from './MockLayers';
 
 import { useStore } from '../../store/useWorldViewStore';
 import { latLonToMGRS } from '../../utils/mgrs';
@@ -25,13 +26,20 @@ import SNOW_SHADER from '../../shaders/snow.glsl?raw';
 import AI_SHADER from '../../shaders/ai.glsl?raw';
 import PIXELATION_SHADER from '../../shaders/pixelation.glsl?raw';
 
+import { applyPostProcess } from '../../core/postProcess';
+
 // ═══════════════════════════════════════════════════════
 // GlobeView Component
 // ═══════════════════════════════════════════════════════
 
 export default function GlobeContainer() {
     const viewerRef = useRef(null);
-    const { layers, visualMode, targetLocation, fxSettings, setMouseCoords } = useStore();
+    const layers = useStore(state => state.layers);
+    const visualMode = useStore(state => state.visualMode);
+    const targetLocation = useStore(state => state.targetLocation);
+    const fxSettings = useStore(state => state.fxSettings);
+    const setMouseCoords = useStore(state => state.setMouseCoords);
+    const setSelectedInfo = useStore(state => state.setSelectedInfo);
 
     // Throttled update function to heavily reduce React renders from mouse movement
     const throttledUpdate = useMemo(() => throttle((lat, lng, alt) => {
@@ -64,7 +72,31 @@ export default function GlobeContainer() {
         }
     }, [throttledUpdate]);
 
-    // Cesium Viewer Init
+    // Handle Left Click for Custom InfoBox
+    const handleLeftClick = useCallback((action) => {
+        if (!viewerRef.current?.cesiumElement) return;
+        const viewer = viewerRef.current.cesiumElement;
+
+        // Use drillPick to find entities
+        const pickedObjects = viewer.scene.drillPick(action.position);
+        if (pickedObjects && pickedObjects.length > 0) {
+            const entity = pickedObjects[0].id;
+            if (entity && entity.name) {
+                // Get description. Some properties are constant strings, some are dynamic
+                const rawDesc = entity.description?.getValue ? entity.description.getValue(viewer.clock.currentTime) : entity.description;
+                setSelectedInfo({
+                    name: entity.name,
+                    description: rawDesc ? String(rawDesc) : 'No telemetry data available.',
+                    x: action.position.x,
+                    y: action.position.y
+                });
+                return;
+            }
+        }
+        setSelectedInfo(null);
+    }, []);
+
+    // Cesium Viewer Init & WebGL Cleanup
     useEffect(() => {
         if (viewerRef.current?.cesiumElement) {
             const viewer = viewerRef.current.cesiumElement;
@@ -72,11 +104,31 @@ export default function GlobeContainer() {
             viewer.scene.backgroundColor = Color.fromCssColorString('#050b14');
             viewer.scene.skyAtmosphere.show = true;
             viewer.scene.fog.enabled = true;
+            viewer.scene.globe.depthTestAgainstTerrain = false; // Disabilita calcoli dispendiosi se non su zoom-in estremo
+
+            // Forza requestRenderMode a True
+            viewer.scene.requestRenderMode = true;
+            viewer.scene.maximumRenderTimeChange = Infinity;
+
+            // Mitigazione WebGL Lazy Initialization (Mipmap warnings)
+            viewer.scene.fxaa = false; // Disable fast approximate anti-aliasing
+            viewer.scene.msaaSamples = 1; // Disabilita Hardware Anti-Aliasing (fonte di lazy mipmaps proxy su Firefox/Chrome)
+            viewer.scene.globe.maximumScreenSpaceError = 3; // Riduci caricamento texture aggressive per i tile lontani
 
             if (viewer.animation) viewer.animation.container.style.display = 'none';
             if (viewer.timeline) viewer.timeline.container.style.display = 'none';
             if (viewer.fullscreenButton) viewer.fullscreenButton.container.style.display = 'none';
+
+            // Aggiorna la vista quando arrivano nuovi dati UI
+            viewer.scene.requestRender();
         }
+
+        // Cleanup radicale Context WebGL on Unmount (HMR Fix)
+        return () => {
+            if (viewerRef.current?.cesiumElement && !viewerRef.current?.cesiumElement.isDestroyed()) {
+                viewerRef.current.cesiumElement.destroy();
+            }
+        };
     }, []);
 
     // Camera Jump
@@ -90,6 +142,13 @@ export default function GlobeContainer() {
         }
     }, [targetLocation]);
 
+    // Applicazione Programmatica degli Shader (Evita TypeError di Resium su postProcessStages)
+    useEffect(() => {
+        if (viewerRef.current?.cesiumElement && !viewerRef.current.cesiumElement.isDestroyed()) {
+            applyPostProcess(viewerRef.current.cesiumElement, visualMode, fxSettings);
+        }
+    }, [visualMode, fxSettings]);
+
     return (
         <div className="absolute inset-0 z-0">
             <Viewer
@@ -101,10 +160,21 @@ export default function GlobeContainer() {
                 geocoder={false}
                 homeButton={false}
                 infoBox={false}
+                selectionIndicator={true}
                 sceneModePicker={false}
                 navigationHelpButton={false}
-                requestRenderMode={true}
+                requestRenderMode={true} // Salva WebGL renderizzando solo se necessario
                 maximumRenderTimeChange={Infinity}
+                msaaSamples={1} // Inibisce MultiSample AntiAliasing (che trigghera texture lazy init)
+                contextOptions={{
+                    webgl: {
+                        alpha: false,
+                        antialias: false,
+                        preserveDrawingBuffer: false,
+                        failIfMajorPerformanceCaveat: false,
+                        powerPreference: "high-performance"
+                    }
+                }}
             >
                 {/* ─── 3D Buildings (OSM Ion) ─── */}
                 <Cesium3DTileset
@@ -114,6 +184,7 @@ export default function GlobeContainer() {
                 {/* ─── MGRS Coordinate Tracker ─── */}
                 <ScreenSpaceEventHandler>
                     <ScreenSpaceEvent action={handleMouseMove} type={ScreenSpaceEventType.MOUSE_MOVE} />
+                    <ScreenSpaceEvent action={handleLeftClick} type={ScreenSpaceEventType.LEFT_CLICK} />
                 </ScreenSpaceEventHandler>
 
                 {/* ─── Dynamic Layers ─── */}
@@ -121,46 +192,14 @@ export default function GlobeContainer() {
                 {layers.satellites && <SatelliteLayer />}
                 {layers.flights && <FlightLayer />}
                 {layers.cctv && <VideoProjectionLayer />}
+                {layers.streetTraffic && <StreetTrafficLayer />}
+                {layers.weatherRadar && <WeatherRadarLayer />}
 
                 {/* ─── Visual Mode Shaders ─── */}
-                {visualMode === 'NVG' && <PostProcessStage
-                    fragmentShader={NVG_SHADER}
-                    uniforms={{ noiseIntensity: fxSettings.noise, bloomFactor: fxSettings.bloom }}
-                />}
-                {visualMode === 'FLIR' && <PostProcessStage
-                    fragmentShader={FLIR_SHADER}
-                    uniforms={{ thermalIntensity: fxSettings.bloom }}
-                />}
-                {visualMode === 'THERMAL' && <PostProcessStage
-                    fragmentShader={THERMAL_SHADER}
-                    uniforms={{}}
-                />}
-                {visualMode === 'CRT' && <PostProcessStage
-                    fragmentShader={CRT_SHADER}
-                    uniforms={{ distortionAmount: fxSettings.distortion, bloom: fxSettings.bloom }}
-                />}
-                {visualMode === 'ANIME' && <PostProcessStage
-                    fragmentShader={ANIME_SHADER}
-                    uniforms={{}}
-                />}
-                {visualMode === 'NOIR' && <PostProcessStage
-                    fragmentShader={NOIR_SHADER}
-                    uniforms={{}}
-                />}
-                {visualMode === 'SNOW' && <PostProcessStage
-                    fragmentShader={SNOW_SHADER}
-                    uniforms={{}}
-                />}
-                {visualMode === 'AI' && <PostProcessStage
-                    fragmentShader={AI_SHADER}
-                    uniforms={{}}
-                />}
+                {/* Gli Shader JSX causavano TypeError/Race conditions col Viewer Lifecycle.
+                    Gestiti ora dallo useEffect tramite `applyPostProcess` in modo Vanilla-Cesium. 
+                */}
 
-                {/* ─── Pixelation (always-on when > 0) ─── */}
-                {fxSettings.pixelation > 0.01 && <PostProcessStage
-                    fragmentShader={PIXELATION_SHADER}
-                    uniforms={{ pixelSize: fxSettings.pixelation }}
-                />}
             </Viewer>
 
             {/* Reticolo di Puntamento HUD Centrale */}

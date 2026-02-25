@@ -16,16 +16,24 @@ export function VideoProjectionLayer() {
         vid.crossOrigin = 'anonymous';
         vid.loop = true;
         vid.muted = true;
+        vid.volume = 0; // Double fail-safe
+        vid.autoplay = true;
+        vid.playsInline = true;
 
-        const handleReady = () => {
-            if (vid.readyState >= 2) { // HAVE_CURRENT_DATA or higher
-                setIsReady(true);
-            }
-        };
+        const handleReady = () => setIsReady(true);
 
         vid.addEventListener('canplay', handleReady);
+        vid.addEventListener('loadeddata', handleReady);
+        vid.addEventListener('playing', handleReady);
+
+        if (vid.readyState >= 2) setIsReady(true);
+
         vid.play().catch(e => console.error("Auto-play CCTV projection denied:", e));
-        setTimeout(() => setVideoElement(vid), 0);
+
+        // Fallback per mostrare un frame in caso di ritardi CORS/Network
+        setTimeout(() => setIsReady(true), 2000);
+
+        setVideoElement(vid);
 
         return () => {
             vid.removeEventListener('canplay', handleReady);

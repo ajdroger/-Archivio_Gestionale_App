@@ -9,11 +9,8 @@ export function SidebarLeft() {
         { key: 'earthquakes', icon: Activity, label: 'Earthquakes (24h)', sub: 'USGS', color: '#ff3333' },
         { key: 'satellites', icon: Satellite, label: 'Satellites', sub: 'CelesTrak', color: '#00ff41', count: '180' },
         { key: 'cctv', icon: Video, label: 'CCTV Mesh', sub: 'Street View Polygons', color: '#ffb000' },
-    ];
-
-    const mockItems = [
-        { icon: Map, label: 'Street Traffic', sub: 'OpenStreetMap' },
-        { icon: CloudRain, label: 'Weather Radar', sub: 'NOAA (requires overlay)' },
+        { key: 'streetTraffic', icon: Map, label: 'Street Traffic', sub: 'OpenStreetMap', color: '#ff3333' },
+        { key: 'weatherRadar', icon: CloudRain, label: 'Weather Radar', sub: 'NOAA', color: '#00f0ff' },
     ];
 
     return (
@@ -55,19 +52,6 @@ export function SidebarLeft() {
                     );
                 })}
 
-                {/* Mock (inactive) Layers */}
-                {mockItems.map(({ icon: Icon, label, sub }) => (
-                    <div key={label} className="flex items-center justify-between cursor-pointer bg-gray-900/60 backdrop-blur-md border border-white/10 p-3 rounded">
-                        <div className="flex gap-3 items-start">
-                            <Icon size={16} className="text-gray-500 mt-0.5" />
-                            <div>
-                                <div className="text-gray-400 font-bold text-xs">{label}</div>
-                                <div className="text-[10px] font-mono text-gray-500 mt-0.5">{sub}</div>
-                            </div>
-                        </div>
-                        <div className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border bg-transparent text-gray-500 border-gray-600">OFF</div>
-                    </div>
-                ))}
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
-import { Entity, EllipseGraphics, PointGraphics } from 'resium';
-import { Cartesian3, Color } from 'cesium';
+import { Entity, EllipseGraphics, PointGraphics, LabelGraphics } from 'resium';
+import { Cartesian3, Cartesian2, Color } from 'cesium';
 import { useUSGS } from '../../api/usgs';
 
 export function EarthquakeLayer() {
@@ -25,16 +25,21 @@ export function EarthquakeLayer() {
                         <PointGraphics
                             pixelSize={Math.max(6, eq.mag * 3)}
                             color={Color.fromCssColorString('#ff3333').withAlpha(0.9)}
-                            outlineColor={Color.fromCssColorString('#ff3333').withAlpha(0.4)}
-                            outlineWidth={2}
+                        />
+                        <LabelGraphics
+                            text={`M ${eq.mag.toFixed(1)}`}
+                            font="bold 10px Consolas"
+                            fillColor={Color.fromCssColorString('#ff3333')}
+                            showBackground={true}
+                            backgroundColor={Color.fromCssColorString('#050b14').withAlpha(0.7)}
+                            pixelOffset={new Cartesian2(0, -15)}
+                            disableDepthTestDistance={Number.POSITIVE_INFINITY}
                         />
                         <EllipseGraphics
                             semiMajorAxis={radius}
                             semiMinorAxis={radius}
                             material={Color.fromCssColorString('#ff3333').withAlpha(alpha * 0.3)}
-                            outline={true}
-                            outlineColor={Color.fromCssColorString('#ff3333').withAlpha(alpha * 0.6)}
-                            outlineWidth={1}
+                            outline={false}
                             height={0}
                         />
                     </Entity>

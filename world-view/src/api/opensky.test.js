@@ -2,12 +2,16 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useOpenSky } from './opensky';
 
-// Facciamo il mock di fetch
-global.fetch = vi.fn();
+describe('useOpenSky Real ADSB Multi-Hub', () => {
+    let originalFetch;
 
-describe('useOpenSky', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        originalFetch = global.fetch;
+        global.fetch = vi.fn();
+    });
+
+    afterEach(() => {
+        global.fetch = originalFetch;
     });
 
     it('ritorna data vuota se non abilitato', () => {
@@ -16,14 +20,14 @@ describe('useOpenSky', () => {
         expect(result.current.loading).toBe(false);
     });
 
-    it('effettua fetch e popola data se abilitato', async () => {
+    it('effettua fetch del proxy multihub e mappa data', async () => {
         const mockFlights = {
-            states: [
-                ['123456', 'ALTR83', 'USA', null, null, -122.4, 37.7, 10000, false, 250, 45, null, null, null, null, false, 0]
+            ac: [
+                { hex: '123ABC', flight: 'ALTR83', r: 'USA', lat: 37.7, lon: -122.4, alt_baro: 30000, gs: 450, track: 90 }
             ]
         };
 
-        fetch.mockResolvedValueOnce({
+        global.fetch.mockResolvedValueOnce({
             ok: true,
             json: async () => mockFlights
         });
@@ -39,17 +43,19 @@ describe('useOpenSky', () => {
         expect(result.current.data).toHaveLength(1);
         expect(result.current.data[0].callsign).toBe('ALTR83');
         expect(result.current.data[0].lat).toBe(37.7);
+        // gs in knots (450) translated to ms 
+        expect(result.current.data[0].velocity).toBeCloseTo(231.5);
     });
 
-    it('gestisce gli errori REST endpoint', async () => {
-        fetch.mockResolvedValueOnce({
+    it('gestisce gli errori 500 del multihub', async () => {
+        global.fetch.mockResolvedValueOnce({
             ok: false
         });
 
         const { result } = renderHook(() => useOpenSky(true));
 
         await waitFor(() => {
-            expect(result.current.error).toBe('OpenSky fetch failed');
+            expect(result.current.error).toBe('Global ADS-B MultiHub fetch failed');
         });
     });
 });

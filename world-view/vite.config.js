@@ -12,7 +12,8 @@ export default defineConfig({
     ],
     base: './',
     build: {
-        outDir: '../public/world-view/dist'
+        outDir: '../public/world-view/dist',
+        sourcemap: false
     },
     server: {
         proxy: {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useStore } from '../../store/useWorldViewStore';
 
 export function HUDInfo() {
-    const { mouseCoords } = useStore();
+    const mouseCoords = useStore(state => state.mouseCoords);
     const [sunEl, setSunEl] = useState(0);
 
     // Simulated Sun Elevation based on UTC time just for immersion

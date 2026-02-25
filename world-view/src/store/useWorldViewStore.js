@@ -21,6 +21,8 @@ export const useStore = create((set) => ({
         flights: false,
         satellites: false,
         cctv: false,
+        streetTraffic: false,
+        weatherRadar: false,
     },
     toggleLayer: (key) =>
         set((state) => ({ layers: { ...state.layers, [key]: !state.layers[key] } })),
@@ -62,4 +64,8 @@ export const useStore = create((set) => ({
     // CCTV Params default
     cctvParams: { heading: 0, pitch: -45, roll: 0, fov: 60, range: 100 },
     setCctvParam: (key, value) => set((state) => ({ cctvParams: { ...state.cctvParams, [key]: value } })),
+
+    // Tactical InfoBox
+    selectedInfo: null,
+    setSelectedInfo: (info) => set(() => ({ selectedInfo: info })),
 }));

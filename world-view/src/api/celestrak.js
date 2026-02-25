@@ -12,7 +12,7 @@ export function useCelesTrak(enabled) {
             return;
         }
 
-        const TLE_URL = 'https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle';
+        const TLE_URL = '/MCAG_Militare-Civile-Archivio-Gestionale/public/world-view/proxy.php?target=celestrak';
 
         const fetchTLE = async () => {
             setLoading(true);
