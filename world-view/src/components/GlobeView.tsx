@@ -7,6 +7,8 @@ import { FlightLayer } from './Layers/FlightLayer';
 import { VideoProjectionLayer } from './Layers/VideoProjectionLayer';
 import type { LocationDest } from './UI/BottomToolbar';
 
+import { useStore } from '../store/useStore';
+
 interface GlobeViewProps {
     layers: {
         earthquakes: boolean;
@@ -69,6 +71,7 @@ void main() {
 
 export default function GlobeView({ layers, visualMode, targetLocation }: GlobeViewProps) {
     const viewerRef = useRef<any>(null);
+    const { fxSettings } = useStore();
 
     // Styling Iniziale
     useEffect(() => {
@@ -123,11 +126,36 @@ export default function GlobeView({ layers, visualMode, targetLocation }: GlobeV
                 {layers.cctv && <VideoProjectionLayer />}
 
                 {/* --- Shaders FX via Resium --- */}
-                {visualMode === 'NVG' && <PostProcessStage fragmentShader={NVG_SHADER} />}
-                {visualMode === 'FLIR' && <PostProcessStage fragmentShader={FLIR_SHADER} />}
-                {visualMode === 'THERMAL' && <PostProcessStage fragmentShader={FLIR_SHADER} />}
-                {visualMode === 'CRT' && <PostProcessStage fragmentShader={CRT_SHADER} />}
+                {visualMode === 'NVG' && <PostProcessStage
+                    fragmentShader={NVG_SHADER}
+                    uniforms={{ noiseIntensity: fxSettings.noise, bloomFactor: fxSettings.bloom }}
+                />}
+                {visualMode === 'FLIR' && <PostProcessStage
+                    fragmentShader={FLIR_SHADER}
+                    uniforms={{ thermalIntensity: fxSettings.bloom }}
+                />}
+                {visualMode === 'THERMAL' && <PostProcessStage
+                    fragmentShader={FLIR_SHADER}
+                    uniforms={{ thermalIntensity: fxSettings.bloom }}
+                />}
+                {visualMode === 'CRT' && <PostProcessStage
+                    fragmentShader={CRT_SHADER}
+                    uniforms={{ distortionAmount: fxSettings.distortion, bloom: fxSettings.bloom }}
+                />}
             </Viewer>
+
+            {/* Reticolo di Puntamento HUD Centrale */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 opacity-60 mix-blend-screen scale-125 transition-transform duration-300">
+                <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="60" cy="60" r="50" stroke="#00f0ff" strokeWidth="1" strokeDasharray="4 8" />
+                    <circle cx="60" cy="60" r="30" stroke="#00ff41" strokeWidth="0.5" />
+                    <path d="M60 0 L60 45" stroke="#ff3333" strokeWidth="1.5" />
+                    <path d="M60 120 L60 75" stroke="#ff3333" strokeWidth="1.5" />
+                    <path d="M0 60 L45 60" stroke="#ff3333" strokeWidth="1.5" />
+                    <path d="M120 60 L75 60" stroke="#ff3333" strokeWidth="1.5" />
+                    <circle cx="60" cy="60" r="2" fill="#ffb000" />
+                </svg>
+            </div>
         </div>
     );
 }

@@ -1,16 +1,9 @@
 import { ChevronDown } from 'lucide-react';
 
-interface SidebarRightProps {
-    fxSettings: {
-        distortion: number;
-        bloom: number;
-        scanlines: number;
-        noise: number;
-    };
-    setFxSetting: (key: keyof SidebarRightProps['fxSettings'], value: number) => void;
-}
+import { useStore } from '../../store/useStore';
 
-export function SidebarRight({ fxSettings, setFxSetting }: SidebarRightProps) {
+export function SidebarRight() {
+    const { fxSettings, setFxSetting } = useStore();
     return (
         <div className="absolute top-1/2 -translate-y-1/2 right-4 w-[300px] z-10 select-none flex flex-col gap-4">
 

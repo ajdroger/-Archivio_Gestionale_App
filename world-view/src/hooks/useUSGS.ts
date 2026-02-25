@@ -27,7 +27,7 @@ export function useUSGS(enabled: boolean) {
             try {
                 // Fetch earthquakes from the past month (significant ones) or past 24h all.
                 // USGS GeoJSON Feed: M2.5+ past 24 hours
-                const response = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
+                const response = await fetch('/api/usgs/2.5_day.geojson');
                 if (!response.ok) throw new Error('USGS fetch failed');
                 const json = await response.json();
 

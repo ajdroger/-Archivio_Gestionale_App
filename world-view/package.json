@@ -16,7 +16,8 @@
     "react-dom": "^19.2.0",
     "resium": "^1.19.4",
     "satellite.js": "^6.0.2",
-    "three": "0.164.0"
+    "three": "0.164.0",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

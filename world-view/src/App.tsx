@@ -7,6 +7,7 @@ import type { LocationDest } from './components/UI/BottomToolbar';
 import type { VisualMode } from './components/UI/BottomToolbar';
 import { CCTVPanopticPanel } from './components/CCTVPanopticPanel';
 import { Link as LinkIcon } from 'lucide-react';
+import { useStore } from './store/useStore';
 
 function App() {
   const [layers, setLayers] = useState({
@@ -19,38 +20,29 @@ function App() {
   const [activeMode, setActiveMode] = useState<VisualMode>('CRT');
   const [targetLocation, setTargetLocation] = useState<LocationDest | null>(null);
 
-  const [fxSettings, setFxSettings] = useState({
-    distortion: 0.15,
-    bloom: 0.8,
-    scanlines: 0.5,
-    noise: 0.05
-  });
+  const { fxSettings, setAllFxSettings } = useStore();
 
   const handleSetLayer = (key: keyof typeof layers, value: boolean) => {
     setLayers(prev => ({ ...prev, [key]: value }));
-  };
-
-  const handleSetFxSetting = (key: keyof typeof fxSettings, value: number) => {
-    setFxSettings(prev => ({ ...prev, [key]: value }));
   };
 
   const handleModeChange = (mode: VisualMode) => {
     setActiveMode(mode);
     switch (mode) {
       case 'NORMAL':
-        setFxSettings({ distortion: 0, bloom: 0.2, scanlines: 0, noise: 0 });
+        setAllFxSettings({ distortion: 0, bloom: 0.2, scanlines: 0, noise: 0 });
         break;
       case 'CRT':
-        setFxSettings({ distortion: 0.15, bloom: 0.8, scanlines: 0.5, noise: 0.05 });
+        setAllFxSettings({ distortion: 0.15, bloom: 0.8, scanlines: 0.5, noise: 0.05 });
         break;
       case 'NVG':
-        setFxSettings({ distortion: 0.05, bloom: 1.2, scanlines: 0.2, noise: 0.15 });
+        setAllFxSettings({ distortion: 0.05, bloom: 1.2, scanlines: 0.2, noise: 0.15 });
         break;
       case 'FLIR':
-        setFxSettings({ distortion: 0, bloom: 1.0, scanlines: 0.1, noise: 0.08 });
+        setAllFxSettings({ distortion: 0, bloom: 1.0, scanlines: 0.1, noise: 0.08 });
         break;
       case 'THERMAL':
-        setFxSettings({ distortion: 0, bloom: 1.5, scanlines: 0, noise: 0.02 });
+        setAllFxSettings({ distortion: 0, bloom: 1.5, scanlines: 0, noise: 0.02 });
         break;
     }
   };
@@ -110,7 +102,7 @@ function App() {
       <div className="z-10 absolute inset-0 pointer-events-none">
         <div className="pointer-events-auto">
           <SidebarLeft layers={layers} setLayer={handleSetLayer} />
-          <SidebarRight fxSettings={fxSettings} setFxSetting={handleSetFxSetting} />
+          <SidebarRight />
           <BottomToolbar currentMode={activeMode} setMode={handleModeChange} onJump={handleJump} />
 
           {/* Visual CV Module */}

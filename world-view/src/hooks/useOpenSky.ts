@@ -28,7 +28,7 @@ export function useOpenSky(enabled: boolean) {
             try {
                 // OpenSky limits unauthenticated calls. We fetch a bounding box to avoid massive payloads if needed, 
                 // or entire state vectors if allowed. Using global requires large payload.
-                const response = await fetch('https://opensky-network.org/api/states/all');
+                const response = await fetch('/api/opensky/states/all');
                 if (!response.ok) throw new Error('OpenSky fetch failed');
                 const json = await response.json();
 
