@@ -43,10 +43,12 @@ export function VideoProjectionLayer() {
                         hierarchy={Cartesian3.fromDegreesArray(AUSTIN_CCTV_BBOX)}
                         material={new ImageMaterialProperty({
                             image: videoElement,
-                            color: Color.WHITE.withAlpha(0.85) // Overlay semitrasparente sul 3D Terrain
+                            color: Color.WHITE.withAlpha(0.85), // Overlay semitrasparente sul 3D Terrain
+                            transparent: true
                         })}
                         height={5} // Alzato di 5 metri sopra il terreno per evitare z-fighting col ground
                         extrudedHeight={0}
+                        outline={false}
                     />
                 </Entity>
             )}
