@@ -4,10 +4,12 @@ import './index.css'
 import App from './App.tsx'
 
 // --- Console Warning Suppressor ---
+// Override per silenziare avvisi di depracation upstream di react-globe.gl
 const originalWarn = console.warn;
 console.warn = (...args) => {
-  if (args[0] && typeof args[0] === 'string' && args[0].includes('THREE.Clock: This module has been deprecated')) {
-    return; // Mute specific Three.js warning from react-globe.gl
+  if (args[0] && typeof args[0] === 'string') {
+    if (args[0].includes('THREE.Clock: This module has been deprecated')) return;
+    if (args[0].includes('Multiple instances of Three.js')) return;
   }
   originalWarn(...args);
 };
