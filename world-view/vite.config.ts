@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     cesium()
   ],
-  base: '/MCAG_Militare-Civile-Archivio-Gestionale/public/world-view/dist/',
+  base: './',
   build: {
     outDir: '../public/world-view/dist'
   }
