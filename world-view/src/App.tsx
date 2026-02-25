@@ -3,6 +3,7 @@ import GlobeView from './components/GlobeView';
 import { SidebarLeft } from './components/UI/SidebarLeft';
 import { SidebarRight } from './components/UI/SidebarRight';
 import { BottomToolbar } from './components/UI/BottomToolbar';
+import type { LocationDest } from './components/UI/BottomToolbar';
 import type { VisualMode } from './components/UI/BottomToolbar';
 import { CCTVPanopticPanel } from './components/CCTVPanopticPanel';
 import { ShieldAlert } from 'lucide-react';
@@ -15,8 +16,8 @@ function App() {
     cctv: false,
   });
 
-  // Real default
   const [activeMode, setActiveMode] = useState<VisualMode>('CRT');
+  const [targetLocation, setTargetLocation] = useState<LocationDest | null>(null);
 
   const [fxSettings, setFxSettings] = useState({
     distortion: 0.15,
@@ -33,7 +34,6 @@ function App() {
     setFxSettings(prev => ({ ...prev, [key]: value }));
   };
 
-  // Aggiorna anche i settings quando cambia il preset per un effetto migliore
   const handleModeChange = (mode: VisualMode) => {
     setActiveMode(mode);
     switch (mode) {
@@ -53,6 +53,10 @@ function App() {
         setFxSettings({ distortion: 0, bloom: 1.5, scanlines: 0, noise: 0.02 });
         break;
     }
+  };
+
+  const handleJump = (loc: LocationDest) => {
+    setTargetLocation(loc);
   };
 
   return (
@@ -75,14 +79,14 @@ function App() {
       </div>
 
       {/* Main 3D Globe */}
-      <GlobeView layers={layers} visualMode={activeMode} />
+      <GlobeView layers={layers} visualMode={activeMode} targetLocation={targetLocation} />
 
       {/* UI Panels */}
       <div className="z-10 absolute inset-0 pointer-events-none">
         <div className="pointer-events-auto">
           <SidebarLeft layers={layers} setLayer={handleSetLayer} />
           <SidebarRight fxSettings={fxSettings} setFxSetting={handleSetFxSetting} />
-          <BottomToolbar currentMode={activeMode} setMode={handleModeChange} />
+          <BottomToolbar currentMode={activeMode} setMode={handleModeChange} onJump={handleJump} />
 
           {/* Visual CV Module */}
           {layers.cctv && (
