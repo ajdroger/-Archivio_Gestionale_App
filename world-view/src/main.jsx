@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
+import App from './App.jsx'
+import { initializeEngine } from './core/engine';
 
 // --- Console Warning Suppressor ---
 // Override per silenziare avvisi di depracation upstream di react-globe.gl
@@ -15,7 +16,10 @@ console.warn = (...args) => {
 };
 // ----------------------------------
 
-createRoot(document.getElementById('root')!).render(
+// Start Engine (sets Cesium token)
+initializeEngine();
+
+createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
   </StrictMode>,

@@ -1,7 +1,7 @@
 import { Entity, PointGraphics } from 'resium';
 import { Cartesian3, Color } from 'cesium';
-import { useOpenSky } from '../api/useOpenSky';
-import type { FlightData } from '../api/useOpenSky';
+import { useOpenSky } from '../../api/opensky';
+
 
 export function FlightLayer() {
     const { data: flights } = useOpenSky(true);
@@ -10,7 +10,7 @@ export function FlightLayer() {
 
     return (
         <>
-            {flights.map((flight: FlightData, index: number) => {
+            {flights.map((flight, index) => {
                 const alt = flight.altitude || 10000;
                 const position = Cartesian3.fromDegrees(flight.lng, flight.lat, alt);
 

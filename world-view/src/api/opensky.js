@@ -1,20 +1,9 @@
 import { useState, useEffect } from 'react';
 
-export interface FlightData {
-    icao24: string;
-    callsign: string;
-    origin_country: string;
-    lng: number;
-    lat: number;
-    altitude: number;
-    velocity: number;
-    true_track: number;
-}
-
-export function useOpenSky(enabled: boolean) {
-    const [data, setData] = useState<FlightData[]>([]);
+export function useOpenSky(enabled) {
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (!enabled) {
@@ -34,8 +23,7 @@ export function useOpenSky(enabled: boolean) {
 
                 // Take a random sample or top 500 to keep performance optimal
                 const limit = 500;
-                type OpenSkyStateVector = (string | number | boolean | null)[];
-                const flights: FlightData[] = json.states.slice(0, limit).filter((s: OpenSkyStateVector) => s[5] !== null && s[6] !== null).map((s: OpenSkyStateVector) => ({
+                const flights = json.states.slice(0, limit).filter(s => s[5] !== null && s[6] !== null).map(s => ({
                     icao24: String(s[0]),
                     callsign: typeof s[1] === 'string' ? s[1].trim() : 'UNKNOWN',
                     origin_country: String(s[2]),
@@ -47,7 +35,7 @@ export function useOpenSky(enabled: boolean) {
                 }));
 
                 setData(flights);
-            } catch (err: unknown) {
+            } catch (err) {
                 setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);

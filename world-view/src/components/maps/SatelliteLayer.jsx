@@ -1,7 +1,7 @@
 import { Entity, PointGraphics } from 'resium';
 import { Cartesian3, Color } from 'cesium';
-import { useCelesTrak } from '../api/useCelesTrak';
-import type { SatData } from '../api/useCelesTrak';
+import { useCelesTrak } from '../../api/celestrak';
+
 
 export function SatelliteLayer() {
     const { data: satellites } = useCelesTrak(true);
@@ -10,7 +10,7 @@ export function SatelliteLayer() {
 
     return (
         <>
-            {satellites.map((sat: SatData, index: number) => {
+            {satellites.map((sat, index) => {
                 const position = Cartesian3.fromDegrees(sat.lng, sat.lat, sat.alt * 1000);
                 return (
                     <Entity

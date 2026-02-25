@@ -1,13 +1,11 @@
-import GlobeView from './core/GlobeView';
-import { SidebarLeft } from './ui/SidebarLeft';
-import { SidebarRight } from './ui/SidebarRight';
-import { BottomToolbar } from './ui/BottomToolbar';
-import { CCTVPanopticPanel } from './ui/CCTVPanopticPanel';
-import { HUDInfoBottomRight } from './ui/HUDInfoBottomRight';
-import { HeaderTopLeft } from './ui/HeaderTopLeft';
-import { TelemetryTopRight } from './ui/TelemetryTopRight';
-import { useStore } from './core/store';
-
+import GlobeContainer from './components/maps/GlobeContainer';
+import { SidebarLeft, SidebarRight } from './components/ui/Sidebars';
+import { BottomToolbar } from './components/ui/BottomToolbar';
+import { CCTVWindow as CCTVPanopticPanel } from './components/cctv/CCTVWindow';
+import { HUDInfo as HUDInfoBottomRight } from './components/ui/HUDInfo';
+import { Header as HeaderTopLeft } from './components/ui/Header';
+import { Telemetry as TelemetryTopRight } from './components/ui/Telemetry';
+import { useStore } from './store/useWorldViewStore';
 function App() {
   const { layers, toggleLayer, fxSettings } = useStore();
 
@@ -26,7 +24,7 @@ function App() {
       <HUDInfoBottomRight />
 
       {/* ═══ Main 3D Globe ═══ */}
-      <GlobeView />
+      <GlobeContainer />
 
       {/* ═══ UI Panels ═══ */}
       <div className="z-10 absolute inset-0 pointer-events-none">

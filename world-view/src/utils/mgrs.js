@@ -7,7 +7,7 @@ import * as mgrs from 'mgrs';
  * @param accuracy Numero di cifre per la precisione (es. 5 = 1m)
  * @returns Stringa MGRS o 'OUT OF BOUNDS'
  */
-export function latLonToMGRS(lat: number, lng: number, accuracy: number = 5): string {
+export function latLonToMGRS(lat, lng, accuracy = 5) {
     if (lat < -80 || lat > 84) {
         return "OUT OF BOUNDS (UPS)";
     }

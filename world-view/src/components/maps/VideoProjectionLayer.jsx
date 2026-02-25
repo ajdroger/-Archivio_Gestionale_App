@@ -3,11 +3,11 @@ import { Entity, PolygonGraphics } from 'resium';
 import { Cartesian3, Color, ImageMaterialProperty } from 'cesium';
 
 // Il bbox dinamico rimpiazza l'approccio statico
-import { useStore } from './store';
+import { useStore } from '../../store/useWorldViewStore';
 
 export function VideoProjectionLayer() {
     const { cctvParams } = useStore();
-    const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
+    const [videoElement, setVideoElement] = useState(null);
     const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export function VideoProjectionLayer() {
     const wFar = Math.max(dFar * Math.tan(fovRad / 2), wNear * 1.5);
 
     // Funzione rotazione 2D matematica e mappa coordinate (x=lng, y=lat)
-    const rotate = (dx: number, dy: number) => {
+    const rotate = (dx, dy) => {
         const rx = dx * Math.cos(-headingRad) - dy * Math.sin(-headingRad);
         const ry = dx * Math.sin(-headingRad) + dy * Math.cos(-headingRad);
         // compensazione equatore/paralleli approx

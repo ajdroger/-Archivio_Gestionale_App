@@ -1,34 +1,7 @@
 import { create } from 'zustand';
 
-// ── Types ──────────────────────────────────────────────
-export type VisualMode = 'NORMAL' | 'CRT' | 'NVG' | 'FLIR' | 'THERMAL' | 'ANIME' | 'NOIR' | 'SNOW' | 'AI';
-
-export interface LocationDest {
-    lat: number;
-    lng: number;
-    alt: number;
-    name: string;
-}
-
-export interface LayersState {
-    earthquakes: boolean;
-    flights: boolean;
-    satellites: boolean;
-    cctv: boolean;
-}
-
-export interface FxSettings {
-    distortion: number;
-    bloom: number;
-    scanlines: number;
-    noise: number;
-    pixelation: number;
-    sharpen: number;
-    panopticOpacity: number;
-}
-
 // ── FX Presets per Visual Mode ─────────────────────────
-const FX_PRESETS: Record<VisualMode, Partial<FxSettings>> = {
+const FX_PRESETS = {
     NORMAL: { distortion: 0, bloom: 0.2, scanlines: 0, noise: 0 },
     CRT: { distortion: 0.15, bloom: 0.8, scanlines: 0.5, noise: 0.05 },
     NVG: { distortion: 0.05, bloom: 1.2, scanlines: 0.2, noise: 0.15 },
@@ -40,36 +13,8 @@ const FX_PRESETS: Record<VisualMode, Partial<FxSettings>> = {
     AI: { distortion: 0, bloom: 1.0, scanlines: 0.1, noise: 0 },
 };
 
-// ── Store Interface ────────────────────────────────────
-interface WorldViewState {
-    // Layers
-    layers: LayersState;
-    toggleLayer: (key: keyof LayersState) => void;
-
-    // Visual Mode
-    visualMode: VisualMode;
-    setVisualMode: (mode: VisualMode) => void;
-
-    // Camera Target
-    targetLocation: LocationDest | null;
-    setTargetLocation: (loc: LocationDest | null) => void;
-
-    // FX Settings
-    fxSettings: FxSettings;
-    setFxSetting: (key: keyof FxSettings, value: number) => void;
-    setAllFxSettings: (settings: FxSettings) => void;
-
-    // Real-Time HUD Coords
-    mouseCoords: { lat: number, lng: number, alt: number, mgrs: string };
-    setMouseCoords: (coords: { lat: number, lng: number, alt: number, mgrs: string }) => void;
-
-    // CCTV Mesh Calibration
-    cctvParams: { heading: number, pitch: number, roll: number, fov: number, range: number };
-    setCctvParam: (key: keyof WorldViewState['cctvParams'], value: number) => void;
-}
-
 // ── Store ──────────────────────────────────────────────
-export const useStore = create<WorldViewState>((set) => ({
+export const useStore = create((set) => ({
     // Layers — default earthquakes ON
     layers: {
         earthquakes: true,

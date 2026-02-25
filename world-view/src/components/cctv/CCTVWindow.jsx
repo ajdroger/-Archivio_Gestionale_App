@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Video, Target, X } from 'lucide-react';
 
-interface CCTVPanelProps {
-    onClose: () => void;
-}
 
-import { useStore } from '../core/store';
 
-export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
+import { useStore } from '../../store/useWorldViewStore';
+
+export function CCTVWindow({ onClose }) {
     const { cctvParams, setCctvParam } = useStore();
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef(null);
+    const videoRef = useRef(null);
     const [isReady, setIsReady] = useState(false);
 
     // Create video element for the CCTV feed
@@ -43,7 +41,7 @@ export function CCTVPanopticPanel({ onClose }: CCTVPanelProps) {
     useEffect(() => {
         if (!isReady) return;
 
-        let animationFrameId: number;
+        let animationFrameId;
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');

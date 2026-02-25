@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useStore } from '../core/store';
+import { useStore } from '../../store/useWorldViewStore';
 
-export function HUDInfoBottomRight() {
+export function HUDInfo() {
     const { mouseCoords } = useStore();
     const [sunEl, setSunEl] = useState(0);
 

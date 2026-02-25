@@ -1,11 +1,10 @@
-import { Camera, Eye, Radio, Monitor, Crosshair, Sparkles, CloudSnow, Moon, type LucideIcon } from 'lucide-react';
-import { useStore } from '../core/store';
-import type { VisualMode, LocationDest } from '../core/store';
+import { Camera, Eye, Radio, Monitor, Crosshair, Sparkles, CloudSnow, Moon } from 'lucide-react';
+import { useStore } from '../../store/useWorldViewStore';
 
 export function BottomToolbar() {
     const { visualMode, setVisualMode, setTargetLocation } = useStore();
 
-    const locations: LocationDest[] = [
+    const locations = [
         { name: 'Austin', lat: 30.2672, lng: -97.7431, alt: 800 },
         { name: 'San Francisco', lat: 37.7749, lng: -122.4194, alt: 1000 },
         { name: 'New York', lat: 40.7128, lng: -74.0060, alt: 1000 },
@@ -16,7 +15,7 @@ export function BottomToolbar() {
         { name: 'Washington DC', lat: 38.8951, lng: -77.0364, alt: 1000 }
     ];
 
-    const modes: { id: VisualMode; icon: LucideIcon; label: string; }[] = [
+    const modes = [
         { id: 'NORMAL', icon: Monitor, label: 'Normal' },
         { id: 'CRT', icon: Radio, label: 'CRT' },
         { id: 'NVG', icon: Eye, label: 'NVG' },

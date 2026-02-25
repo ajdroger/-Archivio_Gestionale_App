@@ -1,7 +1,7 @@
 import { Link as LinkIcon } from 'lucide-react';
-import { useStore } from '../core/store';
+import { useStore } from '../../store/useWorldViewStore';
 
-export function HeaderTopLeft() {
+export function Header() {
     const { visualMode, targetLocation } = useStore();
 
     const summaryText = targetLocation

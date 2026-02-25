@@ -1,19 +1,9 @@
 import { useState, useEffect } from 'react';
 
-export interface EarthquakeData {
-    id: string;
-    mag: number;
-    place: string;
-    time: number;
-    lat: number;
-    lng: number;
-    depth: number;
-}
-
-export function useUSGS(enabled: boolean) {
-    const [data, setData] = useState<EarthquakeData[]>([]);
+export function useUSGS(enabled) {
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (!enabled) {
@@ -31,8 +21,7 @@ export function useUSGS(enabled: boolean) {
                 if (!response.ok) throw new Error('USGS fetch failed');
                 const json = await response.json();
 
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const earthquakes: EarthquakeData[] = json.features.map((f: any) => ({
+                const earthquakes = json.features.map((f) => ({
                     id: String(f.id),
                     mag: Number(f.properties.mag),
                     place: String(f.properties.place),
@@ -43,7 +32,7 @@ export function useUSGS(enabled: boolean) {
                 }));
 
                 setData(earthquakes);
-            } catch (err: unknown) {
+            } catch (err) {
                 setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);

@@ -8,34 +8,33 @@ import { SatelliteLayer } from './SatelliteLayer';
 import { FlightLayer } from './FlightLayer';
 import { VideoProjectionLayer } from './VideoProjectionLayer';
 
-import { useStore } from './store';
-import { latLonToMGRS } from '../utils/mgrsConverter';
+import { useStore } from '../../store/useWorldViewStore';
+import { latLonToMGRS } from '../../utils/mgrs';
 
 // ═══════════════════════════════════════════════════════
 // GLSL Fragment Shaders — Post-Processing Visual Modes
 // ═══════════════════════════════════════════════════════
 
-import NVG_SHADER from '../shaders/nvg.glsl?raw';
-import FLIR_SHADER from '../shaders/flir.glsl?raw';
-import THERMAL_SHADER from '../shaders/thermal.glsl?raw';
-import CRT_SHADER from '../shaders/crt.glsl?raw';
-import ANIME_SHADER from '../shaders/anime.glsl?raw';
-import NOIR_SHADER from '../shaders/noir.glsl?raw';
-import SNOW_SHADER from '../shaders/snow.glsl?raw';
-import AI_SHADER from '../shaders/ai.glsl?raw';
-import PIXELATION_SHADER from '../shaders/pixelation.glsl?raw';
+import NVG_SHADER from '../../shaders/nvg.glsl?raw';
+import FLIR_SHADER from '../../shaders/flir.glsl?raw';
+import THERMAL_SHADER from '../../shaders/thermal.glsl?raw';
+import CRT_SHADER from '../../shaders/crt.glsl?raw';
+import ANIME_SHADER from '../../shaders/anime.glsl?raw';
+import NOIR_SHADER from '../../shaders/noir.glsl?raw';
+import SNOW_SHADER from '../../shaders/snow.glsl?raw';
+import AI_SHADER from '../../shaders/ai.glsl?raw';
+import PIXELATION_SHADER from '../../shaders/pixelation.glsl?raw';
 
 // ═══════════════════════════════════════════════════════
 // GlobeView Component
 // ═══════════════════════════════════════════════════════
 
-export default function GlobeView() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const viewerRef = useRef<any>(null);
+export default function GlobeContainer() {
+    const viewerRef = useRef(null);
     const { layers, visualMode, targetLocation, fxSettings, setMouseCoords } = useStore();
 
     // Throttled update function to heavily reduce React renders from mouse movement
-    const throttledUpdate = useMemo(() => throttle((lat: number, lng: number, alt: number) => {
+    const throttledUpdate = useMemo(() => throttle((lat, lng, alt) => {
         setMouseCoords({
             lat,
             lng,
@@ -45,8 +44,7 @@ export default function GlobeView() {
     }, 100), [setMouseCoords]);
 
     // Mouse Tracking for HUD Coordinates
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleMouseMove = useCallback((action: any) => {
+    const handleMouseMove = useCallback((action) => {
         if (!viewerRef.current?.cesiumElement) return;
         const viewer = viewerRef.current.cesiumElement;
         const position = action.endPosition;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export function TelemetryTopRight() {
+export function Telemetry() {
     const [timestamp, setTimestamp] = useState('');
 
     useEffect(() => {

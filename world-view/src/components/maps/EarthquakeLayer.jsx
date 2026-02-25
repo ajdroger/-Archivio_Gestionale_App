@@ -1,6 +1,6 @@
 import { Entity, EllipseGraphics, PointGraphics } from 'resium';
 import { Cartesian3, Color } from 'cesium';
-import { useUSGS } from '../api/useUSGS';
+import { useUSGS } from '../../api/usgs';
 
 export function EarthquakeLayer() {
     const { data: earthquakes } = useUSGS(true);

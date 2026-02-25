@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react';
 import * as satellite from 'satellite.js';
 
-export interface SatData {
-    id: string;
-    name: string;
-    lat: number;
-    lng: number;
-    alt: number; // in km
-}
-
-export function useCelesTrak(enabled: boolean) {
-    const [data, setData] = useState<SatData[]>([]);
+export function useCelesTrak(enabled) {
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (!enabled) {
@@ -32,7 +24,7 @@ export function useCelesTrak(enabled: boolean) {
                 const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
                 // Parse TLE pairs (every 3 lines: Name, Line 1, Line 2)
-                const satRecords: SatData[] = [];
+                const satRecords = [];
                 for (let i = 0; i < lines.length && i < 3000; i += 3) {
                     // Limit to first 1000 sats (3000 lines) for performance
                     const name = lines[i];
@@ -45,7 +37,7 @@ export function useCelesTrak(enabled: boolean) {
                             const positionEci = positionAndVelocity ? positionAndVelocity.position : null;
                             if (typeof positionEci !== 'boolean' && positionEci) {
                                 const gmst = satellite.gstime(new Date());
-                                const positionGd = satellite.eciToGeodetic(positionEci as satellite.EciVec3<number>, gmst);
+                                const positionGd = satellite.eciToGeodetic(positionEci, gmst);
 
                                 const longitudeDeg = satellite.degreesLong(positionGd.longitude);
                                 const latitudeDeg = satellite.degreesLat(positionGd.latitude);
@@ -68,7 +60,7 @@ export function useCelesTrak(enabled: boolean) {
                 }
 
                 setData(satRecords);
-            } catch (err: unknown) {
+            } catch (err) {
                 setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);
