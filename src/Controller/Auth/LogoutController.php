@@ -28,7 +28,7 @@ class LogoutController
     public function logout(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
-            session_destroy();
+            \MCAG\SecurityLayer\SessionManager::destroy();
         }
 
         $routeParser = RouteContext::fromRequest($request)->getRouteParser();

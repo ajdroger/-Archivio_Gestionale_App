@@ -15,9 +15,9 @@ const FX_PRESETS = {
 
 // ── Store ──────────────────────────────────────────────
 export const useStore = create((set) => ({
-    // Layers — default earthquakes ON
+    // Layers — default earthquakes OFF
     layers: {
-        earthquakes: true,
+        earthquakes: false,
         flights: false,
         satellites: false,
         cctv: false,

@@ -56,10 +56,9 @@ export function SatelliteLayer() {
                     description: desc,
                     position: pos,
                     point: {
-                        pixelSize: 10,
+                        pixelSize: 15,
                         color: Color.fromCssColorString('#00ff41'),
-                        outlineColor: Color.BLACK,
-                        outlineWidth: 2
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY
                     },
                     label: {
                         text: `SAT ${sat.name}`,

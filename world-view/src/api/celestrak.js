@@ -21,20 +21,27 @@ export function useCelesTrak(enabled) {
                 const response = await fetch(TLE_URL);
                 if (!response.ok) throw new Error('CelesTrak fetch failed');
                 const text = await response.text();
-                const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                // Rimuovi \r e splitta per newline, filtrando stringhe vuote
+                const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-                // Parse TLE pairs (every 3 lines: Name, Line 1, Line 2)
                 const satRecords = [];
-                for (let i = 0; i < lines.length && i < 3000; i += 3) {
-                    // Limit to first 1000 sats (3000 lines) for performance
+                // Un TLE CelesTrak standard possiede 3 linee: Titolo, Linea1, Linea 2
+                for (let i = 0; i < lines.length - 2; i += 3) {
+                    if (satRecords.length >= 1500) break; // Hard limit rendering performances (1500 satelliti)
+
                     const name = lines[i];
                     const tleLine1 = lines[i + 1];
                     const tleLine2 = lines[i + 2];
-                    if (tleLine1 && tleLine2) {
+
+                    if (tleLine1 && tleLine2 && tleLine1.startsWith('1 ') && tleLine2.startsWith('2 ')) {
                         try {
                             const satrec = satellite.twoline2satrec(tleLine1, tleLine2);
+                            if (!satrec) continue;
+
                             const positionAndVelocity = satellite.propagate(satrec, new Date());
                             const positionEci = positionAndVelocity ? positionAndVelocity.position : null;
+
+                            // Check validità posizione 
                             if (typeof positionEci !== 'boolean' && positionEci) {
                                 const gmst = satellite.gstime(new Date());
                                 const positionGd = satellite.eciToGeodetic(positionEci, gmst);
@@ -43,9 +50,9 @@ export function useCelesTrak(enabled) {
                                 const latitudeDeg = satellite.degreesLat(positionGd.latitude);
                                 const altitudeKm = positionGd.height;
 
-                                if (!isNaN(longitudeDeg) && !isNaN(latitudeDeg) && !isNaN(altitudeKm)) {
+                                if (isFinite(longitudeDeg) && isFinite(latitudeDeg) && isFinite(altitudeKm)) {
                                     satRecords.push({
-                                        id: satrec.satnum || name,
+                                        id: name.replace(/\s+/g, '_') + '_' + satrec.satnum,
                                         name: name,
                                         lat: latitudeDeg,
                                         lng: longitudeDeg,
@@ -53,10 +60,17 @@ export function useCelesTrak(enabled) {
                                     });
                                 }
                             }
-                        } catch {
-                            // Ignore invalid TLE parsing
+                        } catch (err) {
+                            // Ignore specific parse failures per singolo satellite
+                            console.warn("TLE Parsing failed for: ", name);
                         }
                     }
+                }
+
+                if (satRecords.length === 0) {
+                    console.error("[WORLDVIEW CelesTrak] Parsing fallito o file Vuoto. Text Preview: ", text.substring(0, 150));
+                } else {
+                    console.log(`[WORLDVIEW CelesTrak] ${satRecords.length} vettori in Orbita caricati ed elaborati tramite TLE Parser.`);
                 }
 
                 setData(satRecords);
