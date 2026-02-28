@@ -139,14 +139,15 @@ if ($target === 'opensky') {
     exit;
 } elseif ($target === 'celestrak') {
     header("Content-Type: text/plain");
-    // URL diretto al formato TLE
-    $url = 'https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle';
+    // Fetch JSON TLE from SatNOGS instead of CelesTrak to solve IP blocks & timeouts
+    $url = 'https://db.satnogs.org/api/tle/';
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 
     $result = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -154,9 +155,22 @@ if ($target === 'opensky') {
 
     if ($httpCode !== 200) {
         http_response_code($httpCode);
-        echo "CelesTrak proxy fetch failed";
+        echo "SatNOGS TLE proxy fetch failed";
     } else {
-        echo $result;
+        $data = json_decode($result, true);
+        $textOutput = "";
+        if (is_array($data)) {
+            foreach ($data as $sat) {
+                if (isset($sat['tle1']) && isset($sat['tle2'])) {
+                    $name = isset($sat['tle0']) ? $sat['tle0'] : "UNKNOWN";
+                    if (strpos($name, '0 ') === 0) {
+                        $name = substr($name, 2);
+                    }
+                    $textOutput .= trim($name) . "\n" . trim($sat['tle1']) . "\n" . trim($sat['tle2']) . "\n";
+                }
+            }
+        }
+        echo $textOutput;
     }
     exit;
 }
