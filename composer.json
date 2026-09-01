@@ -35,7 +35,7 @@
         "dompdf/dompdf": "^3.1",
         "phpmailer/phpmailer": "^7.0",
         "defuse/php-encryption": "^2.4",
-        "predis/predis": "^2.2",
+        "predis/predis": "^3.6",
         "sentry/sentry": "^4.0",
         "webonyx/graphql-php": "^15.29",
         "ezyang/htmlpurifier": "^4.19",
